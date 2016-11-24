@@ -145,7 +145,7 @@ function conform_send_bulk_email(){
     
     jQuery("body").css({'cursor':'wait'});
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=sendbulkemail';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=sendbulkemail';
     var data = new FormData();
     data.append('emailSubject', emailSubject);
     data.append('emailBody', emailBody);
@@ -211,7 +211,7 @@ function conform_send_test_email_for_admin(){
      
     jQuery("body").css({'cursor':'wait'});
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=sendadmintestemail';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=sendadmintestemail';
     var data = new FormData();
     data.append('emailSubject', emailSubject);
     data.append('emailBody', emailBody);
@@ -262,7 +262,7 @@ function templateupdatefilter(){
           
             jQuery("#emailtemplate").val(dropdownvalue);
             var url = window.location.protocol + "//" + window.location.host + "/";
-            var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=get_email_template';
+            var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=get_email_template';
             var data = new FormData();
             var emailtemplatename = jQuery("#emailtemplate").val();
             data.append('emailtemplatename', emailtemplatename);
@@ -321,7 +321,7 @@ function templateupdatefilter(){
 function update_admin_email_template(){
     
      var url = window.location.protocol + "//" + window.location.host + "/";
-     var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=update_admin_email_template';
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=update_admin_email_template';
      var data = new FormData();
      var emailtemplatename = jQuery("#emailtemplate").val();
      var fromname = jQuery("#fromname").val();
@@ -456,7 +456,7 @@ function removeemailtemplate(){
 function conform_remove_email_template(emailtemplatename){
 
      var url = window.location.protocol + "//" + window.location.host + "/";
-     var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=remove_email_template';
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=remove_email_template';
      var data = new FormData();
      data.append('emailtemplatename', emailtemplatename);
  
@@ -576,7 +576,7 @@ function welcome_email_send_admin(){
      
     jQuery("body").css({'cursor':'wait'});
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=sendadmintestemailwelcome';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=sendadmintestemailwelcome';
     var data = new FormData();
     data.append('emailSubject', emailSubject);
     data.append('emailBody', emailBody);
@@ -626,7 +626,7 @@ function updateWelcomeMsg(){
     
     jQuery("body").css({'cursor':'wait'});
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=updatewelocmecontent';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=updatewelocmecontent';
     var data = new FormData();
     data.append('welcomeemailSubject', emailSubject);
     data.append('welcomeemailBody', emailBody);
@@ -716,7 +716,7 @@ function getpagecontent_foreditor(){
    
     jQuery("#mycustomeditor").val("");
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=getpageContent';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getpageContent';
     var data = new FormData();
     data.append('pageID', pageID);
     jQuery.ajax({
@@ -762,7 +762,7 @@ function conform_update_content_page(){
     var contentbodyID =jQuery('#pagecontentid').val();
   
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=updatepagecontent';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=updatepagecontent';
     var data = new FormData();
     data.append('contenttitle', contenttitle);
     data.append('contentbody', contentbody);
@@ -806,7 +806,7 @@ function conform_update_content_page(){
 function welcome_available_merge_fields(){
       jQuery("body").css({'cursor':'wait'});
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=getavailablemergefields';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getavailablemergefields';
     var data = new FormData();
     var welcomedatafieldskeys="";
     
@@ -988,7 +988,7 @@ function conform_send_welcomeemail_report(){
     
     jQuery("body").css({'cursor':'wait'});
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=sendcustomewelcomeemail';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=sendcustomewelcomeemail';
     var data = new FormData();
    
    

@@ -21,7 +21,7 @@ function updatecontentsettings() {
    var infocontent = jQuery("#infocontent").val();
    var addresspoints = jQuery("#addresspoints").val();
 
-   var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=updatecmanagersettings';
+   var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=updatecmanagersettings';
    var data = new FormData();
        data.append('excludemetakeyscreate', exclude_array_create);
        data.append('excludemetakeysedit', exclude_array_edit);

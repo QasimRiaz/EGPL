@@ -7,12 +7,12 @@
 
 
 
-function add_new_role_EPGL(){
+function add_new_role_EGPL(){
     
      var rolename =jQuery('#rolename').val();
      jQuery("body").css({'cursor':'wait'});
      var url = window.location.protocol + "//" + window.location.host + "/";
-     var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=addnewrole';
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=addnewrole';
      var data = new FormData();
      data.append('rolename', rolename);
       jQuery.ajax({
@@ -115,7 +115,7 @@ function delete_role_name_conform(namerole){
     var rolename =namerole;
      jQuery("body").css({'cursor':'wait'});
      var url = window.location.protocol + "//" + window.location.host + "/";
-     var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=removerole';
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=removerole';
      var data = new FormData();
      data.append('rolename', rolename);
       jQuery.ajax({
@@ -155,7 +155,7 @@ function update_admin_settings(){
     
      jQuery("body").css({'cursor':'wait'});
      var url = window.location.protocol + "//" + window.location.host + "/";
-     var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=adminsettings';
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=adminsettings';
      var data = new FormData();
      
      data.append('eventdate', eventdate);

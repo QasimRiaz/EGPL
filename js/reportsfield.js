@@ -78,7 +78,7 @@ function reportload(reportname){
  var data = new FormData();
  var url = window.location.protocol + "//" + window.location.host + "/";
         
-       var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=getReportsdatanew';
+       var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getReportsdatanew';
         data.append('reportName', reportname);
         
        
@@ -411,8 +411,8 @@ function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
 
 
     var fileName = "UserExport-" + curr_dat + "-" + time;
-   // console.log('/wp-content/plugins/EPGL/exportdatefiledownload.php?file='+ JSON.stringify(arrData['rows']));
-   // window.location = '/wp-content/plugins/EPGL/exportdatefiledownload.php?file='+ JSON.stringify(arrData['rows']);
+   // console.log('/wp-content/plugins/EGPL/exportdatefiledownload.php?file='+ JSON.stringify(arrData['rows']));
+   // window.location = '/wp-content/plugins/EGPL/exportdatefiledownload.php?file='+ JSON.stringify(arrData['rows']);
     //this will remove the blank-spaces from the title and replace it with an underscore
     //fileName += ReportTitle.replace(/ /g,"_");   
 
@@ -420,7 +420,7 @@ function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
     var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
     
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/exportdatefiledownload.php';
+    var urlnew = url + 'wp-content/plugins/EGPL/exportdatefiledownload.php';
   //  jQuery( "body" ).append( '<a href="'+'" title="Get some foo!" id="foo">Show me some foo</a>' );
   //  jQuery.post( urlnew );
     
@@ -559,7 +559,7 @@ function get_all_files() {
         
     var data = new FormData();
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=get_all_file_urls';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=get_all_file_urls';
     data.append('colvalue', colvalue);
     
      jQuery.ajax({
@@ -574,7 +574,7 @@ function get_all_files() {
                jQuery('#hiddenform').empty();
                if(jQuery.parseJSON(data) !=null){
                var hiddenformhtml ="";
-                 hiddenformhtml += '<form id="myform" action="'+url+'wp-content/plugins/EPGL/bulkdownload.php" method="post"><input type="hidden" name="zipfoldername" value="'+colvalue+'">';
+                 hiddenformhtml += '<form id="myform" action="'+url+'wp-content/plugins/EGPL/bulkdownload.php" method="post"><input type="hidden" name="zipfoldername" value="'+colvalue+'">';
                 
                  jQuery.each(jQuery.parseJSON(data), function(key, value) {
                    
@@ -604,7 +604,7 @@ function get_all_files() {
         //console.log(ids);
 
        // var colvalue = jQuery("#file_upload option:selected").val();
-        //var url = baseUrl + "wp-content/plugins/EPGL/download-bulk-file.php?zipname=" + colvalue;
+        //var url = baseUrl + "wp-content/plugins/EGPL/download-bulk-file.php?zipname=" + colvalue;
         //console.log(dat);
        // window.location.replace(url);
         //  window.open(url+dat, '_blank');
@@ -826,7 +826,7 @@ function removeTemplateReport(saveReportName){
 
     var data = new FormData();
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=remove_save_report_template';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=remove_save_report_template';
     data.append('savereportname', saveReportName);
     
      jQuery.ajax({

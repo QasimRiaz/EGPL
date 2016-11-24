@@ -6,37 +6,37 @@
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
 	<title>Admin Dashboard</title>
 
-	<link href="/wp-content/plugins/EPGL/cmtemplate/img/favicon.144x144.png" rel="apple-touch-icon" type="image/png" sizes="144x144">
-	<link href="/wp-content/plugins/EPGL/cmtemplate/img/favicon.114x114.png" rel="apple-touch-icon" type="image/png" sizes="114x114">
-	<link href="/wp-content/plugins/EPGL/cmtemplate/img/favicon.72x72.png" rel="apple-touch-icon" type="image/png" sizes="72x72">
-	<link href="/wp-content/plugins/EPGL/cmtemplate/img/favicon.57x57.png" rel="apple-touch-icon" type="image/png">
-	<link href="/wp-content/plugins/EPGL/cmtemplate/img/favicon.png" rel="icon" type="image/png">
-	<link href="/wp-content/plugins/EPGL/cmtemplate/img/favicon.ico" rel="shortcut icon">
+	<link href="/wp-content/plugins/EGPL/cmtemplate/img/favicon.144x144.png" rel="apple-touch-icon" type="image/png" sizes="144x144">
+	<link href="/wp-content/plugins/EGPL/cmtemplate/img/favicon.114x114.png" rel="apple-touch-icon" type="image/png" sizes="114x114">
+	<link href="/wp-content/plugins/EGPL/cmtemplate/img/favicon.72x72.png" rel="apple-touch-icon" type="image/png" sizes="72x72">
+	<link href="/wp-content/plugins/EGPL/cmtemplate/img/favicon.57x57.png" rel="apple-touch-icon" type="image/png">
+	<link href="/wp-content/plugins/EGPL/cmtemplate/img/favicon.png" rel="icon" type="image/png">
+	<link href="/wp-content/plugins/EGPL/cmtemplate/img/favicon.ico" rel="shortcut icon">
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!--[if lt IE 9]>
 	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
-          <link rel="stylesheet" href="/wp-content/plugins/EPGL/css/contentmanager.css">
-	<link rel="stylesheet" href="/wp-content/plugins/EPGL/cmtemplate/css/lib/lobipanel/lobipanel.min.css">
-    <link rel="stylesheet" href="/wp-content/plugins/EPGL/cmtemplate/css/lib/jqueryui/jquery-ui.min.css">
-    <link rel="stylesheet" href="/wp-content/plugins/EPGL/cmtemplate/css/lib/font-awesome/font-awesome.min.css">
-    <link rel="stylesheet" href="/wp-content/plugins/EPGL/cmtemplate/css/main.css">
-    <link rel="stylesheet" href="/wp-content/plugins/EPGL/cmtemplate/css/customstyle.css">
-    <link rel="stylesheet" href="/wp-content/plugins/EPGL/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css"/>
-    <link rel="stylesheet" href="/wp-content/plugins/EPGL/cmtemplate/css/lib/clockpicker/bootstrap-clockpicker.min.css">
-<!--    <link rel="stylesheet" href="/wp-content/plugins/EPGL/css/bootstrap.min.css">-->
+          <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/contentmanager.css">
+	<link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/lobipanel/lobipanel.min.css">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/jqueryui/jquery-ui.min.css">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/font-awesome/font-awesome.min.css">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/main.css">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/customstyle.css">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css"/>
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/clockpicker/bootstrap-clockpicker.min.css">
+<!--    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap.min.css">-->
      
 <!--    contetnmanager css-->
     
-    <link rel="stylesheet" href="/wp-content/plugins/EPGL/css/watable.css">
-     <link rel="stylesheet" href="/wp-content/plugins/EPGL/css/datepicker.css">
-     <link rel="stylesheet" href="/wp-content/plugins/EPGL/css/bootstrap-multiselect.css">
-     <link rel="stylesheet" href="/wp-content/plugins/EPGL/css/jquery-confirm.css">
-       <link rel="stylesheet" href="/wp-content/plugins/EPGL/css/dataTables.tableTools.css">
-       <link rel="stylesheet" type="text/css" href="/wp-content/plugins/EPGL/css/jquery.dataTables.css">
-       <link rel="stylesheet" type="text/css" href="/wp-content/plugins/EPGL/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/watable.css">
+     <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/datepicker.css">
+     <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap-multiselect.css">
+     <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/jquery-confirm.css">
+       <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/dataTables.tableTools.css">
+       <link rel="stylesheet" type="text/css" href="/wp-content/plugins/EGPL/css/jquery.dataTables.css">
+       <link rel="stylesheet" type="text/css" href="/wp-content/plugins/EGPL/css/buttons.dataTables.min.css">
    
        
        
@@ -48,8 +48,8 @@
 	<header class="site-header">
 	    <div class="container-fluid">
 	        <a   class="site-logo" style="cursor: default;">
-	            <img class="hidden-md-down" src="/wp-content/plugins/EPGL/cmtemplate/img/rzExpoGenie-Logo-1.png" alt="">
-	            <img class="hidden-lg-up"   src="/wp-content/plugins/EPGL/cmtemplate/img/rzExpoGenie-Logo-1.png" alt="">
+	            <img class="hidden-md-down" src="/wp-content/plugins/EGPL/cmtemplate/img/rzExpoGenie-Logo-1.png" alt="">
+	            <img class="hidden-lg-up"   src="/wp-content/plugins/EGPL/cmtemplate/img/rzExpoGenie-Logo-1.png" alt="">
 	        </a>
 	        <button class="hamburger hamburger--htla">
 	            <span>toggle menu</span>

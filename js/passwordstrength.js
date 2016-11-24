@@ -20,7 +20,7 @@ function change_password_custome(){
     // console.log(newpassword);
     jQuery("body").css({'cursor':'wait'});
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=changepassword';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=changepassword';
     var data = new FormData();
     data.append('newpassword', newpassword);
    

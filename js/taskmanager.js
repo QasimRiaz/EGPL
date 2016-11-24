@@ -28,7 +28,7 @@ function create_sponsor_task() {
     var preappend = key.replace(/\s+/g, '_');
     
     var uniquekey = "task_" + preappend.toLowerCase();
-    var urlnew = url + 'wp-content/plugins/EPGL/taskmanager.php?createnewtask=check_sponsor_task_key_value';
+    var urlnew = url + 'wp-content/plugins/EGPL/taskmanager.php?createnewtask=check_sponsor_task_key_value';
     var data = new FormData();
 
 
@@ -134,7 +134,7 @@ function create_sponsor_task_data() {
     data.append('linkname', linkName);
     data.append('addational_attr', taskAddationalAttr);
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/taskmanager.php?createnewtask=create_new_task';
+    var urlnew = url + 'wp-content/plugins/EGPL/taskmanager.php?createnewtask=create_new_task';
 
 
     jQuery.ajax({
@@ -242,7 +242,7 @@ function sponsor_task_update() {
     data.append('linkname', linkName);
     data.append('addational_attr', taskAddationalAttr);
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EPGL/taskmanager.php?createnewtask=create_new_task';
+    var urlnew = url + 'wp-content/plugins/EGPL/taskmanager.php?createnewtask=create_new_task';
 
 
     jQuery.ajax({
@@ -342,7 +342,7 @@ function get_edit_sponsor_task_date() {
     
     
    
-    var urlnew = url + 'wp-content/plugins/EPGL/taskmanager.php?createnewtask=get_edit_task_key_data';
+    var urlnew = url + 'wp-content/plugins/EGPL/taskmanager.php?createnewtask=get_edit_task_key_data';
     var data = new FormData();
 
 
@@ -488,7 +488,7 @@ function conformRemoveSponsorTask(){
    jQuery("body").css("cursor", "progress");
    var uniqueKey = jQuery("#updateTaskKey option:selected").val();
    var url = window.location.protocol + "//" + window.location.host + "/";
-   var urlnew = url + 'wp-content/plugins/EPGL/taskmanager.php?createnewtask=removeTaskData';
+   var urlnew = url + 'wp-content/plugins/EGPL/taskmanager.php?createnewtask=removeTaskData';
    var data = new FormData();
    data.append('uniqueKey', uniqueKey);
    jQuery.ajax({

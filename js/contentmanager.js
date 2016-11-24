@@ -117,7 +117,7 @@ function add_new_sponsor(){
   
   
   
-  var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=add_new_sponsor_metafields';
+  var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=add_new_sponsor_metafields';
  
    jQuery("body").css("cursor", "progress");
   if(email !=""  ){
@@ -147,7 +147,7 @@ function add_new_sponsor(){
                 if(message.msg == 'User created'){
                     
                    // jQuery('#sponsor-form').hide();
-                  if(message.userrole == 'EPGL'){
+                  if(message.userrole == 'EGPL'){
                       sName = "Content Manager";
                   }
                     jQuery("form")[0].reset();
@@ -204,7 +204,7 @@ function add_new_admin_user(){
  var username =  jQuery("#Susername").val();
   var sponsorlevel = jQuery("#Srole option:selected").val();
 
-  var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=addnewadminuser';
+  var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=addnewadminuser';
   var data = new FormData();
    jQuery("body").css("cursor", "progress");
   if(email !=""  ){
@@ -290,7 +290,7 @@ function update_sponsor(){
   console.log(sponsorid);
   var sponsorlevel = jQuery("#Srole option:selected").val();
   var password =  jQuery("#password").val();
-  var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=update_new_sponsor_metafields';
+  var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=update_new_sponsor_metafields';
   var data = new FormData();
    jQuery("body").css("cursor", "progress");
 
@@ -450,7 +450,7 @@ function conform_remove_resource(idsponsor){
      jQuery("body").css({'cursor':'wait'});
      var url = window.location.protocol + "//" + window.location.host + "/";
      
-     var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=remove_post_resource';
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=remove_post_resource';
      var data = new FormData();
      data.append('id', idsponsor);
      jQuery.ajax({
@@ -484,7 +484,7 @@ function conform_remove_sponsor(idsponsor){
      
      var url = window.location.protocol + "//" + window.location.host + "/";
      
-     var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=remove_sponsor_metas';
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=remove_sponsor_metas';
      var data = new FormData();
      data.append('id', idsponsor);
      jQuery.ajax({
@@ -524,7 +524,7 @@ function create_new_resource(){
      var title = jQuery('#Stitle').val(); 
      
      var file = jQuery('#Sfile')[0].files[0]; 
-     var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=resource_new_post';
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=resource_new_post';
      var data = new FormData();
      data.append('title', title);
      data.append('file', file);
@@ -596,7 +596,7 @@ function resource_file_upload(){
     jQuery("body").css({'cursor':'wait'});
     var data = new FormData();
     data.append('file', file);
-    var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=resource_file_upload';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=resource_file_upload';
       jQuery.ajax({
             url: urlnew,
             data: data,
@@ -662,7 +662,7 @@ function getUrlParameter(sParam)
 jQuery(document).ready(function(){
      var url = window.location.protocol + "//" + window.location.host + "/";
      var data = new FormData();
-     var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=plugin_settings';
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=plugin_settings';
      jQuery.ajax({
             url: urlnew,
             data: data,
@@ -686,7 +686,7 @@ jQuery(document).ready(function(){
   console.log(reportName);
          jQuery("body").css({'cursor':'wait'});
      var url = window.location.protocol + "//" + window.location.host + "/";
-     var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=update_admin_report';
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=update_admin_report';
      var data = new FormData();
      
      
@@ -781,7 +781,7 @@ function bulk_import_user(){
    }
     
      
-     var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=bulkimportuser';
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=bulkimportuser';
     
      var datatable ='';
      
@@ -924,7 +924,7 @@ function conform_edit_resource(idresource){
     console.log(idresource);
     var resourcetitle = jQuery("#resourcetitle").val();
     var url = window.location.protocol + "//" + window.location.host + "/"; 
-    var urlnew = url + 'wp-content/plugins/EPGL/egpl.php?contentManagerRequest=updatresource';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=updatresource';
     var data = new FormData();
     jQuery("body").css({'cursor':'wait'});
     
