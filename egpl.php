@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       A plugin to automatically update GitHub 2.5.
- * Version:           1.3
+ * Version:           1.4
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       hello-word-two
