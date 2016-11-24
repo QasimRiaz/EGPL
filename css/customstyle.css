@@ -1,0 +1,12 @@
+.site-header .site-logo img {
+   
+    height: 66px !important;
+  
+    top: -15px !important;
+}
+
+.chart-statistic-box .chart-container .chart-container-title{font-size: 14px !important;font-style: italic !important;top: 17px !important;color: lightblue !important;}
+li.active a, li.active a:hover {
+    background: #7cb5ec !important ;
+   
+}
