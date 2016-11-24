@@ -1,1 +1,1 @@
-# EGPL
+~Current Version:1.0~
