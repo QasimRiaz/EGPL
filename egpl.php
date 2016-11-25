@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       A plugin to automatically update GitHub 2.5.
- * Version:           1.4
+ * Version:           1.5
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       hello-word-two
@@ -1974,8 +1974,12 @@ function my_plugin_activate() {
       
   }
 
-    $settings_array['ContentManager']['sponsor_name']='User';
-    $settings_array['ContentManager']['attendyTypeKey']='Role';
+    //$settings_array['ContentManager']['sponsor_name']='User';
+    //$settings_array['ContentManager']['attendyTypeKey']='Role';
+    if (get_option('ContenteManager_Settings')) {
+       $oldvalues = get_option( 'ContenteManager_Settings' );
+    }
+    
     
     $task_input_type[0]['lable'] = 'None';
     $task_input_type[0]['type'] = 'none';
@@ -2002,8 +2006,8 @@ function my_plugin_activate() {
     
     
     
-    $settings_array['ContentManager']['taskmanager']['input_type']=$task_input_type;
-    update_option( 'ContenteManager_Settings', $settings_array);
+    $oldvalues['ContentManager']['taskmanager']['input_type']=$task_input_type;
+    update_option( 'ContenteManager_Settings', $oldvalues);
     
    
 $table_name ="contentmanager_logging";
@@ -2024,19 +2028,6 @@ $sql = "CREATE TABLE contentmanager_log (
  action_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
  PRIMARY KEY (id)
 ) ENGINE=MyISAM;";
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 dbDelta( $sql );
