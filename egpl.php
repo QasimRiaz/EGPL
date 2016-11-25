@@ -4,8 +4,8 @@
 /**
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
- * Description:       A plugin to automatically update GitHub 2.5.
- * Version:           1.4
+ * Description:       EGPL
+ * Version:           1.5
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       hello-word-two
@@ -1364,7 +1364,7 @@ function remove_sponsor_metas($user_id){
 
    
     $path =  dirname(__FILE__);
-   $hom_path = str_replace("/wp-content/plugins/contentmanager","",$path);
+   $hom_path = str_replace("/wp-content/plugins/EGPL","",$path);
    
     
     if(!function_exists('wp_delete_user')) {
