@@ -17,5 +17,5 @@ if (!empty($_GET['fieldname'])) {
 
 
 
-    header('Location: ' . $base_url . '/wp-content/plugins/contentmanager/download-lib-one.php?zipname=' . $filed_name . '&filename=' . $download_array);
+    header('Location: ' . $base_url . '/wp-content/plugins/EGPL/download-lib-one.php?zipname=' . $filed_name . '&filename=' . $download_array);
 }

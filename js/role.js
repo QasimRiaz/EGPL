@@ -7,7 +7,7 @@
 
 
 
-function add_new_role_EGPL(){
+function add_new_role_contentmanager(){
     
      var rolename =jQuery('#rolename').val();
      jQuery("body").css({'cursor':'wait'});

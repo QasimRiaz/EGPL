@@ -46,7 +46,7 @@
             <div class="box-typical box-typical-padding" id="uploadimportfile">
                 <p>
                 
-                    Please Download <a href="/wp-content/plugins/contentmanager/import/sampledatafile.xlsx" target="_blank" >Sampledata.xlsx</a>. Replace the dummy values with actual ones and upload your file below. Please note that Email, First Name, Last Name, User Level and Company Name are required for each user. Please do not change column names or their positions. The file must be in Excel (.xlsx) format.  
+                    Please Download <a href="/wp-content/plugins/EGPL/import/sampledatafile.xlsx" target="_blank" >Sampledata.xlsx</a>. Replace the dummy values with actual ones and upload your file below. Please note that Email, First Name, Last Name, User Level and Company Name are required for each user. Please do not change column names or their positions. The file must be in Excel (.xlsx) format.  
                 </p>
                 
                    <h5 class="m-t-lg with-border"></h5>

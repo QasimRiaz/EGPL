@@ -132,7 +132,7 @@ function update_user_meta_custome(elem) {
 
 
 
-    jQuery.ajax({url: url + 'wp-content/plugins/contentmanager/usertask_update.php?usertask_update=update_user_meta_custome',
+    jQuery.ajax({url: url + 'wp-content/plugins/EGPL/usertask_update.php?usertask_update=update_user_meta_custome',
             data: {action: value, updatevalue: metaupdate, status: statusvalue,sponsorid:sponsorid},
             type: 'post',
             success: function(output) {
@@ -140,7 +140,13 @@ function update_user_meta_custome(elem) {
                filestatus=true;
                jQuery("body").css({'cursor':'default'});
             },error: function (xhr, ajaxOptions, thrownError) {
-                     jAlert('There was an error during the requested operation. Please try again.'); 
+                    swal({
+					title: "Error",
+					text: "There was an error during the requested operation. Please try again.",
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				});
       }
         });
     } else {
@@ -156,7 +162,7 @@ function update_user_meta_custome(elem) {
         data.append('status', statusvalue);
         data.append('lastvalue', lastvalue);
         data.append('sponsorid',sponsorid);
-        var urlnew = url + 'wp-content/plugins/contentmanager/usertask_update.php?usertask_update=user_file_upload';
+        var urlnew = url + 'wp-content/plugins/EGPL/usertask_update.php?usertask_update=user_file_upload';
 
 
         //console.log(file);
@@ -192,7 +198,13 @@ function update_user_meta_custome(elem) {
                 }
                 //alert(alertmessage);
             },error: function (xhr, ajaxOptions, thrownError) {
-                     jAlert('There was an error during the requested operation. Please try again.'); 
+                    swal({
+					title: "Error",
+					text: "There was an error during the requested operation. Please try again.",
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				});
       }
         });
         // }
@@ -215,7 +227,13 @@ jQuery(document).ready(function() {
                                                                     if(erroralert == true){
 									instance._stop(-1);
                                                                         erroralert=false;
-                                                                        jAlert('There was an error during the requested operation. Please try again.'); 
+                                                                       swal({
+					title: "Error",
+					text: "There was an error during the requested operation. Please try again.",
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				});
                                                                     }else{
                                                                         instance._stop(1);
                                                                     }

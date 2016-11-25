@@ -176,7 +176,7 @@
                                             $field_html .= ' ';
                                         $field_html .= $form_tag . " />";
                                         if (!empty($value)) {
-                                            $field_html .= "<div class='remove_" . $profile_field_name . "'><a href='" . $base_url . "/wp-content/plugins/contentmanager/download-lib.php?userid=" . $user_IDD . "&fieldname=" . $profile_field_name . "' target='_blank' style='margin-right: 24px;'>Download File</a><a  style='width:75px;' id='remove_" . $profile_field_name . "' class='" . $profile_field_name . " btn-danger btn remove_upload' >Remove</a></div>";
+                                            $field_html .= "<div class='remove_" . $profile_field_name . "'><a href='" . $base_url . "/wp-content/plugins/EGPL/download-lib.php?userid=" . $user_IDD . "&fieldname=" . $profile_field_name . "' target='_blank' style='margin-right: 24px;'>Download File</a><a  style='width:75px;' id='remove_" . $profile_field_name . "' class='" . $profile_field_name . " btn-danger btn remove_upload' >Remove</a></div>";
                                         }
                                         break;
                                     case 'textarea':
