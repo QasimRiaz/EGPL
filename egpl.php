@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       A plugin to automatically update GitHub 2.5.
- * Version:           1.5
+ * Version:           1.4
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       hello-word-two
@@ -1731,7 +1731,7 @@ function getReportsdatanew($report_name){
                     $file_info = unserialize($all_meta_for_user[$profile_field_name][0]);
                     
                     if (!empty($file_info)) {
-                        $myNewArray[$profile_field_name] = '<a href="'.$base_url.'/wp-content/plugins/contentmanager/download-lib.php?userid=' . $aid->user_id . '&fieldname=' . $profile_field_name . '" >Download</a>';
+                        $myNewArray[$profile_field_name] = '<a href="'.$base_url.'/wp-content/plugins/EGPL/download-lib.php?userid=' . $aid->user_id . '&fieldname=' . $profile_field_name . '" >Download</a>';
                     } else {
                         $myNewArray[$profile_field_name] = '';
                     }
@@ -1828,19 +1828,19 @@ add_action('wp_enqueue_scripts', 'add_contentmanager_js');
 function add_contentmanager_js(){
       wp_enqueue_script('safari4', plugins_url('/js/my_task_update.js', __FILE__), array('jquery'));
     
-     wp_enqueue_script( 'jquery.alerts', plugins_url() . '/contentmanager/js/jquery.alerts.js', array(), '1.1.0', true );
-     wp_enqueue_script( 'boot-date-picker', plugins_url() . '/contentmanager/js/bootstrap-datepicker.js', array(), '1.2.0', true );
-     wp_enqueue_script( 'jquerydatatable', plugins_url() . '/contentmanager/js/jquery.dataTables.js', array(), '1.2.0', true );
-     wp_enqueue_script( 'shCore', plugins_url() . '/contentmanager/js/shCore.js', array(), '1.2.0', true );
-     wp_enqueue_script( 'demo', plugins_url() . '/contentmanager/js/demo.js', array(), '1.2.0', true );
-     wp_enqueue_script( 'bootstrap.min', plugins_url() . '/contentmanager/js/bootstrap.min.js', array(), '1.2.0', true );
+     wp_enqueue_script( 'jquery.alerts', plugins_url() . '/EGPL/js/jquery.alerts.js', array(), '1.1.0', true );
+     wp_enqueue_script( 'boot-date-picker', plugins_url() . '/EGPL/js/bootstrap-datepicker.js', array(), '1.2.0', true );
+     wp_enqueue_script( 'jquerydatatable', plugins_url() . '/EGPL/js/jquery.dataTables.js', array(), '1.2.0', true );
+     wp_enqueue_script( 'shCore', plugins_url() . '/EGPL/js/shCore.js', array(), '1.2.0', true );
+     wp_enqueue_script( 'demo', plugins_url() . '/EGPL/js/demo.js', array(), '1.2.0', true );
+     wp_enqueue_script( 'bootstrap.min', plugins_url() . '/EGPL/js/bootstrap.min.js', array(), '1.2.0', true );
     
      wp_enqueue_script('safari1', plugins_url('/js/modernizr.custom.js', __FILE__), array('jquery'));
      wp_enqueue_script('safari2', plugins_url('/js/classie.js', __FILE__), array('jquery'));
      wp_enqueue_script('safari3', plugins_url('/js/progressButton.js', __FILE__), array('jquery'));
    
     // wp_enqueue_script('bulk-email', plugins_url('/js/bulk-email.js', __FILE__), array('jquery'));
-     wp_enqueue_script('sweetalert', plugins_url('/contentmanager/cmtemplate/js/lib/bootstrap-sweetalert/sweetalert.min.js'), array('jquery'));
+     wp_enqueue_script('sweetalert', plugins_url('/EGPL/cmtemplate/js/lib/bootstrap-sweetalert/sweetalert.min.js'), array('jquery'));
      wp_enqueue_script('password_strength_cal', plugins_url('/js/passwordstrength.js', __FILE__), array('jquery'));
       //wp_enqueue_script('rolejs', plugins_url('/js/role.js', __FILE__), array('jquery'));
      
@@ -1850,15 +1850,15 @@ function add_contentmanager_js(){
 add_action('wp_enqueue_scripts', 'my_contentmanager_style');
 
 function my_contentmanager_style() {
-    wp_enqueue_style('my-mincss', plugins_url() .'/contentmanager/css/bootstrap.min.css');
-    wp_enqueue_style('my-sweetalert', plugins_url() .'/contentmanager/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css');
-    wp_enqueue_style('my-datepicker', plugins_url().'/contentmanager/css/datepicker.css');
-    wp_enqueue_style('jquery.dataTables', plugins_url().'/contentmanager/css/jquery.dataTables.css');
-    wp_enqueue_style('shCore', plugins_url().'/contentmanager/css/shCore.css');
+    wp_enqueue_style('my-mincss', plugins_url() .'/EGPL/css/bootstrap.min.css');
+    wp_enqueue_style('my-sweetalert', plugins_url() .'/EGPL/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css');
+    wp_enqueue_style('my-datepicker', plugins_url().'/EGPL/css/datepicker.css');
+    wp_enqueue_style('jquery.dataTables', plugins_url().'/EGPL/css/jquery.dataTables.css');
+    wp_enqueue_style('shCore', plugins_url().'/EGPL/css/shCore.css');
   
-    wp_enqueue_style('my-datatable-tools', plugins_url().'/contentmanager/css/dataTables.tableTools.css');
-   // wp_enqueue_style('cleditor-css', plugins_url() .'/contentmanager/css/jquery.cleditor.css');
-   // wp_enqueue_style('contentmanager-css', plugins_url() .'/contentmanager/css/forntend.css');
+    wp_enqueue_style('my-datatable-tools', plugins_url().'/EGPL/css/dataTables.tableTools.css');
+   // wp_enqueue_style('cleditor-css', plugins_url() .'/EGPL/css/jquery.cleditor.css');
+   // wp_enqueue_style('contentmanager-css', plugins_url() .'/EGPL/css/forntend.css');
     wp_enqueue_style('my-admin-theme1', plugins_url('css/component.css', __FILE__));
     wp_enqueue_style('my-admin-theme', plugins_url('css/normalize.css', __FILE__));
   
@@ -1868,84 +1868,84 @@ function my_plugin_activate() {
 
   $create_pages_list[0]['title'] = 'New User';
   $create_pages_list[0]['name'] = 'create-user';
-  $create_pages_list[0]['temp'] = 'plugin_templates/addsponsor-template.php';
+  $create_pages_list[0]['temp'] = 'temp/addsponsor-template.php';
   
   $create_pages_list[1]['title'] = 'Create Resources';
   $create_pages_list[1]['name'] = 'create-resource';
-  $create_pages_list[1]['temp'] = 'plugin_templates/create-resource-template.php';
+  $create_pages_list[1]['temp'] = 'temp/create-resource-template.php';
   
  
   
   
   $create_pages_list[2]['title'] = 'User Report';
   $create_pages_list[2]['name'] = 'user-report';
-  $create_pages_list[2]['temp'] = 'plugin_templates/sponsor-reports-template.php';
+  $create_pages_list[2]['temp'] = 'temp/sponsor-reports-template.php';
   
   
    $create_pages_list[3]['title'] = 'Edit User';
   $create_pages_list[3]['name'] = 'edit-user';
-  $create_pages_list[3]['temp'] = 'plugin_templates/edit_sponsor-template.php' ;
+  $create_pages_list[3]['temp'] = 'temp/edit_sponsor-template.php' ;
   
   
    $create_pages_list[4]['title'] = 'Edit User Task';
   $create_pages_list[4]['name'] = 'edit-task';
-  $create_pages_list[4]['temp'] = 'plugin_templates/editponsor-task-update-template.php';
+  $create_pages_list[4]['temp'] = 'temp/editponsor-task-update-template.php';
   
   $create_pages_list[5]['title'] = 'All Resources';
   $create_pages_list[5]['name'] = 'all-resources';
-  $create_pages_list[5]['temp'] = 'plugin_templates/view_resource-template.php';
+  $create_pages_list[5]['temp'] = 'temp/view_resource-template.php';
   
   $create_pages_list[6]['title'] = 'Create New Task';
   $create_pages_list[6]['name'] = 'create-task';
-  $create_pages_list[6]['temp'] = 'plugin_templates/createponsor-task-template.php';
+  $create_pages_list[6]['temp'] = 'temp/createponsor-task-template.php';
   
   $create_pages_list[7]['title'] = 'Admin Change Password';
   $create_pages_list[7]['name'] = 'admin-change-password';
-  $create_pages_list[7]['temp'] = 'plugin_templates/change_password_template.php';
+  $create_pages_list[7]['temp'] = 'temp/change_password_template.php';
   
   
     
   $create_pages_list[8]['title'] = 'Welcome Email Content';
   $create_pages_list[8]['name'] = 'welcome-email';
-  $create_pages_list[8]['temp'] = 'plugin_templates/welcome_email_template.php';
+  $create_pages_list[8]['temp'] = 'temp/welcome_email_template.php';
   
     
   $create_pages_list[9]['title'] = 'Manage users Level';
   $create_pages_list[9]['name'] = 'add-new-level';
-  $create_pages_list[9]['temp'] = 'plugin_templates/create-role-template.php';
+  $create_pages_list[9]['temp'] = 'temp/create-role-template.php';
   
   $create_pages_list[10]['title'] = 'Add Content Manager';
   $create_pages_list[10]['name'] = 'add-content-manager-user';
-  $create_pages_list[10]['temp'] = 'plugin_templates/addcontentmanager-template.php';
+  $create_pages_list[10]['temp'] = 'temp/addcontentmanager-template.php';
   
   $create_pages_list[11]['title'] = 'Content Editor';
   $create_pages_list[11]['name'] = 'content-editor';
-  $create_pages_list[11]['temp'] = 'plugin_templates/edit_content_page.php';
+  $create_pages_list[11]['temp'] = 'temp/edit_content_page.php';
   
   $create_pages_list[12]['title'] = 'Dashboard';
   $create_pages_list[12]['name'] = 'dashboard';
-  $create_pages_list[12]['temp'] = 'plugin_templates/admin_dashboard.php';
+  $create_pages_list[12]['temp'] = 'temp/admin_dashboard.php';
   
   $create_pages_list[13]['title'] = 'Bulk Download';
   $create_pages_list[13]['name'] = 'bulk-download-files';
-  $create_pages_list[13]['temp'] = 'plugin_templates/bulk_download_task_files_template.php';
+  $create_pages_list[13]['temp'] = 'temp/bulk_download_task_files_template.php';
   
   $create_pages_list[14]['title'] = 'User Change Password';
   $create_pages_list[14]['name'] = 'change-password';
-  $create_pages_list[14]['temp'] = 'plugin_templates/user_change_password_template.php';
+  $create_pages_list[14]['temp'] = 'temp/user_change_password_template.php';
   
   $create_pages_list[15]['title'] = 'Admin Settings';
   $create_pages_list[15]['name'] = 'admin-settings';
-  $create_pages_list[15]['temp'] = 'plugin_templates/settings-template.php';
+  $create_pages_list[15]['temp'] = 'temp/settings-template.php';
   
   
   $create_pages_list[15]['title'] = 'Tasks';
   $create_pages_list[15]['name'] = 'tasks';
-  $create_pages_list[15]['temp'] = 'plugin_templates/sponsor-task-update-template.php';
+  $create_pages_list[15]['temp'] = 'temp/sponsor-task-update-template.php';
   
   $create_pages_list[15]['title'] = 'Bulk Import Users';
   $create_pages_list[15]['name'] = 'tasks';
-  $create_pages_list[15]['temp'] = 'plugin_templates/bulkuser_import.php';
+  $create_pages_list[15]['temp'] = 'temp/bulkuser_import.php';
   
  
   foreach($create_pages_list as $key=>$value){
@@ -2306,25 +2306,25 @@ class ContentManager {
 
                 // Add your templates to this array.
                 $this->templates = array(
-                        'plugin_templates/addsponsor-template.php'     => 'Add new sponsor',
-                        'plugin_templates/create-resource-template.php'     => 'Create resource',
-                        'plugin_templates/sponsor-reports-template.php'     => 'Sponsor Reports',
-                        'plugin_templates/edit_sponsor-template.php'     => 'Edit Sponsor', 
-                        'plugin_templates/edit_sponsor-task-template.php'     => 'Edit Sponsor Task',
-                        'plugin_templates/view_resource-template.php'     => 'Resource list view',
-                        'plugin_templates/createponsor-task-template.php'     => 'Create Sponsor Task',
-                        'plugin_templates/editponsor-task-update-template.php' =>  'Edit Sponsor Task Update',
-                        'plugin_templates/change_password_template.php' =>  'Change Password',
-                        'plugin_templates/welcome_email_template.php' =>  'Welcome Email',
-                        'plugin_templates/create-role-template.php' =>  'Create New Role',
-                        'plugin_templates/addcontentmanager-template.php' =>  'Add Content Manager',
-			'plugin_templates/edit_content_page.php'     => 'Edit Content',
-                        'plugin_templates/admin_dashboard.php'     => 'Dashboard',
-                         'plugin_templates/bulk_download_task_files_template.php'     => 'Download Bulk Email',
-                         'plugin_templates/user_change_password_template.php'     => 'User Change Password',
-                         'plugin_templates/settings-template.php'     => 'Admin Settings',
-                         'plugin_templates/bulkuser_import.php'     => 'Bulk Import Users',
-                         'plugin_templates/sponsor-task-update-template.php'=>'Sponsor Task Update'
+                        'temp/addsponsor-template.php'     => 'Add new sponsor',
+                        'temp/create-resource-template.php'     => 'Create resource',
+                        'temp/sponsor-reports-template.php'     => 'Sponsor Reports',
+                        'temp/edit_sponsor-template.php'     => 'Edit Sponsor', 
+                        'temp/edit_sponsor-task-template.php'     => 'Edit Sponsor Task',
+                        'temp/view_resource-template.php'     => 'Resource list view',
+                        'temp/createponsor-task-template.php'     => 'Create Sponsor Task',
+                        'temp/editponsor-task-update-template.php' =>  'Edit Sponsor Task Update',
+                        'temp/change_password_template.php' =>  'Change Password',
+                        'temp/welcome_email_template.php' =>  'Welcome Email',
+                        'temp/create-role-template.php' =>  'Create New Role',
+                        'temp/addcontentmanager-template.php' =>  'Add Content Manager',
+			'temp/edit_content_page.php'     => 'Edit Content',
+                        'temp/admin_dashboard.php'     => 'Dashboard',
+                         'temp/bulk_download_task_files_template.php'     => 'Download Bulk Email',
+                         'temp/user_change_password_template.php'     => 'User Change Password',
+                         'temp/settings-template.php'     => 'Admin Settings',
+                         'temp/bulkuser_import.php'     => 'Bulk Import Users',
+                         'temp/sponsor-task-update-template.php'=>'Sponsor Task Update'
                     
                 );
 				
@@ -2906,7 +2906,7 @@ function wpse_183245_upload_dir( $dirs ) {
     
     $dirs['subdir'] = '/import';
     $dirs['path'] = dirname(__FILE__).'/import';
-    $dirs['url'] =  get_site_url().'/wp-content/plugins/contentmanager/import';
+    $dirs['url'] =  get_site_url().'/wp-content/plugins/EGPL/import';
     
     
     return $dirs; 
