@@ -3,14 +3,14 @@
 
 /**
  * Plugin Name:       EGPL
- * Plugin URI:        https://github.com/QasimRiaz/EGPL
+ * Plugin URI:        https://github.com/QasimRiaz/EGPL/tree/old-projects-t
  * Description:       EGPL
  * Version:           1.6
  * Author:            EG
  * License:           GNU General Public License v2
- * Text Domain:       hello-word-two
+ * Text Domain:       EGPL
  * Network:           true
- * GitHub Plugin URI: https://github.com/QasimRiaz/EGPL
+ * GitHub Plugin URI: https://github.com/QasimRiaz/EGPL/tree/old-projects-t
  * Requires WP:       4.0
  * Requires PHP:      5.3
  */
@@ -3236,9 +3236,9 @@ if (is_admin()) { // note the use of is_admin() to double check that this is hap
         $config = array(
             'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
             'proper_folder_name' => 'EGPL', // this is the name of the folder your plugin lives in
-            'api_url' => 'https://api.github.com/repos/QasimRiaz/EGPL', // the GitHub API url of your GitHub repo
+            'api_url' => 'https://github.com/QasimRiaz/EGPL/tree/old-projects-t', // the GitHub API url of your GitHub repo
             'raw_url' => 'https://raw.github.com/QasimRiaz/EGPL/old-projects-t', // the GitHub raw url of your GitHub repo
-            'github_url' => 'https://github.com/QasimRiaz/EGPL', // the GitHub url of your GitHub repo
+            'github_url' => 'https://github.com/QasimRiaz/EGPL/tree/old-projects-t', // the GitHub url of your GitHub repo
             'zip_url' => 'https://github.com/QasimRiaz/EGPL/zipball/old-projects-t', // the zip url of the GitHub repo
             'sslverify' => true, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
             'requires' => '3.0', // which version of WordPress does your plugin require?
