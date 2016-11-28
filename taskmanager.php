@@ -35,24 +35,18 @@ function removeTaskData($taskupdatevalue){
     $user_ID = get_current_user_id();
     $alert_type = "Remove";
     $subject = "Delete Task";
-    admin_alert($subject, $key, $lable, $descrpition, $newDate, $type, $alert_type);
+  
    
-    $test = 'user_meta_manager_data';
+    $test = 'custome_task_manager_data';
     $result = get_option($test);
     
     $user_info = get_userdata($user_ID);
    
-       contentmanagerlogging("Admin Remove Task","Admin Action",serialize($result['profile_fields'][$key]),$user_ID,$user_info->user_email,$result);
+    contentmanagerlogging("Admin Remove Task","Admin Action",serialize($result['profile_fields'][$key]),$user_ID,$user_info->user_email,$result);
 
-    unset($result['profile_fields'][$key . '_status']);
-    unset($result['profile_fields'][$key . '_datetime']);
+   
     unset($result['profile_fields'][$key]);
-    unset($result['custom_meta'][$key . '_status']);
-    unset($result['custom_meta'][$key . '_datetime']);
-    unset($result['custom_meta'][$key]);
-    unset($result['sort_order'][$key]);
-    unset($result['sort_order'][$key . '_status']);
-    unset($result['sort_order'][$key . '_datetime']);
+   
     
     
     $result = update_option($test, $result);
@@ -62,7 +56,7 @@ function removeTaskData($taskupdatevalue){
 function get_edit_task_key_data($key){
     
      if (isset($key)) {
-        $test = 'user_meta_manager_data';
+        $test = 'custome_task_manager_data';
         $result = get_option($test);
         $dataval = $result['profile_fields'][$key];
         $dataval['descrpition'] = stripslashes($dataval['descrpition']);
@@ -93,19 +87,16 @@ function create_new_task($data_array){
     $newDate = date("d-M-Y", strtotime($date));
   
     $rolesvalue = explode(",", $data_array['roles']);
+    $usersids = explode(",", $data_array['selectedusersids']);
     
     $subject = "New Task created at ";
     $alert_type = "Add";
     admin_alert($subject, $key, $lable, $descrpition, $newDate, $rolesvalue, $type, $alert_type);
-    $test = 'user_meta_manager_data';
+    $test = 'custome_task_manager_data';
     $result = get_option($test);
-    $looparray;
-    $loop=0;
-    foreach ($result['custom_meta'] as $item=>$keys){
-        $looparray[$loop]=$item;
-        $loop++;
-   }
-if (in_array($key, $looparray))
+ 
+   
+if (in_array($key, $result['profile_fields']))
   {
      $action_name ="Admin Edit Task";
   }
@@ -135,6 +126,7 @@ else
     $a['allow_multi'] = 'no';
     $a['size'] = '';
     $a['roles'] = $rolesvalue;
+    $a['usersids'] = $usersids;
    
      if($type == 'link'){
          $a['lin_url']=$linkurl;
@@ -163,66 +155,11 @@ else
    
   
     
-    //task status array 
-    $c['value'] = '';
-    $c['unique'] = 'no';
-    $c['type'] = 'select';
-    $c['label'] = $_POST['labell'] . ' Status';
-    $c['class'] = '';
-    $c['attrs'] = $newDate;
-    $c['after'] = '';
-    $c['required'] = 'no';
-    $c['allow_tags'] = 'yes';
-    $c['add_to_profile'] = 'yes';
-    $c['allow_multi'] = 'no';
-    $c['size'] = '1';
-    $c['roles'] = $rolesvalue;
-
-    $f['label'] = 'Pending';
-    $f['value'] = 'Pending';
-    $f['state'] = '';
-
-    $g['label'] = 'Complete';
-    $g['value'] = 'Complete';
-    $g['state'] = '';
-
-
-    //$d[]=$f;
-    //$e[]=$g;
-
-    $c['options'][0] = $f;
-    $c['options'][1] = $g;
-
-
-    $c['unique'] = 'no';
-    $c['value'] = '';
-
-
-    //task time stamp  
-    $d['value'] = '';
-    $d['unique'] = 'no';
-    $d['type'] = 'datetime';
-    $d['label'] = $lable . ' Date-Time';
-    $d['class'] = '';
-    $d['attrs'] = $newDate;
-    $d['after'] = '';
-    $d['required'] = 'no';
-    $d['allow_tags'] = 'yes';
-    $d['add_to_profile'] = 'yes';
-    $d['allow_multi'] = 'no';
-    $d['size'] = '';
-    $d['roles'] = $rolesvalue;
-    $b;
-    $d['options'] = $b;
+   
 
 
     $result['profile_fields'][$key] = $a;
-    $result['profile_fields'][$key . '_status'] = $c;
-    $result['profile_fields'][$key . '_datetime'] = $d;
-    $result['custom_meta'][$key] = '';
-    $result['custom_meta'][$key . '_status'] = '';
-    $result['custom_meta'][$key . '_datetime'] = '';
-    array_push($result['sort_order'], $key, $key . "_status", $key . '_datetime');
+    
     $user_info = get_userdata($user_ID);
     
     
@@ -230,7 +167,7 @@ else
    $restult = update_option($test, $result);
     
     
-    contentmanagerlogging($action_name,"Admin Action",serialize($result['profile_fields'][$key]),$user_ID,$user_info->user_email,$restult);
+    contentmanagerlogging($action_name,"Admin Action",serialize($result['profile_fields'][$key]),$user_ID,$user_info->user_email,$key);
 
     
   die();   
@@ -242,7 +179,7 @@ else
 function check_sponsor_task_key_value($key) {
     
     
-    $test = 'user_meta_manager_data';
+    $test = 'custome_task_manager_data';
     $result = get_option($test);
     $value = 0;
     if (empty($result['profile_fields'][$key])) {

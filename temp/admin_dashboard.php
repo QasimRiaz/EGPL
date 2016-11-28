@@ -89,8 +89,8 @@
                                     </div>
                                     <div class="tab-content widget-tabs-content">
 
-                                        <div class="tab-pane active" id="w-4-tab-1" role="tabpanel">
-                                            <div class="tab-pane active" id="attendee_totalamount_chart" role="tabpanel">
+                                        <div class="tab-pane active" id="w-4-tab-1" role="tabpanel" >
+                                            <div class="box-typical-body panel-body" id="attendee_totalamount_chart"  style="height: 642px;">
 
                                             </div>
                                         </div>

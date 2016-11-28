@@ -4,7 +4,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
     //get_header();
 
-    $test = 'user_meta_manager_data';
+    $test = 'custome_task_manager_data';
     $result = get_option($test);
     
    // unset($result['profile_fields']['task_company_logo_png_file_datetime']);

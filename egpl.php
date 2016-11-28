@@ -84,7 +84,7 @@ if ($_GET['contentManagerRequest'] == 'addnewadminuser') {
     
     require_once('../../../wp-load.php');
     
-    $test = 'user_meta_manager_data';
+    $test = 'custome_task_manager_data';
     $result = get_option($test);
     $keys_string[] = 'first_name';
     $keys_string[]= 'last_name';
@@ -1481,7 +1481,7 @@ function bulk_import_user_file($updatevalue){
 
 function getReportsdatanew($report_name){
     
-    
+  
     if($report_name != "defult"){
        
     $settitng='AR_Contentmanager_Reports_Filter';
@@ -1489,8 +1489,8 @@ function getReportsdatanew($report_name){
    
             
    }
-    $test = 'user_meta_manager_data';
-    $result = get_option($test);
+    $test = 'custome_task_manager_data';
+    $result_task_array_list = get_option($test);
     $settitng_key = 'ContenteManager_Settings';
     $sponsor_info = get_option($settitng_key);
     $sponsor_name = $sponsor_info['ContentManager']['sponsor_name'];
@@ -1498,34 +1498,14 @@ function getReportsdatanew($report_name){
     // print_r($result);
     $idx = 0;
     $labelArray = null;
-    $file_upload_list.='<select id="file_upload" ><option value="">Select a Download Field</option>';
-    $task_drop_down = '<select style="width:400px;" name="taske_fields" id="taske_fields" ><option value="">-----------   Select a Task    --------</option>';
-    foreach ($result['profile_fields'] as $profile_field_name => $profile_field_settings) {
-
-        if ($profile_field_settings['type'] == 'color') {
-
-            $file_upload_list.='<option value="' . $profile_field_name . '">' . $profile_field_settings['label'] . '</option>';
-        }
-
-        if (strpos($profile_field_name, "status") !== false) {
-
-
-            if ($profile_field_settings['type'] == "select") {
-                $task_drop_down.='<option value="' . $profile_field_settings['label'] . '">' . $profile_field_settings['label'] . '</option>';
-            }
-        }
-    }
-    $file_upload_list.='</select>';
-    $task_drop_down.='</select>';
+   
 
     global $wpdb;
     $tasklable = $_POST['tasklabel'];
     $taskestatus = $_POST['taskestatus'];
     $sponsorrole = $_POST['sponsorrole'];
 
-    $test = 'user_meta_manager_data';
-    $get_keys_array_result = get_option($test);
-
+   
     $query = "SELECT DISTINCT user_id
     FROM " . $wpdb->usermeta;
 
@@ -1533,9 +1513,42 @@ function getReportsdatanew($report_name){
      FROM " . $wpdb->usermeta . " WHERE  `user_id` = 1 AND  `meta_key` LIKE  'task_%'";
 
     $table_head = $wpdb->get_results($query_th);
+   
 
+//first get a list of all meta keys
+    $keysn = $wpdb->get_col("SELECT distinct meta_key FROM $wpdb->usermeta");
 
-    $k = 10;
+//then prepare the meta keys query as fields which we'll join to the user table fields
+    $meta_columns = '';
+    foreach ($keysn as $key) {
+        $meta_columns .= " MAX(CASE WHEN um1.meta_key = '$key' THEN um1.meta_value ELSE NULL END) AS " . str_replace('-', '_', $key) . ", \n";
+    }
+
+//then write the main query with all of the regular fields and use a simple left join on user users.ID and usermeta.user_id
+    $query = "
+SELECT  
+    u.ID,
+    u.user_login,
+    u.user_pass,
+    u.user_nicename,
+    u.user_email,
+    u.user_url,
+    u.user_registered,
+    u.user_activation_key,
+    u.user_status,
+    u.display_name,
+  
+    " . rtrim($meta_columns, ", \n") . " 
+FROM 
+    $wpdb->users u
+LEFT JOIN 
+    $wpdb->usermeta um1 ON (um1.user_id = u.ID)
+GROUP BY 
+    u.ID";
+
+    $usersn = $wpdb->get_results($query, ARRAY_A);
+
+      $k = 10;
     $unique_id=0;
     $showhideMYFieldsArray = array();
      $Rname = "";
@@ -1558,10 +1571,6 @@ function getReportsdatanew($report_name){
      $RRole_show=false;
      $Lname_show=false;
      $welcomeemail_show=true;
-     
-     
-     
-     
      
       if($report_name != "defult"){
     
@@ -1627,7 +1636,7 @@ function getReportsdatanew($report_name){
         
         
    }
-
+   
     $showhideMYFieldsArray['action_edit_delete'] = array('index' => 1, 'type' => 'string','unique' => true, 'hidden' => false, 'friendly'=> "Action" ,'filter'=>false);
     $showhideMYFieldsArray['company_name'] = array('index' => 2, 'type' => 'string','unique' => true, 'hidden' => $CompanyName_show,'friendly'=> "Company Name",'filter'=>$CompanyName);
     $showhideMYFieldsArray['Role'] = array('index' => 3, 'type' => 'string','unique' => true, 'hidden' => $RRole_show,'friendly'=> "Level",'filter'=>$RRole);
@@ -1643,7 +1652,7 @@ function getReportsdatanew($report_name){
     
     
    // uasort($get_keys_array_result['profile_fields'], "cmp2");
-    foreach ($get_keys_array_result['profile_fields'] as $profile_field_name => $profile_field_settings) {
+    foreach ($result_task_array_list['profile_fields'] as $profile_field_name => $profile_field_settings) {
         $report_key_value = "";
         $showhidevalue = true;
 
@@ -1654,26 +1663,75 @@ function getReportsdatanew($report_name){
                 $showhidevalue = false;
             }
         }
-        if (strpos($profile_field_name, "task") !== false) {
+        
 
             if ($profile_field_settings['type'] == 'datetime') {
+                
                 $showhideMYFieldsArray[$profile_field_name] = array('index' => $k, 'type' => 'date', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'],'filter'=>$report_key_value);
                 $k++;
+                
+                $showhideMYFieldsArray[$profile_field_name.'_datetime'] = array('index' => $k, 'type' => 'date', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'].' Datetime','filter'=>$report_key_value);
+                $k++;
+                
+                $showhideMYFieldsArray[$profile_field_name.'_status'] = array('index' => $k, 'type' => 'string', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'].' Status','filter'=>$report_key_value);
+               
+                $k++;
+                
             } else if ($profile_field_settings['type'] == 'color') {
+                
                 $showhideMYFieldsArray[$profile_field_name] = array('index' => $k, 'type' => 'string', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'],'filter'=>$report_key_value);
                 $k++;
+                
+                $showhideMYFieldsArray[$profile_field_name.'_datetime'] = array('index' => $k, 'type' => 'date', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'].' Datetime','filter'=>$report_key_value);
+                $k++;
+                
+                $showhideMYFieldsArray[$profile_field_name.'_status'] = array('index' => $k, 'type' => 'string', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'].' Status','filter'=>$report_key_value);
+               $k++;
+            
+                
             } else if ($profile_field_settings['type'] == 'text') {
+                
                 $showhideMYFieldsArray[$profile_field_name] = array('index' => $k, 'type' => 'string', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'],'filter'=>$report_key_value);
                 $k++;
+                
+                $showhideMYFieldsArray[$profile_field_name.'_datetime'] = array('index' => $k, 'type' => 'date', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'].' Datetime','filter'=>$report_key_value);
+                $k++;
+                
+                $showhideMYFieldsArray[$profile_field_name.'_status'] = array('index' => $k, 'type' => 'string', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'].' Status','filter'=>$report_key_value);
+               
+                $k++;
+                
             } else if ($profile_field_settings['type'] == 'textarea') {
+                
                 $showhideMYFieldsArray[$profile_field_name] = array('index' => $k, 'type' => 'string', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'],'filter'=>$report_key_value);
                 $k++;
+                
+                $showhideMYFieldsArray[$profile_field_name.'_datetime'] = array('index' => $k, 'type' => 'date', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'].' Datetime','filter'=>$report_key_value);
+                $k++;
+                
+                $showhideMYFieldsArray[$profile_field_name.'_status'] = array('index' => $k, 'type' => 'string', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'].' Status','filter'=>$report_key_value);
+               
+                $k++;
+                
             } else {
+                
                 $showhideMYFieldsArray[$profile_field_name] = array('index' => $k, 'type' => 'string', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'],'filter'=>$report_key_value);
+                $k++;
+                
+                $showhideMYFieldsArray[$profile_field_name.'_datetime'] = array('index' => $k, 'type' => 'date', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'].' Datetime','filter'=>$report_key_value);
+                $k++;
+                
+                $showhideMYFieldsArray[$profile_field_name.'_status'] = array('index' => $k, 'type' => 'string', 'unique' => true, 'hidden' => $showhidevalue,'friendly'=> $profile_field_settings['label'].' Status','filter'=>$report_key_value);
+               
                 $k++;
             }
-        }
+        
+            
+            
     }
+    
+   // echo '<pre>';
+          //  print_r($showhideMYFieldsArray);exit;
         $column_name_uppercase = $showhideMYFieldsArray;//array_change_key_case($showhideMYFieldsArray, CASE_UPPER);
         $newStr = strtoupper($showhidefields);
         //print_r ($newStr);
@@ -1681,101 +1739,160 @@ function getReportsdatanew($report_name){
         $result = $wpdb->get_results($query);
         $allMetaForAllUsers = array();
         $myNewArray = array();
-        $test = 'user_meta_manager_data';
-        $get_keys_array_result = get_option($test);
+      
         $zee = 0;
         $new = 0;
-     foreach ($result as $aid) {
 
-
-        $user_data = get_userdata($aid->user_id);
-       
         
-        if( $user_data->roles[0]!='administrator' ){
-        $all_meta_for_user = get_user_meta($aid->user_id);
+        
+   foreach ($usersn as $aid) {
+
+
+        //$user_data = get_userdata($aid->user_id);
        
-        if (!empty($all_meta_for_user['wp_user_login_date_time'][0])) {
+      $user_role = unserialize($aid['wp_capabilities']); 
+       if (in_array("administrator", $user_role)) {
+      
+       }else{   
+            
+      
+       
+        if (!empty($aid['wp_user_login_date_time'])) {
 
 
-            $login_date_time = date('d-M-Y H:i:s', $all_meta_for_user['wp_user_login_date_time'][0]);
+            $login_date_time = date('d-M-Y H:i:s', $aid['wp_user_login_date_time']);
             $timestamp = strtotime($login_date_time) * 1000;
         } else {
             $timestamp = "";
         }
-       $company_name = $all_meta_for_user['company_name'][0];
-        // echo $company_name;
-        // echo '<pre>';
-        // print_r($user_data);
-        // exit;
-       $myNewArray['action_edit_delete'] = '<p style="width:83px !important;"><a href="/edit-user/?sponsorid='.$aid->user_id.'" title="Edit Speaker Profile"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-pencil-square-o" style="color:#262626;"></i></span></a><a style="margin-left: 10px;" href="/edit-sponsor-task/?sponsorid='.$aid->user_id.'" title="Speaker Tasks"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-th-list" style="color:#262626;"></i></span></a><a onclick="view_profile(this)" id="'.$unique_id.'" name="viewprofile"  style="cursor: pointer;color:red;margin-left: 10px;" title="View Profile" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-eye" style="color:#262626;"></i></a><a onclick="delete_sponsor_meta(this)" id="'.$aid->user_id.'" name="delete-sponsor"  style="cursor: pointer;color:red;margin-left: 10px;" title="Remove Speaker" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-times-circle" style="color:#262626;"></i></a></p>';
+       $company_name = $aid['company_name'];
+       $myNewArray['action_edit_delete'] = '<p style="width:83px !important;"><a href="/edit-user/?sponsorid='.$aid['ID'].'" title="Edit Speaker Profile"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-pencil-square-o" style="color:#262626;"></i></span></a><a style="margin-left: 10px;" href="/edit-sponsor-task/?sponsorid='.$aid['ID'].'" title="Speaker Tasks"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-th-list" style="color:#262626;"></i></span></a><a onclick="view_profile(this)" id="'.$unique_id.'" name="viewprofile"  style="cursor: pointer;color:red;margin-left: 10px;" title="View Profile" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-eye" style="color:#262626;"></i></a><a onclick="delete_sponsor_meta(this)" id="'.$aid['ID'].'" name="delete-sponsor"  style="cursor: pointer;color:red;margin-left: 10px;" title="Remove Speaker" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-times-circle" style="color:#262626;"></i></a></p>';
 	   
 	   	$unique_id++;
+       reset($user_role);
+      $first_key = key($user_role);
+    
         $myNewArray['company_name'] = $company_name;
-        $myNewArray['Role'] = $user_data->roles[0];
+        $myNewArray['Role'] = ucwords($first_key);
         $myNewArray['last_login'] = $timestamp;
      
-        $myNewArray['first_name'] = $user_data->first_name;
-        $myNewArray['last_name'] = $user_data->last_name;
-           $myNewArray['sponsor_name'] = $user_data->display_name;
-        $myNewArray['Email'] = $user_data->user_email;
-        $myNewArray['convo_welcomeemail_datetime'] = $user_data->convo_welcomeemail_datetime;
+        $myNewArray['first_name'] = $aid['first_name'];
+        $myNewArray['last_name'] = $aid['last_name'];
+           $myNewArray['sponsor_name'] = $aid['display_name'];
+        $myNewArray['Email'] = $aid['user_email'];
+        $myNewArray['convo_welcomeemail_datetime'] = $aid['convo_welcomeemail_datetime'];
        
         // echo $login_date_time; 
 
         
         
   //uasort($get_keys_array_result['profile_fields'], "cmp2");
-        foreach ($get_keys_array_result['profile_fields'] as $profile_field_name => $profile_field_settings) {
-            if (strpos($profile_field_name, "task") !== false) {
+        foreach ($result_task_array_list['profile_fields'] as $profile_field_name => $profile_field_settings) {
+        
+         
+               
                 if ($profile_field_settings['type'] == 'color') {
-                    $file_info = unserialize($all_meta_for_user[$profile_field_name][0]);
-                    
+                    $file_info = unserialize($aid[$profile_field_name]);
+                   
+                   
                     if (!empty($file_info)) {
-                        $myNewArray[$profile_field_name] = '<a href="'.$base_url.'/wp-content/plugins/EGPL/download-lib.php?userid=' . $aid->user_id . '&fieldname=' . $profile_field_name . '" >Download</a>';
+                        $myNewArray[$profile_field_name] = '<a href="'.$base_url.'/wp-content/plugins/contentmanager/download-lib.php?userid=' . $aid['ID'] . '&fieldname=' . $profile_field_name . '" >Download</a>';
+                    
+                        
+                        
                     } else {
                         $myNewArray[$profile_field_name] = '';
                     }
-                } else {
+                    if(!empty($aid[$profile_field_name.'_datetime'])){
+                            if (strpos($aid[$profile_field_name.'_datetime'], 'AM') !== false) {
 
-                    // echo 'Qasimriaz';
-
-                   
-                        //  echo 'Qasimriaz1';
-                        if ($profile_field_settings['type'] == 'datetime') {
-                            //$mynewdate = new DateTime($all_meta_for_user[$profile_field_name][0]);
-                            if(!empty($all_meta_for_user[$profile_field_name][0])){
-                            if (strpos($all_meta_for_user[$profile_field_name][0], 'AM') !== false) {
-
-                                $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name][0]);
+                                $datevalue = str_replace(":AM", "", $aid[$profile_field_name.'_datetime']);
                                  $datemy = strtotime($datevalue) * 1000;
                             } else {
-                                $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name][0]);
-                                 $datemy = strtotime($datevalue) * 1000;
+                                $datevalue = str_replace(":PM", "", $aid[$profile_field_name.'_datetime']);
+                                $datemy = strtotime($datevalue) * 1000;
                             }}else{
                                 $datemy="";
                             }
-                           
+                    $myNewArray[$profile_field_name.'_datetime'] =$datemy;
+                    $myNewArray[$profile_field_name.'_status'] = $aid[$profile_field_name.'_status'];
+                    
+                    if ($aid[$profile_field_name.'_status'] == "Pending") {
+                        $myNewArray[$profile_field_name . '_statusCls'] = "red";
+                    } else if ($aid[$profile_field_name.'_status'] == "Complete") {
+                        $myNewArray[$profile_field_name . '_statusCls'] = "green";
+                    } else {
+                        $myNewArray[$profile_field_name.'_statusCls'] = "blue";
+                    }
+                    
+                    
+                } else {
 
-                            $myNewArray[$profile_field_name] = $datemy;
-                        } 
-                        else if ($profile_field_settings['type'] == 'text') {
+                 
+                      if ($profile_field_settings['type'] == 'text') {
                              
 
-                            $myNewArray[$profile_field_name] = $all_meta_for_user[$profile_field_name][0];
-                        } 
+                            $myNewArray[$profile_field_name] = $aid[$profile_field_name];
+                             if (!empty($aid[$profile_field_name . '_datetime'])) {
+                            if (strpos($aid[$profile_field_name . '_datetime'], 'AM') !== false) {
+
+                                $datevalue = str_replace(":AM", "", $aid[$profile_field_name . '_datetime']);
+                                $datemy = strtotime($datevalue) * 1000;
+                            } else {
+                                $datevalue = str_replace(":PM", "", $aid[$profile_field_name . '_datetime']);
+                                $datemy = strtotime($datevalue) * 1000;
+                            }
+                        } else {
+                            $datemy = "";
+                        }
+                        $myNewArray[$profile_field_name . '_datetime'] = $datemy;
+                            $myNewArray[$profile_field_name . '_status'] = $aid[$profile_field_name . '_status'];
+                        if ($aid[$profile_field_name . '_status'] == "Pending") {
+                            $myNewArray[$profile_field_name . '_statusCls'] = "red";
+                        } else if ($aid[$profile_field_name . '_status'] == "Complete") {
+                            $myNewArray[$profile_field_name . '_statusCls'] = "green";
+                        } else {
+                            $myNewArray[$profile_field_name . '_statusCls'] = "blue";
+                        }
+
+                       
+                    } 
                         else if ($profile_field_settings['type'] == 'textarea') {
 
-                            $myNewArray[$profile_field_name] =  $all_meta_for_user[$profile_field_name][0];
+                            $myNewArray[$profile_field_name] =  $aid[$profile_field_name];
+                            if(!empty($aid[$profile_field_name.'_datetime'])){
+                                if (strpos($aid[$profile_field_name.'_datetime'], 'AM') !== false) {
+
+                                 $datevalue = str_replace(":AM", "", $aid[$profile_field_name.'_datetime']);
+                                 $datemy = strtotime($datevalue) * 1000;
+                            } else {
+                                $datevalue = str_replace(":PM", "", $aid[$profile_field_name.'_datetime']);
+                                $datemy = strtotime($datevalue) * 1000;
+                            }}else{
+                                $datemy="";
+                            }
+                            $myNewArray[$profile_field_name.'_datetime'] =$datemy;
+                            $myNewArray[$profile_field_name.'_status'] = $aid[$profile_field_name.'_status'];
+                            if ($aid[$profile_field_name.'_status'] == "Pending") {
+                                $myNewArray[$profile_field_name . '_statusCls'] = "red";
+                            } else if ($aid[$profile_field_name.'_status'] == "Complete") {
+                                $myNewArray[$profile_field_name . '_statusCls'] = "green";
+                            } else {
+                                $myNewArray[$profile_field_name.'_statusCls'] = "blue";
+                            }
+                    
+                            
+                            
                             //$newarray[$new]=$all_meta_for_user[$profile_field_name][0];
                             // $new++;
                         }
                         else if ($profile_field_settings['type'] == 'select') {
 
-                            $myNewArray[$profile_field_name] =  $all_meta_for_user[$profile_field_name][0];
+                            $myNewArray[$profile_field_name] =  $aid[$profile_field_name];
                           
-                            if($all_meta_for_user[$profile_field_name][0] == "Pending"){
+                            if($aid[$profile_field_name] == "Pending"){
                                 $myNewArray[$profile_field_name.'Cls'] =  "red";
-                            }else if($all_meta_for_user[$profile_field_name][0] == "Complete"){
+                            }else if($aid[$profile_field_name] == "Complete"){
                                 $myNewArray[$profile_field_name.'Cls'] =  "green";
                             }else{
                                 $myNewArray[$profile_field_name.'Cls'] =  "blue";
@@ -1783,15 +1900,57 @@ function getReportsdatanew($report_name){
                             //$newarray[$new]=$all_meta_for_user[$profile_field_name][0];
                             // $new++;
                         }  else if ($profile_field_settings['type'] == 'select-2') {
-                            $myNewArray[$profile_field_name] =  $all_meta_for_user[$profile_field_name][0];
+                            $myNewArray[$profile_field_name] =  $aid[$profile_field_name];
+                            if(!empty($aid[$profile_field_name.'_datetime'])){
+                                if (strpos($aid[$profile_field_name.'_datetime'], 'AM') !== false) {
+
+                                 $datevalue = str_replace(":AM", "", $aid[$profile_field_name.'_datetime']);
+                                 $datemy = strtotime($datevalue) * 1000;
+                            } else {
+                                $datevalue = str_replace(":PM", "", $aid[$profile_field_name.'_datetime']);
+                                $datemy = strtotime($datevalue) * 1000;
+                            }}else{
+                                $datemy="";
+                            }
+                            $myNewArray[$profile_field_name.'_datetime'] =$datemy;
+                            $myNewArray[$profile_field_name.'_datetime'] =$datemy;
+                            if ($aid[$profile_field_name.'_status'] == "Pending") {
+                                $myNewArray[$profile_field_name . '_statusCls'] = "red";
+                            } else if ($aid[$profile_field_name.'_status'] == "Complete") {
+                                $myNewArray[$profile_field_name . '_statusCls'] = "green";
+                            } else {
+                                $myNewArray[$profile_field_name.'_statusCls'] = "blue";
+                            }
                           
                         }else {
                            
 
-                            $myNewArray[$profile_field_name] = $all_meta_for_user[$profile_field_name][0];
+                            $myNewArray[$profile_field_name] = $aid[$profile_field_name];
+                            if(!empty($aid[$profile_field_name.'_datetime'])){
+                                if (strpos($aid[$profile_field_name.'_datetime'], 'AM') !== false) {
+
+                                 $datevalue = str_replace(":AM", "", $aid[$profile_field_name.'_datetime']);
+                                 $datemy = strtotime($datevalue) * 1000;
+                            } else {
+                                $datevalue = str_replace(":PM", "", $aid[$profile_field_name.'_datetime']);
+                                $datemy = strtotime($datevalue) * 1000;
+                            }}else{
+                                $datemy="";
+                            }
+                            $myNewArray[$profile_field_name.'_datetime'] =$datemy;
+                            if ($aid[$profile_field_name.'_status'] == "Pending") {
+                                $myNewArray[$profile_field_name . '_statusCls'] = "red";
+                            } else if ($aid[$profile_field_name.'_status'] == "Complete") {
+                                $myNewArray[$profile_field_name . '_statusCls'] = "green";
+                            } else {
+                                $myNewArray[$profile_field_name.'_statusCls'] = "blue";
+                            }
+                    
+                            
                         }
                     } 
-                }
+              //  echo '<pre>';
+              //  print_r($myNewArray);exit;
             }
         
        // $row_name_uppercase = array_change_key_case($myNewArray, CASE_UPPER);
@@ -1799,11 +1958,16 @@ function getReportsdatanew($report_name){
        // echo $zee.'<br>';
         $zee++;
     }
-   
-}
+
+   }
+
+
+
+
+
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
-    $current_admin_email =$user_info->user_email;
+    $current_admin_email =$aid->user_email;
     $oldvalues = get_option( 'ContenteManager_Settings' );
      
     $attendytype=$oldvalues['ContentManager']['attendytype_key'];
@@ -1815,12 +1979,14 @@ function getReportsdatanew($report_name){
     $settings['eventdate'] =$eventdate;
     
      
-   // echo '<pre>';
-   // print_r($allMetaForAllUsers);exit;
+  //  echo '<pre>';
+   // print_r($allMetaForAllUsers);
     
     
     
      echo json_encode($column_name_uppercase) . '//' . json_encode($allMetaForAllUsers) .'//'.json_encode($settings) ;
+     
+     
      die();
 }
 
@@ -2687,7 +2853,7 @@ function get_user_meta_merger_field_value($userid,$key){
 function gettaskduesoon(){
  
    
-    $test = 'user_meta_manager_data';
+    $test = 'custome_task_manager_data';
     $result = get_option($test);
    
     foreach($result['profile_fields'] as $key=>$value){

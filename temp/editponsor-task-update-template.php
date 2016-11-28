@@ -6,13 +6,26 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
 
 
-    $test = 'user_meta_manager_data';
+    $test = 'custome_task_manager_data';
     $result = get_option($test);
+    
+    
+   // echo '<pre>';
+   // print_r($result);exit;
+    
+    
     $test_setting = 'ContenteManager_Settings';
     $plug_in_settings = get_option($test_setting);
     
     
-
+  $fields = array( 'ID','user_email' );
+    $args = array(
+        'role__not_in' => array('administrator'),
+        'fields' => $fields,
+    );
+    $get_all_ids = get_users($args);
+    
+   
 
 
 
@@ -221,6 +234,29 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                         
                         
                     </div>
+<!--                      <div class="form-group row" >
+                        <label class="col-sm-3 form-control-label">Assign Users <strong>*</strong></label>
+                        <div class="col-sm-9">
+                            <div class="form-control-wrapper form-control-icon-left">
+                               
+                              <select name="userids" id="userids"  class="select2" multiple="multiple">
+                                            <option value="all">All</option>
+                                            <?php
+                                            foreach ($get_all_ids as $user) {
+                                                echo '<option value="' . $user->ID . '">' . $user->user_email . '</option>';
+                                            }
+                                            ?>
+
+                                        </select>
+                               
+                               
+                            </div>
+                            
+
+                        </div>
+                        
+                        
+                    </div>-->
                       <div class="form-group row" >
                         <label class="col-sm-3 form-control-label">Task Description <strong>*</strong></label>
                         <div class="col-sm-9">

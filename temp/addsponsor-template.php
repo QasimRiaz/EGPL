@@ -6,7 +6,7 @@
 		
       
       
-      $test = 'user_meta_manager_data';
+      $test = 'custome_task_manager_data';
       $result = get_option($test);
       $settitng_key='ContenteManager_Settings';
       $sponsor_info = get_option($settitng_key);
@@ -93,43 +93,15 @@
                                     </div>
                  </div>
                     <h5 class="m-t-lg with-border">Additional Information</h5>
-                  <?php
-                                    $oldvalues = get_option( 'ContenteManager_Settings' );
-                                    if(!empty($oldvalues['ContentManager']['exclude_sponsor_meta_create'])){
-                                      
-                                             foreach ($result['profile_fields'] as $profile_field_name => $profile_field_settings) {
-                                                
-                                                 if (!in_array($profile_field_name, $oldvalues['ContentManager']['exclude_sponsor_meta_create'])) {
-                                                        if (strpos($profile_field_name, "task") !== false || strpos($profile_field_name, "convo") !== false) {
-                                                            
-                                                        } else {
-                                                            
-                                                            echo ' <div class="form-group row">
-                                                      <label class="col-sm-2 form-control-label">' . $profile_field_settings['label'] . '</label><div class="col-sm-10">
-                                           
-                                                     <input  class="form-control mymetakey"  type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name . '" name="' . $profile_field_name . '" value="" />
-                                                   </div></div>';
-                                                        }
-                                                    }
-                                                 
-                                            
-                                             
-                                             
-                                         }
-                                    }else{
-                                         foreach ($result['profile_fields'] as $profile_field_name => $profile_field_settings) {
-                                                if (strpos($profile_field_name, "task") !== false || strpos($profile_field_name, "convo") !== false) {
-                                            
-                                                } else {
-                                                 echo ' <div class="form-group row">
-                                                      <label class="col-sm-2 form-control-label">' . $profile_field_settings['label'] . '</label><div class="col-sm-10">
-                                          
-                                                     <input  class="form-control mymetakey"  type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name . '" name="' . $profile_field_name . '" value="" />
-                                                   </div></div>';
-                                            }
-                                         }
-                                   }
-                                    ?>
+                    <div class="form-group row">
+                                    <label class="col-sm-2 form-control-label">Company Name <strong>*</strong></label>
+                                    <div class="col-sm-10">
+                                        
+				<input type="text"  class="form-control mymetakey" id="company_name" name="company_name" placeholder="Company Name" required>
+								
+                                        
+                                    </div>
+                                </div>
                      <h5 class="m-t-lg with-border"></h5>
                      <div class="row" style="margin-bottom: 15px;">
                         <div class="col-sm-2"></div>
