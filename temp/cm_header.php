@@ -43,14 +43,24 @@
  
     
 </head>
+
+<?php $oldvalues = get_option( 'ContenteManager_Settings' );
+
+$logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
+
+
+?>
+
 <body class="with-side-menu theme-picton-blue">
 
 	<header class="site-header">
 	    <div class="container-fluid">
+           <?php if(!empty($logo_imag)){?>
 	        <a   class="site-logo" style="cursor: default;">
-	            <img class="hidden-md-down" src="/wp-content/plugins/EGPL/cmtemplate/img/rzExpoGenie-Logo-1.png" alt="">
-	            <img class="hidden-lg-up"   src="/wp-content/plugins/EGPL/cmtemplate/img/rzExpoGenie-Logo-1.png" alt="">
+	            <img class="hidden-md-down" src="<?php echo $logo_imag;?>" alt="">
+	            <img class="hidden-lg-up"   src="<?php echo $logo_imag;?>" alt="">
 	        </a>
+           <?php }?>
 	        <button class="hamburger hamburger--htla">
 	            <span>toggle menu</span>
 	        </button>

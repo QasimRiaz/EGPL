@@ -413,7 +413,20 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
 }else if($_GET['contentManagerRequest'] == 'updatecmanagersettings'){ 
     require_once('../../../wp-load.php');
     
-   
+    $adminsitelogo=$_FILES['adminsitelogo'];
+    
+    if(empty($adminsitelogo)){
+        
+        
+    }else{
+      
+      $adminstielogourl = resource_file_upload($adminsitelogo);
+      $_POST['adminsitelogourl'] = $adminstielogourl;
+      
+    }
+    
+    
+    
     updatecmanagersettings($_POST); 
    
     
@@ -2238,7 +2251,10 @@ function updatecmanagersettings($object_data){
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);     
     $lastInsertId = contentmanagerlogging('Update Contentmanager Settings',"Admin Action",serialize($object_data),$user_ID,$user_info->user_email,"pre_action_data");
-      
+    
+    
+   
+    
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $sponsor_name=$oldvalues['ContentManager']['sponsor_name'];
     $values_create=$object_data['excludemetakeyscreate'];
@@ -2247,7 +2263,7 @@ function updatecmanagersettings($object_data){
     $eventdate = $object_data['eventdate'];
     $formemail = $object_data['formemail'];
     $mandrill = $object_data['mandrill'];
-    $infocontent = $object_data['infocontent'];
+   
     $addresspoints = $object_data['addresspoints'];
     
     $values_edit=$object_data['excludemetakeysedit'];
@@ -2274,8 +2290,8 @@ function updatecmanagersettings($object_data){
     $oldvalues['ContentManager']['eventdate']=$eventdate;
     $oldvalues['ContentManager']['formemail']=$formemail;
     $oldvalues['ContentManager']['mandrill']=$mandrill;
-    $oldvalues['ContentManager']['infocontent']=$infocontent;
     $oldvalues['ContentManager']['addresspoints']=$addresspoints;
+    $oldvalues['ContentManager']['adminsitelogo']=$object_data['adminsitelogourl'];
     
     $result=update_option('ContenteManager_Settings', $oldvalues);
     
@@ -2335,6 +2351,7 @@ function excludes_sponsor_meta(){
      $mandrill = $oldvalues['ContentManager']['mandrill'];
      $infocontent = $oldvalues['ContentManager']['infocontent'];
      $addresspoints = $oldvalues['ContentManager']['addresspoints'];
+     $adminsitelogo = $oldvalues['ContentManager']['adminsitelogo'];
       
      //echo'<pre>';
     // print_r($oldvalues);
@@ -2385,9 +2402,10 @@ function excludes_sponsor_meta(){
  
         <td><input type="text" name="mandrill"  id="mandrill" value='.$mandrill.'></td>
        </tr>
-        <tr><td><h4>Infobox Content</h4></td>
+        <tr><td><h4>Admin Site Logo</h4></td>
  
-        <td><textarea type="text" name="infocontent"  id="infocontent" >'.$infocontent.'</textarea></td>
+        <td><input type="file"  onclick="clearfilepath()" name="adminsitelogo" id="adminsitelogo"></br><img src="'.$adminsitelogo.'" id="uploadlogourl" width="200" height="70"></td>
+        <td></td>
        </tr>
         <tr><td><h4>Event Address</h4></td>
 
