@@ -87,7 +87,7 @@ function create_new_task($data_array){
     $newDate = date("d-M-Y", strtotime($date));
   
     $rolesvalue = explode(",", $data_array['roles']);
-    $usersids = explode(",", $data_array['selectedusersids']);
+    //$usersids = explode(",", $data_array['selectedusersids']);
     
     $subject = "New Task created at ";
     $alert_type = "Add";
@@ -126,7 +126,7 @@ else
     $a['allow_multi'] = 'no';
     $a['size'] = '';
     $a['roles'] = $rolesvalue;
-    $a['usersids'] = $usersids;
+    //$a['usersids'] = $usersids;
    
      if($type == 'link'){
          $a['lin_url']=$linkurl;
