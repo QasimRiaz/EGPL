@@ -650,12 +650,11 @@ function taskstatusdrawChart(drawchartstatus) {
  var pendingcountdata = [];
  var complatecountdata = [];
  var emptycountdata = [];
- var divheight = 645;
    google.charts.load('current', {'packages': ['gauge']});
     google.charts.setOnLoadCallback(activeusergaugechart);
  //mapdata.push(['Genre', 'Complete', 'Pending', 'Empty', {role: 'annotation'}]);
  statscolcount=0;
-console.log(drawchartstatus.length);
+
   
   
  for (var index in drawchartstatus['cols']) {
@@ -667,8 +666,7 @@ console.log(drawchartstatus.length);
            
             
             if (colvalue.indexOf("status") !=-1) {
-                
-             
+              
                var resultmy = _.pluck(drawchartstatus['rows'], colvalue);
                var countresult = _.countBy(resultmy);
              
@@ -688,11 +686,6 @@ console.log(drawchartstatus.length);
                    var pendingcount = countresult.null;
                }
               
-              if(statscolcount > 35 ){
-                   divheight = divheight + 15;
-                  
-                   jQuery("#attendee_totalamount_chart").css({"overflow-y" : "scroll"});
-              }
                 statscolcount++;
                
                 complatecountdata.push(completecount);
@@ -714,7 +707,7 @@ console.log(drawchartstatus.length);
     jQuery('#attendee_totalamount_chart').highcharts({
         chart: {
             type: 'bar',
-            height :divheight,
+            height :650,
             style: {
             fontFamily: "Signika, serif",
             color: '#6e6e70'
@@ -762,12 +755,12 @@ console.log(drawchartstatus.length);
       enabled: false
   },
          series: mapdata,//[{
-            //name: 'Pending',
-           // data: [5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2]
-        //}, {
-           // name: 'Complate',
-          //  data: [2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2]
-        //}]
+          //  name: 'Pending',
+          //  data: [5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2]
+       // }, {
+        //    name: 'Complate',
+       //     data: [2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1]
+       // }]
     });
  
     
