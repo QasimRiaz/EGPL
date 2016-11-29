@@ -34,7 +34,7 @@
 <div id="content" class="full-width">
 
     <div id="sponsor-status"></div>
-  <?php
+              <?php
     // TO SHOW THE PAGE CONTENTS
     while ( have_posts() ) : the_post(); ?> <!--Because the_content() works only inside a WP Loop -->
         <div class="entry-content-page">
@@ -42,6 +42,7 @@
         </div><!-- .entry-content-page -->
 
     <?php
+    endwhile; //resetting the page loop?>
    
             <table class="mytable table table-striped table-bordered table-condensed" >
                 <thead>
@@ -139,7 +140,7 @@
                                $action_col .= ' ';
                            $action_col .= $form_tag . " />";
                            if (!empty($value)) {
-                               $action_col .= "<div class='remove_" . $profile_field_name . "'><a href='" . $base_url . "/wp-content/plugins/contentmanager/download-lib.php?userid=" . $user_IDD . "&fieldname=" . $profile_field_name . "' target='_blank' style='margin-right: 24px;'>Download File</a><a  style='width:75px;' id='remove_" . $profile_field_name . "' class='" . $profile_field_name . " btn-danger btn remove_upload' >Remove</a></div>";
+                               $action_col .= "<div class='remove_" . $profile_field_name . "'><a href='" . $base_url . "/wp-content/plugins/EGPL/download-lib.php?userid=" . $user_IDD . "&fieldname=" . $profile_field_name . "' target='_blank' style='margin-right: 24px;'>Download File</a><a  style='width:75px;' id='remove_" . $profile_field_name . "' class='" . $profile_field_name . " btn-danger btn remove_upload' >Remove</a></div>";
                            }
                            break;
                    

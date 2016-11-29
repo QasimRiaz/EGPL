@@ -1809,7 +1809,7 @@ GROUP BY
                    
                    
                     if (!empty($file_info)) {
-                        $myNewArray[$profile_field_name] = '<a href="'.$base_url.'/wp-content/plugins/contentmanager/download-lib.php?userid=' . $aid['ID'] . '&fieldname=' . $profile_field_name . '" >Download</a>';
+                        $myNewArray[$profile_field_name] = '<a href="'.$base_url.'/wp-content/plugins/EGPL/download-lib.php?userid=' . $aid['ID'] . '&fieldname=' . $profile_field_name . '" >Download</a>';
                     
                         
                         
