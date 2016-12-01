@@ -1,6 +1,5 @@
 
 
-
 jQuery(document).ready(function() {
 
 
@@ -97,11 +96,11 @@ function create_sponsor_task_data() {
    jQuery("body").css("cursor", "progress");
     var linkUrl = "";
     var linkName = "";
-    var taskLabel = jQuery("#tasklabel").val().replace(/,/g, '');
-    var uniqueKey = taskLabel.toLowerCase();
-    var replaced = uniqueKey.split(' ').join('_');
+    var taskLabel = jQuery("#tasklabel").val();
+    var uniqueKey = taskLabel.toLowerCase().replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, '_');
+   
     var uniquecode =randomString(5, 'a#');
-    uniqueKey ='task_'+replaced+'_'+uniquecode;
+    uniqueKey ='task_'+uniqueKey+'_'+uniquecode;
     console.log(uniqueKey);
     
     var taskInputType = jQuery("#inputtype option:selected").val();
