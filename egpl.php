@@ -847,7 +847,7 @@ try {
        
        
        
-       $result = send_email($user_info->user_email,$subject_body,$body_message,$headers);
+       $result = send_email($user_info->user_email,$subject_body,stripslashes($body_message),$headers);
 
     
    
@@ -931,7 +931,7 @@ try {
        
        
        
-       $result = send_email($user_info->user_email,$subject_body,$body_message,$headers);
+       $result = send_email($user_info->user_email,$subject_body,stripslashes($body_message),$headers);
 
     
    
@@ -1028,7 +1028,7 @@ try {
        $lastInsertId = contentmanagerlogging('Welcome Email Template',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
        
     $welcome_subject =$_POST['welcomeemailSubject'];
-    $welcome_body =$_POST['welcomeemailBody'];
+    $welcome_body =stripslashes($_POST['welcomeemailBody']);
     $replaytoemailadd =$_POST['replaytoemailadd'];
     $welcomeemailfromname =$_POST['welcomeemailfromname'];
     $settitng_key='AR_Contentmanager_Email_Template_welcome';
@@ -1779,7 +1779,7 @@ GROUP BY
             $timestamp = "";
         }
        $company_name = $aid['company_name'];
-       $myNewArray['action_edit_delete'] = '<p style="width:83px !important;"><a href="/edit-user/?sponsorid='.$aid['ID'].'" title="Edit Speaker Profile"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-pencil-square-o" style="color:#262626;"></i></span></a><a style="margin-left: 10px;" href="/edit-sponsor-task/?sponsorid='.$aid['ID'].'" title="Speaker Tasks"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-th-list" style="color:#262626;"></i></span></a><a onclick="view_profile(this)" id="'.$unique_id.'" name="viewprofile"  style="cursor: pointer;color:red;margin-left: 10px;" title="View Profile" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-eye" style="color:#262626;"></i></a><a onclick="delete_sponsor_meta(this)" id="'.$aid['ID'].'" name="delete-sponsor"  style="cursor: pointer;color:red;margin-left: 10px;" title="Remove Speaker" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-times-circle" style="color:#262626;"></i></a></p>';
+       $myNewArray['action_edit_delete'] = '<p style="width:83px !important;"><a href="/edit-user/?sponsorid='.$aid['ID'].'" title="Edit User Profile"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-pencil-square-o" style="color:#262626;"></i></span></a><a style="margin-left: 10px;" href="/edit-sponsor-task/?sponsorid='.$aid['ID'].'" title="User Tasks"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-th-list" style="color:#262626;"></i></span></a><a onclick="view_profile(this)" id="'.$unique_id.'" name="viewprofile"  style="cursor: pointer;color:red;margin-left: 10px;" title="View Profile" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-eye" style="color:#262626;"></i></a><a onclick="delete_sponsor_meta(this)" id="'.$aid['ID'].'" name="delete-sponsor"  style="cursor: pointer;color:red;margin-left: 10px;" title="Remove User" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-times-circle" style="color:#262626;"></i></a></p>';
 	   
 	   	$unique_id++;
        reset($user_role);
