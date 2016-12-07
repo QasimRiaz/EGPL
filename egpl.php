@@ -1764,7 +1764,7 @@ GROUP BY
         //$user_data = get_userdata($aid->user_id);
        
       $user_role = unserialize($aid['wp_capabilities']); 
-       if (in_array("administrator", $user_role)) {
+       if (array_key_exists("administrator", $user_role)) {
       
        }else{   
             
