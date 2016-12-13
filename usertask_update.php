@@ -9,12 +9,9 @@ if ($_GET['usertask_update'] == "update_user_meta_custome") {
    
     $updatevalue=$_POST['updatevalue'];
     
-    $reg_value = iconv("UTF-8", "ISO-8859-1//TRANSLIT", $updatevalue);
-    //echo $reg_value;
-  
- 
-    
- 
+    //$reg_value = iconv("UTF-8", "ISO-8859-1//TRANSLIT", $updatevalue);
+    //remove this iconv function due to special charcter not working french langue 
+    $reg_value = $updatevalue;
     $status=$_POST['status'];
     $sponsorid=$_POST['sponsorid'];
     update_user_meta_custome($keyvalue,$reg_value,$status,$sponsorid,$_POST);
@@ -276,7 +273,7 @@ function update_user_meta_custome($keyvalue,$updatevalue,$status,$sponsorid,$log
     
      contentmanagerlogging_file_upload ($lastInsertId,serialize($email_body_message_for_admin));
     // contentmanagerlogging ('Save Task',"User Action",serialize($log_obj),$postid,$user_info->user_email,$result);
-    wp_mail($to, $subject, $email_body_message_for_admin,$headers);
+   // wp_mail($to, $subject, $email_body_message_for_admin,$headers);
  
   } catch (Exception $e) {
        
