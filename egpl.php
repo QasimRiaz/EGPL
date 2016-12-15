@@ -327,6 +327,7 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
         
        $random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
        $user_id = register_new_user( $username, $email );//wp_create_user($username, $random_password, $email);
+    if ( ! is_wp_error( $user_id ) ) {
        $result=$user_id;
        $loggin_data['created_id']=$result;
        $message['user_id'] = $user_id;
@@ -341,7 +342,9 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
             $t=time();
             update_user_meta($user_id, 'convo_welcomeemail_datetime', $t*1000);
        }      
-       
+    }else{
+         $message['msg'] = $user_id->errors['invalid_username'][0];
+    } 
     } else {
         
         $message['msg'] = 'User already exists';

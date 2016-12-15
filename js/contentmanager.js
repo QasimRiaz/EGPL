@@ -171,8 +171,9 @@ function add_new_sponsor(){
                     jQuery( "#sponsor-status" ).append( '<div class="fusion-alert alert error alert-dismissable alert-danger alert-shadow"><span class="alert-icon"><i class="fa fa-lg fa-exclamation-triangle"></i></span>User already exists</div><div class="fusion-clearfix"></div>' );
                      swal({
 					title: "Error",
-					text: 'User already exists',
+					text: message.msg,
 					type: "error",
+                                        html:true,
 					confirmButtonClass: "btn-danger",
 					confirmButtonText: "Ok"
 				});
