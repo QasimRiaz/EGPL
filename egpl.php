@@ -2013,7 +2013,19 @@ GROUP BY
                         else if ($profile_field_settings['type'] == 'select') {
 
                             $myNewArray[$profile_field_name] =  $aid[$profile_field_name];
-                          
+                          if(!empty($aid[$profile_field_name.'_datetime'])){
+                                if (strpos($aid[$profile_field_name.'_datetime'], 'AM') !== false) {
+
+                                 $datevalue = str_replace(":AM", "", $aid[$profile_field_name.'_datetime']);
+                                 $datemy = strtotime($datevalue) * 1000;
+                            } else {
+                                $datevalue = str_replace(":PM", "", $aid[$profile_field_name.'_datetime']);
+                                $datemy = strtotime($datevalue) * 1000;
+                            }}else{
+                                $datemy="";
+                            }
+                            $myNewArray[$profile_field_name.'_datetime'] =$datemy;
+                            $myNewArray[$profile_field_name.'_status'] = $aid[$profile_field_name.'_status'];
                             if($aid[$profile_field_name] == "Pending"){
                                 $myNewArray[$profile_field_name.'Cls'] =  "red";
                             }else if($aid[$profile_field_name] == "Complete"){
@@ -2037,7 +2049,7 @@ GROUP BY
                                 $datemy="";
                             }
                             $myNewArray[$profile_field_name.'_datetime'] =$datemy;
-                            $myNewArray[$profile_field_name.'_datetime'] =$datemy;
+                            $myNewArray[$profile_field_name.'_status'] = $aid[$profile_field_name.'_status'];
                             if ($aid[$profile_field_name.'_status'] == "Pending") {
                                 $myNewArray[$profile_field_name . '_statusCls'] = "red";
                             } else if ($aid[$profile_field_name.'_status'] == "Complete") {
@@ -2062,6 +2074,7 @@ GROUP BY
                                 $datemy="";
                             }
                             $myNewArray[$profile_field_name.'_datetime'] =$datemy;
+                            $myNewArray[$profile_field_name.'_status'] = $aid[$profile_field_name.'_status'];
                             if ($aid[$profile_field_name.'_status'] == "Pending") {
                                 $myNewArray[$profile_field_name . '_statusCls'] = "red";
                             } else if ($aid[$profile_field_name.'_status'] == "Complete") {
