@@ -56,14 +56,14 @@ get_currentuserinfo();
 	                   <i class="font-icon fa fa-upload"></i>
 	                    <span class="lbl">Bulk Import Users</span>
 	                </a>
-                            
-                        </li>
-                         <li class="mythemestyle">
-	                <a href="/add-new-level/">
-	                  <i class="font-icon fa fa-bars"></i>
-	                    <span class="lbl">Manage Levels</span>
+                            <li class="mythemestyle">
+	                <a href="/sync-to-floorplan/">
+	                  <i class="font-icon fa fa-refresh"></i>
+	                    <span class="lbl">Sync To Floorplan</span>
 	                </a>
-	            </li>
+	            </li> 
+                        </li>
+                         
 	            
 	        </ul>
 	    </section>
@@ -89,15 +89,15 @@ get_currentuserinfo();
 	        <header class="side-menu-title">Tasks</header>
 	        <ul class="side-menu-list mynav">
 	            <li class="mythemestyle"> 
-	                <a href="/create-task/">
+	                <a href="/bulk-edit-task/">
 	                   <i class="font-icon fa fa-tasks"></i>
-	                    <span class="lbl">Create New Task</span>
+	                    <span class="lbl">Manage Tasks</span>
 	                </a>
 	            </li>
-	            <li class="mythemestyle">
-	                <a href="/edit-task/">
-	                   <i class="font-icon fa fa-pencil"></i>
-	                    <span class="lbl">Edit Tasks</span>
+	           <li class="mythemestyle">
+	                <a href="/add-new-level/">
+	                  <i class="font-icon fa fa-bars"></i>
+	                    <span class="lbl">Manage Levels</span>
 	                </a>
 	            </li>
 	            

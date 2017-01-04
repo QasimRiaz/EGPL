@@ -2,6 +2,10 @@
 // Silence is golden.
    if (current_user_can('administrator') || current_user_can('contentmanager') ) {
        
+  
+ 
+       
+       
        include 'cm_header.php';
        include 'cm_left_menu_bar.php';
        ?>

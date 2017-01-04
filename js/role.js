@@ -461,7 +461,7 @@ function createroleclone(e){
                             
                             
                             swal({
-                                title: "Nice!",
+                                title: "Success!",
                                 text: 'New Level: ' + inputValue+' created successfully',
                                 type: "success",
                                 confirmButtonClass: "btn-success"

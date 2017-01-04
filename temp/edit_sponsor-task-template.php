@@ -119,7 +119,7 @@
                        case 'url':
                            
                            $action_col .= '<input class="myclass" type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name;
-                           $action_col .= '" value="'.$value.'" >';
+                           $action_col .= '" value="'.stripslashes($value).'" >';
                            break;
                        case 'color':
                            
@@ -173,7 +173,7 @@
                                $action_col .= ' required="required"';
                            if (!empty($profile_field_settings['taskattrs']))
                                $action_col .= $profile_field_settings['taskattrs'];
-                           $action_col .= $form_tag . '>' . $value . '</textarea>';
+                           $action_col .= $form_tag . '>' . stripslashes($value) . '</textarea>';
                            if (!empty($profile_field_settings['taskattrs']))
                                $action_col .='<span style="font-size:10px;padding-top: 20px;padding-left: 4px;padding-right: 7px;" id="chars_' . $profile_field_name . '">' . str_replace("maxlength=", "", $profile_field_settings['taskattrs']) . '</span><span style="font-size:10px;">characters remaining</span>';
                            break;

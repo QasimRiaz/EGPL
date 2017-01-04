@@ -80,7 +80,7 @@
                               $large_image_url = get_post_meta($post->ID, 'port-descr', 1);
                            
                          ?> <tr>
-                                  <td style="text-align:center;"><a style="cursor: pointer;    margin-right: 18px;" onclick="delete_resource(this)" id="<?php echo $post->ID;?>"  title="Delete Resource"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-times-circle fa-2x" style="color:#262626;"></i></span></a><a style="cursor: pointer;" onclick="edit_resource(this)" id="<?php echo $post->ID;?>"  ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-pencil-square fa-2x" style="color:#262626;"></i></span></a></td>
+                             <td style="text-align:center;"><div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"> <i onclick="delete_resource(this)" id="<?php echo $post->ID;?>"  title="Delete Resource" class="hi-icon fusion-li-icon fa fa-times-circle fa-2x" ></i><i onclick="edit_resource(this)" id="<?php echo $post->ID;?>" class="hi-icon fusion-li-icon fa fa-pencil-square fa-2x" ></i></div></td>
                                   <td id="<?php echo $post->ID.'U';?>"><?php the_title(); ?></td>
                                   <td><a href="<?php echo $custom['excerpt'][0]; ?>" target="_blank"><?php the_title(); ?></a></td>
                                    </tr>

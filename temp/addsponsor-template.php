@@ -93,6 +93,16 @@
                                     </div>
                  </div>
                     <h5 class="m-t-lg with-border">Additional Information</h5>
+                     <div class="form-group row">
+                                    <label class="col-sm-2 form-control-label">Company Logo </label>
+                                    <div class="col-sm-10">
+                                                     
+                                          
+					<input  type="file" class="form-control" name="profilepic" id="profilepic" >				
+								
+				    </div>
+                                    
+		</div>
                     <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">Company Name <strong>*</strong></label>
                                     <div class="col-sm-10">

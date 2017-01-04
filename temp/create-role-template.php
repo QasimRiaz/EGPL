@@ -5,13 +5,37 @@
   
 	 global $wp_roles;
      
-   
+     $role_key=strtolower('My new special level old');
+    
+     $get_all_roles_array = 'wp_user_roles';
+     $get_all_roles = get_option($get_all_roles_array);
+     $result_update = 'newvalue';
+     foreach ($get_all_roles as $key => $item) {
+            
+           
+            if($role_key == strtolower($item['name'])){
+                
+     //            echo $role_key.'-----';
+       //          echo strtolower($item['name']).'<br>';
+                $result_update = 'already';
+                break;
+            }
+    }
+     // echo '<pre>';
+    // print_r($get_all_roles);
+   // echo $result_update;exit;
+   // exit;
           
-    $all_roles = $wp_roles->get_names();	
+    $all_roles = $wp_roles->get_names();
+    
+    
     $list="";
       $test = 'custome_task_manager_data';
       $get_task_keys = get_option($test);
       
+      
+      
+    
       include 'cm_header.php';
        include 'cm_left_menu_bar.php';
                 ?>
@@ -34,6 +58,8 @@
             <div class="box-typical box-typical-padding">
                     <p>
                         Here you can create various levels your users will belong to. Each level represents a different class of your users. e.g. Gold, Silver, Platinum etc. Each user will be able to see a different set of tasks based on their assigned level. 
+                       
+                    
                     </p>
 
                     <h5 class="m-t-lg with-border"></h5>
@@ -87,7 +113,7 @@
                // echo $key;
                    $os = $profile_field_settings['roles'];
                    
-                if (in_array($key, $os)) {
+                if (in_array($key, $os) || in_array('all', $os)) {
                  // print_r(  $os );
                     $list.=$profile_field_settings['label'].'&#013;';
                     $taskcount++;
@@ -100,13 +126,14 @@
            
         
                           echo '<tr>
-                                                           <td><label  title="'.$list.'">' . $name . '  ('.$taskcount.' tasks)</label></td>
-                                                           <td><p style="width:83px !important;">
+                                                           <td><a href="/role-assignment/?rolename='.$name.'"><label style="cursor: pointer;"  id="mrolename" title="'.$list.'">' . $name . '  ('.$taskcount.' tasks)</label></a></td>
+                                                           <td><div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a">
    
-    <a onclick="delete_role_name(this)" id="'.$key.'" name="delete-sponsor" style="cursor: pointer;color:red;margin-left: 10px;" title="Remove Level">
-        <span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-times-circle fa-2x" style="color:#262626;"></i></span>
-    </a>
-</p></td>
+    
+    <i class="hi-icon fusion-li-icon fa fa-pencil-square fa-2x"  title="Edit Level Name" name="'.$name.'" onclick="editrolename(this)" id="'.$key.'" ></i>
+    <i class="hi-icon fusion-li-icon fa fa-clone fa-2x" name="'.$name.'" title="Create a Clone" onclick="createroleclone(this)" id="'.$key.'" ></i>
+    <i class="hi-icon fusion-li-icon fa fa-times-circle fa-2x" onclick="delete_role_name(this)" id="'.$key.'" name="delete-sponsor" title="Remove Level" ></i>
+</div></td>
                                                            </tr>';                          
                                                   
                                                   

@@ -132,7 +132,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
 				<section class="faq-page-cats">
 					<div class="row">
-						<div class="col-md-3">
+						<div class="col-md-4">
 							<div class="faq-page-cat" title="Number of users matching current filter">
 								<div class="faq-page-cat-icon"><i class="reporticon font-icon fa fa fa-filter fa-2x"></i></div>
 								<div class="faq-page-cat-title">
@@ -141,7 +141,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 								<div class="faq-page-cat-txt" id="filteredstatscount" >0</div>
 							</div>
 						</div>
-						<div class="col-md-3">
+						<div class="col-md-4">
 							<div class="faq-page-cat" title="Number of users currently selected">
 								<div class="faq-page-cat-icon"><i class="reporticon font-icon fa fa-check-square fa-2x"></i></div>
 								<div class="faq-page-cat-title">
@@ -150,34 +150,33 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 							<div class="faq-page-cat-txt" id="selectedstatscount"> 0</div>
 							</div>
 						</div>
-						<div class="col-md-3">
+                                               <div class="col-md-4">
 							<div class="faq-page-cat" title="Compose and send a bulk email message to the currently selected users">
-								<div class="faq-page-cat-icon"><i class="reporticon font-icon fa fa-envelope fa-2x"></i></div>
+								<div class="faq-page-cat-icon"><i class="reporticon font-icon fa fa-users fa-2x"></i></div>
 								
 								<div class="faq-page-cat-txt">
-                                                                    <button disabled style="min-width: 128px;" type="button" id="sendbulkemailstatus"  onclick="get_bulk_email_address()"class=" btn-square-icon">
-                                                                            <i class="fa fa-mail-forward"></i>
-                                                                            Bulk Email
-                                                                            <span class="label label-pill label-success" id="bulkemailcounter">0</span>
-                                                                        </button>
+                                                                    
+                                                                    <div class="btn-group">
+                                                                            <button disabled type="button" id="sendbulkemailstatus" class="btn btn-inline dropdown-toggle btn-square-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                                Bulk Action
+                                                                                <span class="label label-pill label-danger" id="bulkemailcounter">0</span>
+                                                                            </button>
+                                                                            <div class="dropdown-menu">
+                                                                                <a class="dropdown-item" onclick="get_bulk_email_address()"><i class="fa fa-mail-forward"></i> Bulk Email</a>
+                                                                                <a class="dropdown-item" onclick="sendwelcomemsg()"><i class="fa fa-paper-plane"></i> Welcome Email</a>
+                                                                                <a class="dropdown-item" onclick="sync_bulk_users()"><i class="fa fa-refresh"></i> Sync to Floorplan</a>
+                                                                                
+                                                                                
+                                                                            </div>
+                                                                        </div>
                                                                    
                                                                 </div>
 							</div>
-						</div>
-                                               <div class="col-md-3">
-							<div class="faq-page-cat" title="">
-								<div class="faq-page-cat-icon"><i class="reporticon font-icon fa fa-paper-plane fa-2x"></i></div>
-								
-								<div class="faq-page-cat-txt">
-                                                                    <button disabled type="button" id="sendwelcomeemailstatus"  onclick="sendwelcomemsg()"class=" btn-square-icon">
-                                                                            <i class="fa fa-mail-forward"></i>
-                                                                            Welcome Email
-                                                                            <span class="label label-pill label-success" id="welcomeemailcounter">0</span>
-                                                                        </button>
-                                                                   
-                                                                </div>
-							</div>
-						</div>
+						 </div>
+                                            
+                                            
+						
+                                              
 					</div><!--.row-->
 				</section><!--.faq-page-cats-->
 

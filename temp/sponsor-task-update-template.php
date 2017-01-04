@@ -34,15 +34,7 @@
 <div id="content" class="full-width">
 
     <div id="sponsor-status"></div>
-              <?php
-    // TO SHOW THE PAGE CONTENTS
-    while ( have_posts() ) : the_post(); ?> <!--Because the_content() works only inside a WP Loop -->
-        <div class="entry-content-page">
-            <?php the_content(); ?> <!-- Page Content -->
-        </div><!-- .entry-content-page -->
 
-    <?php
-    endwhile; //resetting the page loop?>
    
             <table class="mytable table table-striped table-bordered table-condensed" >
                 <thead>
@@ -72,9 +64,19 @@
                            $user_can_view = true;
                        }
                    }
-               }else{
-                   $user_can_view = true;
+                  
+                   
+                   
                }
+               if(!empty($profile_field_settings['usersids'])){
+                if (in_array($user_IDD, $profile_field_settings['usersids'])) {
+                    
+                     $user_can_view = true;
+                }
+               }
+               //else{
+                 //  $user_can_view = true;
+              // }
              if(isset($profile_field_settings['usersids'])){
                if(in_array($sponsor_id,$profile_field_settings['usersids'])){
                    
@@ -94,12 +96,12 @@
                    
                    if ($result_date < 0) {
 
-                       $duedate_html = '<td class="duedate"  data-order="' . $timestamp_task_data . '" >' . $profile_field_settings['attrs'] . '</td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . stripslashes($profile_field_settings['descrpition']) . '</td>';
+                       $duedate_html = '<td class="duedate"  data-order="' . $timestamp_task_data . '" >' . $profile_field_settings['attrs'] . '</td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . $profile_field_settings['descrpition'] . '</td>';
                    
                        
                    } else {
                      
-                       $duedate_html = '<tr class="overdue"><td  data-order="' . $timestamp_task_data . '" class="duedate ' . $profile_field_name . '_status">' . $profile_field_settings['attrs'] . ' <span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-flag" style="color:#5D5858;"></i></span></td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . stripslashes($profile_field_settings['descrpition']) . '</td>';
+                       $duedate_html = '<tr class="overdue"><td  data-order="' . $timestamp_task_data . '" class="duedate ' . $profile_field_name . '_status">' . $profile_field_settings['attrs'] . ' <span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-flag" style="color:#5D5858;"></i></span></td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . $profile_field_settings['descrpition'] . '</td>';
                        
                        
                    }
@@ -113,9 +115,11 @@
                        case 'number':
                        case 'email':
                        case 'url':
-                           
+                           //echo $value.'-----';
+                           //echo htmlspecialchars($value);
+                           //exit;
                            $action_col .= '<input class="myclass" type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name;
-                           $action_col .= '" value="'.$value.'" >';
+                           $action_col .= '" value="'.htmlspecialchars($value).'" >';
                            break;
                        case 'color':
                            
@@ -152,13 +156,7 @@
                            $action_col .= '<strong >Coming soon</strong>';
                            break;
                        //Modification by Qasim Riaz
-                       case 'link':
-                           $action_col .= '<a href="' . $profile_field_settings['lin_url'] . '"target="_blank"';
-                           if (!empty($profile_field_settings['taskattrs']))
-                               $action_col .= $profile_field_settings['taskattrs'];
-                           $action_col.= '>' . $profile_field_settings['linkname'] . '</a>';
-
-                           break;
+                      
                       case 'textarea':
                            
                            $action_col .= '<textarea rows="5"  class="myclasstextarea" id="' . $profile_field_name . '" name="' . $profile_field_name;
@@ -169,7 +167,7 @@
                                $action_col .= ' required="required"';
                            if (!empty($profile_field_settings['taskattrs']))
                                $action_col .= $profile_field_settings['taskattrs'];
-                           $action_col .= $form_tag . '>' . $value . '</textarea>';
+                           $action_col .= $form_tag . '>' . htmlspecialchars($value) . '</textarea>';
                            if (!empty($profile_field_settings['taskattrs']))
                                $action_col .='<span style="font-size:10px;padding-top: 20px;padding-left: 4px;padding-right: 7px;" id="chars_' . $profile_field_name . '">' . str_replace("maxlength=", "", $profile_field_settings['taskattrs']) . '</span><span style="font-size:10px;">characters remaining</span>';
                            break;
@@ -195,6 +193,15 @@
                            endforeach;
 
                            $action_col .= "</select>\n";
+                           break;
+                     case 'link':
+                        // echo $profile_field_settings['lin_url'] ;exit;
+                           $action_col .= '<a href="' . $profile_field_settings['lin_url'] . '"target="_blank" ';
+                           if (!empty($profile_field_settings['taskattrs'])){
+                               $action_col .= $profile_field_settings['taskattrs'];
+                           }
+                               $action_col.= '>' . $profile_field_settings['linkname'] . '</a>';
+                       
                            break;
                    }
                    

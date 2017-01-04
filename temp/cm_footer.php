@@ -1,23 +1,22 @@
     
-	<script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/jquery/jquery.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/highstock.js"></script>
      
       
 	<script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/tether/tether.min.js"></script>
 	<script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/bootstrap/bootstrap.min.js"></script>
 	<script src="/wp-content/plugins/EGPL/cmtemplate/js/plugins.js"></script>
-        <script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/bootstrap-sweetalert/sweetalert.min.js"></script>
-	<script type="text/javascript" src="/wp-content/plugins/EGPL/cmtemplate/js/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/bootstrap-sweetalert/sweetalert.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="/wp-content/plugins/EGPL/cmtemplate/js/lib/lobipanel/lobipanel.min.js"></script>
 	<script type="text/javascript" src="/wp-content/plugins/EGPL/cmtemplate/js/lib/match-height/jquery.matchHeight.min.js"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/bootstrap-select/bootstrap-select.min.js"></script>
+    <script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/bootstrap-select/bootstrap-select.min.js"></script>
 	<script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/select2/select2.full.min.js"></script>
-        <script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/datatables-net/datatables.min.js"></script>
-        <script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/clockpicker/bootstrap-clockpicker.min.js"></script>
+    <script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/datatables-net/datatables.min.js"></script>
+    <script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/clockpicker/bootstrap-clockpicker.min.js"></script>
 	<script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/clockpicker/bootstrap-clockpicker-init.js"></script>
 	<script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/daterangepicker/daterangepicker.js"></script>
-  
         
 <!--       content manager js files -->
         
@@ -25,7 +24,7 @@
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/lodash.js"></script>
         
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/exporting.js"></script>
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/contentmanager.js?v=1.13"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/contentmanager.js"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.watable.js"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-datepicker.js"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-multiselect.js"></script>
@@ -33,15 +32,20 @@
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery-confirm.js"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/passwordstrength.js"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/taskmanager.js"></script>
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/role.js"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/role.js?v=1.16"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.fileDownload.js"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/admin-modernizr.custom.js"></script>
         <script type="text/javascript" language="javascript" src="/wp-content/plugins/EGPL/js/jquery.dataTables.js"></script>
+        <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+        
         <script src='/wp-content/plugins/EGPL/js/randomColor.js'></script>
+        <script src='/wp-content/plugins/EGPL/js/jquery.ajax-progress.js'></script>
+         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=1.16"></script>
           
 	 
             
 
-        <script type="text/javascript" language="javascript" src="/wp-content/plugins/EGPL/js/dataTables.buttons.min.js"></script>
+	<script type="text/javascript" language="javascript" src="/wp-content/plugins/EGPL/js/dataTables.buttons.min.js"></script>
         <script type="text/javascript" language="javascript" src="/wp-content/plugins/EGPL/js/jszip.min.js"></script>
         <script type="text/javascript" language="javascript" src="/wp-content/plugins/EGPL/js/buttons.html5.min.js"></script>
       
@@ -63,8 +67,7 @@ tinymce.init({
             class:'table'
   },
   toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-  convert_urls: false,
-        content_css: [
+  content_css: [
     '/wp-content/plugins/EGPL/css/editorstyle.css'
   ]
 });
@@ -79,8 +82,7 @@ tinymce.init({
              border:1, class:'table'
   },
   toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-  convert_urls: false,
-        content_css: [
+  content_css: [
     '/wp-content/plugins/EGPL/css/editorstyle.css'
   ]
 });
@@ -95,8 +97,7 @@ tinymce.init({
            border:1, class:'table'
   },
   toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-  convert_urls: false,
-        content_css: [
+  content_css: [
     '/wp-content/plugins/EGPL/css/editorstyle.css'
   ]
 });
@@ -111,8 +112,7 @@ tinymce.init({
            border:1
   },
   toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-  convert_urls: false,
-        content_css: [
+  content_css: [
     '/wp-content/plugins/EGPL/css/editorstyle.css'
   ]
 });
@@ -135,6 +135,14 @@ jQuery('#daterange3').daterangepicker({
                                 }
                                 
 			});
+ jQuery('.datepicker').daterangepicker({
+				singleDatePicker: true,
+				showDropdowns: true,
+                                locale: {
+                                    format: 'DD-MMM-YYYY'
+                                }
+                                
+			});                       
  var dt = new Date();
  var hours = dt.getHours()+1;
  var time =hours + ":" + dt.getMinutes();
@@ -143,7 +151,8 @@ jQuery('#daterange3').daterangepicker({
  jQuery("#picktime").val(time);
  
 jQuery(function () {
-
+ 
+ 
     jQuery('#container').highcharts({
 
         chart: {

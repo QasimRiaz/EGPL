@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/customstyle.css">
     <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css"/>
     <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/clockpicker/bootstrap-clockpicker.min.css">
+    
 <!--    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap.min.css">-->
      
 <!--    contetnmanager css-->
@@ -37,6 +38,8 @@
        <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/dataTables.tableTools.css">
        <link rel="stylesheet" type="text/css" href="/wp-content/plugins/EGPL/css/jquery.dataTables.css">
        <link rel="stylesheet" type="text/css" href="/wp-content/plugins/EGPL/css/buttons.dataTables.min.css">
+        <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/component.css">
+     
    
        
        

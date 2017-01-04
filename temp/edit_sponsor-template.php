@@ -118,7 +118,35 @@
                               
                                    
                   <h5 class="m-t-lg with-border">Additional Information</h5>                  
-                                
+                          <div class="form-group row">
+                                    <label class="col-sm-2 form-control-label">Company Logo </label>
+                                    <?php if(empty($all_meta_for_user['user_profile_url'][0])){?>  
+                                    <div class="col-sm-10">
+                                                     
+                                        
+					<input  type="file" class="form-control" name="profilepic" id="profilepic" >				
+                                      
+                                       
+		                  </div>
+                                   <?php }else{?>
+                                    <div id="showprofilepic">
+                                    <div class="col-sm-6">
+                                       <img width="200" id="userprofilepic"  name="userprofilepic" src="<?php echo $all_meta_for_user['user_profile_url'][0];?>" >
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <a width="200" class="btn btn-inline mycustomwidth btn-success" onclick="showprofilefieldupload()" >Edit Logo</a>
+                                    </div>
+                                     </div>
+                                      <?php } ?>
+                                    
+                                    <div class="col-sm-10" style="display:none;" id="updateprofilepic">
+                                                     
+                                        
+					<input  type="file" class="form-control" name="profilepic" id="profilepic" >				
+                                      
+                                       
+		                  </div>
+		</div>            
                                <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">Company Name <strong>*</strong></label>
                                     <div class="col-sm-10">
