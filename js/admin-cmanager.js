@@ -18,6 +18,8 @@ function updatecontentsettings() {
    var eventdate = jQuery("#eventdate").val();
    var formemail = jQuery("#formemail").val();
    var mandrill = jQuery("#mandrill").val();
+   var mapapikey = jQuery("#mapapikey").val();
+   var mapsecretkey = jQuery("#mapsecretkey").val();
    
    var addresspoints = jQuery("#addresspoints").val();
    var uploadlogourl = jQuery("#uploadlogourl").attr("src");
@@ -40,9 +42,10 @@ function updatecontentsettings() {
        data.append('eventdate', eventdate);
        data.append('attendyTypeKey', attendyTypeKey);
        data.append('formemail', formemail);
-        data.append('mandrill', mandrill);
-       
-          data.append('addresspoints', addresspoints);
+       data.append('mandrill', mandrill);
+       data.append('mapapikey', mapapikey);
+       data.append('mapsecretkey', mapsecretkey);
+       data.append('addresspoints', addresspoints);
      
 
        jQuery.ajax({

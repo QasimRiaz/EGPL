@@ -516,3 +516,153 @@ li.active a, li.active a:hover {
 	position:static !important;
 
 }
+
+.ui-widget-content {
+       border: 1px solid #ffffff !important;
+    background: #ffffff !important;
+     height: 7px !important; 
+    border-radius: 0px !important;
+}
+
+.ui-widget-header {
+   
+   
+    height: 6px;
+    border-radius: 0px !important;
+    background: #00a8ff !important;;
+}
+
+.jconfirm-box{margin-top: 100px !important;}
+.select2-container{margin-bottom: 10px !important;}
+
+.bulkedittask th {
+    color: white;
+    background-color: #004b9b !important;
+   
+}
+.bulkaddnewtask{
+    
+    background-color: #efc591 !important;
+    background: #efc591 !important;
+}
+
+/*table cards */
+
+
+.cards {
+        background-color: transparent;
+    }
+
+    /*--[  This does the job of making the table rows appear as cards ]----------------*/
+    .cards tbody img {
+        height: 100px;
+    }
+    .cards tbody tr {
+        float: left;
+        margin: 10px;
+        border: 1px solid #aaa;
+        box-shadow: 3px 3px 6px rgba(0,0,0,0.25);
+        background-color: white;
+        height: 685px ;
+    }
+    .cards tbody td {
+        display: block;
+        width: 279px;
+        overflow: hidden;
+        text-align: left;
+    }
+
+    /*---[ The remaining is just more dressing to fit my preferances ]-----------------*/
+    .cards {
+        background-color: #fff;
+    }
+    .cards tbody label {
+        display: none;
+        margin-right: 5px;
+        width: 50px;
+    }   
+    .cards .glyphicon {
+        font-size: 20px;
+    }
+
+    .cards .glyphicon {
+        font-size: 75px;
+    }
+
+    .cards tbody label {
+        display: inline;
+        position: relative;
+        font-size: 85%;
+        font-weight: normal;
+        top: -5px;
+        left: -3px;
+        float: left;
+        color: #808080;
+    }
+    .cards tbody td:nth-child(1) {
+        text-align: center;
+    }
+    
+    .cards thead{
+        
+        display: none;
+    }
+    .addscrol{
+        
+            height: 118px !important;
+            overflow: auto !important;
+        
+    }
+    
+    .topmarrginebulkedit{
+        
+        
+        margin-top: 14px !important;
+    }
+    
+    table.dataTable.no-footer{
+        
+                border-bottom: 1px solid #eceeef !important;;
+    }
+    
+    .removetask{
+        
+        background-color: #f7a5a5 !important;
+        text-decoration: line-through;
+        
+    }
+      .addnewtask{
+        
+        background-color: #a0e9af !important;
+        
+    }
+    .addnewtaskintorole td{ background-color: #a0e9af !important;}
+    table.dataTable thead th, table.dataTable thead td {
+    
+     border-bottom: 1px solid #eceeef !important;
+}
+
+  .specialstyle{  height: 50px;
+    background-color: #ed942a;
+    color: white;
+    
+  }
+table.dataTable tbody td {
+    vertical-align: middle !important;
+}
+.assignedtasks{margin-bottom: 0px !important;}
+.removetaskrole td{
+        background-color: #f7a5a5 !important;
+        text-decoration: line-through;
+}
+
+.emptyfielderror{
+    
+     background-color: #dc4141 !important;
+    
+}
+
+.jspContainer{
+    
+    width:95% !important;
+}

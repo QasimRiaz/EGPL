@@ -1,11 +1,12 @@
 <?php
 
 
+
 /**
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           1.17
+ * Version:           2.0
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -16,7 +17,130 @@
  */
 
 //get all the plugin settings
-if ($_GET['contentManagerRequest'] == 'addnewadminuser') {
+//get all the plugin settings
+if ($_GET['contentManagerRequest'] == 'insertmapdynamicsuser') {
+    
+     require_once('../../../wp-load.php');
+     try{
+        
+     
+     
+      
+      
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID);  
+        $lastInsertId = contentmanagerlogging('Insert Map Dynamics User',"Admin Action","",$user_ID,$user_info->user_email,"pre_action_data");
+      
+        $userid = $_POST['userid'];
+        $requestcount = $_POST['requestcount'];
+        $userdata = get_userdata($userid);
+        $all_meta_for_user = get_user_meta($userid);
+       
+        
+        
+        
+        
+        if(!empty($all_meta_for_user['exhibitor_map_dynamics_ID'][0])){
+            
+            $data_array=array(
+            'company'=>$all_meta_for_user['company_name'][0],
+            'email'=>$userdata->user_email,
+            'first_name'=>$userdata->first_name,
+            'last_name'=>$userdata->last_name,
+            'image'=>$all_meta_for_user['user_profile_url'][0],
+            'exhibitor_id'=>$all_meta_for_user['exhibitor_map_dynamics_ID'][0]  
+            ) ;
+            $result = update_exhibitor_map_dynamics($data_array);
+            if($result->status == 'success'){
+            
+             $data_array['status'] = $result->status;
+             $data_array['result'] = '';
+             $data_array['Exhibitor_ID'] = $result->results->Exhibitor_ID;
+             
+            
+         
+            }else{
+                $data_array['status'] = $result->status;
+                $data_array['result'] = $result->status_details;
+                $data_array['Exhibitor_ID'] = '';
+            }
+            
+        
+        }else{
+            
+           $data_array=array(
+            'company'=>$all_meta_for_user['company_name'][0],
+            'email'=>$userdata->user_email,
+            'first_name'=>$userdata->first_name,
+            'last_name'=>$userdata->last_name,
+            'image'=>$all_meta_for_user['user_profile_url'][0],
+            
+          ) ;
+           $result = insert_exhibitor_map_dynamics($data_array);
+           
+           if($result->status == 'success'){
+            
+             $data_array['status'] = $result->status;
+             $data_array['result'] = '';
+             $data_array['Exhibitor_ID'] = $result->results->Exhibitor_ID;
+             
+             update_user_meta($userdata->ID, 'exhibitor_map_dynamics_ID', $result->results->Exhibitor_ID);
+         
+            }else{
+                
+                $data_array['status'] = $result->status;
+                $data_array['result'] = $result->status_details;
+                $data_array['Exhibitor_ID'] = '';
+            }
+        }
+        
+      $data_array['requestcount'] =  $requestcount;
+      
+      contentmanagerlogging_file_upload ($lastInsertId,serialize($result)); 
+      echo json_encode($data_array);
+      die();
+        
+        
+    }catch (Exception $e) {
+       
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+    }
+ 
+ die();   
+    
+}else if ($_GET['contentManagerRequest'] == 'GetMapdynamicsApiKeys') {
+    
+    require_once('../../../wp-load.php');
+    
+    
+    try{
+        
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID);  
+        $lastInsertId = contentmanagerlogging('Check Map Dynamics keys',"Admin Action","",$user_ID,$user_info->user_email,"pre_action_data");
+        $oldvalues = get_option( 'ContenteManager_Settings' );
+        $mapapikey = $oldvalues['ContentManager']['mapapikey'];
+        $mapsecretkey = $oldvalues['ContentManager']['mapsecretkey'];
+        
+        if(!empty($mapapikey)&&!empty($mapsecretkey)){
+            echo 'connected';
+        }else{
+            echo 'notconnected';
+        }
+      
+        
+    }catch (Exception $e) {
+       
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+    }
+ 
+ die();   
+    
+}else if ($_GET['contentManagerRequest'] == 'addnewadminuser') {
     require_once('../../../wp-load.php');
     
     
@@ -266,7 +390,7 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
 }else if ($_GET['contentManagerRequest'] == 'update_new_sponsor_metafields') {
      require_once('../../../wp-load.php');
    
-   try{
+  try{
        
      $user_ID = get_current_user_id();
      $user_info = get_userdata($user_ID); 
@@ -279,14 +403,83 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
     unset($_POST['sponsorlevel']);
     unset($_POST['sponsorid']);
     unset($_POST['password']);
-    
+    $email = $_POST['Semail'];
     $meta_array=$_POST;
+    if(empty($_POST['profilepicurl'])){
+        
+        $profilepic=$_FILES['profilepic'];
+        $picprofileurl = resource_file_upload($profilepic);
+    
+        
+    }else{
+        
+        $picprofileurl= $_POST['profilepicurl'];
+    }
+    $oldvalues = get_option( 'ContenteManager_Settings' );
+    
+    
     if(!empty($password)){ wp_set_password( $password, $userid );}
     
-   
-           $result =  add_new_sponsor_metafields($userid,$meta_array,$role);
-           contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
+       update_user_meta($userid, 'user_profile_url', $picprofileurl);
+       
+       $mapapikey = $oldvalues['ContentManager']['mapapikey'];
+       $mapsecretkey = $oldvalues['ContentManager']['mapsecretkey'];
+       $userexhibitor_id = get_user_meta( $userid, 'exhibitor_map_dynamics_ID', true ); 
+       if(!empty($mapapikey) && !empty($mapsecretkey)){
+          
+        $request_for_sync_map_dynamics = contentmanagerlogging('Sync to map dynamics update',"Admin Action",serialize($data_array),$user_ID,$user_info->user_email,"pre_action_data");
+        
+        if(!empty($userexhibitor_id)){
+            $data_array=array(
+            'company'=>$meta_array['company_name'],
+            'email'=>$email,
+            'first_name'=>$meta_array['first_name'],
+            'last_name'=>$meta_array['last_name'],
+            'image'=>$picprofileurl,
+            'exhibitor_id'=>intval($userexhibitor_id)
+              
+          ) ;
+            $result = update_exhibitor_map_dynamics($data_array) ;
+        }else{
+            $data_array=array(
+            'company'=>$meta_array['company_name'],
+            'email'=>$email,
+            'first_name'=>$meta_array['first_name'],
+            'last_name'=>$meta_array['last_name'],
+            'image'=>$picprofileurl
+            
+              
+          ) ; 
+            $result = insert_exhibitor_map_dynamics($data_array) ;
+            
+        }
+        contentmanagerlogging_file_upload ($request_for_sync_map_dynamics,serialize($result));
+       
+        
+        
+        if($result->status == 'success'){
+            
+             update_user_meta($userid, 'exhibitor_map_dynamics_ID', $result->results->Exhibitor_ID);
+         
+             $mapdynamicsstatus = 'User update to map dynamics successfully';
+            
+        }else{
+            
+            $sync_map_dynamics_message = $result->status_details;
+            $mapdynamicsstatus = $sync_map_dynamics_message;
+        }
+        
+        
+       
+       }else{
            
+           $mapdynamicsstatus = '';
+           
+       }
+       $result =  add_new_sponsor_metafields($userid,$meta_array,$role);
+       $message['mapdynamicsstatus'] = $mapdynamicsstatus;
+       contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
+       echo json_encode($message);
    }catch (Exception $e) {
        
          contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
@@ -297,6 +490,9 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
     
 }else if ($_GET['contentManagerRequest'] == 'add_new_sponsor_metafields') {
     require_once('../../../wp-load.php');
+    
+    
+   
     
     
     try{
@@ -321,19 +517,65 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
     $user_id = username_exists($username);
     
     $message['username'] = $username;
+    $profilepic=$_FILES['profilepic'];
+    $picprofileurl = resource_file_upload($profilepic);
+  
     
+    $oldvalues = get_option( 'ContenteManager_Settings' );
    
     if (!$user_id and email_exists($email) == false) {
         
        $random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
        $user_id = register_new_user( $username, $email );//wp_create_user($username, $random_password, $email);
-    if ( ! is_wp_error( $user_id ) ) {
+       if ( ! is_wp_error( $user_id ) ) {
+       
        $result=$user_id;
        $loggin_data['created_id']=$result;
        $message['user_id'] = $user_id;
        $message['msg'] = 'User created';
        $message['userrole'] = $role;
        $meta_array=$_POST;
+       update_user_meta($user_id, 'user_profile_url', $picprofileurl);
+       
+       $mapapikey = $oldvalues['ContentManager']['mapapikey'];
+       $mapsecretkey = $oldvalues['ContentManager']['mapsecretkey'];
+       
+       if(!empty($mapapikey) && !empty($mapsecretkey)){
+          
+          $data_array=array(
+            'company'=>$meta_array['company_name'],
+            'email'=>$email,
+            'first_name'=>$meta_array['first_name'],
+            'last_name'=>$meta_array['last_name'],
+            'image'=>$picprofileurl
+              
+          ) ;
+          
+        $request_for_sync_map_dynamics = contentmanagerlogging('Sync to map dynamics',"Admin Action",serialize($data_array),$user_ID,$user_info->user_email,"pre_action_data");
+        $result = insert_exhibitor_map_dynamics($data_array) ;
+        contentmanagerlogging_file_upload ($request_for_sync_map_dynamics,serialize($result));
+       
+        
+        
+        if($result->status == 'success'){
+            
+             update_user_meta($user_id, 'exhibitor_map_dynamics_ID', $result->results->Exhibitor_ID);
+         
+             $mapdynamicsstatus = 'This update has also been synced to floorplan';
+            
+        }else{
+            
+            $sync_map_dynamics_message = $result->status_details;
+            $mapdynamicsstatus = 'However, this update could not be synced to floorplan';
+        }
+        
+        
+       
+       }else{
+           
+           $mapdynamicsstatus = '';
+           
+       }
        
        add_new_sponsor_metafields($user_id,$meta_array,$role);
        if($welcomeemail_status == 'send'){
@@ -343,16 +585,18 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
             update_user_meta($user_id, 'convo_welcomeemail_datetime', $t*1000);
        }      
     }else{
-         $message['msg'] = $user_id->errors['invalid_username'][0];
+       
+        
+      $message['msg'] = $user_id->errors['invalid_username'][0];
     } 
     } else {
         
         $message['msg'] = 'User already exists';
         
     }
-    
+   
     $loggin_data['msg']=$message['msg'];
-    
+    $message['mapdynamicsstatus'] = $mapdynamicsstatus;
     contentmanagerlogging_file_upload ($lastInsertId,serialize($loggin_data));
     echo json_encode($message);
     }catch (Exception $e) {
@@ -402,7 +646,8 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
     $user_info = get_userdata($user_ID);
     $lastInsertId = contentmanagerlogging('Load Report',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
     $report_name=$_POST['reportName'];
-    getReportsdatanew($report_name); 
+    $usertimezone=intval($_POST['usertimezone']);
+    getReportsdatanew($report_name,$usertimezone); 
     $result='Report Loaded';
     
     contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
@@ -850,7 +1095,7 @@ try {
        
        
        
-       $result = send_email($user_info->user_email,$subject_body,stripslashes($body_message),$headers);
+       $result = send_email($user_info->user_email,$subject_body,$body_message,$headers);
 
     
    
@@ -934,7 +1179,7 @@ try {
        
        
        
-       $result = send_email($user_info->user_email,$subject_body,stripslashes($body_message),$headers);
+       $result = send_email($user_info->user_email,$subject_body,$body_message,$headers);
 
     
    
@@ -1031,7 +1276,7 @@ try {
        $lastInsertId = contentmanagerlogging('Welcome Email Template',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
        
     $welcome_subject =$_POST['welcomeemailSubject'];
-    $welcome_body =stripslashes($_POST['welcomeemailBody']);
+    $welcome_body =$_POST['welcomeemailBody'];
     $replaytoemailadd =$_POST['replaytoemailadd'];
     $welcomeemailfromname =$_POST['welcomeemailfromname'];
     $settitng_key='AR_Contentmanager_Email_Template_welcome';
@@ -1101,10 +1346,84 @@ try {
      $user_info = get_userdata($user_ID);
      $lastInsertId = contentmanagerlogging('Add New Role',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
      $role_key=strtolower($newrolename);
+     $get_all_roles_array = 'wp_user_roles';
      $remove_space_role_kye=str_replace(" ","_",$role_key);
-     $result = add_role( $remove_space_role_kye, ucfirst($newrolename), array( 'read' => true, ) );
-     if ( null !== $result ) {
+     $get_all_roles = get_option($get_all_roles_array);
+     $result_update = 'newvalue';
+     foreach ($get_all_roles as $key => $item) {
+            
+            if($role_key == strtolower($item['name']) || $key == $remove_space_role_kye ){
+                $result_update = 'already';
+                break;
+            }
+            
+    }
+     
+     
+     
+    
+     if($result_update == 'newvalue'){
+        $result = add_role( $remove_space_role_kye, ucfirst($newrolename), array( 'read' => true, ) );
+        if ( null !== $result) {
+            $msg['msg'] = '<strong>'.ucfirst($newrolename).'</strong> New Level created';
+            $msg['status'] = 'success';
+            $msg['title'] = 'Success';
+        }
+     }else {
+        
+        $msg['msg'] = '<strong>'.ucfirst($newrolename).'</strong> Level already exists.';
+        $msg['status'] = 'warning';
+        $msg['title'] = 'Warning';
+        
+       }
+     echo   json_encode($msg);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
+    
+    }catch (Exception $e) {
+       
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+         return $e;
+ }
+    die(); 
+
+}else if ($_GET['contentManagerRequest'] == 'createlevelclone') {
+    
+    require_once('../../../wp-load.php');
+    
+    try{
+    $newrolename =$_POST['rolename'];
+    $clonelevelkey =$_POST['clonerolekey'];
+    
+     $user_ID = get_current_user_id();
+     $user_info = get_userdata($user_ID);
+     $lastInsertId = contentmanagerlogging('Create new Clone',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
+     
+     $new_role_key=strtolower($newrolename);
+     $new_remove_space_role_kye=str_replace(" ","_",$new_role_key);
+     $result = add_role($new_remove_space_role_kye, ucfirst($newrolename), array( 'read' => true, ) );
+     
+     
+     
+     
+     
+     if (!empty($result)) {
         $msg['msg'] = 'New Level created';
+        $test = 'custome_task_manager_data';
+        $assign_new_role = get_option($test);
+     
+           foreach($assign_new_role['profile_fields'] as $profile_field_name => $profile_field_settings) {
+               
+               
+                   if(in_array($clonelevelkey,$assign_new_role['profile_fields'][$profile_field_name]['roles'])){
+                        array_push($assign_new_role['profile_fields'][$profile_field_name]['roles'],$new_remove_space_role_kye);
+                   }
+             
+               
+           } 
+            //echo $key;
+            
+       
+      $taskarray_update = update_option($test, $assign_new_role);
      }
       else {
         
@@ -1463,116 +1782,8 @@ function resource_file_upload($updatevalue){
    
     if(!empty($updatevalue)){
         if ( ! function_exists( 'wp_handle_upload' ) ) require_once( ABSPATH . 'wp-admin/includes/file.php' );
-           // $upload_overrides = array( 'test_form' => false, 'mimes' => array('zip'=>'application/zip','eps'=>'application/postscript','ai' => 'application/postscript','jpg|jpeg|jpe' => 'image/jpeg','gif' => 'image/gif','png' => 'image/png','bmp' => 'image/bmp','pdf'=>'text/pdf','doc'=>'application/msword','docx'=>'application/msword','xlsx'=>'application/msexcel') );
-        $mime_type = array(
-	// Image formats
-	'jpg|jpeg|jpe'                 => 'image/jpeg',
-	'gif'                          => 'image/gif',
-	'png'                          => 'image/png',
-	'bmp'                          => 'image/bmp',
-	'tif|tiff'                     => 'image/tiff',
-	'ico'                          => 'image/x-icon',
-        'eps'                          => 'application/postscript',
-        'ai'                           =>  'application/postscript',
-	// Video formats
-	'asf|asx'                      => 'video/x-ms-asf',
-	'wmv'                          => 'video/x-ms-wmv',
-	'wmx'                          => 'video/x-ms-wmx',
-	'wm'                           => 'video/x-ms-wm',
-	'avi'                          => 'video/avi',
-	'divx'                         => 'video/divx',
-	'flv'                          => 'video/x-flv',
-	'mov|qt'                       => 'video/quicktime',
-	'mpeg|mpg|mpe'                 => 'video/mpeg',
-	'mp4|m4v'                      => 'video/mp4',
-	'ogv'                          => 'video/ogg',
-	'webm'                         => 'video/webm',
-	'mkv'                          => 'video/x-matroska',
-	
-	// Text formats
-	'txt|asc|c|cc|h'               => 'text/plain',
-	'csv'                          => 'text/csv',
-	'tsv'                          => 'text/tab-separated-values',
-	'ics'                          => 'text/calendar',
-	'rtx'                          => 'text/richtext',
-	'css'                          => 'text/css',
-	'htm|html'                     => 'text/html',
-	
-	// Audio formats
-	'mp3|m4a|m4b'                  => 'audio/mpeg',
-	'ra|ram'                       => 'audio/x-realaudio',
-	'wav'                          => 'audio/wav',
-	'ogg|oga'                      => 'audio/ogg',
-	'mid|midi'                     => 'audio/midi',
-	'wma'                          => 'audio/x-ms-wma',
-	'wax'                          => 'audio/x-ms-wax',
-	'mka'                          => 'audio/x-matroska',
-	
-	// Misc application formats
-	'rtf'                          => 'application/rtf',
-	'js'                           => 'application/javascript',
-	'pdf'                          => 'application/pdf',
-	'swf'                          => 'application/x-shockwave-flash',
-	'class'                        => 'application/java',
-	'tar'                          => 'application/x-tar',
-	'zip'                          => 'application/zip',
-	'gz|gzip'                      => 'application/x-gzip',
-	'rar'                          => 'application/rar',
-	'7z'                           => 'application/x-7z-compressed',
-	'exe'                          => 'application/x-msdownload',
-	
-	// MS Office formats
-	'doc'                          => 'application/msword',
-	'pot|pps|ppt'                  => 'application/vnd.ms-powerpoint',
-	'wri'                          => 'application/vnd.ms-write',
-	'xla|xls|xlt|xlw'              => 'application/vnd.ms-excel',
-	'mdb'                          => 'application/vnd.ms-access',
-	'mpp'                          => 'application/vnd.ms-project',
-	'docx'                         => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-	'docm'                         => 'application/vnd.ms-word.document.macroEnabled.12',
-	'dotx'                         => 'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
-	'dotm'                         => 'application/vnd.ms-word.template.macroEnabled.12',
-	'xlsx'                         => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-	'xlsm'                         => 'application/vnd.ms-excel.sheet.macroEnabled.12',
-	'xlsb'                         => 'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
-	'xltx'                         => 'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
-	'xltm'                         => 'application/vnd.ms-excel.template.macroEnabled.12',
-	'xlam'                         => 'application/vnd.ms-excel.addin.macroEnabled.12',
-	'pptx'                         => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-	'pptm'                         => 'application/vnd.ms-powerpoint.presentation.macroEnabled.12',
-	'ppsx'                         => 'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
-	'ppsm'                         => 'application/vnd.ms-powerpoint.slideshow.macroEnabled.12',
-	'potx'                         => 'application/vnd.openxmlformats-officedocument.presentationml.template',
-	'potm'                         => 'application/vnd.ms-powerpoint.template.macroEnabled.12',
-	'ppam'                         => 'application/vnd.ms-powerpoint.addin.macroEnabled.12',
-	'sldx'                         => 'application/vnd.openxmlformats-officedocument.presentationml.slide',
-	'sldm'                         => 'application/vnd.ms-powerpoint.slide.macroEnabled.12',
-	'onetoc|onetoc2|onetmp|onepkg' => 'application/onenote',
-	
-	// OpenOffice formats
-	'odt'                          => 'application/vnd.oasis.opendocument.text',
-	'odp'                          => 'application/vnd.oasis.opendocument.presentation',
-	'ods'                          => 'application/vnd.oasis.opendocument.spreadsheet',
-	'odg'                          => 'application/vnd.oasis.opendocument.graphics',
-	'odc'                          => 'application/vnd.oasis.opendocument.chart',
-	'odb'                          => 'application/vnd.oasis.opendocument.database',
-	'odf'                          => 'application/vnd.oasis.opendocument.formula',
-	
-	// WordPerfect formats
-	'wp|wpd'                       => 'application/wordperfect',
-	
-	// iWork formats
-	'key'                          => 'application/vnd.apple.keynote',
-	'numbers'                      => 'application/vnd.apple.numbers',
-	'pages'                        => 'application/vnd.apple.pages',
-        );
-        
-        
-        
-        $upload_overrides = array( 'test_form' => false,'mimes' =>$mime_type);    
-        
-        
-        $movefile = wp_handle_upload( $updatevalue, $upload_overrides );
+            $upload_overrides = array( 'test_form' => false, 'mimes' => array('zip'=>'application/zip','eps'=>'application/postscript','ai' => 'application/postscript','jpg|jpeg|jpe' => 'image/jpeg','gif' => 'image/gif','png' => 'image/png','bmp' => 'image/bmp','pdf'=>'text/pdf','doc'=>'application/msword','docx'=>'application/msword','xlsx'=>'application/msexcel') );
+            $movefile = wp_handle_upload( $updatevalue, $upload_overrides );
         if(!empty($movefile['file'])){
           
             return $movefile['url'];
@@ -1603,7 +1814,7 @@ function bulk_import_user_file($updatevalue){
 
 
 
-function getReportsdatanew($report_name){
+function getReportsdatanew($report_name,$usertimezone){
     
   
     if($report_name != "defult"){
@@ -1625,10 +1836,11 @@ function getReportsdatanew($report_name){
    
 
     global $wpdb;
+    global $wp_roles;
     $tasklable = $_POST['tasklabel'];
     $taskestatus = $_POST['taskestatus'];
     $sponsorrole = $_POST['sponsorrole'];
-
+    $all_roles = $wp_roles->get_names();
    
     $query = "SELECT DISTINCT user_id
     FROM " . $wpdb->usermeta;
@@ -1639,10 +1851,8 @@ function getReportsdatanew($report_name){
     $table_head = $wpdb->get_results($query_th);
    
 
-//first get a list of all meta keys
 
-
-    $k = 10;
+      $k = 13;
     $unique_id=0;
     $showhideMYFieldsArray = array();
      $Rname = "";
@@ -1744,6 +1954,10 @@ function getReportsdatanew($report_name){
     $showhideMYFieldsArray['Email'] = array('index' => 8, 'type' => 'string','unique' => true, 'hidden' => $Remail_show,'friendly'=> "Email",'filter'=>$Remail);
     $showhideMYFieldsArray['convo_welcomeemail_datetime'] = array('index' => 9, 'type' => 'date','unique' => true, 'hidden' => $welcomeemail_show,'friendly'=> "Welcome Email Sent On",'filter'=>$welcomeemail);
     
+    $showhideMYFieldsArray['exhibitor_map_dynamics_ID'] = array('index' => 10, 'type' => 'string','unique' => true, 'hidden' => $mapdynamicsid_show,'friendly'=> "Floorplan ID",'filter'=>$mapdynamicsid);
+    $showhideMYFieldsArray['user_profile_url'] = array('index' => 11, 'type' => 'string','unique' => true, 'hidden' => $companylogourl_show,'friendly'=> "User Company Logo Url",'filter'=>$companylogourl);
+    $showhideMYFieldsArray['wp_user_id'] = array('index' => 12, 'type' => 'string','unique' => true, 'hidden' => $userID_show,'friendly'=> "User ID",'filter'=>$userID);
+    
     
    // uasort($get_keys_array_result['profile_fields'], "cmp2");
     foreach ($result_task_array_list['profile_fields'] as $profile_field_name => $profile_field_settings) {
@@ -1839,31 +2053,49 @@ function getReportsdatanew($report_name){
 
         
         
-   foreach ($result_user_id as $aid) {
+       
+          
+  foreach ($result_user_id as $aid) {
 
 
+        //$user_data = get_userdata($aid->user_id);
+       
+      //echo  $aid['wp_user_login_date_time'].'<br>';
       $user_data = get_userdata($aid->user_id);
       $all_meta_for_user = get_user_meta($aid->user_id);
-      if(!empty($all_meta_for_user)){ 
-      if (!in_array("administrator", $user_data->roles)) {
       
+  
       
-            
-        
+ if(!empty($all_meta_for_user) && !in_array("administrator", $user_data->roles)){ 
+     
+     
+           //echo '<pre>';
+     //print_r($all_meta_for_user);exit;
+     
+   if (!empty($all_meta_for_user['wp_user_login_date_time'][0])) {
+
        
-        if (!empty($all_meta_for_user['wp_user_login_date_time'][0])) {
-
-
-            $login_date_time = date('d-M-Y H:i:s', $all_meta_for_user['wp_user_login_date_time'][0]);
-            $timestamp = strtotime($login_date_time) * 1000;
+            $login_date = date('d-M-Y H:i:s', $all_meta_for_user['wp_user_login_date_time'][0]);
+           // echo strtotime($login_date_time);exit;
+            if($usertimezone > 0){
+                $login_date_time = (new DateTime($login_date))->sub(new DateInterval('PT'.abs($usertimezone).'H'))->format('d-M-Y H:i:s');
+            }else{
+                $login_date_time = (new DateTime($login_date))->add(new DateInterval('PT'.abs($usertimezone).'H'))->format('d-M-Y H:i:s');
+                
+            }
+            $timestamp = strtotime($login_date_time) *1000 ;
+           // echo $timestamp; 
+           // echo date('m/d/Y H:i:s', $timestamp);exit;
+            
         } else {
             $timestamp = "";
         }
+      
        $company_name = $all_meta_for_user['company_name'][0];
        $myNewArray['action_edit_delete'] = '<p style="width:83px !important;"><a href="/edit-user/?sponsorid='.$aid->user_id.'" title="Edit User Profile"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-pencil-square-o" style="color:#262626;"></i></span></a><a style="margin-left: 10px;" href="/edit-sponsor-task/?sponsorid='.$aid->user_id.'" title="User Tasks"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-th-list" style="color:#262626;"></i></span></a><a onclick="view_profile(this)" id="'.$unique_id.'" name="viewprofile"  style="cursor: pointer;color:red;margin-left: 10px;" title="View Profile" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-eye" style="color:#262626;"></i></a><a onclick="delete_sponsor_meta(this)" id="'.$aid->user_id.'" name="delete-sponsor"  style="cursor: pointer;color:red;margin-left: 10px;" title="Remove User" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-times-circle" style="color:#262626;"></i></a></p>';
-	   
-       $unique_id++;
-     
+
+        $unique_id++;
+	   	
     
         $myNewArray['company_name'] = $company_name;
         $myNewArray['Role'] = ucwords($user_data->roles[0]);
@@ -1873,10 +2105,12 @@ function getReportsdatanew($report_name){
         $myNewArray['last_name'] = $user_data->last_name;
         $myNewArray['sponsor_name'] = $user_data->display_name;
         $myNewArray['Email'] = $user_data->user_email;
-        $myNewArray['convo_welcomeemail_datetime'] = $user_data->convo_welcomeemail_datetime;
+        $myNewArray['convo_welcomeemail_datetime'] =  $user_data->convo_welcomeemail_datetime;
+        $myNewArray['exhibitor_map_dynamics_ID'] = $all_meta_for_user['exhibitor_map_dynamics_ID'][0];
+        $myNewArray['user_profile_url'] = $all_meta_for_user['user_profile_url'][0];
+        $myNewArray['wp_user_id'] = $aid->user_id;
        
-        // echo $login_date_time; 
-
+       
         
         
   //uasort($get_keys_array_result['profile_fields'], "cmp2");
@@ -1896,17 +2130,35 @@ function getReportsdatanew($report_name){
                     } else {
                         $myNewArray[$profile_field_name] = '';
                     }
-                    if(!empty($all_meta_for_user[$profile_field_name.'_datetime'][0])){
-                            if (strpos($all_meta_for_user[$profile_field_name.'_datetime'][0], 'AM') !== false) {
+                    if (!empty($all_meta_for_user[$profile_field_name . '_datetime'][0])) {
+                        if (strpos($all_meta_for_user[$profile_field_name . '_datetime'][0], 'AM') !== false) {
+                            
 
-                                $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name.'_datetime'][0]);
-                                 $datemy = strtotime($datevalue) * 1000;
+                            $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
                             } else {
-                                $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name.'_datetime'][0]);
-                                $datemy = strtotime($datevalue) * 1000;
-                            }}else{
-                                $datemy="";
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
                             }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                            
+                            
+                        } else {
+                            $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            } else {
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                        }
+                    } else {
+                        $datemy = "";
+                    }
                     $myNewArray[$profile_field_name.'_datetime'] =$datemy;
                     $myNewArray[$profile_field_name.'_status'] = $all_meta_for_user[$profile_field_name.'_status'][0];
                     
@@ -1925,21 +2177,40 @@ function getReportsdatanew($report_name){
                       if ($profile_field_settings['type'] == 'text') {
                              
 
-                            $myNewArray[$profile_field_name] = $all_meta_for_user[$profile_field_name][0];
-                             if (!empty($all_meta_for_user[$profile_field_name . '_datetime'][0])) {
+                        $myNewArray[$profile_field_name] = $all_meta_for_user[$profile_field_name][0];
+                        if (!empty($all_meta_for_user[$profile_field_name . '_datetime'][0])) {
                             if (strpos($all_meta_for_user[$profile_field_name . '_datetime'][0], 'AM') !== false) {
+                            
 
-                                $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
-                                $datemy = strtotime($datevalue) * 1000;
+                            $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
                             } else {
-                                $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
-                                $datemy = strtotime($datevalue) * 1000;
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
                             }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                            
+                            
                         } else {
-                            $datemy = "";
+                            $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            } else {
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
                         }
-                        $myNewArray[$profile_field_name . '_datetime'] = $datemy;
+                    } else {
+                        $datemy = "";
+                    }
+                            $myNewArray[$profile_field_name . '_datetime'] = $datemy;
                             $myNewArray[$profile_field_name . '_status'] = $all_meta_for_user[$profile_field_name . '_status'][0];
+                            
+                            
                         if ($all_meta_for_user[$profile_field_name . '_status'][0] == "Pending") {
                             $myNewArray[$profile_field_name . '_statusCls'] = "red";
                         } else if ($all_meta_for_user[$profile_field_name . '_status'][0] == "Complete") {
@@ -1953,17 +2224,35 @@ function getReportsdatanew($report_name){
                         else if ($profile_field_settings['type'] == 'textarea') {
 
                             $myNewArray[$profile_field_name] =  $all_meta_for_user[$profile_field_name][0];
-                            if(!empty($all_meta_for_user[$profile_field_name.'_datetime'][0])){
-                                if (strpos($all_meta_for_user[$profile_field_name.'_datetime'][0], 'AM') !== false) {
+                            if (!empty($all_meta_for_user[$profile_field_name . '_datetime'][0])) {
+                        if (strpos($all_meta_for_user[$profile_field_name . '_datetime'][0], 'AM') !== false) {
+                            
 
-                                 $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name.'_datetime'][0]);
-                                 $datemy = strtotime($datevalue) * 1000;
+                            $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
                             } else {
-                                $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name.'_datetime'][0]);
-                                $datemy = strtotime($datevalue) * 1000;
-                            }}else{
-                                $datemy="";
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
                             }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                            
+                            
+                        } else {
+                            $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            } else {
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                        }
+                    } else {
+                        $datemy = "";
+                    }
                             $myNewArray[$profile_field_name.'_datetime'] =$datemy;
                             $myNewArray[$profile_field_name.'_status'] = $all_meta_for_user[$profile_field_name.'_status'][0];
                             if ($all_meta_for_user[$profile_field_name.'_status'][0] == "Pending") {
@@ -1982,41 +2271,36 @@ function getReportsdatanew($report_name){
                         else if ($profile_field_settings['type'] == 'select') {
 
                             $myNewArray[$profile_field_name] =  $all_meta_for_user[$profile_field_name][0];
-                          if(!empty($all_meta_for_user[$profile_field_name.'_datetime'])){
-                                if (strpos($all_meta_for_user[$profile_field_name.'_datetime'][0], 'AM') !== false) {
+                          
+                           if (!empty($all_meta_for_user[$profile_field_name . '_datetime'][0])) {
+                        if (strpos($all_meta_for_user[$profile_field_name . '_datetime'][0], 'AM') !== false) {
+                            
 
-                                 $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name.'_datetime'][0]);
-                                 $datemy = strtotime($datevalue) * 1000;
+                            $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
                             } else {
-                                $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name.'_datetime'][0]);
-                                $datemy = strtotime($datevalue) * 1000;
-                            }}else{
-                                $datemy="";
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
                             }
-                            $myNewArray[$profile_field_name.'_datetime'] =$datemy;
-                            $myNewArray[$profile_field_name.'_status'] = $all_meta_for_user[$profile_field_name.'_status'][0];
-                            if($all_meta_for_user[$profile_field_name][0] == "Pending"){
-                                $myNewArray[$profile_field_name.'Cls'] =  "red";
-                            }else if($all_meta_for_user[$profile_field_name][0] == "Complete"){
-                                $myNewArray[$profile_field_name.'Cls'] =  "green";
-                            }else{
-                                $myNewArray[$profile_field_name.'Cls'] =  "blue";
-                            }
-                            //$newarray[$new]=$all_meta_for_user[$profile_field_name][0];
-                            // $new++;
-                        }  else if ($profile_field_settings['type'] == 'select-2') {
-                            $myNewArray[$profile_field_name] =  $all_meta_for_user[$profile_field_name][0];
-                            if(!empty($all_meta_for_user[$profile_field_name.'_datetime'][0])){
-                                if (strpos($all_meta_for_user[$profile_field_name.'_datetime'][0], 'AM') !== false) {
-
-                                 $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name.'_datetime'][0]);
-                                 $datemy = strtotime($datevalue) * 1000;
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                            
+                            
+                        } else {
+                            $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
                             } else {
-                                $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name.'_datetime'][0]);
-                                $datemy = strtotime($datevalue) * 1000;
-                            }}else{
-                                $datemy="";
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
                             }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                        }
+                    } else {
+                        $datemy = "";
+                    }
                             $myNewArray[$profile_field_name.'_datetime'] =$datemy;
                             $myNewArray[$profile_field_name.'_status'] = $all_meta_for_user[$profile_field_name.'_status'][0];
                             if ($all_meta_for_user[$profile_field_name.'_status'][0] == "Pending") {
@@ -2027,23 +2311,86 @@ function getReportsdatanew($report_name){
                                 $myNewArray[$profile_field_name.'_statusCls'] = "blue";
                             }
                           
-                        }else {
+                            //$newarray[$new]=$all_meta_for_user[$profile_field_name][0];
+                            // $new++;
+                        }  
+                        else if ($profile_field_settings['type'] == 'select-2') {
+                            $myNewArray[$profile_field_name] =  $all_meta_for_user[$profile_field_name][0];
+                            if (!empty($all_meta_for_user[$profile_field_name . '_datetime'][0])) {
+                        if (strpos($all_meta_for_user[$profile_field_name . '_datetime'][0], 'AM') !== false) {
+                            
+
+                            $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            } else {
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                            
+                            
+                        } else {
+                            $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            } else {
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                        }
+                    } else {
+                        $datemy = "";
+                    }
+                            $myNewArray[$profile_field_name.'_datetime'] =$datemy;
+                            $myNewArray[$profile_field_name.'_status'] = $all_meta_for_user[$profile_field_name.'_status'][0];
+                            if ($all_meta_for_user[$profile_field_name.'_status'][0] == "Pending") {
+                                $myNewArray[$profile_field_name . '_statusCls'] = "red";
+                            } else if ($all_meta_for_user[$profile_field_name.'_status'][0] == "Complete") {
+                                $myNewArray[$profile_field_name . '_statusCls'] = "green";
+                            } else {
+                                $myNewArray[$profile_field_name.'_statusCls'] = "blue";
+                            }
+                          
+                        }
+                        else {
                            
 
                             $myNewArray[$profile_field_name] = $all_meta_for_user[$profile_field_name][0];
-                            if(!empty($all_meta_for_user[$profile_field_name.'_datetime'][0])){
-                                if (strpos($all_meta_for_user[$profile_field_name.'_datetime'][0], 'AM') !== false) {
+                            if (!empty($all_meta_for_user[$profile_field_name . '_datetime'][0])) {
+                        if (strpos($all_meta_for_user[$profile_field_name . '_datetime'][0], 'AM') !== false) {
+                            
 
-                                 $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name.'_datetime'][0]);
-                                 $datemy = strtotime($datevalue) * 1000;
+                            $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
                             } else {
-                                $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name.'_datetime'][0]);
-                                $datemy = strtotime($datevalue) * 1000;
-                            }}else{
-                                $datemy="";
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
                             }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                            
+                            
+                        } else {
+                            $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            } else {
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                        }
+                    } else {
+                        $datemy = "";
+                    }
                             $myNewArray[$profile_field_name.'_datetime'] =$datemy;
-                            $myNewArray[$profile_field_name.'_status'] = $all_meta_for_user[$profile_field_name.'_status'][0];
+                             $myNewArray[$profile_field_name.'_status'] = $all_meta_for_user[$profile_field_name.'_status'][0];
                             if ($all_meta_for_user[$profile_field_name.'_status'][0] == "Pending") {
                                 $myNewArray[$profile_field_name . '_statusCls'] = "red";
                             } else if ($all_meta_for_user[$profile_field_name.'_status'][0] == "Complete") {
@@ -2063,16 +2410,13 @@ function getReportsdatanew($report_name){
         $allMetaForAllUsers[$zee] = $myNewArray;
        // echo $zee.'<br>';
         $zee++;
-    }
- }else{
+   
+   }else{
+    
+       contentmanagerlogging('Load Report Data',"Admin Action",serialize($aid->user_id),$user_ID,$user_info->user_email,$aid->user_id );
      
-      contentmanagerlogging('Load Report Data',"Admin Action",serialize($aid->user_id),$user_ID,$user_info->user_email,$aid->user_id );
-     
- }
- 
+ }    
 }
-
-
 
 
 
@@ -2088,6 +2432,7 @@ function getReportsdatanew($report_name){
     $settings['Currentadminemail'] =$current_admin_email;
     $settings['sitename'] =$sitename;
     $settings['eventdate'] =$eventdate;
+    
     
      
   //  echo '<pre>';
@@ -2216,14 +2561,17 @@ function my_plugin_activate() {
   $create_pages_list[15]['temp'] = 'temp/settings-template.php';
   
   
-  $create_pages_list[15]['title'] = 'Tasks';
-  $create_pages_list[15]['name'] = 'tasks';
-  $create_pages_list[15]['temp'] = 'temp/sponsor-task-update-template.php';
+  $create_pages_list[16]['title'] = 'Tasks';
+  $create_pages_list[16]['name'] = 'tasks';
+  $create_pages_list[16]['temp'] = 'temp/sponsor-task-update-template.php';
   
-  $create_pages_list[15]['title'] = 'Bulk Import Users';
-  $create_pages_list[15]['name'] = 'tasks';
-  $create_pages_list[15]['temp'] = 'temp/bulkuser_import.php';
+  $create_pages_list[17]['title'] = 'Bulk Import Users';
+  $create_pages_list[17]['name'] = 'bulk-import-user';
+  $create_pages_list[17]['temp'] = 'temp/bulkuser_import.php';
   
+  $create_pages_list[18]['title'] = 'Sync to Floorplan';
+  $create_pages_list[18]['name'] = 'sync-to-floorplan';
+  $create_pages_list[18]['temp'] = 'temp/sync_to_floorplan.php';
  
   foreach($create_pages_list as $key=>$value){
       
@@ -2262,7 +2610,7 @@ function my_plugin_activate() {
     $task_input_type[0]['type'] = 'none';
     $task_input_type[1]['lable'] = 'Text';
     $task_input_type[1]['type'] = 'text';
-    $task_input_type[2]['lable'] = 'Link';
+    $task_input_type[2]['lable'] = 'Display Link';
     $task_input_type[2]['type'] = 'link';
     $task_input_type[3]['lable'] = 'Date';
     $task_input_type[3]['type'] = 'date';
@@ -2278,7 +2626,7 @@ function my_plugin_activate() {
     $task_input_type[8]['type'] = 'color';
     $task_input_type[9]['lable'] = 'Text Area';
     $task_input_type[9]['type'] = 'textarea';
-    $task_input_type[10]['lable'] = 'Coming soon';
+    $task_input_type[10]['lable'] = 'Display Coming soon';
     $task_input_type[10]['type'] = 'comingsoon';
     
     
@@ -2361,6 +2709,8 @@ function updatecmanagersettings($object_data){
     $eventdate = $object_data['eventdate'];
     $formemail = $object_data['formemail'];
     $mandrill = $object_data['mandrill'];
+    $mapapikey = $object_data['mapapikey'];
+    $mapsecretkey = $object_data['mapsecretkey'];
    
     $addresspoints = $object_data['addresspoints'];
     
@@ -2390,6 +2740,8 @@ function updatecmanagersettings($object_data){
     $oldvalues['ContentManager']['mandrill']=$mandrill;
     $oldvalues['ContentManager']['addresspoints']=$addresspoints;
     $oldvalues['ContentManager']['adminsitelogo']=$object_data['adminsitelogourl'];
+    $oldvalues['ContentManager']['mapapikey']=$mapapikey;
+    $oldvalues['ContentManager']['mapsecretkey']=$mapsecretkey;
     
     $result=update_option('ContenteManager_Settings', $oldvalues);
     
@@ -2447,8 +2799,8 @@ function excludes_sponsor_meta(){
      $eventdate = $oldvalues['ContentManager']['eventdate'];
      $formemail = $oldvalues['ContentManager']['formemail'];
      $mandrill = $oldvalues['ContentManager']['mandrill'];
-     $infocontent = $oldvalues['ContentManager']['infocontent'];
-     $addresspoints = $oldvalues['ContentManager']['addresspoints'];
+     $mapapikey = $oldvalues['ContentManager']['mapapikey'];
+     $mapsecretkey = $oldvalues['ContentManager']['mapsecretkey'];
      $adminsitelogo = $oldvalues['ContentManager']['adminsitelogo'];
       
      //echo'<pre>';
@@ -2507,10 +2859,15 @@ function excludes_sponsor_meta(){
        </tr>
         <tr><td><h4>Event Address</h4></td>
 
+        <tr><td><h4>Map Dynamics API Key</h4></td>
+ 
+        <td><input type="text" name="mapapikey"  id="mapapikey" value='.$mapapikey.'></td>
+       </tr>
+        <tr><td><h4>Map Dynamics Secret Key</h4></td>
+
         <td>
-        <input type="text" name="addresspoints"  id="addresspoints" value='.$addresspoints.'>
-<p>Add your address to the location you wish to show on the map.</br>If the location is off, please try to use long/lat coordinates with latlng=. ex: latlng=12.381068,-1.492711. </p>
-         
+        <input type="text" name="mapsecretkey"  id="mapsecretkey" value='.$mapsecretkey.'>
+       
 </td>
        </tr>
        <tr>
@@ -2606,7 +2963,12 @@ class ContentManager {
                          'temp/user_change_password_template.php'     => 'User Change Password',
                          'temp/settings-template.php'     => 'Admin Settings',
                          'temp/bulkuser_import.php'     => 'Bulk Import Users',
-                         'temp/sponsor-task-update-template.php'=>'Sponsor Task Update'
+                         'temp/sponsor-task-update-template.php'=>'Sponsor Task Update',
+                         'temp/sync_to_floorplan.php'=>'Sync to Floorplan',
+                         'temp/bulk_edit_task.php'=>'Bulk Edit Task',
+                         'temp/bulk_edit_task_list.php'=>'Bulk Edit Task List view',
+                         'temp/managerole_assignment.php'=>'Role Assignment'
+                    
                     
                 );
 				
@@ -2977,7 +3339,7 @@ function gettaskduesoon(){
          if (strpos($value['label'], 'Status') !== false || strpos($value['label'], 'Date-Time') !== false) {
             
         }else{
-             $arrDates[] = array($value['label']=>$value['attrs']);
+             $arrDates[] = array($key=>$value['attrs']);
         }
         
         } 
@@ -2987,13 +3349,16 @@ function gettaskduesoon(){
  $flat =array_reduce($arrDates, 'array_merge', array());
  uasort($flat, "cmp");
  $duetaskcount= 0;
+ 
+
+ 
     foreach ($flat as $index=>$taskdate){
      
        $time = strtotime($taskdate);
        $currenttime = strtotime(date('Y-m-d'));                                      //echo $index;
                                               //  echo $taskdate;
     if($time>= $currenttime) {                                         
-    $html_task_due_soon .= '<tr><td>'.$index.'</td><td nowrap align="center"><span class="semibold">'.$taskdate.'</span></td></tr>';
+    $html_task_due_soon .= '<tr><td>'.$result['profile_fields'][$index]['label'].'</td><td nowrap align="center"><span class="semibold">'.$taskdate.'</span></td></tr>';
     $duetaskcount++;
     }                  
                                                
@@ -3510,9 +3875,105 @@ function specialtext_shortcode( $atts, $content = null ) {
 }
 add_shortcode( 'specialtext', 'specialtext_shortcode' );
 
+
+function auth_with_map_dynamics($request_call){
+    
+    $oldvalues = get_option( 'ContenteManager_Settings' );
+    $mapapikey = $oldvalues['ContentManager']['mapapikey'];
+    $mapsecretkey = $oldvalues['ContentManager']['mapsecretkey'];
+    $access_hash = md5($mapsecretkey.$request_call);
+    
+    //ASSEMBLE THE POST VALUES ARRAY
+    $post_values = array('key'=>$mapapikey, 'access_hash'=>$access_hash, 'call'=>$request_call, 'format'=>'json');
+    
+    $ch = curl_init('http://api.map-dynamics.com/services/auth/');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_values);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    $results = json_decode($result);
+   
+    if($results->status == 'success'){
+        
+        $output  =  $results->results->hash;
+        
+    }else{
+        
+       $output  = 'error'; 
+        
+    }
+    
+   return $output;
+    
+}
+
+
+
+function insert_exhibitor_map_dynamics($data_array){
+    
+    
+    $hsah = auth_with_map_dynamics('exhibitors/insert');
+    $oldvalues = get_option( 'ContenteManager_Settings' );
+    $mapapikey = $oldvalues['ContentManager']['mapapikey'];
+    $mapsecretkey = $oldvalues['ContentManager']['mapsecretkey'];
+    $post_values = array('key'=>$mapapikey, 'call'=>'exhibitors/insert', 'hash'=>$hsah, 'format'=>'json');
+    
+    
+    $dataarray =  array_merge($post_values, $data_array);
+    //echo '<pre>';
+   // print_r($dataarray);
+    
+   // exit;
+  
+    $ch = curl_init('http://api.map-dynamics.com/services/exhibitors/insert/');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $dataarray);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    $results = json_decode($result);
+    
+     
+    return $results;
+    
+    
+    
+    
+}
+
+function update_exhibitor_map_dynamics($data_array){
+    
+    
+    $hsah = auth_with_map_dynamics('exhibitors/update');
+    $oldvalues = get_option( 'ContenteManager_Settings' );
+    $mapapikey = $oldvalues['ContentManager']['mapapikey'];
+    $mapsecretkey = $oldvalues['ContentManager']['mapsecretkey'];
+    $post_values = array('key'=>$mapapikey, 'call'=>'exhibitors/update' ,'hash'=>$hsah, 'format'=>'json');
+    $dataarray = array_merge($post_values, $data_array);
+    
+   // echo '<pre>';
+   // print_r($dataarray);
+    
+    //exit;
+    
+    
+    $ch = curl_init('http://api.map-dynamics.com/services/exhibitors/update/');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $dataarray);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    $results = json_decode($result);
+    
+     
+    return $results;
+    
+    
+    
+    
+}
 // auto upload plugin from github
 
 include_once('updater.php');
+
 
 if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
         $config = array(
@@ -3530,6 +3991,7 @@ if (is_admin()) { // note the use of is_admin() to double check that this is hap
         );
         new WP_GitHub_Updater($config);
     }
+
 
 
 

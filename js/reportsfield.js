@@ -73,13 +73,16 @@ function reportUpdateFilter(){
 }
 function reportload(reportname){
 
-
-  jQuery("body").css({'cursor':'wait'});
+ var curdate = new Date()
+ var usertimezone = curdate.getTimezoneOffset()/60;
+ console.log(usertimezone);
+ jQuery("body").css({'cursor':'wait'});
  var data = new FormData();
  var url = window.location.protocol + "//" + window.location.host + "/";
         
        var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getReportsdatanew';
         data.append('reportName', reportname);
+        data.append('usertimezone', usertimezone);
         
        
          jQuery.ajax({
@@ -396,7 +399,7 @@ function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
 
 
     var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
-
+    console.log(JSON.stringify(arrData['cols']));
     var CSV = '';
    
     var d = new Date(ReportTitle);
@@ -429,6 +432,7 @@ function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
    
     data.append('rows',   JSON.stringify(arrData['rows']));
     data.append('cols',   JSON.stringify(arrData['cols']));
+    
     data.append('reportname',   fileName);
   
     var mapForm = document.createElement("form");
@@ -650,12 +654,11 @@ function taskstatusdrawChart(drawchartstatus) {
  var pendingcountdata = [];
  var complatecountdata = [];
  var emptycountdata = [];
- var divheight = 645;
    google.charts.load('current', {'packages': ['gauge']});
     google.charts.setOnLoadCallback(activeusergaugechart);
  //mapdata.push(['Genre', 'Complete', 'Pending', 'Empty', {role: 'annotation'}]);
  statscolcount=0;
-console.log(drawchartstatus.length);
+
   
   
  for (var index in drawchartstatus['cols']) {
@@ -667,8 +670,7 @@ console.log(drawchartstatus.length);
            
             
             if (colvalue.indexOf("status") !=-1) {
-                
-             
+              
                var resultmy = _.pluck(drawchartstatus['rows'], colvalue);
                var countresult = _.countBy(resultmy);
              
@@ -688,11 +690,6 @@ console.log(drawchartstatus.length);
                    var pendingcount = countresult.null;
                }
               
-              if(statscolcount > 35 ){
-                   divheight = divheight + 15;
-                  
-                   jQuery("#attendee_totalamount_chart").css({"overflow-y" : "scroll"});
-              }
                 statscolcount++;
                
                 complatecountdata.push(completecount);
@@ -714,7 +711,7 @@ console.log(drawchartstatus.length);
     jQuery('#attendee_totalamount_chart').highcharts({
         chart: {
             type: 'bar',
-            height :divheight,
+            height :650,
             style: {
             fontFamily: "Signika, serif",
             color: '#6e6e70'
@@ -762,12 +759,12 @@ console.log(drawchartstatus.length);
       enabled: false
   },
          series: mapdata,//[{
-            //name: 'Pending',
-           // data: [5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2]
-        //}, {
-           // name: 'Complate',
-          //  data: [2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2,2,5, 3, 4, 7, 2]
-        //}]
+          //  name: 'Pending',
+          //  data: [5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2]
+       // }, {
+        //    name: 'Complate',
+       //     data: [2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1]
+       // }]
     });
  
     
@@ -917,7 +914,7 @@ function view_profile(elem){
          if(allRows['rows'][idsponsor][i] == null){
              allRows['rows'][idsponsor][i]="";
          }    
-         tablehtml  +=  '<tr><td style="text-align:right;width:50%;"><b>'+obj[i]['friendly']+'</b></td><td style="width:50%;">'+allRows['rows'][idsponsor][i]+'</td></tr>';
+         tablehtml  +=  '<tr><td style="text-align:right;width:50%;"><b>'+obj[i]['friendly']+'</b></td><td style="width:50%;">'+stripSlashesspecial(allRows['rows'][idsponsor][i])+'</td></tr>';
          
          }
      }
@@ -1083,9 +1080,19 @@ var usercount = drawchartstatus['rows'].length;
                 }
         },
         tooltip: {
-             pointFormat: '{series.name}: <b>{point.y}</b>'
+             pointFormat: '{series.name}: <b>{point.name}</b>'
         },
         plotOptions: {
+            series: {
+            cursor: 'pointer',
+            point: {
+                events: {
+                    click: function() {
+                        location.href = '/role-assignment/?rolename='+this.name;
+                    }
+                }
+            }
+            },
             pie: {
                 dataLabels: {
                     enabled: true,

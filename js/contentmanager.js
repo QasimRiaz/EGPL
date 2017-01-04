@@ -58,13 +58,13 @@ jQuery('textarea').keyup(function() {
   jQuery('#chars_'+textareaid).text(length);
   if(length == 0){
      // alert('.');
-      swal({
-					title: "Warning",
-					text: "You have exceeded the character limit. The extra text has been removed', 'Character limit exceeded",
-					type: "warning",
-					confirmButtonClass: "btn-warning",
-					confirmButtonText: "Ok"
-				});
+        swal({
+            title: "Warning",
+            text: "You have exceeded the character limit. The extra text has been removed', 'Character limit exceeded",
+            type: "warning",
+            confirmButtonClass: "btn-warning",
+            confirmButtonText: "Ok"
+        });
   
 //jQuery( "#dialog" ).dialog();
   }
@@ -91,7 +91,139 @@ jQuery(function() {
      //jQuery( "#datepickerr" ).datepicker();
     
   });
+function calltoinsertorupdateuser_confrim(){
+    
+    swal({
+        title: "Are you sure?",
+        text: 'you want to start the sync process? It may take a few minutes depending on the size of data.',
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-success",
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+        closeOnConfirm: true,
+        closeOnCancel: true
+    },
+            function (isConfirm) {
 
+
+
+                if (isConfirm) {
+                    var Sname = calltoinsertorupdateuser();
+                   
+                } else {
+                   
+                }
+            });
+
+}
+
+
+function calltoinsertorupdateuser(){
+                       
+    
+    
+    var userids =  [];
+    var url = window.location.protocol + "//" + window.location.host + "/";
+    var syncurl = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=insertmapdynamicsuser';
+    var statustable ="";
+    statustable +='<table id="syncuserstatustable" class="display" cellspacing="0" width="100%"><thead><tr><th>Email</th><th>Company Name</th><th>Status</th><th>Result</th><th>Floor plan Exhibitor ID</th></tr></thead><tbody id="syncuserdata">';
+    var data = new FormData();
+    jQuery('#prog').progressbar({ value: 0 });
+    jQuery("body").css({'cursor':'wait'});                
+    jQuery('.useridarray').map(function() {
+            userids.push(jQuery(this).val());
+    });
+     jQuery("#starttosync").hide();
+     jQuery(".result").show();
+    var progresscountsize = Math.ceil(100 / userids.length);
+    var countersize = progresscountsize;
+    
+    var counter = 1;
+    var newcounter = 1;
+    jQuery('#totaluser').empty();
+    jQuery('#totaluser').append('<p><i class="fa fa-users" aria-hidden="true"></i>  0/'+userids.length+'</p>');
+    
+    jQuery.each(userids, function(index, value) {
+        var data = new FormData();
+        data.append('userid', value);
+        data.append('requestcount', newcounter);
+        newcounter++;
+        jQuery.ajax({
+            url: syncurl,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            
+            success: function(data) {
+           
+                var finalresult = jQuery.parseJSON(data);
+                statustable += '<tr><td>' + finalresult.email + '</td><td>'+ finalresult.company + '</td>';
+                if(finalresult.status == "success"){
+				
+                                    statustable +='<td>' + finalresult.status + '</td>';
+                                    statustable +='<td >' + finalresult.result + '</td>';
+                                    statustable +='<td>' +finalresult.Exhibitor_ID+ '</td></tr>';
+                                
+                                    }else{
+			            statustable +='<td >' + finalresult.status + '</td>';
+                                    statustable +='<td class="notcreateduser">' + finalresult.result + '</td>';
+                                    statustable +='<td></td></tr>';
+                                }
+                              
+                                 jQuery('#prog')
+                                    .progressbar('option', 'value', countersize)
+                                    .children('.ui-progressbar-value')
+                                    .html('')
+                                    .css('display', 'block');
+                            jQuery('#totaluser').empty();
+                            jQuery('#totaluser').append('<p><i class="fa fa-users" aria-hidden="true"></i> '+counter+'/'+userids.length+'</p>');
+                            jQuery('#progressreport').empty();
+                            if(countersize > 100){
+                            jQuery('#progressreport').append('<p>100% done</p>');
+                            }else{
+                                jQuery('#progressreport').append('<p>'+countersize + '% done</p>');
+                                
+                            }
+                 console.log(countersize);                
+          countersize = countersize+progresscountsize ;
+          counter++;
+           if (jQuery("#prog").attr("aria-valuenow") >= 100) {
+               //console.log(finalresult.requestcount);
+                jQuery('body').css('cursor', 'default');
+                statustable += '</tbody> </table>';
+                jQuery("#syncuserstatus").empty();
+                jQuery("#syncuserstatus").append(statustable);
+                 jQuery("#syncuserstatus").show();
+                jQuery('#syncuserstatustable').DataTable({
+                pageLength: 25,
+                dom: 'Bfrtlip',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        title: 'Download Sync results',
+                        text: 'Download Sync results'
+                    }
+                ]
+            });
+        }      
+             
+         }   
+   
+        });
+        
+       
+   });
+   
+      
+        
+   
+    
+    
+    
+}
 var resuorcemsg;
 var  resuorcestatus;
 var settingArray;
@@ -100,6 +232,7 @@ function add_new_sponsor(){
    var url = window.location.protocol + "//" + window.location.host + "/";
   
   var email =  jQuery("#Semail").val();
+  var profilepic = jQuery('#profilepic')[0].files[0]; 
   var data = new FormData();
   var sponsorlevel = jQuery("#Srole option:selected").val();
   if (jQuery('#checknewuser').is(":checked")){
@@ -124,6 +257,7 @@ function add_new_sponsor(){
       
        data.append('username', email);
        data.append('email', email);
+       data.append('profilepic', profilepic);
        data.append('sponsorlevel', sponsorlevel);
        
        jQuery('.mymetakey').each(function(){
@@ -142,12 +276,13 @@ function add_new_sponsor(){
             success: function(data) {
                 
                var message = jQuery.parseJSON(data);
+               console.log(message);
                 var sName = settingArray.ContentManager['sponsor_name'];
                  jQuery('body').css('cursor', 'default');
                 if(message.msg == 'User created'){
                     
                    // jQuery('#sponsor-form').hide();
-                  if(message.userrole == 'EGPL'){
+                  if(message.userrole == 'contentmanager'){
                       sName = "Content Manager";
                   }
                     jQuery("form")[0].reset();
@@ -155,8 +290,9 @@ function add_new_sponsor(){
                    // jQuery( "#sponsor-status" ).append( '<div class="fusion-alert alert success alert-dismissable alert-success alert-shadow"><span class="alert-icon"><i class="fa fa-lg fa-check-circle"></i></span>'+sName+' Created Successfully. </div><div class="fusion-clearfix"></div>' );
                     swal({
 					title: "Success",
-					text: 'User Created Successfully',
+					text: 'User Created Successfully</br>'+message.mapdynamicsstatus,
 					type: "success",
+                                        html:true,
 					confirmButtonClass: "btn-success",
 					confirmButtonText: "Ok"
 				});
@@ -176,6 +312,7 @@ function add_new_sponsor(){
                                         html:true,
 					confirmButtonClass: "btn-danger",
 					confirmButtonText: "Ok"
+                                       
 				});
                                 
                 }
@@ -286,11 +423,21 @@ function add_new_admin_user(){
 function update_sponsor(){
    var url = window.location.protocol + "//" + window.location.host + "/";
   
- 
+ var profilepic ="";
+  var profilepicurl="";
   var sponsorid =  parseInt(jQuery("#sponsorid").val());
-  console.log(sponsorid);
+  if(jQuery('#userprofilepic').attr('src') == undefined){
+  
+        profilepic = jQuery('#profilepic')[0].files[0]; 
+  }else{
+        profilepicurl = jQuery('#userprofilepic').attr('src');
+  }
+ console.log(profilepicurl);
   var sponsorlevel = jQuery("#Srole option:selected").val();
   var password =  jQuery("#password").val();
+  
+  var Semail = jQuery('#Semail').val();
+  
   var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=update_new_sponsor_metafields';
   var data = new FormData();
    jQuery("body").css("cursor", "progress");
@@ -300,7 +447,9 @@ function update_sponsor(){
        data.append('password', password);
        data.append('sponsorid', sponsorid);
        data.append('sponsorlevel', sponsorlevel);
-       
+       data.append('profilepic', profilepic);
+       data.append('profilepicurl', profilepicurl);
+       data.append('Semail', Semail);
        
        jQuery('.mymetakey').each(function(){
            
@@ -318,24 +467,18 @@ function update_sponsor(){
             success: function(data) {
                 
              
-                 jQuery('body').css('cursor', 'default');
                 
-                   
-                   // jQuery('#sponsor-form').hide();
-                  
-                  var sName = settingArray.ContentManager['sponsor_name'];
-                  
-                    jQuery( "#sponsor-status" ).empty();
-                    jQuery( "#sponsor-status" ).append( '<div class="fusion-alert alert success alert-dismissable alert-success alert-shadow"><span class="alert-icon"><i class="fa fa-lg fa-check-circle"></i></span>'+sName+' Data Updated Successfully. </div><div class="fusion-clearfix"></div>' );
-                    
-                    swal({
+                  var message = jQuery.parseJSON(data);
+                
+                swal({
                         title: "Updated!",
-                        text: 'User Data Updated Successfully.',
+                        text: 'User Data Updated Successfully.</br>'+message.mapdynamicsstatus,
                         type: "success",
+                        html:true,
                         confirmButtonClass: "btn-success"
                     });
                     
-
+                jQuery('body').css('cursor', 'default');
 
                 
                
@@ -980,5 +1123,131 @@ function conform_edit_resource(idresource){
     var res = current_date.toString().split("GMT");
     return res[1];
     
-        }
-       
+}
+
+function showprofilefieldupload(){
+    
+    jQuery("#showprofilepic").hide();
+    jQuery("#updateprofilepic").show();
+    
+    jQuery('#userprofilepic').remove();
+    
+}
+        
+function sync_bulk_users(){
+    
+    var url = window.location.protocol + "//" + window.location.host + "/"; 
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=GetMapdynamicsApiKeys';
+    var syncurl = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=insertmapdynamicsuser';
+    var data = new FormData();
+    var useridarray = {};
+    jQuery("body").css({'cursor':'wait'});  
+    
+      
+                var checkedRows = waTable.getData(true);
+                var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
+
+                var useridstml = "";
+                useridstml += '<form id="myform" action="/sync-to-floorplan/" method="post">';
+
+                for (var i = 0; i < arrData['rows'].length; i++) {
+
+
+                    useridstml += '<input type="hidden" name="userid[]" value="' + arrData['rows'][i].wp_user_id + '">';
+                   // console.log(arrData['rows'][i].wp_user_id);
+                }
+     
+                useridstml += '</form>';
+                
+                jQuery("body").append(useridstml);
+                document.getElementById('myform').submit();
+                
+}
+
+
+
+
+
+
+// var progresscountsize = 100 / arrData['rows'].length;
+//    var countersize = progresscountsize ;
+//    var counter = 0;
+//    
+//    
+//    statustable +='<table id="syncuserstatustable" class="display" cellspacing="0" width="100%"><thead><tr><th>Email</th><th>Company Name</th><th>Status</th><th>Created User ID</th></tr></thead><tbody id="syncuserdata">'
+//                    for (var i = 0; i < arrData['rows'].length; i++) {
+//                        
+//                        var userdataarray = {};
+//                            jQuery("body").css({'cursor':'wait'});
+//                        
+//                            userdataarray['email']= arrData['rows'][i].Email;
+//                            userdataarray['company']=arrData['rows'][i].company_name;
+//                            userdataarray['first_name']=arrData['rows'][i].first_name;
+//                            userdataarray['last_name']=arrData['rows'][i].last_name;
+//                            userdataarray['image']=arrData['rows'][i].user_profile_url;
+//                            userdataarray['Exhibitor_ID'] = arrData['rows'][i].exhibitor_map_dynamics_ID;
+//                            
+//						
+//                       
+//                       var data = new FormData();
+//                       data.append('userdataarray',  JSON.stringify(userdataarray));
+//                       
+//                        jQuery.ajax({
+//                            url: syncurl,
+//                            data: data,
+//                            cache: false,
+//                            contentType: false,
+//                            processData: false,
+//                            type: 'POST',
+//                            success: function (data) {
+//                                 
+//                              
+//                                var finalresult = jQuery.parseJSON(data);
+//                                  console.log(finalresult);
+//                                statustable += '<tr><td>' + finalresult.email + '</td><td>'+ finalresult.company + '</td>';
+//                                if(finalresult.status == "success"){
+//				
+//                                    statustable +='<td>' + finalresult.status + '</td>';
+//                                    statustable +='<td>' +finalresult.Exhibitor_ID+ '</td></tr>';
+//                                
+//                                    }else{
+//			
+//                                    statustable +='<td class="notcreateduser">' + finalresult.status + '</td>'
+//                                    statustable +='<td></td></tr>';
+//                                }
+//                                jQuery('#prog')
+//                                    .progressbar('option', 'value', countersize)
+//                                    .children('.ui-progressbar-value')
+//                                    .html(countersize.toPrecision(3) + '%')
+//                                    .css('display', 'block');
+//                            
+//                            
+//                                
+//                                countersize = countersize+progresscountsize ;
+//                                jQuery('body').css('cursor', 'default'); 
+//                              if (jQuery("#prog").attr("aria-valuenow") == 100) {
+//                                  
+//                                    statustable += '</tbody> </table>';
+//                                    jQuery("#syncuserstatus").append(statustable);
+//                                    jQuery('#syncuserstatustable').DataTable({
+//                                            pageLength: 25,
+//                                            dom: 'Bfrtlip',
+//                                            buttons: [
+//                                                {
+//                                                    extend: 'excelHtml5',
+//                                                    title: 'Download Sync results',
+//                                                    text: 'Download Sync results'
+//                                                }
+//                                            ]
+//                                    });
+//                                    
+//                                }     
+//                            }
+//                        });
+//                     
+//                       
+//                       
+//                   }
+//                 
+//                
+//         

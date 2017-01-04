@@ -3,11 +3,13 @@
 
 
 
-$colsdata=json_decode(stripslashes($_POST['cols']), true);
+$colsdata=json_decode($_POST['cols'], true);
 $rowsdata=json_decode($_POST['rows']);
 $reportname = $_POST['reportname'];
+
+
 //echo '<pre>';
-//print_r($rowsdata);exit;
+//print_r($rowsdata);
 
 
 foreach ($colsdata as $key=>$value){
@@ -18,9 +20,9 @@ foreach ($colsdata as $key=>$value){
         
         
     }else{
-     
+    
    
-       $colsarray_excel[] = $colsdata[$key]['friendly']; 
+       $colsarray_excel[] = stripslashes($colsdata[$key]['friendly']); 
     }
     
     
