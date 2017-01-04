@@ -43,7 +43,7 @@
 
               <form method="post" action="javascript:void(0);" onSubmit="add_new_admin_user()">
                     
-                   <div class="form-group row">
+<!--                   <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">Username <strong>*</strong></label>
                                     <div class="col-sm-10">
                                             <div class="form-control-wrapper form-control-icon-left">    
@@ -52,7 +52,7 @@
                                             </div>		
                                         
                                     </div>
-                                </div>
+                                </div>-->
                   <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">Email <strong>*</strong></label>
                                     <div class="col-sm-10">
