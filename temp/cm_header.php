@@ -18,27 +18,27 @@
 	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
-          <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/contentmanager.css">
-	<link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/lobipanel/lobipanel.min.css">
-    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/jqueryui/jquery-ui.min.css">
-    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/font-awesome/font-awesome.min.css">
-    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/main.css">
-    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/customstyle.css">
-    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css"/>
-    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/clockpicker/bootstrap-clockpicker.min.css">
+          <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/contentmanager.css?v=2.1">
+	<link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/lobipanel/lobipanel.min.css?v=2.1">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/jqueryui/jquery-ui.min.css?v=2.1">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/font-awesome/font-awesome.min.css?v=2.1">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/main.css?v=2.1">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/customstyle.css?v=2.1">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css?v=2.1"/>
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/clockpicker/bootstrap-clockpicker.min.css?v=2.1">
     
 <!--    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap.min.css">-->
      
 <!--    contetnmanager css-->
     
-    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/watable.css">
-     <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/datepicker.css">
-     <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap-multiselect.css">
-     <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/jquery-confirm.css">
-       <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/dataTables.tableTools.css">
-       <link rel="stylesheet" type="text/css" href="/wp-content/plugins/EGPL/css/jquery.dataTables.css">
-       <link rel="stylesheet" type="text/css" href="/wp-content/plugins/EGPL/css/buttons.dataTables.min.css">
-        <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/component.css">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/watable.css?v=2.1">
+     <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/datepicker.css?v=2.1">
+     <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap-multiselect.css?v=2.1">
+     <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/jquery-confirm.css?v=2.1">
+       <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/dataTables.tableTools.css?v=2.1">
+       <link rel="stylesheet" type="text/css" href="/wp-content/plugins/EGPL/css/jquery.dataTables.css?v=2.1">
+       <link rel="stylesheet" type="text/css" href="/wp-content/plugins/EGPL/css/buttons.dataTables.min.css?v=2.1">
+        <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/admin-component.css?v=2.1">
      
    
        

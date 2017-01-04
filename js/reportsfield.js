@@ -654,6 +654,7 @@ function taskstatusdrawChart(drawchartstatus) {
  var pendingcountdata = [];
  var complatecountdata = [];
  var emptycountdata = [];
+ var divheight = 645;
    google.charts.load('current', {'packages': ['gauge']});
     google.charts.setOnLoadCallback(activeusergaugechart);
  //mapdata.push(['Genre', 'Complete', 'Pending', 'Empty', {role: 'annotation'}]);
@@ -689,7 +690,11 @@ function taskstatusdrawChart(drawchartstatus) {
                }else{
                    var pendingcount = countresult.null;
                }
-              
+               if(statscolcount > 35 ){
+                   divheight = divheight + 15;
+                  
+                   jQuery("#attendee_totalamount_chart").css({"overflow-y" : "scroll"});
+                }
                 statscolcount++;
                
                 complatecountdata.push(completecount);
@@ -711,7 +716,7 @@ function taskstatusdrawChart(drawchartstatus) {
     jQuery('#attendee_totalamount_chart').highcharts({
         chart: {
             type: 'bar',
-            height :650,
+           height :divheight,
             style: {
             fontFamily: "Signika, serif",
             color: '#6e6e70'

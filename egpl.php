@@ -1864,6 +1864,12 @@ function getReportsdatanew($report_name,$usertimezone){
      $Rdate = "";
      $RRole = "";
      $welcomeemail="";
+     $userID="";
+     $companylogourl="";
+     $mapdynamicsid="";
+     $companylogourl_show=true;
+     $mapdynamicsid_show=true;
+     $userID_show=true;
      $shoerolefiltervalue=true;
      $Rname_show = true;
      $CompanyName_show = false;
@@ -1934,6 +1940,27 @@ function getReportsdatanew($report_name,$usertimezone){
                 $welcomeemail_show=false;
           }else{
              $welcomeemail_show = true; 
+          }
+          
+          if (array_key_exists("exhibitor_map_dynamics_ID", $sponsor_report_data[$report_name])){
+                $mapdynamicsid = $sponsor_report_data[$report_name]['exhibitor_map_dynamics_ID'];
+                $mapdynamicsid_show=false;
+          }else{
+             $mapdynamicsid_show = true; 
+          }
+          
+          if (array_key_exists("user_profile_url", $sponsor_report_data[$report_name])){
+                $companylogourl = $sponsor_report_data[$report_name]['user_profile_url'];
+                $companylogourl_show=false;
+          }else{
+             $companylogourl_show = true; 
+          }
+          
+          if (array_key_exists("wp_user_id", $sponsor_report_data[$report_name])){
+                $userID = $sponsor_report_data[$report_name]['wp_user_id'];
+                $userID_show=false;
+          }else{
+             $userID_show = true; 
           }
           
         
