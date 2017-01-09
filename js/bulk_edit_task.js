@@ -5,7 +5,7 @@
  var newfieldtask =0;
   var loadinglightbox;
 jQuery(document).ready(function() {
-   
+     
    t = jQuery('.bulkedittask').DataTable( {
         initComplete: function () {
            this.api().columns([1]).every( function () {
@@ -80,8 +80,9 @@ jQuery(document).ready(function() {
   
 jQuery(window).load(function() {
    console.log('finshedloading'); 
-   jQuery('#loadingalert').hide();
-   
+   //jQuery('#loadingalert').hide();
+   jQuery('.block-msg-default').remove();
+   jQuery('.blockOverlay').remove();
 });
 
     jQuery('.addnewbulktask').on( 'click', function () {
@@ -270,7 +271,24 @@ function strRemove(theTarget, theString) {
 
 function clonebulk_task(e){
         
-        jQuery('#loadingalert').addClass('showwaitingboox');
+        
+      
+        jQuery.blockUI({
+        overlayCSS: {
+            background: 'rgba(24, 44, 68, 0.8)',
+            opacity: 1,
+            cursor: 'wait'
+        },
+        css: {
+            width: 'auto',
+            top: '45%',
+            left: '45%'
+        },
+        message: '<div class="blockui-default-message"><i class="fa fa-circle-o-notch fa-spin"></i><h6>Please Wait</h6></div>'
+
+    });
+        
+        
         var uniquecode  = randomString(5, 'a#');
         var currentclickid = jQuery(e).attr('id');
         var clonetask = jQuery('#'+currentclickid).parent('p').parent('td').parent('tr').addClass('clontrposition');
