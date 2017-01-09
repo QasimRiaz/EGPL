@@ -4,19 +4,48 @@
  var listview;
  var newfieldtask =0;
 jQuery(document).ready(function() {
-    
-    
-    t = jQuery('.bulkedittask').DataTable({
-        
-        "paging": false,
+   
+   t = jQuery('.bulkedittask').DataTable( {
+        initComplete: function () {
+           this.api().columns([1]).every( function () {
+                var column = this;
+                jQuery(".specialsearchfilter")
+                    .on( 'change', function () {
+                        var val = jQuery.fn.dataTable.util.escapeRegex(
+                            jQuery(this).val()
+                            
+                        );
+                        var  searchvalue = val.replace(/([~!@#$%^&*()_+=`{}\[\]\|\\:;'<>,.\/? ])+/g, ' ');
+                       
+                        column
+                            .search( searchvalue )
+                            .draw();
+                    } );
+                 
+               column.data().unique().sort().each( function ( d, j ) {
+                    var val = jQuery(d).val();
+                  
+                  // jQuery(".specialsearchfilter").append( '<option value="'+val+'">'+val+'</option>' );
+                   
+                } 
+                        
+             );
+                
+               
+               
+                
+            } );
+            
+        },
+        "paging": true,
         "info": false,
         "dom": '<"top"i><"clear">',
-        "columnDefs": [
-           
-            {"width": "50px", "targets": 0},
-            {"width": "100px", "targets": 3}
-        ]
-    });
+        columnDefs: [
+            { "type": "html-input", "targets": [1] }
+        ] 
+    } );
+
+  
     
    
     listview = jQuery('.bulkedittasklistview').DataTable({

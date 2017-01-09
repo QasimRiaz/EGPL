@@ -52,7 +52,23 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                
                 <h5 class="m-t-lg with-border"></h5>
                 <div class="form-group row">
-                    <label class="col-sm-6 form-control-label"></label>
+                    <label class="col-sm-2">Quick Search :</label>
+                    <div class="col-sm-4">
+                   
+                              
+                       <select class="specialsearchfilter select2" style="width:95%;border: #d6e2e8 solid 1px; height: 36px; border-radius: 3px;  padding-left: 10px;">
+   
+                        <option value=""></option>
+                     <?php  foreach ($result['profile_fields'] as $key=>$value){  ?>
+                        <option value="<?php echo htmlspecialchars($value['label']);?>"><?php echo htmlspecialchars($value['label']);?></option>
+                        
+                       
+                     <?php  }?>
+                        
+                        
+                       </select>
+                    </div>
+                  
                     
                     <div class="col-sm-6">
                         <form method="post" action="javascript:void(0);" onSubmit="saveallbulktask()">
@@ -96,7 +112,9 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                             </select>
                        
                     
-                    
+                      
+                      
+             
                     <table  class="bulkedittask  table-bordered compact dataTable no-footer cards"  width="100%">
                         <thead>
                             <tr class="text_th" >
@@ -133,13 +151,14 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
 
                                     <input type="text" style="margin-top: 10px;margin-bottom: 10px;" id="row-<?php echo $task_code;?>-title" class="form-control" name="tasklabel" placeholder="Title"  title="Title" value="<?php echo htmlspecialchars($value['label']);?>" required> 
-                                    <span><input type="hidden" id="row-<?php echo $task_code;?>-key"  value="<?php echo $key; ?>" ></span> 
+                                    <span><input type="hidden" id="row-<?php echo $task_code;?>-key"  value="<?php echo $key; ?>" ></span>
                                     
                                     
 
 
                                 </td>
                                 <td>
+                                     
                                     <div class="topmarrginebulkedit">
                                         <select  class="select2 bulktasktypedrop tasktypesdata" id="bulktasktype_<?php echo $task_code;?>" data-placeholder="Select Type" title="Select Type" data-allow-clear="true">
                                             
