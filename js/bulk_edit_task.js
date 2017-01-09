@@ -3,6 +3,7 @@
  var roleassignmenttable;
  var listview;
  var newfieldtask =0;
+  var loadinglightbox;
 jQuery(document).ready(function() {
    
    t = jQuery('.bulkedittask').DataTable( {
@@ -37,7 +38,7 @@ jQuery(document).ready(function() {
             } );
             
         },
-        "paging": true,
+        "paging": false,
         "info": false,
         "dom": '<"top"i><"clear">',
         columnDefs: [
@@ -77,7 +78,12 @@ jQuery(document).ready(function() {
                                 
 			});
   
- 
+jQuery(window).load(function() {
+   console.log('finshedloading'); 
+   jQuery('#loadingalert').hide();
+   
+});
+
     jQuery('.addnewbulktask').on( 'click', function () {
          var uniquecode  = randomString(5, 'a#');
          var tasktypedata = jQuery('.addnewtaskdata-type').html();
@@ -263,7 +269,8 @@ function strRemove(theTarget, theString) {
        }
 
 function clonebulk_task(e){
-       
+        
+        jQuery('#loadingalert').addClass('showwaitingboox');
         var uniquecode  = randomString(5, 'a#');
         var currentclickid = jQuery(e).attr('id');
         var clonetask = jQuery('#'+currentclickid).parent('p').parent('td').parent('tr').addClass('clontrposition');
@@ -331,6 +338,8 @@ function clonebulk_task(e){
                                 }
                                 
 			});
+                       jQuery('#loadingalert').removeClass('showwaitingboox');
+       // jQuery('.loadingalert').css("display", "none !important");
          //console.log(resnew);
    // } );
      
@@ -338,13 +347,7 @@ function clonebulk_task(e){
                                     
  function removebulk_task(e){
      
-     
-             
-   
-
-     
-     
-     swal({
+      swal({
             title: "Are you sure?",
             text: 'Click confirm to delete this Task. Deleting a task will not delete the data already submitted by users.',
             type: "warning",
@@ -647,5 +650,8 @@ function stripSlashesspecial(str)
 	{
 		return str.replace(/\\/g, '');
 	}
+ function log(text) {
+          jQuery('#logs').append(text + '<br>');
+        }
 
 //manger task js code

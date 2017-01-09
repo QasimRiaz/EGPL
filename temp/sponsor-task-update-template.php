@@ -68,12 +68,17 @@
                    
                    
                }
-               
+               if(!empty($profile_field_settings['usersids'])){
+                if (in_array($user_IDD, $profile_field_settings['usersids'])) {
+                    
+                     $user_can_view = true;
+                }
+               }
                //else{
                  //  $user_can_view = true;
               // }
              if(isset($profile_field_settings['usersids'])){
-               if(in_array($sponsor_id,(array) $profile_field_settings['usersids'])){
+               if(in_array($sponsor_id,$profile_field_settings['usersids'])){
                    
                 $user_can_view = true;
                }

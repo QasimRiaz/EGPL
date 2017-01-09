@@ -350,7 +350,7 @@ function removetask_forthisrole(e){
  
  
 function editrolename(e){
-    jQuery("body").css({'cursor':'wait'});
+   
     var rolekey = jQuery(e).attr('id');
     var oldrolename = jQuery(e).attr('name');
     var url = window.location.protocol + "//" + window.location.host + "/";
@@ -417,7 +417,7 @@ function editrolename(e){
 }
 
 function createroleclone(e){
-    jQuery("body").css({'cursor':'wait'});
+   
     var rolekey = jQuery(e).attr('id');
     var oldrolename = jQuery(e).attr('name');
     var url = window.location.protocol + "//" + window.location.host + "/";

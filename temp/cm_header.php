@@ -55,6 +55,7 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
 ?>
 
 <body class="with-side-menu theme-picton-blue">
+     
 
 	<header class="site-header">
 	    <div class="container-fluid">
