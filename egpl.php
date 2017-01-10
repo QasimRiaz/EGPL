@@ -17,7 +17,20 @@
 
 //get all the plugin settings
 //get all the plugin settings
-if ($_GET['contentManagerRequest'] == 'insertmapdynamicsuser') {
+if($_GET['createnewtask'] == "editrolekey") {        
+    require_once('../../../wp-load.php');
+    
+    editrolename($_POST);
+   
+  
+}else if($_GET['createnewtask'] == "roleassignnewtasks") {        
+
+    require_once('../../../wp-load.php');
+    
+    roleassignnewtasks($_POST);
+   
+  
+}else if ($_GET['contentManagerRequest'] == 'insertmapdynamicsuser') {
     
      require_once('../../../wp-load.php');
      try{
@@ -220,7 +233,7 @@ if ($_GET['contentManagerRequest'] == 'insertmapdynamicsuser') {
     $keys_string[]= 'user_login';
     
     $bodytext_id = 'welcomebodytext';
-    
+    if(!empty($result['custom_meta'])){
     foreach($result['custom_meta'] as $key=>$value){
       
       if (preg_match('/task/',$key)){
@@ -231,7 +244,7 @@ if ($_GET['contentManagerRequest'] == 'insertmapdynamicsuser') {
       }
       
     }
-    
+   }
     
  // echo '<pre>';
  // print_r( $result['sort_order'] );
@@ -1576,7 +1589,128 @@ function updateadminemailtemplate($data_array,$email_template_name){
 }
 
 
-
+function roleassignnewtasks($request){
+    
+     try{
+         
+         
+        
+         
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID);  
+        $lastInsertId = contentmanagerlogging('Role Assigned New Tasks',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
+        $role_name = $request['rolename'];
+        $test = 'custome_task_manager_data';
+        $result_old = get_option($test);
+        
+        $tasksdatalist=json_decode(stripslashes($request['roleassigntaskdatalist']));
+        $removetasklist = json_decode(stripslashes($request['removetasklist'])); 
+        if(!empty($tasksdatalist)) {
+        foreach($tasksdatalist as $key){
+           foreach($result_old['profile_fields'] as $profile_field_name => $profile_field_settings) {
+               
+               if($key == $profile_field_name){
+                   if(!in_array($role_name,$result_old['profile_fields'][$key]['roles'])){
+                        array_push($result_old['profile_fields'][$key]['roles'],$role_name);
+                   }
+               }
+               
+           } 
+            //echo $key;
+            
+        }
+        }
+       if(!empty($removetasklist)) {
+        foreach($removetasklist as $key){
+           foreach($result_old['profile_fields'] as $profile_field_name => $profile_field_settings) {
+               
+               if($key == $profile_field_name){
+                   foreach (array_keys($result_old['profile_fields'][$key]['roles'], $role_name) as $key1) {
+                    unset($result_old['profile_fields'][$key]['roles'][$key1]);
+                  } 
+               }
+               
+           } 
+            //echo $key;
+            
+        }
+       }
+        
+        
+        
+       
+        
+        
+        //echo '<pre>';
+        //print_r($result_old['profile_fields']);exit;
+        
+        
+        $user_info = get_userdata($user_ID);
+        $restults = update_option($test, $result_old);
+        
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
+        
+       
+         
+    }catch (Exception $e) {
+       
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+    }
+ 
+ die();  
+    
+    
+}
+function editrolename($request){
+    
+     try{
+      
+        
+         
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID);  
+        $lastInsertId = contentmanagerlogging('Edit Level Name',"Admin Action",serialize($request),''.$user_ID,$user_info->user_email,"pre_action_data");
+       
+        $levelnamenew = $request['rolenewname'];
+        $levelkey = $request['rolekey'];
+        
+        $get_all_roles_array = 'wp_user_roles';
+        $get_all_roles = get_option($get_all_roles_array);
+        $result_update = 'newvalue';
+        foreach ($get_all_roles as $key => $item) {
+            
+            if(in_array($levelnamenew,$item)){
+                $result_update = 'already';
+                break;
+            }
+        }
+        if($result_update == 'newvalue'){
+            $get_all_roles[$levelkey]['name'] = $levelnamenew;
+            $restults = update_option($get_all_roles_array, $get_all_roles);
+             $result_status['msg']= 'update';
+        }else{
+           
+            $result_status['msg']= 'already exists';
+        }
+        
+        
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($result_status));
+        
+       echo json_encode($result_status);
+         
+    }catch (Exception $e) {
+       
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+    }
+ 
+ die();  
+    
+    
+}
 
 function setpasswordcustome($password){
       
@@ -1945,8 +2079,8 @@ function getReportsdatanew($report_name,$usertimezone){
     $sponsorrole = $_POST['sponsorrole'];
     $all_roles = $wp_roles->get_names();
    
-    $query = "SELECT DISTINCT user_id
-    FROM " . $wpdb->usermeta;
+    $query = "SELECT DISTINCT ID as user_id
+    FROM " . $wpdb->users;
 
     $query_th = "SELECT meta_key
      FROM " . $wpdb->usermeta . " WHERE  `user_id` = 1 AND  `meta_key` LIKE  'task_%'";

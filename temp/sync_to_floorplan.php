@@ -127,7 +127,7 @@ $count_length = count($get_all_ids);
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-12">
-                        <div id="prog" ></div>
+                        <div id="prog" width="98% !important;" ></div>
                         </div>    
                     </div>
                     <div class="form-group row">

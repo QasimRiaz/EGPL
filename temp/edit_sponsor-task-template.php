@@ -98,12 +98,12 @@
                    
                    if ($result_date < 0) {
 
-                       $duedate_html = '<td class="duedate"  data-order="' . $timestamp_task_data . '" >' . $profile_field_settings['attrs'] . '</td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . $profile_field_settings['descrpition'] . '</td>';
+                       $duedate_html = '<td class="duedate"  data-order="' . $timestamp_task_data . '" >' . $profile_field_settings['attrs'] . '</td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' .  stripslashes($profile_field_settings['descrpition']) . '</td>';
                    
                        
                    } else {
                      
-                       $duedate_html = '<tr class="overdue"><td  data-order="' . $timestamp_task_data . '" class="duedate ' . $profile_field_name . '_status">' . $profile_field_settings['attrs'] . ' <span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-flag" style="color:#5D5858;"></i></span></td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . $profile_field_settings['descrpition'] . '</td>';
+                       $duedate_html = '<tr class="overdue"><td  data-order="' . $timestamp_task_data . '" class="duedate ' . $profile_field_name . '_status">' . $profile_field_settings['attrs'] . ' <span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-flag" style="color:#5D5858;"></i></span></td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . stripslashes($profile_field_settings['descrpition']) . '</td>';
                        
                        
                    }

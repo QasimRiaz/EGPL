@@ -264,7 +264,7 @@ function update_admin_settings(){
       
       
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EGPL/taskmanager.php?createnewtask=roleassignnewtasks';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?createnewtask=roleassignnewtasks';
     var data = new FormData();
     
     data.append('roleassigntaskdatalist',   JSON.stringify(taskdataupdatelist));
@@ -354,7 +354,7 @@ function editrolename(e){
     var rolekey = jQuery(e).attr('id');
     var oldrolename = jQuery(e).attr('name');
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EGPL/taskmanager.php?createnewtask=editrolekey';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?createnewtask=editrolekey';
     var data = new FormData();
     
     data.append('rolekey',   rolekey);

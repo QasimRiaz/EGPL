@@ -273,20 +273,6 @@ function clonebulk_task(e){
         
         
       
-        jQuery.blockUI({
-        overlayCSS: {
-            background: 'rgba(24, 44, 68, 0.8)',
-            opacity: 1,
-            cursor: 'wait'
-        },
-        css: {
-            width: 'auto',
-            top: '45%',
-            left: '45%'
-        },
-        message: '<div class="blockui-default-message"><i class="fa fa-circle-o-notch fa-spin"></i><h6>Please Wait</h6></div>'
-
-    });
         
         
         var uniquecode  = randomString(5, 'a#');
@@ -455,15 +441,25 @@ function clonebulk_task(e){
 function saveallbulktask(){
    
    
-    
+    //jQuery("#customers_select_search").select2("val", "");
+   jQuery("#customers_select_search").select2({ allowClear: true });
+   // t.search(' ').draw();
+    t.columns().every( function () {
+        var that = this;
+ 
+        
+           
+                that.search(' ').draw();
+            
+        } );
     jQuery("body").css({'cursor':'wait'});
     var taskdataupdate = {};
     var requeststatus = 'stop';
     var errormsg= "";
     var specialcharacterstatus = false;
-   if(t.rows().data()['length'] == 0 ){
-    var requeststatus = 'update';
-   }else{
+    if(t.rows().data()['length'] == 0 ){
+        var requeststatus = 'update';
+    }else{
     
     jQuery( ".saveeverything" ).each(function( index ) {
       

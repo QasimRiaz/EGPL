@@ -122,7 +122,9 @@ function calltoinsertorupdateuser_confrim(){
 function calltoinsertorupdateuser(){
                        
     
+   
     
+     
     var userids =  [];
     var url = window.location.protocol + "//" + window.location.host + "/";
     var syncurl = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=insertmapdynamicsuser';
@@ -136,7 +138,8 @@ function calltoinsertorupdateuser(){
     });
      jQuery("#starttosync").hide();
      jQuery(".result").show();
-    var progresscountsize = Math.ceil(100 / userids.length);
+    var progresscountsize = 100 / userids.length;
+   
     var countersize = progresscountsize;
     
     var counter = 1;
@@ -181,10 +184,10 @@ function calltoinsertorupdateuser(){
                             jQuery('#totaluser').empty();
                             jQuery('#totaluser').append('<p><i class="fa fa-users" aria-hidden="true"></i> '+counter+'/'+userids.length+'</p>');
                             jQuery('#progressreport').empty();
-                            if(countersize > 100){
+                            if(countersize.toFixed(0) > 100){
                             jQuery('#progressreport').append('<p>100% done</p>');
                             }else{
-                                jQuery('#progressreport').append('<p>'+countersize + '% done</p>');
+                                jQuery('#progressreport').append('<p>'+countersize.toFixed(0) + '% done</p>');
                                 
                             }
                  console.log(countersize);                

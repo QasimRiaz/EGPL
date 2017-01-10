@@ -69,7 +69,8 @@ tinymce.init({
             class:'table'
   },
   toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-  content_css: [
+  convert_urls: false,
+        content_css: [
     '/wp-content/plugins/EGPL/css/editorstyle.css'
   ]
 });
@@ -84,6 +85,7 @@ tinymce.init({
              border:1, class:'table'
   },
   toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+  convert_urls: false,
   content_css: [
     '/wp-content/plugins/EGPL/css/editorstyle.css'
   ]
@@ -99,7 +101,8 @@ tinymce.init({
            border:1, class:'table'
   },
   toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-  content_css: [
+  convert_urls: false,
+        content_css: [
     '/wp-content/plugins/EGPL/css/editorstyle.css'
   ]
 });
@@ -114,7 +117,8 @@ tinymce.init({
            border:1
   },
   toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-  content_css: [
+  convert_urls: false,
+        content_css: [
     '/wp-content/plugins/EGPL/css/editorstyle.css'
   ]
 });
