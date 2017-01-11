@@ -86,6 +86,16 @@ jQuery(window).load(function() {
 });
 
     jQuery('.addnewbulktask').on( 'click', function () {
+        
+        jQuery("#customers_select_search").select2({ allowClear: true });
+        t.columns().every( function () {
+        var that = this;
+ 
+        
+           
+                that.search(' ').draw();
+            
+        });
          var uniquecode  = randomString(5, 'a#');
          var tasktypedata = jQuery('.addnewtaskdata-type').html();
          var taskroledata = jQuery('.addnewtaskdata-role').html();
@@ -99,7 +109,7 @@ jQuery(window).load(function() {
         var col6 = '<div class="addscrol topmarrginebulkedit"><select class="select2" id="row-'+uniquecode+'-levels" data-placeholder="Select Levels" title="Select Levels" data-allow-clear="true"  multiple="multiple">'+taskroledata+'</select><br><select data-placeholder="Select Users" title="Select Users" id="row-'+uniquecode+'-userid" data-allow-clear="true"  class="select2" multiple="multiple">'+taskuseriddata+'</select> <br></div>';
         var col7 = '<br><div class="addscrol"><div id="row-'+uniquecode+'-descrpition" class="edittaskdiscrpition_'+uniquecode+'"></div><p ><i class="font-icon fa fa-edit" id="taskdiscrpition_'+uniquecode+'" title="Edit your task description"style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Description</span></p></div></div>';
                   
-      var  rowNode = t.row.add( [
+       t.row.add( [
             col1,
             col2,
             col3,
@@ -273,7 +283,16 @@ function clonebulk_task(e){
         
         
       
+        jQuery("#customers_select_search").select2({ allowClear: true });
+   
+        t.columns().every( function () {
+        var that = this;
+ 
         
+           
+                that.search(' ').draw();
+            
+        } );
         
         var uniquecode  = randomString(5, 'a#');
         var currentclickid = jQuery(e).attr('id');
@@ -302,7 +321,7 @@ function clonebulk_task(e){
             
         });
         t.row.add(data).draw().nodes().to$().addClass("bulkaddnewtask");
-       
+      
       // t.row.add(data).draw().node();
        
         var oldvalue = jQuery('#row-'+uniquecode+'-title').val();

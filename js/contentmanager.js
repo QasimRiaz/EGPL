@@ -138,6 +138,7 @@ function calltoinsertorupdateuser(){
     });
      jQuery("#starttosync").hide();
      jQuery(".result").show();
+     console.log(userids.length);
     var progresscountsize = 100 / userids.length;
    
     var countersize = progresscountsize;
@@ -193,7 +194,7 @@ function calltoinsertorupdateuser(){
                  console.log(countersize);                
           countersize = countersize+progresscountsize ;
           counter++;
-           if (jQuery("#prog").attr("aria-valuenow") >= 100) {
+           if (counter > userids.length) {
                //console.log(finalresult.requestcount);
                 jQuery('body').css('cursor', 'default');
                 statustable += '</tbody> </table>';

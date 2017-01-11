@@ -29,18 +29,59 @@ jQuery(document).ready(function() {
 
 jQuery( document ).ready(function() {
     jQuery( ".remove_upload" ).click(function() {
-       console.log('test');
-         var id = jQuery(this).attr('id');
-         myString = id.replace('remove_','');
-         jQuery( "input[name='"+myString+"']" ).val("");
-         var myClass = jQuery("#"+id).attr("class");
-         var myArray = myClass.split(' ');
-         jQuery( "input[name$='"+myArray[0]+"']" ).val("");
-         jQuery("#hd_"+myArray[0]).val("");
-         jQuery("."+id).hide();
-         jQuery("."+myArray[0]).show();
+        
+        
+        var id = jQuery(this).attr('id');
+        swal({
+            title: "Are you sure?",
+            text: 'You want to remove this resource.',
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes, remove it!",
+            cancelButtonText: "No, cancel please!",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        },
+                function (isConfirm) {
+
+
+
+                    if (isConfirm) {
+                        console.log('test');
+                       
+                        myString = id.replace('remove_', '');
+                        jQuery("input[name='" + myString + "']").val("");
+                        var myClass = jQuery("#" + id).attr("class");
+                        var myArray = myClass.split(' ');
+                        jQuery("input[name$='" + myArray[0] + "']").val("");
+                        jQuery("#hd_" + myArray[0]).val("");
+                        jQuery("." + id).hide();
+                        jQuery("." + myArray[0]).show();
+                        swal({
+                            title: "Removed!",
+                            text: "Resource remove Successfully",
+                            type: "success",
+                            confirmButtonClass: "btn-success"
+                        }, function () {
+                            
+                        }
+                        );
+                    } else {
+                        swal({
+                            title: "Cancelled",
+                            text: "Resource is safe :)",
+                            type: "error",
+                            confirmButtonClass: "btn-danger"
+                        });
+                    }
+                });
+         
+         
+         
+         
    });
-    jQuery( ".sf-sub-indicator" ).addClass( "icon-chevron-right" ); 
+jQuery( ".sf-sub-indicator" ).addClass( "icon-chevron-right" ); 
     jQuery('textarea').each(function(){
       console.log('test');
         var maxLength = jQuery(this).attr('maxlength');
@@ -48,8 +89,6 @@ jQuery( document ).ready(function() {
         var length = jQuery(this).val().length;
         var remininglength=maxLength-length;
         jQuery('#chars_'+textareaid).text(remininglength);
-    
-       
 });
 jQuery("input").change(function(event) {
        var id = jQuery(this).attr('id');

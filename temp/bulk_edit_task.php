@@ -24,9 +24,13 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     $all_roles = $wp_roles->get_names();
    // $options_values='';
     // foreach ($result['profile_fields'] as $key=>$value){  
-        
-      
-     //}
+        $tasktitle_list = array();
+        foreach ($result['profile_fields'] as $key=>$value){ 
+    
+            $tasktitle_list[] = htmlspecialchars($value['label']);
+    
+        }
+     sort($tasktitle_list);
     ?> 
     
 
@@ -76,8 +80,8 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                        <select class="specialsearchfilter select2" id="customers_select_search" data-placeholder="Quick Search"  data-allow-clear="true" style="width:95%;border: #d6e2e8 solid 1px; height: 36px; border-radius: 3px;  padding-left: 10px;">
    
                            <option value=""></option>
-                     <?php  foreach ($result['profile_fields'] as $key=>$value){  ?>
-                        <option value="<?php echo htmlspecialchars($value['label']);?>"><?php echo htmlspecialchars($value['label']);?></option>
+                     <?php  foreach ($tasktitle_list as $key=>$value){ ?>
+                        <option value="<?php echo $value;?>"><?php echo $value;?></option>
                         
                        
                      <?php  }?>

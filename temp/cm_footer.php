@@ -256,6 +256,7 @@ jQuery(function () {
 });
 
 
+
 	</script>
 <script src="/wp-content/plugins/EGPL/cmtemplate/js/app.js"></script>
 </body>
