@@ -3380,7 +3380,7 @@ $wpdb->query($wpdb->prepare($query, "Login", "User Action",serialize($current_us
     endif;
 }
 
-add_action( 'wp_login_failed', 'my_front_end_login_fail' );  // hook failed login
+add_action( 'wp_login_failed', 'my_front_end_login_fail' ,10,1);  // hook failed login
 
 function my_front_end_login_fail( $username ) {
    $referrer = $_SERVER['HTTP_REFERER'];  // where did the post submission come from?
@@ -3395,8 +3395,7 @@ function my_front_end_login_fail( $username ) {
     $wpdb->query($wpdb->prepare($query, "Login Failed", "User Action",serialize($username),'','',''));
 
       
-wp_redirect( $referrer . '?login=failed' );  // let's append some information (login=failed) to the URL for the theme to use
-      exit;
+
    }
 }
 
