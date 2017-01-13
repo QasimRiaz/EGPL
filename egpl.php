@@ -3380,23 +3380,23 @@ $wpdb->query($wpdb->prepare($query, "Login", "User Action",serialize($current_us
     endif;
 }
 
-add_action( 'wp_login_failed', 'my_front_end_login_fail' ,10,1);  // hook failed login
+add_action( 'authenticate', 'my_front_end_login_fail',10,1);  // hook failed login
 
-function my_front_end_login_fail( $username ) {
+function my_front_end_login_fail( $error, $user, $pass ) {
    $referrer = $_SERVER['HTTP_REFERER'];  // where did the post submission come from?
  
-
+   $message['error'] = $error;
+   $message['username'] = $user;
+   $message['pass'] = $pass;
 // if there's a valid referrer, and it's not the default log-in screen
-   if ( !empty($referrer) && !strstr($referrer,'wp-login') && !strstr($referrer,'wp-admin') ) {
+ 
        
        
     global $wpdb;
     $query = "INSERT INTO contentmanager_log (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
-    $wpdb->query($wpdb->prepare($query, "Login Failed", "User Action",serialize($username),'','',''));
+    $wpdb->query($wpdb->prepare($query, "Login Failed", "User Action",serialize($message),'','',''));
 
-      
 
-   }
 }
 
 
