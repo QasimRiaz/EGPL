@@ -34,7 +34,15 @@
 <div id="content" class="full-width">
 
     <div id="sponsor-status"></div>
+           <?php
+    // TO SHOW THE PAGE CONTENTS
+    while ( have_posts() ) : the_post(); ?> <!--Because the_content() works only inside a WP Loop -->
+        <div class="entry-content-page">
+            <?php the_content(); ?> <!-- Page Content -->
+        </div><!-- .entry-content-page -->
 
+    <?php
+    endwhile; //resetting the page loop?>
    
             <table class="mytable table table-striped table-bordered table-condensed" >
                 <thead>
