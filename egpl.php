@@ -1498,10 +1498,11 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
     $file=$_FILES['file'];
     
     $welcomeemailstatus=$_POST['welcomeemailstatus'];
-    
+    $loggin_data['file']=$resourceurl;
     add_filter( 'upload_dir', 'wpse_183245_upload_dir' );
     $resourceurl = bulk_import_user_file($file);
-    $loggin_data['fileurl']=$resourceurl;
+    
+    $result['fileurl']=$resourceurl;
     remove_filter( 'upload_dir', 'wpse_183245_upload_dir' );
    
   
@@ -1516,13 +1517,14 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
     }else{
        
          $responce = 'faild'; 
+         $result['status'] = 'Sorry, this file type is not permitted for security reasons.';
     }
     
     
     echo   json_encode($responce);
     
     
-    contentmanagerlogging('Bulk Import User',"Admin Action",serialize($loggin_data),$user_ID,$user_info->user_email,$result);
+    contentmanagerlogging('Bulk Import User',"Admin Action",serialize($loggin_data),$user_ID,$user_info->user_email,serialize($result));
     contentmanagerlogging_file_upload ($lastInsertId,serialize($loggin_data));
     
   }catch (Exception $e) {
@@ -2034,7 +2036,109 @@ function bulk_import_user_file($updatevalue){
    
     if(!empty($updatevalue)){
         if ( ! function_exists( 'wp_handle_upload' ) ) require_once( ABSPATH . 'wp-admin/includes/file.php' );
-            $upload_overrides = array('test_form' => false, 'mimes' => array('xlsx'=>'application/msexcel'));
+                    $mime_type = array(
+	// Image formats
+	'jpg|jpeg|jpe'                 => 'image/jpeg',
+	'gif'                          => 'image/gif',
+	'png'                          => 'image/png',
+	'bmp'                          => 'image/bmp',
+	'tif|tiff'                     => 'image/tiff',
+	'ico'                          => 'image/x-icon',
+        'eps'                          => 'application/postscript',
+        'ai'                           =>  'application/postscript',
+	// Video formats
+	'asf|asx'                      => 'video/x-ms-asf',
+	'wmv'                          => 'video/x-ms-wmv',
+	'wmx'                          => 'video/x-ms-wmx',
+	'wm'                           => 'video/x-ms-wm',
+	'avi'                          => 'video/avi',
+	'divx'                         => 'video/divx',
+	'flv'                          => 'video/x-flv',
+	'mov|qt'                       => 'video/quicktime',
+	'mpeg|mpg|mpe'                 => 'video/mpeg',
+	'mp4|m4v'                      => 'video/mp4',
+	'ogv'                          => 'video/ogg',
+	'webm'                         => 'video/webm',
+	'mkv'                          => 'video/x-matroska',
+	
+	// Text formats
+	'txt|asc|c|cc|h'               => 'text/plain',
+	'csv'                          => 'text/csv',
+	'tsv'                          => 'text/tab-separated-values',
+	'ics'                          => 'text/calendar',
+	'rtx'                          => 'text/richtext',
+	'css'                          => 'text/css',
+	'htm|html'                     => 'text/html',
+	
+	// Audio formats
+	'mp3|m4a|m4b'                  => 'audio/mpeg',
+	'ra|ram'                       => 'audio/x-realaudio',
+	'wav'                          => 'audio/wav',
+	'ogg|oga'                      => 'audio/ogg',
+	'mid|midi'                     => 'audio/midi',
+	'wma'                          => 'audio/x-ms-wma',
+	'wax'                          => 'audio/x-ms-wax',
+	'mka'                          => 'audio/x-matroska',
+	
+	// Misc application formats
+	'rtf'                          => 'application/rtf',
+	'js'                           => 'application/javascript',
+	'pdf'                          => 'application/pdf',
+	'swf'                          => 'application/x-shockwave-flash',
+	'class'                        => 'application/java',
+	'tar'                          => 'application/x-tar',
+	'zip'                          => 'application/zip',
+	'gz|gzip'                      => 'application/x-gzip',
+	'rar'                          => 'application/rar',
+	'7z'                           => 'application/x-7z-compressed',
+	'exe'                          => 'application/x-msdownload',
+	
+	// MS Office formats
+	'doc'                          => 'application/msword',
+	'pot|pps|ppt'                  => 'application/vnd.ms-powerpoint',
+	'wri'                          => 'application/vnd.ms-write',
+	'xla|xls|xlt|xlw'              => 'application/vnd.ms-excel',
+	'mdb'                          => 'application/vnd.ms-access',
+	'mpp'                          => 'application/vnd.ms-project',
+	'docx'                         => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+	'docm'                         => 'application/vnd.ms-word.document.macroEnabled.12',
+	'dotx'                         => 'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
+	'dotm'                         => 'application/vnd.ms-word.template.macroEnabled.12',
+	'xlsx'                         => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+	'xlsm'                         => 'application/vnd.ms-excel.sheet.macroEnabled.12',
+	'xlsb'                         => 'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
+	'xltx'                         => 'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
+	'xltm'                         => 'application/vnd.ms-excel.template.macroEnabled.12',
+	'xlam'                         => 'application/vnd.ms-excel.addin.macroEnabled.12',
+	'pptx'                         => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+	'pptm'                         => 'application/vnd.ms-powerpoint.presentation.macroEnabled.12',
+	'ppsx'                         => 'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
+	'ppsm'                         => 'application/vnd.ms-powerpoint.slideshow.macroEnabled.12',
+	'potx'                         => 'application/vnd.openxmlformats-officedocument.presentationml.template',
+	'potm'                         => 'application/vnd.ms-powerpoint.template.macroEnabled.12',
+	'ppam'                         => 'application/vnd.ms-powerpoint.addin.macroEnabled.12',
+	'sldx'                         => 'application/vnd.openxmlformats-officedocument.presentationml.slide',
+	'sldm'                         => 'application/vnd.ms-powerpoint.slide.macroEnabled.12',
+	'onetoc|onetoc2|onetmp|onepkg' => 'application/onenote',
+	
+	// OpenOffice formats
+	'odt'                          => 'application/vnd.oasis.opendocument.text',
+	'odp'                          => 'application/vnd.oasis.opendocument.presentation',
+	'ods'                          => 'application/vnd.oasis.opendocument.spreadsheet',
+	'odg'                          => 'application/vnd.oasis.opendocument.graphics',
+	'odc'                          => 'application/vnd.oasis.opendocument.chart',
+	'odb'                          => 'application/vnd.oasis.opendocument.database',
+	'odf'                          => 'application/vnd.oasis.opendocument.formula',
+	
+	// WordPerfect formats
+	'wp|wpd'                       => 'application/wordperfect',
+	
+	// iWork formats
+	'key'                          => 'application/vnd.apple.keynote',
+	'numbers'                      => 'application/vnd.apple.numbers',
+	'pages'                        => 'application/vnd.apple.pages',
+);
+       $upload_overrides = array( 'test_form' => false,$mime_type); 
             $movefile = wp_handle_upload( $updatevalue, $upload_overrides );
            
         if(!empty($movefile['file'])){
@@ -3380,18 +3484,19 @@ $wpdb->query($wpdb->prepare($query, "Login", "User Action",serialize($current_us
     endif;
 }
 
-add_action( 'authenticate', 'my_front_end_login_fail',10,1);  // hook failed login
+add_action( 'authenticate', 'my_front_end_login_fail',10,2);  // hook failed login
 
-function my_front_end_login_fail( $error, $user, $pass ) {
-   $referrer = $_SERVER['HTTP_REFERER'];  // where did the post submission come from?
+function my_front_end_login_fail($error,$user, $pass ) {
+     // where did the post submission come from?
  
    $message['error'] = $error;
    $message['username'] = $user;
    $message['pass'] = $pass;
 // if there's a valid referrer, and it's not the default log-in screen
  
-       
-       
+      // echo '<pre>';
+      // print_r($message);exit;
+ 
     global $wpdb;
     $query = "INSERT INTO contentmanager_log (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
     $wpdb->query($wpdb->prepare($query, "Login Failed", "User Action",serialize($message),'','',''));
