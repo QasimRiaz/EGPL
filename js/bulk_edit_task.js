@@ -608,6 +608,8 @@ function saveallbulktask(){
                     confirmButtonClass: "btn-success"
                 },
         function(isConfirm) {
+            jQuery("body").css({'cursor':'wait'});
+            jQuery('.bulkedittask').empty();
             
             location.reload();
         });
