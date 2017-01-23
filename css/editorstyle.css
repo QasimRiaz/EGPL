@@ -25,6 +25,10 @@ button,input,input:not([type]),input[type=number],input[type=password],input[typ
 .mce-content-body{font-family:Lato ;font-size:14px;color:#000;padding:0 25px 25px}
 .mce-content-body h1,.mce-content-body h2,.mce-content-body h3,.mce-content-body h4,.mce-content-body h5,.mce-content-body h6{font-family:Oswald !important;font-weight:200;line-height:1.4em;margin:25px 0 15px}
 .mce-content-body h1{font-size:34px}
+.mce-content-body a{    color: #027ddb;
+                        cursor: pointer;
+}
+.mce-content-body a:hover{ color: #a3c4dd;}
 .mce-content-body h2{font-size:30px}
 .mce-content-body h3{font-size:26px}
 .mce-content-body h4{font-size:22px}

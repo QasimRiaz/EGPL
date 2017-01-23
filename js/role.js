@@ -208,8 +208,21 @@ function update_admin_settings(){
      var url = window.location.protocol + "//" + window.location.host + "/";
      var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=adminsettings';
      var data = new FormData();
-     
+     var lockTWMcomplete;
+     var lockTWMduedate;
+     if(jQuery('#check-toggle-1').is(':checked')){
+         lockTWMcomplete = 'checked';
+     }else{
+         lockTWMcomplete = 'unchecked';
+     }
+     if(jQuery('#check-toggle-2').is(':checked')){
+         lockTWMduedate = 'checked';
+     }else{
+         lockTWMduedate = 'unchecked';
+     }
      data.append('eventdate', eventdate);
+     data.append('lockTWMcomplete', lockTWMcomplete);
+     data.append('lockTWMduedate', lockTWMduedate);
     // data.append('formemail', formemail);
    
      
@@ -221,7 +234,7 @@ function update_admin_settings(){
             processData: false,
             type: 'POST',
             success: function(data) {
-                
+                 jQuery('body').css('cursor', 'default');
                  swal({
 					title: "Success",
 					text: "Content Manager Settings Updated",
@@ -264,7 +277,7 @@ function update_admin_settings(){
       
       
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?createnewtask=roleassignnewtasks';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=roleassignnewtasks';
     var data = new FormData();
     
     data.append('roleassigntaskdatalist',   JSON.stringify(taskdataupdatelist));
@@ -354,7 +367,7 @@ function editrolename(e){
     var rolekey = jQuery(e).attr('id');
     var oldrolename = jQuery(e).attr('name');
     var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?createnewtask=editrolekey';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=editrolekey';
     var data = new FormData();
     
     data.append('rolekey',   rolekey);

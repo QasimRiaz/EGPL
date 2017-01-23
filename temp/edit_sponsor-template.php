@@ -45,21 +45,53 @@
                 <p>
                 You can edit the selected user here and change their password. </p>
 
-                <h5 class="m-t-lg with-border">Personal Information</h5>
+                <br>
+                <br>
 
               <form method="post" action="javascript:void(0);" onSubmit="update_sponsor()">
                     
-                  
+                  <section class="tabs-section">
+				<div class="tabs-section-nav tabs-section-nav-icons">
+					<div class="tbl">
+						<ul class="nav" role="tablist">
+							<li class="nav-item">
+								<a class="nav-link active" href="#tabs-1-tab-1" role="tab" data-toggle="tab">
+									<span class="nav-link-in">
+										<i class="fa fa-info-circle" ></i>
+										Basic Information
+									</span>
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="#tabs-1-tab-2" role="tab" data-toggle="tab">
+									<span class="nav-link-in">
+										<span class="fa fa-list-alt"></span>
+										Additional Information
+									</span>
+								</a>
+							</li>
+							
+						</ul>
+					</div>
+				</div><!--.tabs-section-nav-->
+
+				<div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane fade in active" id="tabs-1-tab-1">  
                     
               
                                     <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">Email <strong>*</strong></label>
-                                    <div class="col-sm-10">
+                                    <div class="col-sm-5">
                                          <input type="hidden" name="sponsorid" id="sponsorid" value="<?php echo $sponsor_id;?>" >
-								<input type="text"  class="form-control" id="Semail" placeholder="Email"  value="<?php echo $meta_for_user->user_email;?>" readonly>
+					 <input type="text"  class="form-control" id="Semail" placeholder="Email"  value="<?php echo $meta_for_user->user_email;?>" readonly>
 							
                                         
                                     </div>
+                                    <div class="col-sm-5">
+                                        <a    class="btn btn-inline mycustomwidth btn-success" onclick="changeuseremailaddress()">Change Email</a>
+                                          
+                                    </div>
+                                    
                                 </div>
                    <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">First Name <strong>*</strong></label>
@@ -113,12 +145,16 @@
                                         
                                     </div>
                  </div>   
-                               
-                                   
-                              
-                                   
-                  <h5 class="m-t-lg with-border">Additional Information</h5>                  
-                          <div class="form-group row">
+                 <div class="form-group row">
+                                    <label class="col-sm-2 form-control-label">Company Name <strong>*</strong></label>
+                                    <div class="col-sm-10">
+                                        
+								<input type="text"  class="form-control mymetakey" id="company_name" name="company_name" placeholder="Company Name" value="<?php echo $all_meta_for_user['company_name'][0];?>"  required>
+								
+                                        
+                                    </div>
+                                </div>             
+                   <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">Company Logo </label>
                                     <?php if(empty($all_meta_for_user['user_profile_url'][0])){?>  
                                     <div class="col-sm-10">
@@ -130,7 +166,7 @@
 		                  </div>
                                    <?php }else{?>
                                     <div id="showprofilepic">
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-5">
                                        <img width="200" id="userprofilepic"  name="userprofilepic" src="<?php echo $all_meta_for_user['user_profile_url'][0];?>" >
                                     </div>
                                     <div class="col-sm-4">
@@ -146,16 +182,95 @@
                                       
                                        
 		                  </div>
-		</div>            
-                               <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label">Company Name <strong>*</strong></label>
+		</div>                   
+                              
+                                   
+                  </div>                  
+                      <div role="tabpanel" class="tab-pane fade" id="tabs-1-tab-2">
+                               <div class="form-group row" >
+                                    <label class="col-sm-2 form-control-label">Address 1</label>
                                     <div class="col-sm-10">
                                         
-								<input type="text"  class="form-control mymetakey" id="company_name" name="company_name" placeholder="Company Name" value="<?php echo $all_meta_for_user['company_name'][0];?>"  required>
+					<input type="text"  class="form-control mymetakey" id="address_line_1" name="address_line_1" placeholder="Address 1" value="<?php echo $all_meta_for_user['address_line_1'][0];?>" >
 								
                                         
                                     </div>
                                 </div>
+                                <div class="form-group row" >
+                                    <label class="col-sm-2 form-control-label">Address 2</label>
+                                    <div class="col-sm-10">
+                                        
+				<input type="text"  class="form-control mymetakey" id="address_line_1" name="address_line_2" placeholder="Address 2" value="<?php echo $all_meta_for_user['address_line_2'][0];?>" >
+								
+                                        
+                                    </div>
+                                </div>
+                                <div class="form-group row" >
+                                    <label class="col-sm-2 form-control-label">City</label>
+                                    <div class="col-sm-10">
+                                        
+								<input type="text"  class="form-control mymetakey" id="usercity" name="usercity" placeholder="City"  value="<?php echo $all_meta_for_user['usercity'][0];?>">
+								
+                                        
+                                    </div>
+                                </div>
+                                 <div class="form-group row" >
+                                    <label class="col-sm-2 form-control-label">State</label>
+                                    <div class="col-sm-10">
+                                        
+								<input type="text"  class="form-control mymetakey" id="userstate" name="userstate" placeholder="State" value="<?php echo $all_meta_for_user['userstate'][0];?>" >
+								
+                                        
+                                    </div>
+                                </div>
+                                 <div class="form-group row" >
+                                    <label class="col-sm-2 form-control-label">Zipcode</label>
+                                    <div class="col-sm-10">
+                                        
+								<input type="text"  class="form-control mymetakey" id="userzipcode" name="userzipcode" placeholder="Zipcode" value="<?php echo $all_meta_for_user['userzipcode'][0];?>" >
+								
+                                        
+                                    </div>
+                                </div>
+                                <div class="form-group row" >
+                                    <label class="col-sm-2 form-control-label">Country</label>
+                                    <div class="col-sm-10">
+                                        
+								<input type="text"  class="form-control mymetakey" id="usercountry" name="usercountry" placeholder="Country" value="<?php echo $all_meta_for_user['usercountry'][0];?>" >
+								
+                                        
+                                    </div>
+                                </div>
+                                <div class="form-group row" >
+                                    <label class="col-sm-2 form-control-label">Phone 1</label>
+                                    <div class="col-sm-10">
+                                        
+								<input type="text"  class="form-control mymetakey" id="user_phone_1" name="user_phone_1" placeholder="Phone 1" value="<?php echo $all_meta_for_user['user_phone_1'][0];?>">
+								
+                                        
+                                    </div>
+                                </div>
+                                <div class="form-group row" >
+                                    <label class="col-sm-2 form-control-label">Phone 2</label>
+                                    <div class="col-sm-10">
+                                        
+								<input type="text"  class="form-control mymetakey" id="user_phone_2" name="user_phone_2" placeholder="Phone 2" value="<?php echo $all_meta_for_user['user_phone_2'][0];?>">
+								
+                                        
+                                    </div>
+                                </div>
+                                <div class="form-group row" >
+                                    <label class="col-sm-2 form-control-label">Notes</label>
+                                    <div class="col-sm-10">
+                                        
+                                        <textarea   class="form-control mymetakey" id="usernotes" name="usernotes"  ><?php echo $all_meta_for_user['usernotes'][0];?></textarea>
+								
+                                        
+                                    </div>
+                                </div>
+	                    </div><!--.box-typical-body-->
+	                </section><!--.box-typical-dashboard-->           
+                               
                       <h5 class="m-t-lg with-border"></h5>
                                   <div class="form-group row">
                                     <label class="col-sm-2 form-control-label"></label>

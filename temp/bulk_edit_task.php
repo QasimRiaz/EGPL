@@ -210,7 +210,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                             </div>
                                         </td>
                                         <td>
-                                            <input type="text" style="padding-left: 13px;margin-top: 10px;margin-bottom: 10px;" id="row-<?php echo $task_code; ?>-duedate" class="form-control datepicker" name="datepicker"  placeholder="Due Date" title="Due Date"  value="<?php echo $value['attrs']; ?>">
+                                            <input type="text" style="padding-left: 13px;margin-top: 10px;margin-bottom: 10px;" id="row-<?php echo $task_code; ?>-duedate" class="form-control datepicker" name="datepicker"  autocomplete="off" placeholder="Due Date" title="Due Date"  value="<?php echo $value['attrs']; ?>">
                                         </td>
                                         <td>
                                             <input name="attribure" style="margin-top: 10px;margin-bottom: 10px;" id="row-<?php echo $task_code; ?>-attribute" class="form-control" placeholder="Attributes" title="Attributes" value="<?php echo $value['taskattrs']; ?>" >

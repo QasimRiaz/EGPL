@@ -1167,91 +1167,135 @@ function sync_bulk_users(){
                 document.getElementById('myform').submit();
                 
 }
+function changeuseremailaddress(){
+    
+    
+    var userid = jQuery('#sponsorid').val();
+    var oldemailaddress = jQuery('#Semail').val();
+   
+   
+    var url = window.location.protocol + "//" + window.location.host + "/";
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=changeuseremailaddress';
+    var data = new FormData();
+    
+    data.append('userid',   userid);
+    data.append('oldemailaddress',   oldemailaddress);
+     jQuery.confirm({
+            title: "Change Email Address",
+            content: '<div id="titlestatus" ></div><div ><p></p><input placeholder="New Email Address" style="margin-bottom: 10px;padding: 9px;border: #d6e2e8 solid 1px; width: 100%; height: 35px; border-radius: 3px;" type="text" id="newemailaddress" ><p style="color:red;margin: 5px 0px;">This action will also change the login name for this user so we recommend that you send a welcome email message to the new email address.</p><br><p style="margin: 5px 0px;"><input  type="checkbox" value="checked" id="welcomememailstatus"> Send a welcome email (and new password) to the new email address</p></div>',
+            confirmButtonClass: 'mycustomwidth specialbuttoncolor',
+           
+            confirmButton:'Update',
+            cancelButton:false,
+            animation: 'rotateY',
+            closeIcon: true,
+           
+            confirm: function () {
+                
+                var welcomememailstatus ;
+                var newemailaddress = jQuery("#newemailaddress").val();
+                if (isValidEmailAddress(newemailaddress)) {
+                   
+               
+                if (jQuery('#welcomememailstatus').is(':checked')) {
+                     welcomememailstatus = 'checked';
+                }else{
+                     welcomememailstatus = 'unchecked';
+                }
+                data.append('newemailaddress',   newemailaddress);
+                data.append('welcomememailstatus',   welcomememailstatus);
+                jQuery("#titlestatus").empty();
+                if(newemailaddress!=""){
+                    
+                    jQuery.ajax({
+                    url: urlnew,
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'POST',
+                    success: function(data) {
+                        var finalresult = jQuery.parseJSON(data);
+                        
+                       jQuery('body').css('cursor', 'default');
+                        
+                        if(finalresult.msg == 'update'){
+                        swal({
+                                title: "Success!",
+                                text: 'The email and login name for the user has been changed to' + newemailaddress,
+                                type: "success",
+                                confirmButtonClass: "btn-success"
+                            },
+                                    function (isConfirm) {
+
+                                        location.reload();
+                                    }
+                            );
+                   }else{
+                       
+                      
+                       swal({
+                                title: "Error!",
+                                text: finalresult.msg,
+                                type: "error",
+                                confirmButtonClass: "btn-error"
+                            });
+                   } 
+                    }
+                });
+                    
+                }else{
+                    jQuery("#titlestatus").append('<p style="color:red;text-align: center;"><strong>You need to write something!</strong>');
+                    return false;
+                }
+            }else{
+                jQuery("#titlestatus").append('<p style="color:red;text-align: center;"><strong>Error:</strong> This username is invalid because it uses illegal characters. Please enter a valid username.');
+                return false;
+            }                            
+            
+            
+            }
+         });
+    
+}
+
+function returnback(){
+    
+    
+    swal({
+        title: "Are you sure?",
+        text: 'Are you sure you want to leave this screen?',
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+        closeOnConfirm: false,
+        closeOnCancel: false
+    },
+            function (isConfirm) {
 
 
 
+                if (isConfirm) {
+                   
+                        //location.reload();
+                        //window.location.replace("/add-new-level/");
+                        document.location.href = '/add-new-level'
+                   
+                } else {
+                    swal({
+                        title: "Cancelled",
+                        text: "",
+                        type: "error",
+                        confirmButtonClass: "btn-danger"
+                    });
+                }
+            });
+    
+}
 
-
-
-// var progresscountsize = 100 / arrData['rows'].length;
-//    var countersize = progresscountsize ;
-//    var counter = 0;
-//    
-//    
-//    statustable +='<table id="syncuserstatustable" class="display" cellspacing="0" width="100%"><thead><tr><th>Email</th><th>Company Name</th><th>Status</th><th>Created User ID</th></tr></thead><tbody id="syncuserdata">'
-//                    for (var i = 0; i < arrData['rows'].length; i++) {
-//                        
-//                        var userdataarray = {};
-//                            jQuery("body").css({'cursor':'wait'});
-//                        
-//                            userdataarray['email']= arrData['rows'][i].Email;
-//                            userdataarray['company']=arrData['rows'][i].company_name;
-//                            userdataarray['first_name']=arrData['rows'][i].first_name;
-//                            userdataarray['last_name']=arrData['rows'][i].last_name;
-//                            userdataarray['image']=arrData['rows'][i].user_profile_url;
-//                            userdataarray['Exhibitor_ID'] = arrData['rows'][i].exhibitor_map_dynamics_ID;
-//                            
-//						
-//                       
-//                       var data = new FormData();
-//                       data.append('userdataarray',  JSON.stringify(userdataarray));
-//                       
-//                        jQuery.ajax({
-//                            url: syncurl,
-//                            data: data,
-//                            cache: false,
-//                            contentType: false,
-//                            processData: false,
-//                            type: 'POST',
-//                            success: function (data) {
-//                                 
-//                              
-//                                var finalresult = jQuery.parseJSON(data);
-//                                  console.log(finalresult);
-//                                statustable += '<tr><td>' + finalresult.email + '</td><td>'+ finalresult.company + '</td>';
-//                                if(finalresult.status == "success"){
-//				
-//                                    statustable +='<td>' + finalresult.status + '</td>';
-//                                    statustable +='<td>' +finalresult.Exhibitor_ID+ '</td></tr>';
-//                                
-//                                    }else{
-//			
-//                                    statustable +='<td class="notcreateduser">' + finalresult.status + '</td>'
-//                                    statustable +='<td></td></tr>';
-//                                }
-//                                jQuery('#prog')
-//                                    .progressbar('option', 'value', countersize)
-//                                    .children('.ui-progressbar-value')
-//                                    .html(countersize.toPrecision(3) + '%')
-//                                    .css('display', 'block');
-//                            
-//                            
-//                                
-//                                countersize = countersize+progresscountsize ;
-//                                jQuery('body').css('cursor', 'default'); 
-//                              if (jQuery("#prog").attr("aria-valuenow") == 100) {
-//                                  
-//                                    statustable += '</tbody> </table>';
-//                                    jQuery("#syncuserstatus").append(statustable);
-//                                    jQuery('#syncuserstatustable').DataTable({
-//                                            pageLength: 25,
-//                                            dom: 'Bfrtlip',
-//                                            buttons: [
-//                                                {
-//                                                    extend: 'excelHtml5',
-//                                                    title: 'Download Sync results',
-//                                                    text: 'Download Sync results'
-//                                                }
-//                                            ]
-//                                    });
-//                                    
-//                                }     
-//                            }
-//                        });
-//                     
-//                       
-//                       
-//                   }
-//                 
-//                
-//         
+function isValidEmailAddress(emailAddress) {
+    var pattern = new RegExp(/^(("[\w-+\s]+")|([\w-+]+(?:\.[\w-+]+)*)|("[\w-+\s]+")([\w-+]+(?:\.[\w-+]+)*))(@((?:[\w-+]+\.)*\w[\w-+]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][\d]\.|1[\d]{2}\.|[\d]{1,2}\.))((25[0-5]|2[0-4][\d]|1[\d]{2}|[\d]{1,2})\.){2}(25[0-5]|2[0-4][\d]|1[\d]{2}|[\d]{1,2})\]?$)/i);
+    return pattern.test(emailAddress);
+};

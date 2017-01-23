@@ -5,7 +5,7 @@
  var newfieldtask =0;
   var loadinglightbox;
 jQuery(document).ready(function() {
-     
+   jQuery('input,textarea,select').attr('autocomplete', 'off');
    t = jQuery('.bulkedittask').DataTable( {
         initComplete: function () {
            this.api().columns([1]).every( function () {
@@ -235,6 +235,8 @@ function bulktask_descripiton(e){
         cancelButton: 'Close',
         confirmButtonClass: 'btn mycustomwidth btn-lg btn-primary mysubmitemailbutton',
         cancelButtonClass: 'btn mycustomwidth btn-lg btn-danger',
+        columnClass: 'jconfirm-box-container-special',
+         closeIcon: true,
         confirm: function () {
             
             
@@ -609,9 +611,8 @@ function saveallbulktask(){
                 },
         function(isConfirm) {
             jQuery("body").css({'cursor':'wait'});
-            document.location.href = '/dashboard'
             
-           
+             document.location.href = '/dashboard'
         });
                 
                 

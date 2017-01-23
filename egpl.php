@@ -17,13 +17,19 @@
 
 //get all the plugin settings
 //get all the plugin settings
-if($_GET['createnewtask'] == "editrolekey") {        
+if($_GET['contentManagerRequest'] == "changeuseremailaddress") {        
+    require_once('../../../wp-load.php');
+    
+    changeuseremailaddress($_POST);
+   
+  
+}else if($_GET['contentManagerRequest'] == "editrolekey") {        
     require_once('../../../wp-load.php');
     
     editrolename($_POST);
    
   
-}else if($_GET['createnewtask'] == "roleassignnewtasks") {        
+}else if($_GET['contentManagerRequest'] == "roleassignnewtasks") {        
 
     require_once('../../../wp-load.php');
     
@@ -266,10 +272,11 @@ if($_GET['createnewtask'] == "editrolekey") {
     
     foreach ( $users as $user ) {
         $file_url = get_user_meta($user->user_id, $zip_folder_name);
+        $user_company_name = get_user_meta($user->user_id, 'company_name',true);
         
         if(!empty($file_url[0]['file'])){
             
-            $user_file_list[] = $file_url[0]['file'];
+            $user_file_list[] = $user_company_name.'*'.$file_url[0]['file'];
            
         }
         
@@ -1376,7 +1383,7 @@ try {
      
     
      if($result_update == 'newvalue'){
-        $result = add_role( $remove_space_role_kye, ucfirst($newrolename), array( 'read' => true, ) );
+        $result = add_role( $remove_space_role_kye, ucfirst($newrolename), array( 'read' => true,'unfiltered_upload'=>true,'upload_files'=>true ) );
         if ( null !== $result) {
             $msg['msg'] = '<strong>'.ucfirst($newrolename).'</strong> New Level created';
             $msg['status'] = 'success';
@@ -1498,11 +1505,10 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
     $file=$_FILES['file'];
     
     $welcomeemailstatus=$_POST['welcomeemailstatus'];
-    $loggin_data['file']=$resourceurl;
+    
     add_filter( 'upload_dir', 'wpse_183245_upload_dir' );
     $resourceurl = bulk_import_user_file($file);
-    
-    $result['fileurl']=$resourceurl;
+    $loggin_data['fileurl']=$resourceurl;
     remove_filter( 'upload_dir', 'wpse_183245_upload_dir' );
    
   
@@ -1517,14 +1523,13 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
     }else{
        
          $responce = 'faild'; 
-         $result['status'] = 'Sorry, this file type is not permitted for security reasons.';
     }
     
     
     echo   json_encode($responce);
     
     
-    contentmanagerlogging('Bulk Import User',"Admin Action",serialize($loggin_data),$user_ID,$user_info->user_email,serialize($result));
+    contentmanagerlogging('Bulk Import User',"Admin Action",serialize($loggin_data),$user_ID,$user_info->user_email,$result);
     contentmanagerlogging_file_upload ($lastInsertId,serialize($loggin_data));
     
   }catch (Exception $e) {
@@ -2192,8 +2197,10 @@ function getReportsdatanew($report_name,$usertimezone){
     $table_head = $wpdb->get_results($query_th);
    
 
-
-      $k = 13;
+    $additional_settings = get_option( 'EGPL_Settings_Additionalfield' );
+    
+    
+    $k = 13;
     $unique_id=0;
     $showhideMYFieldsArray = array();
      $Rname = "";
@@ -2222,6 +2229,8 @@ function getReportsdatanew($report_name,$usertimezone){
      $RRole_show=false;
      $Lname_show=false;
      $welcomeemail_show=true;
+     
+     
      
       if($report_name != "defult"){
     
@@ -2305,7 +2314,14 @@ function getReportsdatanew($report_name,$usertimezone){
              $userID_show = true; 
           }
           
+         if (array_key_exists("wp_user_id", $sponsor_report_data[$report_name])){
+                $userID = $sponsor_report_data[$report_name]['wp_user_id'];
+                $userID_show=false;
+          }else{
+             $userID_show = true; 
+          }
         
+          
         
    }
    
@@ -2325,6 +2341,32 @@ function getReportsdatanew($report_name,$usertimezone){
     $showhideMYFieldsArray['exhibitor_map_dynamics_ID'] = array('index' => 10, 'type' => 'string','unique' => true, 'hidden' => $mapdynamicsid_show,'friendly'=> "Floorplan ID",'filter'=>$mapdynamicsid);
     $showhideMYFieldsArray['user_profile_url'] = array('index' => 11, 'type' => 'string','unique' => true, 'hidden' => $companylogourl_show,'friendly'=> "User Company Logo Url",'filter'=>$companylogourl);
     $showhideMYFieldsArray['wp_user_id'] = array('index' => 12, 'type' => 'string','unique' => true, 'hidden' => $userID_show,'friendly'=> "User ID",'filter'=>$userID);
+    
+    
+    if(!empty($additional_settings)){
+        $index_count = $k;
+        foreach ($additional_settings as $key=>$valuename){
+            $report_key_value = "";
+            $showhidevalue = true;
+
+            if ($report_name != "defult") {
+                if (array_key_exists($additional_settings[$key]['key'], $sponsor_report_data[$report_name])) {
+
+                    $report_key_value = $sponsor_report_data[$report_name][$additional_settings[$key]['key']];
+                    $showhidevalue = false;
+                }
+            }
+            
+            $showhideMYFieldsArray[$additional_settings[$key]['key']] = array('index' => $index_count, 'type' => 'string','unique' => true, 'hidden' => $showhidevalue,'friendly'=> $additional_settings[$key]['name'],'filter'=>$report_key_value);
+            $index_count++;  
+            
+        }
+        
+        $k=$index_count+1;
+    }
+  
+    
+         
     
     
    // uasort($get_keys_array_result['profile_fields'], "cmp2");
@@ -2477,6 +2519,15 @@ function getReportsdatanew($report_name,$usertimezone){
         $myNewArray['exhibitor_map_dynamics_ID'] = $all_meta_for_user['exhibitor_map_dynamics_ID'][0];
         $myNewArray['user_profile_url'] = $all_meta_for_user['user_profile_url'][0];
         $myNewArray['wp_user_id'] = $aid->user_id;
+        if(!empty($additional_settings)){
+       
+            foreach ($additional_settings as $key=>$valuename){
+            
+             $myNewArray[$additional_settings[$key]['key']] = $all_meta_for_user[$additional_settings[$key]['key']][0];
+             
+            }
+        }
+        
        
        
         
@@ -2855,6 +2906,56 @@ function my_contentmanager_style() {
    
 }
 function my_plugin_activate() {
+    
+    
+    $get_all_roles_array = 'wp_user_roles';
+        $get_all_roles = get_option($get_all_roles_array);
+    if(!empty($get_all_roles)){
+        foreach ($get_all_roles as $key => $item) {
+        
+        if($item['name'] !='Administrator'){
+            
+           if(!array_key_exists('unfiltered_upload',$get_all_roles[$key]['capabilities'])){
+            $get_all_roles[$key]['capabilities']['unfiltered_upload'] = 1;
+            $get_all_roles[$key]['capabilities']['upload_files'] = 1;
+           }
+            
+            
+        }
+        
+    }
+        update_option( $get_all_roles_array, $get_all_roles ); 
+   }
+    
+  $user_additional_field[0]['name']= 'Address 1';
+  $user_additional_field[0]['key']= 'address_line_1';
+  
+  $user_additional_field[1]['name']= 'Address 2';
+  $user_additional_field[1]['key']= 'address_line_2';
+  
+  $user_additional_field[2]['name']= 'City';
+  $user_additional_field[2]['key']= 'usercity';
+  
+  $user_additional_field[3]['name']= 'State';
+  $user_additional_field[3]['key']= 'userstate';
+  
+  $user_additional_field[4]['name']= 'Zipcode';
+  $user_additional_field[4]['key']= 'userzipcode';
+  
+  $user_additional_field[5]['name']= 'Country';
+  $user_additional_field[5]['key']= 'usercountry';
+  
+  $user_additional_field[6]['name']= 'Phone 1';
+  $user_additional_field[6]['key']= 'user_phone_1';
+  
+  $user_additional_field[7]['name']= 'Phone 2';
+  $user_additional_field[7]['key']= 'user_phone_2';
+  
+  $user_additional_field[8]['name']= 'Notes';
+  $user_additional_field[8]['key']= 'usernotes';
+  
+  update_option( 'EGPL_Settings_Additionalfield', $user_additional_field);
+ 
 
   $create_pages_list[0]['title'] = 'New User';
   $create_pages_list[0]['name'] = 'create-user';
@@ -3141,6 +3242,10 @@ function updateadmin_frontend_settings($object_data){
       
     
     $eventdate = $object_data['eventdate'];
+    $lockTWMcomplete = $object_data['lockTWMcomplete'];
+    $lockTWMduedate = $object_data['lockTWMduedate'];
+    
+    
    // $formemail = $object_data['formemail'];
    // $mandrill = $object_data['mandrill'];
   //  $infocontent = $object_data['infocontent'];
@@ -3149,6 +3254,9 @@ function updateadmin_frontend_settings($object_data){
     $oldvalues = get_option( 'ContenteManager_Settings' );
     
     $oldvalues['ContentManager']['eventdate']=$eventdate;
+    $oldvalues['ContentManager']['lockTWMcomplete']=$lockTWMcomplete;
+    $oldvalues['ContentManager']['lockTWMduedate']=$lockTWMduedate;
+    
    // $oldvalues['ContentManager']['formemail']=$formemail;
    // $oldvalues['ContentManager']['mandrill']=$mandrill;
   //  $oldvalues['ContentManager']['infocontent']=$infocontent;
@@ -4347,6 +4455,66 @@ function update_exhibitor_map_dynamics($data_array){
     
 }
 // auto upload plugin from github
+function changeuseremailaddress($request){
+    
+     try{
+      
+        
+         
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID);  
+        $lastInsertId = contentmanagerlogging('Edit user email',"Admin Action",serialize($request),''.$user_ID,$user_info->user_email,"pre_action_data");
+        $newemail = $request['newemailaddress'];
+        $welcome_email_status = $request['welcomememailstatus'];
+        $userid = $request['userid'];
+        $email_status = isValidEmail($newemail);
+        if($email_status){
+            if( email_exists( $newemail )) {
+                
+                $result_status['msg'] = 'A user with that email address already exists Please try another email address.';
+            
+                
+            }else{
+                
+                //$result_update = wp_update_user( array ( 'ID' => $userid, 'user_login' => $newemail,'user_email'=>$newemail) ) ;
+               global $wpdb;
+                $tablename = $wpdb->prefix . "users";
+                $sql = $wpdb->prepare( "UPDATE `wp_users` SET `display_name`='".$newemail."' , `user_login`='".$newemail."',`user_email`='".$newemail."' WHERE `ID`=".$userid."", $tablename );
+                $result_update = $wpdb->query($sql);
+                update_user_meta($userid, 'nickname', $newemail);
+                //echo $result_update;
+                //echo  "UPDATE ".$tablename." SET user_login=".$newemail.",user_email=".$newemail." WHERE ID=".$userid."";
+                $result_status['msg'] = 'update';
+                if($welcome_email_status == 'checked'){
+                    custome_email_send($userid);
+                }
+            }
+        }else{
+            
+            $result_status['msg'] = 'Email address is invalid. Please try again and enter a valid email.';
+        }
+        
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($result_status));
+        
+       echo json_encode($result_status);
+         
+    }catch (Exception $e) {
+       
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+    }
+ 
+ die();  
+    
+    
+}
+
+
+
+function isValidEmail($email){ 
+    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+}
 
 include_once('updater.php');
 

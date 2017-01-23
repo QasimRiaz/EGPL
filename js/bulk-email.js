@@ -93,6 +93,7 @@ function bulkemail_preview(){
                                              testButton:'Send Test Email',
                                              confirmButtonClass: 'btn mycustomwidth btn-lg btn-primary mysubmitemailbutton',
                                              cancelButtonClass: 'btn mycustomwidth btn-lg btn-danger',
+                                             columnClass: 'jconfirm-box-container-special',
                                              onOpen: function() {
                                                
                                                 this.$b.find('button.examplebutton').click(function() {
@@ -528,6 +529,7 @@ function welcomeemail_preview(){
                                              testButton:'Send Test Email',
                                              confirmButtonClass: 'btn mycustomwidth btn-lg btn-primary mysubmitemailbutton',
                                              cancelButtonClass: 'btn-danger btn mycustomwidth btn-lg',
+                                             columnClass: 'jconfirm-box-container-special',
                                              onOpen: function() {
                                                
                                                 this.$b.find('button.examplebutton').click(function() {

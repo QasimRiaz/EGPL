@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/customstyle.css?v=2.1">
     <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css?v=2.1"/>
     <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/clockpicker/bootstrap-clockpicker.min.css?v=2.1">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/lobipanel/lobipanel.min.css">
     
 <!--    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap.min.css">-->
      

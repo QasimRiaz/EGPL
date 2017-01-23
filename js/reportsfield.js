@@ -935,7 +935,8 @@ function view_profile(elem){
             confirmButtonClass: 'mycustomwidth',
             cancelButtonClass: 'customeclasshide',
             animation: 'rotateY',
-            closeIcon: true
+            closeIcon: true,
+            columnClass: 'jconfirm-box-container-special'
             
          });
                                     

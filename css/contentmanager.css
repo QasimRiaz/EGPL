@@ -29,9 +29,9 @@ input[type="textarea"]{height:110px !important;}
   width: 750px !important;
 }
 .checkbox input[type="checkbox"]{  margin-left: -17px !important;}
-.span6 {
+/*.span6 {
   width: 555px !important; 
-}
+}*/
 .cleditorMain{border: #000000 1px solid !important;height:auto !important;}
 
 /*menu-item-has-children*/
@@ -228,7 +228,7 @@ tr.overdue td.duedate{
 }
 }
 
-.jconfirm-box-container{
+.jconfirm-box-container-special{
     width: 80% !important;
     margin-left: 10% !important;
     margin-right: 10% !important;
@@ -662,13 +662,18 @@ table.dataTable tbody td {
     
 }
 
-.jspContainer{
+/*.jspContainer{
     
     width:95% !important;
-}
+}*/
 
 #loadingalert {
       z-index: 999;
+}
+
+.edituseremail{
+    
+    margin-left: 30%;
 }
 
 

@@ -5,6 +5,9 @@ if(isset($_POST['zipfoldername'])) {
     
    
 $filesnames_download = $_POST['result'];
+
+
+
 $zip_folder_name=$_POST['zipfoldername'];
 # create new zip opbject
 $zip = new ZipArchive();
@@ -15,9 +18,10 @@ $zip->open($tmp_file, ZipArchive::CREATE);
 
     # download file
     foreach ($filesnames_download as $file_name) {
-    $download_file = file_get_contents($file_name);
+    $data_image_company = explode("*",$file_name);
+    $download_file = file_get_contents($data_image_company[1]);
     #add it to the zip
-    $zip->addFromString(basename($file_name),$download_file);
+    $zip->addFromString($data_image_company[0].'_'.basename($file_name),$download_file);
     }
 # close zip
 $zip->close();

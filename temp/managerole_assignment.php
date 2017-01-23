@@ -139,7 +139,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                             <div class="col-sm-6">
   
                                 <button    name="savealltask"  onclick="roleassignednewtask()" id="roleassignnewtask" class="btn btn-lg mycustomwidth btn-success" value="Register">Save All Changes</button>
-                                <a  href="/add-new-level/" class="btn btn-lg mycustomwidth btn-success" style="background: gray !important;border: 1px solid #808080 !important;">Cancel</a>
+                                <a  onclick="returnback()" class="btn btn-lg mycustomwidth btn-success" style="background: gray !important;border: 1px solid #808080 !important;">Cancel</a>
                                 
                               
  

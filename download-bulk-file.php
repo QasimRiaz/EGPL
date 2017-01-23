@@ -19,7 +19,7 @@ if (!empty($_GET['zipname'])) {
         
         if(!empty($file_url[0]['file'])){
             
-            echo '<input type="hidden" name="result[]" value="'. $file_url[0]['file']. '">';
+            echo '<input type="hidden" name="result[]" value="'. $file_url. '">';
             $counter=$counter+50 ;
         }
         
