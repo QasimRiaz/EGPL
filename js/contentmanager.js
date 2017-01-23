@@ -1230,6 +1230,7 @@ function changeuseremailaddress(){
 
                                         location.reload();
                                     }
+
                             );
                    }else{
                        
@@ -1245,10 +1246,12 @@ function changeuseremailaddress(){
                 });
                     
                 }else{
+                    jQuery("#titlestatus").empty();
                     jQuery("#titlestatus").append('<p style="color:red;text-align: center;"><strong>You need to write something!</strong>');
                     return false;
                 }
             }else{
+                jQuery("#titlestatus").empty();
                 jQuery("#titlestatus").append('<p style="color:red;text-align: center;"><strong>Error:</strong> This username is invalid because it uses illegal characters. Please enter a valid username.');
                 return false;
             }                            
