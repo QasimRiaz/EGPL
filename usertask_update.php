@@ -22,6 +22,8 @@ if ($_GET['usertask_update'] == "update_user_meta_custome") {
 
     require_once('../../../wp-load.php');
     $keyvalue = $_POST['action'];
+    $actionlogdata['keyvalue'] = $_POST;
+    $actionlogdata['file'] = $_FILES['file'];
     $updatevalue=$_FILES['file'];
     $status=$_POST['status'];
     $oldvalue=$_POST['lastvalue'];
@@ -37,7 +39,7 @@ if ($_GET['usertask_update'] == "update_user_meta_custome") {
         }
        
        $user_info = get_userdata($postid);
-       $lastInsertId = contentmanagerlogging('Save Task File',"User Action",serialize($_POST),$postid,$user_info->user_email,"pre_action_data");
+       $lastInsertId = contentmanagerlogging('Save Task File',"User Action",serialize($actionlogdata),$postid,$user_info->user_email,"pre_action_data");
        user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$lastInsertId);
     
     
@@ -211,11 +213,10 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
     $email_body_message_for_admin['Updated Value']= $movefile['url'];
     $email_body_message_for_admin['Task Status']= $status;
     $email_body_message_for_admin['Task Update Date']=$datetime;
+    $email_body_message_for_admin['status']=$movefile;
     
-    $headers[] = 'Cc: Qasim Riaz <qasim.riaz@e2esp.com>';
-    $site_url = get_option('siteurl');
-    $to = "azhar.ghias@e2esp.com";
-    $subject = $postid . ' <' . $site_url . '>';
+    
+    
     
     contentmanagerlogging_file_upload ($lastInsertId,serialize($email_body_message_for_admin));
     //wp_mail($to, $subject, $email_body_message_for_admin,$headers);

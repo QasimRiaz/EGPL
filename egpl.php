@@ -199,8 +199,8 @@ if($_GET['contentManagerRequest'] == "changeuseremailaddress") {
        
        add_new_sponsor_metafields($user_id,$meta_array,$role);
      
-           
-            custome_email_send($user_id);
+            $useremail='';
+            custome_email_send($user_id,$useremail);
             
        
     } else {
@@ -599,8 +599,8 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
        
        add_new_sponsor_metafields($user_id,$meta_array,$role);
        if($welcomeemail_status == 'send'){
-           
-            custome_email_send($user_id);
+            $useremail='';
+            custome_email_send($user_id,$useremail);
             $t=time();
             update_user_meta($user_id, 'convo_welcomeemail_datetime', $t*1000);
        }      
@@ -3673,11 +3673,22 @@ global $wpdb;
 
 
 
-function custome_email_send($user_id){
+function custome_email_send($user_id,$userlogin=''){
         global $wpdb, $wp_hasher;
         $user = get_userdata($user_id);
-        $user_login = stripslashes($user->user_login);
-        $user_email = stripslashes($user->user_email);
+        
+        if(empty($userlogin)){
+            
+          $user_login = stripslashes($user->user_login);
+          $user_email = stripslashes($user->user_email);
+          
+        }else{
+            
+            $user_email = $userlogin;
+            $user_login = $userlogin;
+        }
+        
+        
         
         $plaintext_pass=wp_generate_password( 8, false, false );
         wp_set_password( $plaintext_pass, $user_id );
@@ -3749,7 +3760,7 @@ function custome_email_send($user_id){
          
             $body_message = str_replace('{issues_passes}', $pass_code_array_list, $body_message);
        //  $body_message = str_replace('{user_email]', $user_email, $body_message);
-         $body_message = str_replace('{user_login}', $user_email, $body_message);
+         $body_message = str_replace('{user_login}', $user_login, $body_message);
         // $body_message = str_replace('[first_name]', $user->first_name,$body_message );
         // $body_message = str_replace('[last_name]', $user->last_name,$body_message );
         // $body_message = str_replace('[agency]', $account_name,$body_message );
@@ -4085,7 +4096,14 @@ function importbulkuseradd($username,$email,$firstname,$lastname,$role,$company_
               
               }
               
-              $role = str_replace(' ','_',strtolower($role));
+              $get_all_roles_array = 'wp_user_roles';
+              $get_all_roles = get_option($get_all_roles_array);
+              foreach ($get_all_roles as $key => $item) {
+                 if($role == $item['name']){
+                     $role = $key;
+                     
+                 }
+              }
               add_new_sponsor_metafields($user_id,$meta_array,$role);
               $plaintext_pass=wp_generate_password( 8, false, false );
               wp_set_password( $plaintext_pass, $user_id );
@@ -4481,12 +4499,16 @@ function changeuseremailaddress($request){
                 $tablename = $wpdb->prefix . "users";
                 $sql = $wpdb->prepare( "UPDATE `wp_users` SET `display_name`='".$newemail."' , `user_login`='".$newemail."',`user_email`='".$newemail."' WHERE `ID`=".$userid."", $tablename );
                 $result_update = $wpdb->query($sql);
+                //echo '<pre>';
+                //print_r($result_update);exit;
                 update_user_meta($userid, 'nickname', $newemail);
                 //echo $result_update;
                 //echo  "UPDATE ".$tablename." SET user_login=".$newemail.",user_email=".$newemail." WHERE ID=".$userid."";
                 $result_status['msg'] = 'update';
+                if($result_update == 1){
                 if($welcome_email_status == 'checked'){
-                    custome_email_send($userid);
+                    custome_email_send($userid,$newemail);
+                }
                 }
             }
         }else{
