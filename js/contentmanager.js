@@ -1182,7 +1182,7 @@ function changeuseremailaddress(){
     data.append('oldemailaddress',   oldemailaddress);
      jQuery.confirm({
             title: "Change Email Address",
-            content: '<div id="titlestatus" ></div><div ><p></p><input placeholder="New Email Address" style="margin-bottom: 10px;padding: 9px;border: #d6e2e8 solid 1px; width: 100%; height: 35px; border-radius: 3px;" type="text" id="newemailaddress" ><p style="color:red;margin: 5px 0px;">This action will also change the login name for this user so we recommend that you send a welcome email message to the new email address.</p><br><p style="margin: 5px 0px;"><input  type="checkbox" value="checked" id="welcomememailstatus"> Send a welcome email (and new password) to the new email address</p></div>',
+            content: '<div id="titlestatus" ></div><div ><p></p><input placeholder="New Email Address" style="margin-bottom: 10px;padding: 9px;border: #d6e2e8 solid 1px; width: 100%; height: 35px; border-radius: 3px;" type="text" id="newemailaddress" ><p style="color:red;margin: 5px 0px;">This action will also change the login name for this user so we recommend that you send a welcome email message to the new email address.</p><br><p style="margin: 5px 0px;"><input  type="checkbox" value="checked" id="welcomememailstatus" checked> Send a welcome email (and new password) to the new email address</p></div>',
             confirmButtonClass: 'mycustomwidth specialbuttoncolor',
            
             confirmButton:'Update',
