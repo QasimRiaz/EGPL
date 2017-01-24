@@ -2198,7 +2198,8 @@ function getReportsdatanew($report_name,$usertimezone){
    
 
     $additional_settings = get_option( 'EGPL_Settings_Additionalfield' );
-    
+     $get_all_roles_array = 'wp_user_roles';
+     $get_all_roles = get_option($get_all_roles_array);
     
     $k = 13;
     $unique_id=0;
@@ -2508,7 +2509,7 @@ function getReportsdatanew($report_name,$usertimezone){
 	   	
     
         $myNewArray['company_name'] = $company_name;
-        $myNewArray['Role'] = ucwords($user_data->roles[0]);
+        $myNewArray['Role'] = $get_all_roles[$user_data->roles[0]]['name'];
         $myNewArray['last_login'] = $timestamp;
      
         $myNewArray['first_name'] = $user_data->first_name;
