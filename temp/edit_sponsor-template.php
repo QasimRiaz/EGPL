@@ -14,8 +14,9 @@
       }
        $settitng_key='ContenteManager_Settings';
        $sponsor_info = get_option($settitng_key);
-    
-      $sponsor_name = $sponsor_info['ContentManager']['sponsor-name'];
+       $additional_fields_settings_key = 'EGPL_Settings_Additionalfield';
+       $additional_fields = get_option($additional_fields_settings_key);
+       $sponsor_name = $sponsor_info['ContentManager']['sponsor-name'];
      
       
       global $wp_roles;
@@ -187,78 +188,20 @@
                                    
                   </div>                  
                       <div role="tabpanel" class="tab-pane fade" id="tabs-1-tab-2">
-                               <div class="form-group row" >
-                                    <label class="col-sm-2 form-control-label">Address 1</label>
-                                    <div class="col-sm-10">
-                                        
-					<input type="text"  class="form-control mymetakey" id="address_line_1" name="address_line_1" placeholder="Address 1" value="<?php echo $all_meta_for_user['address_line_1'][0];?>" >
-								
-                                        
-                                    </div>
-                                </div>
-                                <div class="form-group row" >
-                                    <label class="col-sm-2 form-control-label">Address 2</label>
-                                    <div class="col-sm-10">
-                                        
-				<input type="text"  class="form-control mymetakey" id="address_line_1" name="address_line_2" placeholder="Address 2" value="<?php echo $all_meta_for_user['address_line_2'][0];?>" >
-								
-                                        
-                                    </div>
-                                </div>
-                                <div class="form-group row" >
-                                    <label class="col-sm-2 form-control-label">City</label>
-                                    <div class="col-sm-10">
-                                        
-								<input type="text"  class="form-control mymetakey" id="usercity" name="usercity" placeholder="City"  value="<?php echo $all_meta_for_user['usercity'][0];?>">
-								
-                                        
-                                    </div>
-                                </div>
+                          
+                           <?php   foreach ($additional_fields as $key=>$value){  if($additional_fields[$key]['name'] !='Notes'){?>
+                          
                                  <div class="form-group row" >
-                                    <label class="col-sm-2 form-control-label">State</label>
+                                    <label class="col-sm-2 form-control-label"><?php echo $additional_fields[$key]['name'];?></label>
                                     <div class="col-sm-10">
                                         
-								<input type="text"  class="form-control mymetakey" id="userstate" name="userstate" placeholder="State" value="<?php echo $all_meta_for_user['userstate'][0];?>" >
+					<input type="text"  class="form-control mymetakey" id="<?php echo $additional_fields[$key]['key'];?>" name="<?php echo $additional_fields[$key]['key'];?>" value="<?php echo $all_meta_for_user[$additional_fields[$key]['key']][0];?>" placeholder="<?php echo $additional_fields[$key]['name'];?>" >
 								
                                         
                                     </div>
                                 </div>
-                                 <div class="form-group row" >
-                                    <label class="col-sm-2 form-control-label">Zipcode</label>
-                                    <div class="col-sm-10">
-                                        
-								<input type="text"  class="form-control mymetakey" id="userzipcode" name="userzipcode" placeholder="Zipcode" value="<?php echo $all_meta_for_user['userzipcode'][0];?>" >
-								
-                                        
-                                    </div>
-                                </div>
-                                <div class="form-group row" >
-                                    <label class="col-sm-2 form-control-label">Country</label>
-                                    <div class="col-sm-10">
-                                        
-								<input type="text"  class="form-control mymetakey" id="usercountry" name="usercountry" placeholder="Country" value="<?php echo $all_meta_for_user['usercountry'][0];?>" >
-								
-                                        
-                                    </div>
-                                </div>
-                                <div class="form-group row" >
-                                    <label class="col-sm-2 form-control-label">Phone 1</label>
-                                    <div class="col-sm-10">
-                                        
-								<input type="text"  class="form-control mymetakey" id="user_phone_1" name="user_phone_1" placeholder="Phone 1" value="<?php echo $all_meta_for_user['user_phone_1'][0];?>">
-								
-                                        
-                                    </div>
-                                </div>
-                                <div class="form-group row" >
-                                    <label class="col-sm-2 form-control-label">Phone 2</label>
-                                    <div class="col-sm-10">
-                                        
-								<input type="text"  class="form-control mymetakey" id="user_phone_2" name="user_phone_2" placeholder="Phone 2" value="<?php echo $all_meta_for_user['user_phone_2'][0];?>">
-								
-                                        
-                                    </div>
-                                </div>
+                           <?php }} ?>
+                               
                                 <div class="form-group row" >
                                     <label class="col-sm-2 form-control-label">Notes</label>
                                     <div class="col-sm-10">
