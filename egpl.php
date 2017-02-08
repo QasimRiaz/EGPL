@@ -2984,11 +2984,11 @@ function my_plugin_activate() {
   $user_additional_field[7]['name']= 'Phone 2';
   $user_additional_field[7]['key']= 'user_phone_2';
   
-  $user_additional_field[7]['name']= 'Registration Codes (Comma separated list of values)';
-  $user_additional_field[7]['key']= 'reg_codes';
+  $user_additional_field[8]['name']= 'Registration Codes (Comma separated list of values)';
+  $user_additional_field[8]['key']= 'reg_codes';
    
-  $user_additional_field[8]['name']= 'Notes';
-  $user_additional_field[8]['key']= 'usernotes';
+  $user_additional_field[9]['name']= 'Notes';
+  $user_additional_field[9]['key']= 'usernotes';
   
   update_option( 'EGPL_Settings_Additionalfield', $user_additional_field);
  
