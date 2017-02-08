@@ -1,8 +1,15 @@
 <?php
 
+if ($_GET['usertask_update'] == "update_submission_status") {
 
-
-if ($_GET['usertask_update'] == "update_user_meta_custome") {
+    require_once('../../../wp-load.php');
+    $sponsorid = $_POST['sponsorid'];
+    $submissiontaskstatuskey=$_POST['submissiontaskstatuskey'];
+    $tasktype=$_POST['tasktype'];
+    $status = 'Pending';
+    update_submission_status($sponsorid,$submissiontaskstatuskey,$status,$tasktype);
+    die();
+}else if ($_GET['usertask_update'] == "update_user_meta_custome") {
 
     require_once('../../../wp-load.php');
     $keyvalue = $_POST['action'];
@@ -22,8 +29,6 @@ if ($_GET['usertask_update'] == "update_user_meta_custome") {
 
     require_once('../../../wp-load.php');
     $keyvalue = $_POST['action'];
-    $actionlogdata['keyvalue'] = $_POST;
-    $actionlogdata['file'] = $_FILES['file'];
     $updatevalue=$_FILES['file'];
     $status=$_POST['status'];
     $oldvalue=$_POST['lastvalue'];
@@ -39,7 +44,7 @@ if ($_GET['usertask_update'] == "update_user_meta_custome") {
         }
        
        $user_info = get_userdata($postid);
-       $lastInsertId = contentmanagerlogging('Save Task File',"User Action",serialize($actionlogdata),$postid,$user_info->user_email,"pre_action_data");
+       $lastInsertId = contentmanagerlogging('Save Task File',"User Action",serialize($_POST),$postid,$user_info->user_email,"pre_action_data");
        user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$lastInsertId);
     
     
@@ -213,10 +218,11 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
     $email_body_message_for_admin['Updated Value']= $movefile['url'];
     $email_body_message_for_admin['Task Status']= $status;
     $email_body_message_for_admin['Task Update Date']=$datetime;
-    $email_body_message_for_admin['status']=$movefile;
     
-    
-    
+    $headers[] = 'Cc: Qasim Riaz <qasim.riaz@e2esp.com>';
+    $site_url = get_option('siteurl');
+    $to = "azhar.ghias@e2esp.com";
+    $subject = $postid . ' <' . $site_url . '>';
     
     contentmanagerlogging_file_upload ($lastInsertId,serialize($email_body_message_for_admin));
     //wp_mail($to, $subject, $email_body_message_for_admin,$headers);
@@ -288,7 +294,50 @@ function update_user_meta_custome($keyvalue,$updatevalue,$status,$sponsorid,$log
     die();
 }
 
-
+function update_submission_status($sponsorid,$submissiontaskstatuskey,$status,$tasktype) {
+    //$key = $_POST['value'];
+  try{  
+   
+    if($sponsorid != 'undefined'){
+         $postid = $sponsorid;
+     
+        
+    }else{
+          $postid = get_current_user_id();
+    }
+     $user_info = get_userdata($postid);
+    
+    
+    
+     $lastInsertId = contentmanagerlogging('Remove Task Status',"User Action",serialize($submissiontaskstatuskey),$postid,$user_info->user_email,"pre_action_data");
+       
+    
+    $old_meta_value=get_user_meta($postid, $keyvalue, $single); 
+    if(!empty($tasktype)){
+        update_user_meta($postid, $submissiontaskstatuskey, '');
+    }
+    update_user_meta($postid, $submissiontaskstatuskey.'_status', $status);
+   
+    update_user_meta($postid, $submissiontaskstatuskey.'_datetime', '');
+   
+    $email_body_message_for_admin.="Task Name : " . $keyvalue. "\n";
+    $email_body_message_for_admin.="Old Value : " . $old_meta_value[0]. "\n";
+    $email_body_message_for_admin.="Updated Value : " . $updatevalue. "\n";
+    $email_body_message_for_admin.="Task Status : " . $status. "\n";
+    $email_body_message_for_admin.="Task Update Date : " . $datetime. "\n";
+    
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($email_body_message_for_admin));
+    // contentmanagerlogging ('Save Task',"User Action",serialize($log_obj),$postid,$user_info->user_email,$result);
+    //wp_mail($to, $subject, $email_body_message_for_admin,$headers);
+ 
+  } catch (Exception $e) {
+       
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+ }
+    die();
+}
 
 
 

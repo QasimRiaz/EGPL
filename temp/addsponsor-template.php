@@ -195,7 +195,7 @@
                   <div class="form-group row">
                                     <label class="col-sm-2 form-control-label"></label>
                                     <div class="col-sm-6">
-                                             <button type="submit"  name="addsponsor"  class="btn btn-lg mycustomwidth btn-success" value="Register">Create</button>
+                                             <button type="submit" id="addnewsponsor_q" name="addsponsor"  class="btn btn-lg mycustomwidth btn-success" value="Register">Create</button>
                                             
                                         
                                     </div>

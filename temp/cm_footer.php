@@ -19,7 +19,7 @@
 	<script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/daterangepicker/daterangepicker.js?v=2.14"></script>
         <script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/tether/tether.min.js"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/cmtemplate/js/lib/blockUI/jquery.blockUI.js"></script>
-      
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <!--       content manager js files -->
         
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/reportsfield.js?v=2.14"></script>
@@ -44,7 +44,17 @@
         <script src='/wp-content/plugins/EGPL/js/jquery.ajax-progress.js?v=2.14'></script>
          <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=2.14"></script>
           
-	 
+	 <?php
+         $outside_jsfiels = 'EGPL_include_custome_js_css_files';
+         $include_js_files = get_option($outside_jsfiels);
+         if (!empty($include_js_files['js'])) {
+             foreach ($include_js_files['js'] as $key => $url) {
+                 ?>
+                 <script type="text/javascript" src="<?php echo $include_js_files['js'][$key]['url']; ?> "></script>
+
+             <? }
+         }
+         ?>
             
 
 	<script type="text/javascript" language="javascript" src="/wp-content/plugins/EGPL/js/dataTables.buttons.min.js?v=2.14"></script>
@@ -56,6 +66,8 @@
 <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
 <script>
 jQuery(document).ready(function() {
+    
+    jQuery('[data-toggle="tooltip"]').tooltip(); 
 jQuery('.panel').lobiPanel({
     reload: false,
     close: false,

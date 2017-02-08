@@ -44,13 +44,7 @@ get_currentuserinfo();
                             
                         </li>
                      
-                        <li class="mythemestyle">
-                            <a href="/bulk-download-files/">
-	                   <i class="font-icon fa fa-download"></i>
-	                    <span class="lbl">Bulk Download</span>
-	                </a>
-                            
-                        </li>
+                       
                          <li class="mythemestyle">
                             <a href="/bulk-import-user/">
 	                   <i class="font-icon fa fa-upload"></i>
@@ -99,7 +93,14 @@ get_currentuserinfo();
 	                  <i class="font-icon fa fa-bars"></i>
 	                    <span class="lbl">Manage Levels</span>
 	                </a>
-	            </li>
+	           </li>
+                   <li class="mythemestyle">
+                            <a href="/bulk-download-files/">
+                                <i class="font-icon fa fa-download"></i>
+                                <span class="lbl">Bulk Download</span>
+                            </a>
+                            
+                   </li>
 	            
 	        </ul>
 	    </section>

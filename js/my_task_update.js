@@ -48,7 +48,7 @@ jQuery( document ).ready(function() {
 
 
                     if (isConfirm) {
-                        console.log('test');
+                       
                        
                         myString = id.replace('remove_', '');
                         jQuery("input[name='" + myString + "']").val("");
@@ -162,12 +162,19 @@ function update_user_meta_custome(elem) {
     
     var url = window.location.protocol + "//" + window.location.host + "/";
     var statusid = id.replace('update_', '');
-    var statusvalue = jQuery('#' + statusid + " option:selected").text()
+    var statusvalue ;
     var value = statusid.replace('_status', '');
     var elementType = jQuery("#my" + value).is("input[type='file']"); //jQuery(this).prev().prop('tagName');
     if (elementType == false) {
         var metaupdate = jQuery('#' + value).val();
-
+        if(metaupdate !=""){
+            
+            statusvalue = 'Complete';
+            
+        }else{
+           
+            statusvalue = 'Pending';
+        }
 
 
 
@@ -178,6 +185,18 @@ function update_user_meta_custome(elem) {
              
                filestatus=true;
                jQuery("body").css({'cursor':'default'});
+               if(metaupdate !=""){
+                   
+                   jQuery('#update_'+value+'_remove').removeClass('specialremoveicondisable');
+                   jQuery("." + value+'_submissionstatus').css( "background-color", "#d5f1d5");
+                   jQuery('#update_'+value+'_remove').addClass('specialremoveiconenable');
+                   jQuery('#'+id).children('.content').text('Submitted');
+                   jQuery('#'+id).addClass('disableremovebutton');
+                   jQuery("#" + value).prop("disabled", true);
+               }
+               
+               
+               
             },error: function (xhr, ajaxOptions, thrownError) {
                     swal({
 					title: "Error",
@@ -193,6 +212,16 @@ function update_user_meta_custome(elem) {
         //var metaupdate =jQuery('#my'+value).val();
 
         var file = jQuery('#my' + value)[0].files[0];
+        
+        if(file !=""){
+            
+            statusvalue = 'Complete';
+            
+        }else{
+           
+            statusvalue = 'Pending';
+        }
+        
         // if (typeof(file) != 'undefined') {
         var lastvalue = jQuery('#hd_' + value).val();
         var data = new FormData();
@@ -222,7 +251,7 @@ function update_user_meta_custome(elem) {
 
                         erroralert = true;
                         filestatus=true;
-                         jQuery("body").css({'cursor':'default'});
+                        jQuery("body").css({'cursor':'default'});
                         
                     }else{
                         filestatus=true;
@@ -230,6 +259,16 @@ function update_user_meta_custome(elem) {
                     }
 
                 } else {
+                    
+                    if(file !=""){
+                   
+                        jQuery('#update_'+value+'_remove').removeClass('specialremoveicondisable');
+                        jQuery("." + value+'_submissionstatus').css( "background-color", "#d5f1d5");
+                        jQuery('#update_'+value+'_remove').addClass('specialremoveiconenable');
+                        jQuery('#'+id).children('.content').text('Submitted');
+                        jQuery('#'+id).addClass('disableremovebutton');
+                   
+                    }
                     filestatus=true;
                     jQuery("body").css({'cursor':'default'})
                     location.reload();
@@ -253,7 +292,8 @@ function update_user_meta_custome(elem) {
     }
 }
 jQuery(document).ready(function() {
-   [].slice.call( document.querySelectorAll( 'button.progress-button' ) ).forEach( function( bttn ) {
+    
+   [].slice.call( document.querySelectorAll( 'button.taskcustomesubmit' ) ).forEach( function( bttn ) {
 				new ProgressButton( bttn, {
 					callback : function( instance ) {
 						var progress = 0,
@@ -286,6 +326,127 @@ jQuery(document).ready(function() {
 });
 
 
+function remove_task_value_readyfornew(e){
+    
+    
+     var removebuttonid = jQuery(e).attr('id');
+     var task_name_key = jQuery(e).attr('name');
+     var url = window.location.protocol + "//" + window.location.host + "/";
+     var elementType = jQuery("#my" + task_name_key).is("input[type='file']");
+     var tasktype='';
+     if (elementType == false) {
+         
+         
+         
+          swal({
+            title: "Are you sure?",
+            text: 'You want to remove your submission?',
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes, remove it!",
+            cancelButtonText: "No, cancel please!",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        },
+                function (isConfirm) {
+
+
+
+                    if (isConfirm) {
+                       
+                        update_task_submission_status(task_name_key,tasktype);
+                        jQuery("." + task_name_key+'_submissionstatus').removeAttr('style');
+                   
+                   
+ 
+                        jQuery("#" + task_name_key).prop("disabled", false);
+                        jQuery('#' + removebuttonid).removeClass('specialremoveiconenable');
+                        jQuery('#' + removebuttonid).addClass('specialremoveicondisable');
+                        jQuery('#update_' + task_name_key + '_status').children('.content').text('Submit');
+                        jQuery('#update_' + task_name_key + '_status').removeClass('disableremovebutton');
+                        swal({
+                            title: "Removed!",
+                            text: "Submission remove Successfully",
+                            type: "success",
+                            confirmButtonClass: "btn-success"
+                        }, function () {
+                            
+                        }
+                        );
+                    } else {
+                        swal({
+                            title: "Cancelled",
+                            text: "Submission is safe :)",
+                            type: "error",
+                            confirmButtonClass: "btn-danger"
+                        });
+                    }
+                });
+         
+         
+         
+     }else{
+         
+         swal({
+            title: "Are you sure?",
+            text: 'You want to remove your submission?',
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes, remove it!",
+            cancelButtonText: "No, cancel please!",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        },
+                function (isConfirm) {
+
+
+
+                    if (isConfirm) {
+                        tasktype='fileupload';
+                        update_task_submission_status(task_name_key,tasktype);
+                        jQuery("." + task_name_key+'_submissionstatus').removeAttr('style');
+                        
+                        myString = task_name_key;
+                        jQuery("input[name='" + myString + "']").val("");
+                        jQuery("input[name$='" + myString + "']").val("");
+                        jQuery("#hd_" + myString).val("");
+                        jQuery(".remove_" + myString).hide();
+                        jQuery("." + myString).show();
+                        jQuery('#' + removebuttonid).removeClass('specialremoveiconenable');
+                        jQuery('#' + removebuttonid).addClass('specialremoveicondisable');
+                        jQuery('#update_' + task_name_key + '_status').children('.content').text('Submit');
+                        jQuery('#update_' + task_name_key + '_status').removeClass('disableremovebutton');
+                        swal({
+                            title: "Removed!",
+                            text: "Submission remove Successfully",
+                            type: "success",
+                            confirmButtonClass: "btn-success"
+                        }, function () {
+                            
+                        }
+                        );
+                    } else {
+                        swal({
+                            title: "Cancelled",
+                            text: "Submission is safe :)",
+                            type: "error",
+                            confirmButtonClass: "btn-danger"
+                        });
+                    }
+                });
+         
+     }
+     
+    
+    
+    
+    
+    
+}
+
+
 function getUrlParameter(sParam)
 {
     var sPageURL = window.location.search.substring(1);
@@ -298,7 +459,41 @@ function getUrlParameter(sParam)
             return sParameterName[1];
         }
     }
-}     
+} 
+
+function update_task_submission_status(submissiontaskstatuskey,tasktype){
+    
+    
+    
+    var sponsorid=getUrlParameter('sponsorid');
+    var url = window.location.protocol + "//" + window.location.host + "/";
+    var urlnew = url + 'wp-content/plugins/EGPL/usertask_update.php?usertask_update=update_submission_status';
+    var data = new FormData();
+    data.append('sponsorid',   sponsorid);
+    data.append('tasktype',   tasktype);
+    data.append('submissiontaskstatuskey',   submissiontaskstatuskey);
+    jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+            
+                
+                
+                
+            }
+        });
+   
+    
+    
+    
+    
+}
+
+
 // Bind normal buttons
 
 

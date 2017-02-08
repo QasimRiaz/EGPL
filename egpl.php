@@ -190,6 +190,7 @@ if($_GET['contentManagerRequest'] == "changeuseremailaddress") {
         
        $random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
        $user_id = register_new_user( $username, $email );//wp_create_user($username, $random_password, $email);
+    if ( ! is_wp_error( $user_id ) ) {
        $result=$user_id;
        $loggin_data['created_id']=$result;
        $message['user_id'] = $user_id;
@@ -201,7 +202,10 @@ if($_GET['contentManagerRequest'] == "changeuseremailaddress") {
      
             $useremail='';
             custome_email_send($user_id,$useremail);
-            
+       }else{
+           
+           $message['msg'] = $user_id->errors['invalid_username'][0];
+       } 
        
     } else {
         
@@ -2371,7 +2375,8 @@ function getReportsdatanew($report_name,$usertimezone){
     
     
    // uasort($get_keys_array_result['profile_fields'], "cmp2");
-    foreach ($result_task_array_list['profile_fields'] as $profile_field_name => $profile_field_settings) {
+    if(!empty($result_task_array_list)){
+        foreach ($result_task_array_list['profile_fields'] as $profile_field_name => $profile_field_settings) {
         $report_key_value = "";
         $showhidevalue = true;
 
@@ -2448,7 +2453,7 @@ function getReportsdatanew($report_name,$usertimezone){
             
             
     }
-    
+    }
    // echo '<pre>';
           //  print_r($showhideMYFieldsArray);exit;
         $column_name_uppercase = $showhideMYFieldsArray;//array_change_key_case($showhideMYFieldsArray, CASE_UPPER);
@@ -2868,7 +2873,7 @@ function getReportsdatanew($report_name,$usertimezone){
 
 add_action('wp_enqueue_scripts', 'add_contentmanager_js');
 function add_contentmanager_js(){
-      wp_enqueue_script('safari4', plugins_url('/js/my_task_update.js', __FILE__), array('jquery'));
+      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'1.1.0', true);
     
      wp_enqueue_script( 'jquery.alerts', plugins_url() . '/EGPL/js/jquery.alerts.js', array(), '1.1.0', true );
      wp_enqueue_script( 'boot-date-picker', plugins_url() . '/EGPL/js/bootstrap-datepicker.js', array(), '1.2.0', true );
@@ -2910,7 +2915,7 @@ function my_plugin_activate() {
     
     
     $get_all_roles_array = 'wp_user_roles';
-        $get_all_roles = get_option($get_all_roles_array);
+    $get_all_roles = get_option($get_all_roles_array);
     if(!empty($get_all_roles)){
         foreach ($get_all_roles as $key => $item) {
         
@@ -2928,6 +2933,33 @@ function my_plugin_activate() {
         update_option( $get_all_roles_array, $get_all_roles ); 
    }
     
+   $test_task = 'custome_task_manager_data';
+   $manage_bulk_task= get_option($test_task);
+   if(empty($manage_bulk_task['profile_fields'])){
+       
+       $defulttask['task_company_logo_png_sfggpydf']['value']='';
+       $defulttask['task_company_logo_png_sfggpydf']['unique']='no';
+       $defulttask['task_company_logo_png_sfggpydf']['class']='';
+       $defulttask['task_company_logo_png_sfggpydf']['after']='';
+       $defulttask['task_company_logo_png_sfggpydf']['required']='no';
+       $defulttask['task_company_logo_png_sfggpydf']['allow_tags']='yes';
+       $defulttask['task_company_logo_png_sfggpydf']['add_to_profile']='yes';
+       $defulttask['task_company_logo_png_sfggpydf']['allow_multi']='no';
+       $defulttask['task_company_logo_png_sfggpydf']['size']='';
+       $defulttask['task_company_logo_png_sfggpydf']['label']='Company Logo (PNG File)';
+       $defulttask['task_company_logo_png_sfggpydf']['type']='color';
+       $defulttask['task_company_logo_png_sfggpydf']['lin_url']='';
+       $defulttask['task_company_logo_png_sfggpydf']['attrs']='04-Feb-2017';
+       $defulttask['task_company_logo_png_sfggpydf']['taskattrs']='';
+       $defulttask['task_company_logo_png_sfggpydf']['roles'][0] =  'all';
+       $defulttask['task_company_logo_png_sfggpydf']['descrpition']='Upload Company Logo (PNG File, 200 x 200 px)';
+       $defulttask['task_company_logo_png_sfggpydf']['usersids']='';
+       $manage_bulk_task['profile_fields']  = $defulttask; 
+       update_option( $test_task, $manage_bulk_task ); 
+       
+   }
+   
+   
   $user_additional_field[0]['name']= 'Address 1';
   $user_additional_field[0]['key']= 'address_line_1';
   
@@ -3043,9 +3075,9 @@ function my_plugin_activate() {
   $create_pages_list[18]['name'] = 'sync-to-floorplan';
   $create_pages_list[18]['temp'] = 'temp/sync_to_floorplan.php';
   
-  $create_pages_list[19]['title'] = 'Bulk Edit Task/';
+  $create_pages_list[19]['title'] = 'Bulk Edit Task';
   $create_pages_list[19]['name'] = 'bulk-edit-task';
-  $create_pages_list[19]['temp'] = 'temp/bulk-edit-task/.php';
+  $create_pages_list[19]['temp'] = 'temp/bulk_edit_task.php';
   
   $create_pages_list[20]['title'] = 'Role Assignment';
   $create_pages_list[20]['name'] = 'role-assignment';
@@ -3367,69 +3399,74 @@ function excludes_sponsor_meta(){
      echo $bodayContent;
 }
 
-class ContentManager {
+class PageTemplater {
 
-		/**
-         * A Unique Identifier
-         */
-		 protected $plugin_slug;
+	/**
+	 * A reference to an instance of this class.
+	 */
+	private static $instance;
 
-        /**
-         * A reference to an instance of this class.
-         */
-        private static $instance;
+	/**
+	 * The array of templates that this plugin tracks.
+	 */
+	protected $templates;
 
-        /**
-         * The array of templates that this plugin tracks.
-         */
-        protected $templates;
+	/**
+	 * Returns an instance of this class. 
+	 */
+	public static function get_instance() {
 
+		if ( null == self::$instance ) {
+			self::$instance = new PageTemplater();
+		} 
 
-        /**
-         * Returns an instance of this class. 
-         */
-        public static function get_instance() {
+		return self::$instance;
 
-                if( null == self::$instance ) {
-                        self::$instance = new ContentManager();
-                } 
+	} 
 
-                return self::$instance;
+	/**
+	 * Initializes the plugin by setting filters and administration functions.
+	 */
+	private function __construct() {
 
-        } 
-
-        /**
-         * Initializes the plugin by setting filters and administration functions.
-         */
-        private function __construct() {
-
-                $this->templates = array();
+		$this->templates = array();
 
 
-                // Add a filter to the attributes metabox to inject template into the cache.
-                add_filter(
-					'page_attributes_dropdown_pages_args',
-					 array( $this, 'register_project_templates' ) 
-				);
+		// Add a filter to the attributes metabox to inject template into the cache.
+		if ( version_compare( floatval( get_bloginfo( 'version' ) ), '4.7', '<' ) ) {
+
+			// 4.6 and older
+			add_filter(
+				'page_attributes_dropdown_pages_args',
+				array( $this, 'register_project_templates' )
+			);
+
+		} else {
+
+			// Add a filter to the wp 4.7 version attributes metabox
+			add_filter(
+				'theme_page_templates', array( $this, 'add_new_template' )
+			);
+
+		}
+
+		// Add a filter to the save post to inject out template into the page cache
+		add_filter(
+			'wp_insert_post_data', 
+			array( $this, 'register_project_templates' ) 
+		);
 
 
-                // Add a filter to the save post to inject out template into the page cache
-                add_filter(
-					'wp_insert_post_data', 
-					array( $this, 'register_project_templates' ) 
-				);
+		// Add a filter to the template include to determine if the page has our 
+		// template assigned and return it's path
+		add_filter(
+			'template_include', 
+			array( $this, 'view_project_template') 
+		);
 
 
-                // Add a filter to the template include to determine if the page has our 
-				// template assigned and return it's path
-                add_filter(
-					'template_include', 
-					array( $this, 'view_project_template') 
-				);
-
-
-                // Add your templates to this array.
-                $this->templates = array(
+		// Add your templates to this array.
+		$this->templates = array(
                         'temp/addsponsor-template.php'     => 'Add new sponsor',
                         'temp/create-resource-template.php'     => 'Create resource',
                         'temp/sponsor-reports-template.php'     => 'Sponsor Reports',
@@ -3456,76 +3493,86 @@ class ContentManager {
                     
                     
                 );
-				
-        } 
+			
+	} 
 
+	/**
+	 * Adds our template to the page dropdown for v4.7+
+	 *
+	 */
+	public function add_new_template( $posts_templates ) {
+		$posts_templates = array_merge( $posts_templates, $this->templates );
+		return $posts_templates;
+	}
 
-        /**
-         * Adds our template to the pages cache in order to trick WordPress
-         * into thinking the template file exists where it doens't really exist.
-         *
-         */
+	/**
+	 * Adds our template to the pages cache in order to trick WordPress
+	 * into thinking the template file exists where it doens't really exist.
+	 */
+	public function register_project_templates( $atts ) {
 
-        public function register_project_templates( $atts ) {
+		// Create the key used for the themes cache
+		$cache_key = 'page_templates-' . md5( get_theme_root() . '/' . get_stylesheet() );
 
-                // Create the key used for the themes cache
-                $cache_key = 'page_templates-' . md5( get_theme_root() . '/' . get_stylesheet() );
+		// Retrieve the cache list. 
+		// If it doesn't exist, or it's empty prepare an array
+		$templates = wp_get_theme()->get_page_templates();
+		if ( empty( $templates ) ) {
+			$templates = array();
+		} 
 
-                // Retrieve the cache list. 
-				// If it doesn't exist, or it's empty prepare an array
-				$templates = wp_get_theme()->get_page_templates();
-                if ( empty( $templates ) ) {
-                        $templates = array();
-                } 
+		// New cache, therefore remove the old one
+		wp_cache_delete( $cache_key , 'themes');
 
-                // New cache, therefore remove the old one
-                wp_cache_delete( $cache_key , 'themes');
+		// Now add our template to the list of templates by merging our templates
+		// with the existing templates array from the cache.
+		$templates = array_merge( $templates, $this->templates );
 
-                // Now add our template to the list of templates by merging our templates
-                // with the existing templates array from the cache.
-                $templates = array_merge( $templates, $this->templates );
+		// Add the modified cache to allow WordPress to pick it up for listing
+		// available templates
+		wp_cache_add( $cache_key, $templates, 'themes', 1800 );
 
-                // Add the modified cache to allow WordPress to pick it up for listing
-                // available templates
-                wp_cache_add( $cache_key, $templates, 'themes', 1800 );
+		return $atts;
 
-                return $atts;
+	} 
 
-        } 
+	/**
+	 * Checks if the template is assigned to the page
+	 */
+	public function view_project_template( $template ) {
+		
+		// Get global post
+		global $post;
 
-        /**
-         * Checks if the template is assigned to the page
-         */
-        public function view_project_template( $template ) {
+		// Return template if post is empty
+		if ( ! $post ) {
+			return $template;
+		}
 
-                global $post;
+		// Return default template if we don't have a custom one defined
+		if ( ! isset( $this->templates[get_post_meta( 
+			$post->ID, '_wp_page_template', true 
+		)] ) ) {
+			return $template;
+		} 
 
-                if (!isset($this->templates[get_post_meta( 
-					$post->ID, '_wp_page_template', true 
-				)] ) ) {
-					
-                        return $template;
-						
-                } 
+		$file = plugin_dir_path( __FILE__ ). get_post_meta( 
+			$post->ID, '_wp_page_template', true
+		);
 
-                $file = plugin_dir_path(__FILE__). get_post_meta( 
-					$post->ID, '_wp_page_template', true 
-				);
-				
-                // Just to be safe, we check if the file exist first
-                if( file_exists( $file ) ) {
-                        return $file;
-                } 
-				else { echo $file; }
+		// Just to be safe, we check if the file exist first
+		if ( file_exists( $file ) ) {
+			return $file;
+		} else {
+			echo $file;
+		}
 
-                return $template;
+		// Return template
+		return $template;
 
-        } 
-
-
+	}
 } 
-
-add_action( 'plugins_loaded', array( 'ContentManager', 'get_instance' ) );
+add_action( 'plugins_loaded', array( 'PageTemplater', 'get_instance' ) );
 
 
 // [showuserfield field='COMPANY_NAME']

@@ -5,7 +5,7 @@
  var newfieldtask =0;
   var loadinglightbox;
 jQuery(document).ready(function() {
-   jQuery('input,textarea,select').attr('autocomplete', 'off');
+  
    t = jQuery('.bulkedittask').DataTable( {
         initComplete: function () {
            this.api().columns([1]).every( function () {
@@ -101,13 +101,12 @@ jQuery(window).load(function() {
          var taskroledata = jQuery('.addnewtaskdata-role').html();
          var taskuseriddata = jQuery('.addnewtaskdata-userid').html();
         
-        var col1 = '<div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"><i class="hi-icon fa fa-clone saveeverything" id="'+uniquecode+'" title="Create a clone" onclick="clonebulk_task(this)" style="color:#262626;cursor: pointer;" aria-hidden="true"></i><i style=" cursor: pointer;margin-left: 10px;" onclick="removebulk_task(this)" title="Remove this task" class="hi-icon fusion-li-icon fa fa-times-circle " style="color:#262626;"></i></div>';
-        var col2 = '<input placeholder="Title" title="Title" id="row-'+uniquecode+'-title" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control" name="tasklabel" >  <input type="hidden" id="row-'+uniquecode+'-key" value=""> ';
-        var col3 = '<div class="topmarrginebulkedit"><select  title="Select Type" class="select2 bulktasktypedrop" id="bulktasktype_'+uniquecode+'" data-placeholder="Select Type" data-allow-clear="true">'+tasktypedata+'</select></div><div class="bulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" ><input type="text"  class="form-control" name="linkurl" placeholder="Link URL" title="Link URL"id="row-'+uniquecode+'-linkurl" ><br><input type="text"  class="form-control" name="linkname" placeholder="Link Name" title="Link Name" id="row-'+uniquecode+'-linkname"></div><div class="dbulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" > <input type="text"  class="form-control" name="dropdownvalues" placeholder="Comma separated list of values" title="Comma separated list of values"  id="row-'+uniquecode+'-dropdownvlaues" ></div>';
-        var col4 = '<input title="Due Date" placeholder="Due Date" id="row-'+uniquecode+'-duedate" style="padding-left: 13px;margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control datepicker" name="datepicker" >';
-        var col5 = '<input placeholder="Attributes" title="Attributes" id="row-'+uniquecode+'-attribute" style="margin-top: 10px;margin-bottom: 10px;" name="attribure" class="form-control" id="attribure">';
-        var col6 = '<div class="addscrol topmarrginebulkedit"><select class="select2" id="row-'+uniquecode+'-levels" data-placeholder="Select Levels" title="Select Levels" data-allow-clear="true"  multiple="multiple">'+taskroledata+'</select><br><select data-placeholder="Select Users" title="Select Users" id="row-'+uniquecode+'-userid" data-allow-clear="true"  class="select2" multiple="multiple">'+taskuseriddata+'</select> <br></div>';
-        var col7 = '<br><div class="addscrol"><div id="row-'+uniquecode+'-descrpition" class="edittaskdiscrpition_'+uniquecode+'"></div><p ><i class="font-icon fa fa-edit" id="taskdiscrpition_'+uniquecode+'" title="Edit your task description"style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Description</span></p></div></div>';
+        var col1 = '<div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"><i class="hi-icon fa fa-clone saveeverything" id="'+uniquecode+'" title="Create a clone" onclick="clonebulk_task(this)" style="color:#262626;cursor: pointer;" data-toggle="tooltip" aria-hidden="true"></i> <i data-toggle="tooltip" title="Advanced" name="'+uniquecode+'" onclick="bulktasksettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i><i data-toggle="tooltip" style=" cursor: pointer;margin-left: 10px;" onclick="removebulk_task(this)" title="Remove this task" class="hi-icon fusion-li-icon fa fa-times-circle " style="color:#262626;"></i></div>';
+        var col2 = '<input data-toggle="tooltip" placeholder="Title" title="Title" id="row-'+uniquecode+'-title" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control" name="tasklabel" >  <input type="hidden" id="row-'+uniquecode+'-key" value=""><input type="hidden" id="row-'+uniquecode+'-attribute"  value="" > <input type="hidden" id="row-'+uniquecode+'-taskMWC"  value="" ><input type="hidden" id="row-'+uniquecode+'-taskMWDDP"  value="" > ';
+        var col3 = '<div class="topmarrginebulkedit"><select  data-toggle="tooltip" title="Select Type" class="select2 bulktasktypedrop" id="bulktasktype_'+uniquecode+'" data-placeholder="Select Type" data-allow-clear="true">'+tasktypedata+'</select></div><div class="bulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" ><input type="text"  class="form-control" name="linkurl" placeholder="Link URL" title="Link URL"id="row-'+uniquecode+'-linkurl" ><br><input type="text"  class="form-control" name="linkname" placeholder="Link Name" title="Link Name" id="row-'+uniquecode+'-linkname"></div><div class="dbulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" > <input type="text"  class="form-control" name="dropdownvalues" placeholder="Comma separated list of values" title="Comma separated list of values"  id="row-'+uniquecode+'-dropdownvlaues" ></div>';
+        var col4 = '<input  data-toggle="tooltip" title="Due Date" placeholder="Due Date" id="row-'+uniquecode+'-duedate" style="padding-left: 13px;margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control datepicker" name="datepicker" >';
+        var col5 = '<div class="addscrol topmarrginebulkedit"><select data-toggle="tooltip" class="select2" id="row-'+uniquecode+'-levels" data-placeholder="Select Levels" title="Select Levels" data-allow-clear="true"  multiple="multiple">'+taskroledata+'</select><br><select data-placeholder="Select Users" title="Select Users" id="row-'+uniquecode+'-userid" data-allow-clear="true"  class="select2" multiple="multiple">'+taskuseriddata+'</select> <br></div>';
+        var col6 = '<br><div class="addscrol"><div id="row-'+uniquecode+'-descrpition" class="edittaskdiscrpition_'+uniquecode+'"></div><p ><i class="font-icon fa fa-edit" id="taskdiscrpition_'+uniquecode+'" title="Edit your task description"style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Description</span></p></div></div>';
                   
        t.row.add( [
             col1,
@@ -115,8 +114,8 @@ jQuery(window).load(function() {
             col3,
             col4,
             col5,
-            col6,
-            col7
+            col6
+          
         ] ).draw().nodes().to$().addClass("bulkaddnewtask");
         
         
@@ -229,7 +228,7 @@ function bulktask_descripiton(e){
       
         var updatedescripiton = jQuery.confirm({
             
-        title: 'Task Descripiton',
+        title: 'Task Description',
         content: '<textarea name="taskdescrpition" class="taskdescrpition"  >'+descrpition+'</textarea>',
         confirmButton: 'Update',
         cancelButton: 'Close',
@@ -312,7 +311,7 @@ function clonebulk_task(e){
             var resnew = res;
                     //.replace(regex1, '');
              
-             if(countervalue == 3 || countervalue == 6 ){
+             if(countervalue == 3 || countervalue == 5 ){
                 resnew = strRemove("span", resnew);
                 //console.log(theResult);
             }
@@ -534,6 +533,8 @@ function saveallbulktask(){
         singletaskarray['linkname'] = jQuery( '#row-'+taskid+'-linkname' ).val();
         singletaskarray['attrs'] = jQuery( '#row-'+taskid+'-duedate' ).val();
         singletaskarray['taskattrs'] = jQuery( '#row-'+taskid+'-attribute' ).val();
+        singletaskarray['taskMWC'] = jQuery( '#row-'+taskid+'-taskMWC' ).val();
+        singletaskarray['taskMWDDP'] = jQuery( '#row-'+taskid+'-taskMWDDP' ).val();
         singletaskarray['roles'] = jQuery( '#row-'+taskid+'-levels' ).val();
         singletaskarray['usersids'] = jQuery( '#row-'+taskid+'-userid' ).val();
         singletaskarray['descrpition'] = jQuery( '#row-'+taskid+'-descrpition' ).html();
@@ -691,3 +692,80 @@ function stripSlashesspecial(str)
         }
 
 //manger task js code
+
+function bulktasksettings(e){
+    
+  var task_code = jQuery(e).attr('name');
+  var task_attribute_value = jQuery('#row-'+task_code+'-attribute').val();
+  var selectedtasktype = jQuery( '#bulktasktype_'+task_code ).val();
+  var trvalue='';
+  if(selectedtasktype == 'color'){
+     var attributes_file = task_attribute_value.replace('accept=','');
+     
+     
+     trvalue='<td ><strong>Accept File Types</strong><br>(List of acceptable file extensions)</td><td ><input name="attribure"  placeholder=".png,.eps" id="confrim_attributes"  class="form-control"  value="'+attributes_file+'" ></td>';
+  }else if(selectedtasktype == 'textarea'){
+       var attributes_file = task_attribute_value.replace('maxlength=','');
+       trvalue = '<td ><strong>Max Length</strong><br>(Number of characters allowed)</td><td ><input name="attribure"  placeholder="200" id="confrim_attributes"  class="form-control"  value="'+attributes_file+'" ></td>';
+      
+  }else{
+      
+  }
+  
+  var task_additional_MWComplete = jQuery('#row-'+task_code+'-taskMWC').val();
+  var task_additional_MWDueDatePass = jQuery('#row-'+task_code+'-taskMWDDP').val();
+  var task_title = jQuery('#row-'+task_code+'-title').val();
+  
+  var content='';
+ 
+            
+  content='<table><tr><h5 style="margin-top: 2px;">'+task_title+'</h5><hr/></tr></table><table><tr><td><strong>Lock task when submitted</strong><br>(User cannot remove their submission)</td><td><input '+task_additional_MWComplete+' type="checkbox" class="toggle-one" id="confrim_taskMWC" data-toggle="toggle"></td></tr><tr><td><strong>Lock task when due date is passed</strong><br>(User cannot submit after due date)</td><td><input '+task_additional_MWDueDatePass+' type="checkbox" class="toggle-one"  id="confrim_taskMWDDP" data-toggle="toggle"></td></tr><tr>'+trvalue+'</tr></table>';
+   
+ 
+  jQuery.confirm({
+            
+        title: 'Advanced',
+        content: content,
+        confirmButton: 'Update',
+        cancelButton: false,
+        confirmButtonClass: 'btn mycustomwidth btn-lg btn-primary mysubmitemailbutton',
+        closeIcon: true,
+        onOpen: function() {
+         jQuery('.toggle-one').bootstrapToggle();   
+        },
+        confirm: function () {
+            
+            var attributes='';
+            if(selectedtasktype == 'color'){
+                if(jQuery('#confrim_attributes').val() !=""){
+                    attributes+='accept='+jQuery('#confrim_attributes').val();
+                }
+           }else if(selectedtasktype == 'textarea'){
+           
+                if(jQuery('#confrim_attributes').val() !=""){
+                attributes+='maxlength='+jQuery('#confrim_attributes').val();
+                }
+            }
+            jQuery('#row-'+task_code+'-attribute').val(attributes);
+           
+           
+           if(jQuery('#confrim_taskMWC').is(':checked')){
+                jQuery('#row-'+task_code+'-taskMWC').val('checked');
+           }else{
+              jQuery('#row-'+task_code+'-taskMWC').val(''); 
+           }
+           if(jQuery('#confrim_taskMWDDP').is(':checked')){
+                jQuery('#row-'+task_code+'-taskMWDDP').val('checked');
+           }else{
+             jQuery('#row-'+task_code+'-taskMWDDP').val('');
+           }
+           
+           
+            
+            
+            
+        }
+
+        });
+    
+}

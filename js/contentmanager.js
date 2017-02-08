@@ -398,7 +398,7 @@ function add_new_admin_user(){
                     jQuery( "#sponsor-status" ).append( '<div class="fusion-alert alert error alert-dismissable alert-danger alert-shadow"><span class="alert-icon"><i class="fa fa-lg fa-exclamation-triangle"></i></span>User already exists</div><div class="fusion-clearfix"></div>' );
                      swal({
 					title: "Error",
-					text: 'Content Manager already exists',
+					text: message.msg,
 					type: "error",
 					confirmButtonClass: "btn-danger",
 					confirmButtonText: "Ok"
@@ -1182,7 +1182,7 @@ function changeuseremailaddress(){
     data.append('oldemailaddress',   oldemailaddress);
      jQuery.confirm({
             title: "Change Email Address",
-            content: '<div id="titlestatus" ></div><div ><p></p><input placeholder="New Email Address" style="margin-bottom: 10px;padding: 9px;border: #d6e2e8 solid 1px; width: 100%; height: 35px; border-radius: 3px;" type="text" id="newemailaddress" ><p style="color:red;margin: 5px 0px;">This action will also change the login name for this user so we recommend that you send a welcome email message to the new email address.</p><br><p style="margin: 5px 0px;"><input  type="checkbox" value="checked" id="welcomememailstatus" checked> Send a welcome email (and new password) to the new email address</p></div>',
+            content: '<div id="titlestatus" ></div><div ><p></p><input placeholder="New Email Address" style="margin-bottom: 10px;padding: 9px;border: #d6e2e8 solid 1px; width: 100%; height: 35px; border-radius: 3px;" type="text" id="newemailaddress" ><p style="color:red;margin: 5px 0px;">This action will also change the login name for this user so we recommend that you send a welcome email message to the new email address.</p><br><p style="margin: 5px 0px;"><input checked type="checkbox" value="checked" id="welcomememailstatus"> Send a welcome email (and new password) to the new email address</p></div>',
             confirmButtonClass: 'mycustomwidth specialbuttoncolor',
            
             confirmButton:'Update',

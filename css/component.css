@@ -24,16 +24,12 @@
 	background: #f26522;
 	color: #fff;
 	
-	letter-spacing: 1px;
+	
 	font-size: 1em;
 	line-height: 2;
-        float: right;
-        /* margin-right: 20px; */
-        margin-left: 96px;
-        margin-top: -32px;
-		border-radius: 5px;
-    height: 35px;
-    width: 60px;
+        border-radius: 5px;
+        height: 38px;
+        width: 110px;
 }
 
 .progress-button[disabled],
@@ -593,4 +589,37 @@
 	right: auto;
 	left: 100%;
 	margin-left: 25px;
+}
+
+.disableremovebutton{
+    
+    background-color: #c1c1c1 !important;
+    height: 38px !important;
+    font-size: 1em !important;
+    color: white !important;
+    width:110px !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    
+}
+
+.specialremoveicondisable{
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    color:gray;
+   
+    
+}
+.specialremoveiconenable{
+    
+    color:red;
+    cursor: pointer;
+   
+}
+.myclass{    
+    padding: 10px !important;
+    margin-top: 8px;
+}
+.content-vertical-middle{
+   vertical-align: middle !important; 
 }

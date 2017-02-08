@@ -563,7 +563,7 @@ li.active a, li.active a:hover {
         border: 1px solid #aaa;
         box-shadow: 3px 3px 6px rgba(0,0,0,0.25);
         background-color: white;
-        height: 685px ;
+        height: 622px ;
     }
     .cards tbody td {
         display: block;
@@ -678,3 +678,7 @@ table.dataTable tbody td {
 
 
 
+.toggle-handle {
+    background-color: #c8cdd1 !important;
+    border-color: #bec6cc !important;
+}

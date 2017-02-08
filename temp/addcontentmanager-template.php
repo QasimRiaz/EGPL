@@ -82,6 +82,16 @@
                                         
                                     </div>
                                 </div>
+                                 <div class="form-group row">
+                                    <label class="col-sm-2 form-control-label">Company Name <strong>*</strong></label>
+                                    <div class="col-sm-10">
+                                         <div class="form-control-wrapper form-control-icon-left">    
+								<input type="text"  class="form-control mymetakey" id="company_name" name="company_name" placeholder="Company Name" required>
+					<i class="font-icon  fa fa-pencil"></i>
+                                         </div>			
+                                        
+                                    </div>
+                                </div>
                   <div class="form-group row" style="display:none;">
                                     <label class="col-sm-2 form-control-label">User Level <strong>*</strong></label>
                                     <div class="col-sm-10">
