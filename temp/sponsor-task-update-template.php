@@ -1,28 +1,18 @@
 <?php
 // Template Name: Sponsor Task Update 
  
-       
+   if ( is_user_logged_in() ) {    
       get_header();
 		
      
      $sponsor_id = get_current_user_id(); 
      $roles = wp_get_current_user()->roles;
      $check= array_key_exists("contentmanager",$roles);
-     
-    
-     
-     
-  
-     
-      
-      $test = 'custome_task_manager_data';
-      $result = get_option($test);
-      
-      
-      
-      $settitng_key = 'ContenteManager_Settings';
-      $sponsor_info = get_option($settitng_key);
-      $sponsor_name = $sponsor_info['ContentManager']['sponsor-name'];
+     $test = 'custome_task_manager_data';
+     $result = get_option($test);
+     $settitng_key = 'ContenteManager_Settings';
+     $sponsor_info = get_option($settitng_key);
+     $sponsor_name = $sponsor_info['ContentManager']['sponsor-name'];
       $lockTWMcomplete = $sponsor_info['ContentManager']['lockTWMcomplete'];
       $lockTWMduedate = $sponsor_info['ContentManager']['lockTWMduedate'];
       $current_user = get_userdata( $sponsor_id );
@@ -317,7 +307,10 @@
  
 </div>              
 
-   <?php 
+<?php 
     get_footer(); 
-
-   ?>
+}else{
+     $redirect = get_site_url();
+    wp_redirect( $redirect );exit;
+}
+?>
