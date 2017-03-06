@@ -3627,12 +3627,15 @@ add_shortcode('showuserfield', 'showuserfield_func');
 function sponsor_roles_fun() {
     global $wp_roles;
     global $current_user, $wpdb;
+    $role='';
+    if ( is_user_logged_in() ) {
     $all_roles = $wp_roles->roles;
     $editable_roles = apply_filters('editable_roles', $all_roles);
     
     $role = $wpdb->prefix . 'capabilities';
     $current_user->role = array_keys($current_user->$role);
     $role = $editable_roles[$current_user->role[0]]['name'];
+    }
     return $role;
 }
 

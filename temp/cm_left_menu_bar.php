@@ -118,6 +118,28 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
             <li class="mythemestyle with-sub opened">
 	            <span>
 	                 <i style="color:#004598 !important;" class="font-icon fa fa-plus-square"></i>
+	                <span class="lbl">Reports</span>
+	            </span>
+	            <ul class="mynav">
+	                <li class="mythemestyle">
+                             <a href="/user-report/">
+                               <span class="glyphicon glyphicon-th"></span>
+	                       <span class="lbl menumargine">User Report</span>
+                            </a>
+                            
+                        </li>
+	            <li class="mythemestyle">
+	                <a href="/order-report/">
+	                   <i class="font-icon fa fa-shopping-cart"></i>
+	                    <span class="lbl menumargine">Orders Report</span>
+	                </a>
+	            </li>
+                   
+	            </ul>
+	        </li>
+            <li class="mythemestyle with-sub">
+	            <span>
+	                 <i style="color:#004598 !important;" class="font-icon fa fa-plus-square"></i>
 	                <span class="lbl">Users</span>
 	            </span>
 	            <ul class="mynav">
@@ -218,21 +240,7 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
 	            </li> 
                     </ul>
                 </li>
-                <li class="mythemestyle with-sub">
-	            <span>
-	                 <i style="color:#004598 !important;" class="font-icon fa fa-plus-square"></i>
-	                <span class="lbl">Shop</span>
-	            </span>
-                    <ul class="mynav">
-                      <li class="mythemestyle">
-	                <a href="/order-report/">
-	                   <i class="font-icon fa fa-shopping-cart"></i>
-	                    <span class="lbl menumargine">Orders Report</span>
-	                </a>
-	            </li>
-	              
-                    </ul>
-                </li>
+               
  </ul>
 
 	  

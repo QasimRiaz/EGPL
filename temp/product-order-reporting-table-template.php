@@ -222,7 +222,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
           
         </div>
     </div>
-    </div>
+   
 
 
     <?php
@@ -245,7 +245,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
             <div class="box-typical box-typical-padding" >
                 <div class="form-group row">
                 
-                    <p class="col-sm-12 "><strong>Cannot perform Orders Report. Not connected to Shop.</strong></p>
+                    <p class="col-sm-12 "><strong>Shop is not configured for this site. Please contact ExpoGenie.</strong></p>
                
                 </div>
             </div>

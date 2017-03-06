@@ -303,7 +303,7 @@ function  loadorderreport(){
 
                     if(!empty($header_array[$columns_list_order_report[$col_keys_index]['key']])){
                         $time = strtotime($header_array[$columns_list_order_report[$col_keys_index]['key']]);
-                        $newformat = date('d-M-Y  H:i:s', $time);
+                        $newformat =$time*1000;// date('d-M-Y  H:i:s', $time);
                     }else{
                        $newformat=''; 
                     }
@@ -321,7 +321,7 @@ function  loadorderreport(){
                     
                     if(!empty($post_meta[$columns_list_order_report_postmeta[$col_keys_index]['key']][0])){
                         $time = strtotime($post_meta[$columns_list_order_report_postmeta[$col_keys_index]['key']][0]);
-                        $newformat = date('d-m-Y H:i:s', $time);
+                        $newformat = $time*1000;//date('d-M-Y H:i:s', $time);
                     }else{
                         $newformat='';
                     }
@@ -329,8 +329,12 @@ function  loadorderreport(){
                 } else if ($columns_list_order_report_postmeta[$col_keys_index]['key'] == 'Products' || $columns_list_order_report_postmeta[$col_keys_index]['key'] == 'Account Holder Email') {
                     
                 } else {
-
-                    $column_row[$columns_list_order_report_postmeta[$col_keys_index]['title']] = $post_meta[$columns_list_order_report_postmeta[$col_keys_index]['key']][0];
+                    if($columns_list_order_report_postmeta[$col_keys_index]['type'] == 'num' || $columns_list_order_report_postmeta[$col_keys_index]['type'] == 'num-fmt'){
+                        
+                        $column_row[$columns_list_order_report_postmeta[$col_keys_index]['title']] = round($post_meta[$columns_list_order_report_postmeta[$col_keys_index]['key']][0]);
+                    }else{
+                        $column_row[$columns_list_order_report_postmeta[$col_keys_index]['title']] = $post_meta[$columns_list_order_report_postmeta[$col_keys_index]['key']][0];
+                    }
                 }
             }
 

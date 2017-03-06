@@ -1006,7 +1006,7 @@ function bulk_import_user(){
                     jQuery( "#importuserstatusdiv" ).show( );
                     jQuery('#importuserstatus').DataTable({
 					pageLength: 25,
-                    dom: 'Bfrtlip',
+                    dom: 'Brtlip',
                     buttons: [
                         {
                             extend: 'excelHtml5',

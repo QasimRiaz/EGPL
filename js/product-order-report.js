@@ -3,6 +3,8 @@ var filtersarray = '';
 var rowsdata = '';
 var columsheader = '';
 var columnsheaderarrayfortable = [];
+var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 jQuery(document).ready(function () {
 
     jQuery("body").css({'cursor': 'wait'});
@@ -38,7 +40,7 @@ jQuery(document).ready(function () {
                 label: 'Order ID',
                 operators: ['equal', 'less', 'greater'],
                 type: 'integer',
-                size: 30
+                size: 32
 
 
             }
@@ -71,7 +73,11 @@ jQuery(document).ready(function () {
                 if (columsheader[key].type == 'num' || columsheader[key].type == 'num-fmt') {
 
                     columnsheaderarrayfortable.push({type:'num',title: columsheader[key].title, data: columsheader[key].title, render: jQuery.fn.dataTable.render.number(',', '.', 2, '$')});
-                } else {
+                }else if(columsheader[key].type == 'date'){
+                    
+                    columnsheaderarrayfortable.push({title: columsheader[key].title, data: columsheader[key].title, type: columsheader[key].type, render: function (data) {if (data !== null && data !== "") {var javascriptDate = new Date(data);console.log(data);javascriptDate = javascriptDate.getDate() + "/" + months[javascriptDate.getMonth()] + "/" + javascriptDate.getFullYear() +" "+javascriptDate.getHours()+":"+javascriptDate.getMinutes()+":"+javascriptDate.getSeconds();return javascriptDate;} else {return "";} }});
+                
+                }else {
                     columnsheaderarrayfortable.push({title: columsheader[key].title, data: columsheader[key].title, type: columsheader[key].type});
                 }
 
@@ -83,15 +89,15 @@ jQuery(document).ready(function () {
 
                     if (columsheader[key].type == 'date') {
 
-                        jQuery('#builder').queryBuilder('addFilter', {id: columsheader[key].title, unique: true, label: columsheader[key].title, type: 'date', validation: {format: 'DD-MMM-YYYY'}, plugin: 'datepicker', operators: ['equal', 'less', 'greater', 'between'], size: 30, plugin_config: {format: 'dd-M-yyyy', todayBtn: 'linked', todayHighlight: true, autoclose: true}});
+                        jQuery('#builder').queryBuilder('addFilter', {id: columsheader[key].title, unique: true, label: columsheader[key].title, type: 'date', validation: {format: 'DD-MMM-YYYY'}, plugin: 'datepicker', operators: ['equal', 'less', 'greater', 'between'], size: 20, plugin_config: {format: 'dd-M-yyyy', todayBtn: 'linked', todayHighlight: true, autoclose: true}});
 
                     } else if (columsheader[key].type == 'num' || columsheader[key].type == 'num-fmt') {
 
-                        jQuery('#builder').queryBuilder('addFilter', {id: columsheader[key].title, unique: true, label: columsheader[key].title, operators: ['equal', 'less', 'greater'], type: 'integer', size: 30});
+                        jQuery('#builder').queryBuilder('addFilter', {id: columsheader[key].title, unique: true, label: columsheader[key].title, operators: ['equal', 'less', 'greater'], type: 'integer', size: 32});
 
                     } else {
 
-                        jQuery('#builder').queryBuilder('addFilter', {id: columsheader[key].title, unique: true, label: columsheader[key].title, operators: ['contains', 'equal'], type: 'string', size: 30, });
+                        jQuery('#builder').queryBuilder('addFilter', {id: columsheader[key].title, unique: true, label: columsheader[key].title, operators: ['contains', 'equal'], type: 'string', size: 32, });
 
                     }
 
@@ -126,7 +132,9 @@ jQuery(document).ready(function () {
                     data: rowsdata,
                     columns: columnsheaderarrayfortable,
                     "columnDefs": [
-                        { "type": "num", "targets": 0 }
+                        { "type": "num", "targets": 0 },
+                        { "type": "date", "targets": 1 }
+                        
                     ],
                     dom: 'lBrtip',
                     buttons: [
@@ -270,20 +278,25 @@ jQuery('.drawdatatable').on('click', function () {
 
                             var filterstart = oData[key].filtervalue[0];
                             var filterend = oData[key].filtervalue[1];
+                            console.log( filterstart + '<=' + filterend);
                             jQuery.fn.dataTable.ext.search.push(
                                     function (settings, data, dataIndex) {
                                         var datetime = data[datatableheaderid].split(' ');
                                         var coldate = datetime[0].split('-');
-                                        var gettimecol = new Date(coldate[1] + "-" + coldate[0] + "-" + coldate[2]).getTime();
+                                        var coldatamonth = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(coldate[1]) / 3 + 1 ;
+                                        var gettimecol = new Date(coldate[2] + "-" + coldatamonth + "-" + coldate[0]).getTime();
                                         
                                         
                                         
                                         
                                         var filterstartdate = filterstart.split('-');
-                                        var filterstartdatetime = new Date(filterstartdate[1] + "-" + filterstartdate[0] + "-" + filterstartdate[2]).getTime();
+                                        var startdatemonth = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(filterstartdate[1]) / 3 + 1 ;
+                                        var filterstartdatetime = new Date(filterstartdate[2]+ " " +startdatemonth + " " + filterstartdate[0]).getTime();
                                         var filterenddate = filterend.split('-');
-                                        var filterenddatetime = new Date(filterenddate[1] + "-" + filterenddate[0] + "-" + filterenddate[2]).getTime();
+                                        var enddatemonth = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(filterenddate[1]) / 3 + 1 ;
+                                        var filterenddatetime = new Date(filterenddate[2] + "-" + enddatemonth + "-" + filterenddate[0]).getTime();
                                         
+                                        console.log(filterenddatetime + " " + filterstartdatetime+ " " + gettimecol);
 
                                         if (gettimecol >= filterstartdatetime && gettimecol <= filterenddatetime)
                                         {
@@ -301,14 +314,16 @@ jQuery('.drawdatatable').on('click', function () {
                                         var datetime = data[datatableheaderid].split(' ');
 
                                         var coldate = datetime[0].split('-');
-                                        var gettimecol = new Date(coldate[1] + "-" + coldate[0] + "-" + coldate[2]).getTime();
+                                        var coldatamonth = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(coldate[1]) / 3 + 1 ;
+                                        var gettimecol = new Date(coldate[2] + "-" + coldatamonth + "-" + coldate[0]).getTime();
                                         var filterstartdate = oData[key].filtervalue.split('-');
-                                        var filterstartdatetime = new Date(filterstartdate[1] + "-" + filterstartdate[0] + "-" + filterstartdate[2]).getTime();
+                                        var startdatemonth = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(filterstartdate[1]) / 3 + 1 ;
+                                        var filterstartdatetime = new Date(filterstartdate[2] + "-" + startdatemonth + "-" + filterstartdate[0]).getTime();
 
 
                                         if (gettimecol < filterstartdatetime)
                                         {
-
+                                             console.log(gettimecol + '=>' + filterstartdatetime);
                                             return true;
                                         }
                                         return false;
@@ -321,9 +336,11 @@ jQuery('.drawdatatable').on('click', function () {
                                     function (settings, data, dataIndex) {
                                         var datetime = data[datatableheaderid].split(' ');
                                         var coldate = datetime[0].split('-');
-                                        var gettimecol = new Date(coldate[1] + "-" + coldate[0] + "-" + coldate[2]).getTime();
+                                        var coldatamonth = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(coldate[1]) / 3 + 1 ;
+                                        var gettimecol = new Date(coldate[2] + "-" + coldatamonth + "-" + coldate[0]).getTime();
                                         var filterstartdate = oData[key].filtervalue.split('-');
-                                        var filterstartdatetime = new Date(filterstartdate[1] + "-" + filterstartdate[0] + "-" + filterstartdate[2]).getTime();
+                                        var startdatemonth = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(filterstartdate[1]) / 3 + 1 ;
+                                        var filterstartdatetime = new Date(filterstartdate[2] + "-" + startdatemonth + "-" + filterstartdate[0]).getTime();
 
 
                                         if (gettimecol > filterstartdatetime)
@@ -340,14 +357,16 @@ jQuery('.drawdatatable').on('click', function () {
                                     function (settings, data, dataIndex) {
                                         var datetime = data[datatableheaderid].split(' ');
                                         var coldate = datetime[0].split('-');
+                                        var coldatamonth = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(coldate[1]) / 3 + 1 ;
                                         var gettimecol = new Date(coldate[1] + "-" + coldate[0] + "-" + coldate[2]).getTime();
                                         var filterstartdate = oData[key].filtervalue.split('-');
-                                        var filterstartdatetime = new Date(filterstartdate[1] + "-" + filterstartdate[0] + "-" + filterstartdate[2]).getTime();
-
+                                        var startdatemonth = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(filterstartdate[1]) / 3 + 1 ;
+                                        var filterstartdatetime = new Date(filterstartdate[2] + "-"+startdatemonth+"-" + filterstartdate[0]).getTime();
+                                        
 
                                         if (gettimecol == filterstartdatetime)
                                         {
-                                           
+                                            console.log(gettimecol + '=>' + filterstartdatetime);
                                             return true;
                                         }
                                         return false;

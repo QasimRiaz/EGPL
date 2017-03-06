@@ -7,7 +7,9 @@
 jQuery(document).ready(function() {
   
    t = jQuery('.bulkedittask').DataTable( {
+         "order": [[ 0, "desc" ]],
         initComplete: function () {
+            
            this.api().columns([1]).every( function () {
                 var column = this;
                 jQuery(".specialsearchfilter")
@@ -116,9 +118,9 @@ jQuery(window).load(function() {
             col5,
             col6
           
-        ] ).draw().nodes().to$().addClass("bulkaddnewtask");
+        ]).draw().nodes().to$().addClass("bulkaddnewtask");
         
-        
+        t.column(0).order('desc').draw();
         jQuery('#bulktasktype_'+uniquecode).select2();
         jQuery('#row-'+uniquecode+'-levels').select2();
         jQuery('#row-'+uniquecode+'-userid').select2();

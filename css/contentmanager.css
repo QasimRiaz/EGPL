@@ -688,7 +688,7 @@ div.dataTables_wrapper {
         margin: 0 auto;
     }
     
-.dt-buttons{
+#orderreport_wrapper .dt-buttons{
             float: right !important;
     margin-bottom: 11px !important;;
     margin-top: -35px !important;;
@@ -702,3 +702,5 @@ div.dataTables_wrapper {
         
         background: #fff !important ;
     }
+    .rule-operator-container div button{width:107px !important;}
+    .rule-value-container input[type="number"]{    margin-left: 13px !important;}

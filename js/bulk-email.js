@@ -1004,7 +1004,7 @@ function warning_welcome_emailalreadysend(){
                  
                  
                  var dataarray = jQuery.parseJSON(data);
-                 if(data !=""){
+                 if(data !='null'){
                    swal.close();
                  jQuery.each(dataarray, function (key, value) {
                       
