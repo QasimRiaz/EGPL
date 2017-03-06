@@ -128,9 +128,9 @@ float: left !important;
 	font-weight: normal !important;
 }
 
-.table > thead > tr > th {
+/*.table > thead > tr > th {
 	padding: 5px  !important;
-}
+}*/
 
 .mytab-content {
     padding: 15px;
@@ -682,3 +682,23 @@ table.dataTable tbody td {
     background-color: #c8cdd1 !important;
     border-color: #bec6cc !important;
 }
+
+div.dataTables_wrapper {
+        overflow: auto;
+        margin: 0 auto;
+    }
+    
+.dt-buttons{
+            float: right !important;
+    margin-bottom: 11px !important;;
+    margin-top: -35px !important;;
+    }
+    
+    .menumargine{
+        
+        margin-left: 27px;
+    }
+    .theme-picton-blue .side-menu .side-menu-list>li.opened{
+        
+        background: #fff !important ;
+    }

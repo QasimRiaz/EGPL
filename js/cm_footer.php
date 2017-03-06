@@ -38,7 +38,7 @@
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.fileDownload.js?v=2.15"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/admin-modernizr.custom.js?v=2.15"></script>
        
-        
+        <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.js?v=2.15"></script>
       
         <script src='/wp-content/plugins/EGPL/js/randomColor.js?v=2.15'></script>
         <script src='/wp-content/plugins/EGPL/js/jquery.ajax-progress.js?v=2.15'></script>
@@ -148,19 +148,13 @@ tinymce.init({
 </script>
         
 	<script>
-          
-          
-          jQuery('a[href="' + this.location.pathname + '"]').parents('li').addClass('active');
-          jQuery('a[href="' + this.location.pathname + '"]').parents('li').parent('ul').parent('li').removeClass('active');
-          if(this.location.pathname != '/dashboard/'){
-          jQuery('.opened').removeClass('opened');
-          jQuery('a[href="' + this.location.pathname + '"]').parents('li').parent('ul').parent('li').addClass('opened');
-          }
-            jQuery(".mynav li a").on("click", function(){
-                
-                    jQuery('.active').removeClass('active');
-                    jQuery('a[href="' + this.location.pathname + '"]').parent('li').addClass("active");
-            });
+          jQuery('a[href="' + this.location.pathname + '"]').parents('li,ul').addClass('active');          
+            jQuery(".mynav a").on("click", function(){
+   jQuery(".mynav").find(".active").removeClass("active");
+   jQuery(this).parent().addClass("active");
+   
+   
+});
 jQuery('#daterange3').daterangepicker({
 				singleDatePicker: true,
 				showDropdowns: true,
