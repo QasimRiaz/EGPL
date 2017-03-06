@@ -75,7 +75,7 @@ jQuery(document).ready(function () {
                     columnsheaderarrayfortable.push({type:'num',title: columsheader[key].title, data: columsheader[key].title, render: jQuery.fn.dataTable.render.number(',', '.', 2, '$')});
                 }else if(columsheader[key].type == 'date'){
                     
-                    columnsheaderarrayfortable.push({title: columsheader[key].title, data: columsheader[key].title, type: columsheader[key].type, render: function (data) {if (data !== null && data !== "") {var javascriptDate = new Date(data);console.log(data);javascriptDate = javascriptDate.getDate() + "/" + months[javascriptDate.getMonth()] + "/" + javascriptDate.getFullYear() +" "+javascriptDate.getHours()+":"+javascriptDate.getMinutes()+":"+javascriptDate.getSeconds();return javascriptDate;} else {return "";} }});
+                    columnsheaderarrayfortable.push({title: columsheader[key].title, data: columsheader[key].title, type: columsheader[key].type, render: function (data) {if (data !== null && data !== "") {var javascriptDate = new Date(data);javascriptDate = javascriptDate.getDate() + "/" + months[javascriptDate.getMonth()] + "/" + javascriptDate.getFullYear() +" "+javascriptDate.getHours()+":"+javascriptDate.getMinutes()+":"+javascriptDate.getSeconds();return javascriptDate;} else {return "";} }});
                 
                 }else {
                     columnsheaderarrayfortable.push({title: columsheader[key].title, data: columsheader[key].title, type: columsheader[key].type});
@@ -282,7 +282,7 @@ jQuery('.drawdatatable').on('click', function () {
                             jQuery.fn.dataTable.ext.search.push(
                                     function (settings, data, dataIndex) {
                                         var datetime = data[datatableheaderid].split(' ');
-                                        var coldate = datetime[0].split('-');
+                                        var coldate = datetime[0].split('/');
                                         var coldatamonth = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(coldate[1]) / 3 + 1 ;
                                         var gettimecol = new Date(coldate[2] + "-" + coldatamonth + "-" + coldate[0]).getTime();
                                         
@@ -313,7 +313,7 @@ jQuery('.drawdatatable').on('click', function () {
                                     function (settings, data, dataIndex) {
                                         var datetime = data[datatableheaderid].split(' ');
 
-                                        var coldate = datetime[0].split('-');
+                                        var coldate = datetime[0].split('/');
                                         var coldatamonth = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(coldate[1]) / 3 + 1 ;
                                         var gettimecol = new Date(coldate[2] + "-" + coldatamonth + "-" + coldate[0]).getTime();
                                         var filterstartdate = oData[key].filtervalue.split('-');
@@ -335,7 +335,7 @@ jQuery('.drawdatatable').on('click', function () {
                             jQuery.fn.dataTable.ext.search.push(
                                     function (settings, data, dataIndex) {
                                         var datetime = data[datatableheaderid].split(' ');
-                                        var coldate = datetime[0].split('-');
+                                        var coldate = datetime[0].split('/');
                                         var coldatamonth = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(coldate[1]) / 3 + 1 ;
                                         var gettimecol = new Date(coldate[2] + "-" + coldatamonth + "-" + coldate[0]).getTime();
                                         var filterstartdate = oData[key].filtervalue.split('-');
@@ -356,7 +356,7 @@ jQuery('.drawdatatable').on('click', function () {
                             jQuery.fn.dataTable.ext.search.push(
                                     function (settings, data, dataIndex) {
                                         var datetime = data[datatableheaderid].split(' ');
-                                        var coldate = datetime[0].split('-');
+                                        var coldate = datetime[0].split('/');
                                         var coldatamonth = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(coldate[1]) / 3 + 1 ;
                                         var gettimecol = new Date(coldate[1] + "-" + coldate[0] + "-" + coldate[2]).getTime();
                                         var filterstartdate = oData[key].filtervalue.split('-');
