@@ -683,8 +683,8 @@ table.dataTable tbody td {
     border-color: #bec6cc !important;
 }
 
-#orderreport_wrapper .dataTables_wrapper {
-        overflow: auto;
+#orderreport_wrapper {
+        overflow: auto !important;
         margin: 0 auto;
     }
     
