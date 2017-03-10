@@ -914,44 +914,173 @@ function back_report(){
 function sendwelcomemsg(){
     
     
+    var status = warning_welcome_emailalreadysend();
     
-    swal({
-            title: "Are you sure?",
-            text: 'You want to send the welcome email to the selected users? Their password will be reset and included in the email.',
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Yes, Send it!",
-            cancelButtonText: "No, cancel please!",
-            closeOnConfirm: false,
-            closeOnCancel: false
-        },
-        function(isConfirm) {
+   
+    
+}
+function warning_welcome_emailalreadysend(){
+     
+     
+   //jQuery('#bodytext').val();
+   var bulkemails = new Array();   
+   
+   var checkedRows = waTable.getData(true);
+   var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
+   for (var i = 0; i < arrData['rows'].length; i++) {
+       
+        bulkemails.push(arrData['rows'][i].Email);
+    }
+   
+    
+   
+    if (bulkemails.length === 0) {
+        
+    }else{
+        
+        var length =bulkemails.length;
+        jQuery('#welcomecustomeemail').val(bulkemails.join(", ")); 
+     
+    }
+    
+    var emailAddress=jQuery('#welcomecustomeemail').val();
+   
+    
+    var checkedRows = waTable.getData(true);
+    var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
+   
+   
+     var statusmessage='';
+     var alertclass='';
+    
+    jQuery("body").css({'cursor':'wait'});
+    var url = window.location.protocol + "//" + window.location.host + "/";
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=checkwelcomealreadysend';
+    var data = new FormData();
+    var curdate = new Date()
+    var usertimezone = curdate.getTimezoneOffset()/60;
+   
+    data.append('usertimezone', usertimezone);
+    data.append('emailAddress', emailAddress);
 
-
-
-            if (isConfirm) {
-              var status = conform_send_welcomeemail_report();
-              
-              
-                   swal({
-					title: "Success",
-					text: "Welcome email sent successfully.",
-					type: "success",
-					confirmButtonClass: "btn-success",
-					confirmButtonText: "Ok"
-				});  
+     jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
                 
-             
-            } else {
-                swal({
-                    title: "Cancelled",
-                    text: "Welcome email was not sent",
-                    type: "error",
-                    confirmButtonClass: "btn-danger"
-                });
-            }
+                 jQuery('body').css('cursor', 'default');
+                 var datatablehtml ='<p><strong>The following users in your selection have already been sent the welcome emails. Are you sure you want to send again as it will change their passwords?</strong></p><div style="height: 300px;overflow: auto;"><table class="table"><tr><td>Email</td><td>Welcome Email Sent On</td></tr>';
+                 
+                 
+                 var dataarray = jQuery.parseJSON(data);
+                 if(data !='null'){
+                   swal.close();
+                 jQuery.each(dataarray, function (key, value) {
+                      
+                      
+                      
+                      datatablehtml+='<tr><td>'+key+'</td><td>'+value+'</td></tr>';
+                      
+                  });
+                  
+                datatablehtml+='</table></div>';
+                  
+                 jQuery.confirm({
+                        title: 'Warning !',
+                        content: datatablehtml,
+                        confirmButton:'Confirm',
+                        cancelButton:'Cancel',
+                        confirmButtonClass: 'btn  btn-lg btn-primary ',
+                        cancelButtonClass: 'btn  btn-lg btn-danger',
+                        confirm: function () {
+                         var sendwelcomeemailstatus = conform_send_welcomeemail_report();
+                         
+                   
+                
+                        swal({
+                            title: "Success",
+                            text: "Welcome email sent successfully.",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            confirmButtonText: "Ok"
+                        },function(){
+                            location.reload();
+                        });
+                       
+                            return true;
+                        },
+                        cancel: function () {
+                   
+                        }
+
+                 });
+             }else{
+                  
+                  
+                
+                   
+                   swal({
+                    title: "Are you sure?",
+                    text: 'You want to send the welcome email to the selected users? Their password will be reset and included in the email.',
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Yes, Send it!",
+                    cancelButtonText: "No, cancel please!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                        function (isConfirm) {
+
+
+
+                            if (isConfirm) {
+
+                            var sendwelcomeemailstatus = conform_send_welcomeemail_report();
+                                swal({
+                                    title: "Success",
+                                    text: "Welcome email sent successfully.",
+                                    type: "success",
+                                    confirmButtonClass: "btn-success",
+                                    confirmButtonText: "Ok"
+                                }, function () {
+                                    location.reload();
+                                }
+                                );
+
+                            } else {
+                                swal({
+                                    title: "Cancelled",
+                                    text: "Welcome email was not sent",
+                                    type: "error",
+                                    confirmButtonClass: "btn-danger"
+                                });
+                            }
+                        });
+                 
+                 
+            
+             }  
+                
+            },error: function (xhr, ajaxOptions, thrownError) {
+                     swal({
+					title: "Error",
+					text: "There was an error during the requested operation. Please try again.",
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				}
+                                        );
+      }
         });
+    
+    
+    
+    
     
 }
 function conform_send_welcomeemail_report(){
@@ -1010,10 +1139,8 @@ function conform_send_welcomeemail_report(){
                  jQuery('body').css('cursor', 'default');
                  
                  var message = jQuery.parseJSON(data);
+                 return message;
                  
-                 if(message == 'successfully send'){
-                   
-                 }
                 
                 
             },error: function (xhr, ajaxOptions, thrownError) {

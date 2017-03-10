@@ -128,9 +128,9 @@ float: left !important;
 	font-weight: normal !important;
 }
 
-.table > thead > tr > th {
+/*.table > thead > tr > th {
 	padding: 5px  !important;
-}
+}*/
 
 .mytab-content {
     padding: 15px;
@@ -682,3 +682,43 @@ table.dataTable tbody td {
     background-color: #c8cdd1 !important;
     border-color: #bec6cc !important;
 }
+
+#orderreport_wrapper .dataTables_wrapper {
+        overflow: auto;
+        margin: 0 auto;
+    }
+    
+#orderreport_wrapper .dt-buttons{
+            float: right !important;
+    margin-bottom: 11px !important;;
+    margin-top: -35px !important;;
+    }
+    
+    .menumargine{
+        
+        margin-left: 27px;
+    }
+    .theme-picton-blue .side-menu .side-menu-list>li.opened{
+        
+        background: #fff !important ;
+    }
+    .rule-operator-container div button{width:107px !important;}
+    .rule-value-container input[type="number"]{    margin-left: 13px !important;}
+    .instock{font-weight: 700 !important;
+    color: #7ad03a !important;
+    background: 0 0 !important;;
+    line-height: 1 !important;;}
+    
+    #manageproduct_wrapper .dt-buttons{
+            float: right !important;
+    margin-bottom: 11px !important;;
+    margin-top: -35px !important;;
+    }
+    
+    .outofstock {
+    font-weight: 700 !important;
+    color: #a44 !important;
+    background: 0 0 !important;
+    line-height: 1 !important;
+}
+#importuserstatus_filter{    margin-bottom: 30px !important;}

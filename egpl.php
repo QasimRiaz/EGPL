@@ -17,7 +17,14 @@
 
 //get all the plugin settings
 //get all the plugin settings
-if($_GET['contentManagerRequest'] == "changeuseremailaddress") {        
+
+if($_GET['contentManagerRequest'] == "checkwelcomealreadysend") {        
+    require_once('../../../wp-load.php');
+    
+    checkwelcomealreadysend($_POST);
+   
+  
+}else if($_GET['contentManagerRequest'] == "changeuseremailaddress") {        
     require_once('../../../wp-load.php');
     
     changeuseremailaddress($_POST);
@@ -232,7 +239,7 @@ if($_GET['contentManagerRequest'] == "changeuseremailaddress") {
     
     $test = 'custome_task_manager_data';
     $result = get_option($test);
-    $keys_string[] = 'first_name';
+    $keys_string[]= 'first_name';
     $keys_string[]= 'last_name';
     $keys_string[]= 'date';
     $keys_string[]= 'time';
@@ -241,6 +248,7 @@ if($_GET['contentManagerRequest'] == "changeuseremailaddress") {
     $keys_string[]= 'site_title';
     $keys_string[]= 'create_password_url';
     $keys_string[]= 'user_login';
+    $keys_string[]= 'reg_codes';
     
     $bodytext_id = 'welcomebodytext';
     if(!empty($result['custom_meta'])){
@@ -485,7 +493,7 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
             
              update_user_meta($userid, 'exhibitor_map_dynamics_ID', $result->results->Exhibitor_ID);
          
-             $mapdynamicsstatus = 'User update to map dynamics successfully';
+             $mapdynamicsstatus = 'This update has also been synced to floorplan';
             
         }else{
             
@@ -2331,7 +2339,7 @@ function getReportsdatanew($report_name,$usertimezone){
    }
    
     $showhideMYFieldsArray['action_edit_delete'] = array('index' => 1, 'type' => 'string','unique' => true, 'hidden' => false, 'friendly'=> "Action" ,'filter'=>false);
-    $showhideMYFieldsArray['company_name'] = array('index' => 2, 'type' => 'string','unique' => true, 'hidden' => $CompanyName_show,'friendly'=> "Company Name",'filter'=>$CompanyName);
+    $showhideMYFieldsArray['company_name'] = array('index' => 2, 'type' => 'string','unique' => true, 'sortOrder'=>"asc", 'hidden' => $CompanyName_show,'friendly'=> "Company Name",'filter'=>$CompanyName);
     $showhideMYFieldsArray['Role'] = array('index' => 3, 'type' => 'string','unique' => true, 'hidden' => $RRole_show,'friendly'=> "Level",'filter'=>$RRole);
     $showhideMYFieldsArray['last_login'] = array('index' => 4, 'type' => 'date','unique' => true, 'hidden' => $Rlastlogin_show,'friendly'=> "Last login",'filter'=>$Rlastlogin);
     
@@ -2506,7 +2514,24 @@ function getReportsdatanew($report_name,$usertimezone){
         } else {
             $timestamp = "";
         }
-      
+      if (!empty($user_data->convo_welcomeemail_datetime)) {
+
+       
+            $last_send_welcome_email = date('d-M-Y H:i:s', $user_data->convo_welcomeemail_datetime/1000);
+           
+            if($usertimezone > 0){
+                $last_send_welcome_date_time = (new DateTime($last_send_welcome_email))->sub(new DateInterval('PT'.abs($usertimezone).'H'))->format('d-M-Y H:i:s');
+            }else{
+                $last_send_welcome_date_time = (new DateTime($last_send_welcome_email))->add(new DateInterval('PT'.abs($usertimezone).'H'))->format('d-M-Y H:i:s');
+                
+            }
+            $last_send_welcome_timestamp = strtotime($last_send_welcome_date_time) *1000 ;
+           // echo $timestamp; 
+           // echo date('m/d/Y H:i:s', $timestamp);exit;
+            
+        } else {
+            $last_send_welcome_timestamp = "";
+        }
        $company_name = $all_meta_for_user['company_name'][0];
        $myNewArray['action_edit_delete'] = '<p style="width:83px !important;"><a href="/edit-user/?sponsorid='.$aid->user_id.'" target="_blank" title="Edit User Profile"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-pencil-square-o" style="color:#262626;"></i></span></a><a style="margin-left: 10px;" target="_blank" href="/edit-sponsor-task/?sponsorid='.$aid->user_id.'" title="User Tasks"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-th-list" style="color:#262626;"></i></span></a><a onclick="view_profile(this)" id="'.$unique_id.'" name="viewprofile"  style="cursor: pointer;color:red;margin-left: 10px;" title="View Profile" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-eye" style="color:#262626;"></i></a><a onclick="delete_sponsor_meta(this)" id="'.$aid->user_id.'" name="delete-sponsor"  style="cursor: pointer;color:red;margin-left: 10px;" title="Remove User" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-times-circle" style="color:#262626;"></i></a></p>';
 
@@ -2521,7 +2546,7 @@ function getReportsdatanew($report_name,$usertimezone){
         $myNewArray['last_name'] = $user_data->last_name;
         $myNewArray['sponsor_name'] = $user_data->display_name;
         $myNewArray['Email'] = $user_data->user_email;
-        $myNewArray['convo_welcomeemail_datetime'] =  $user_data->convo_welcomeemail_datetime;
+        $myNewArray['convo_welcomeemail_datetime'] =  $last_send_welcome_timestamp;
         $myNewArray['exhibitor_map_dynamics_ID'] = $all_meta_for_user['exhibitor_map_dynamics_ID'][0];
         $myNewArray['user_profile_url'] = $all_meta_for_user['user_profile_url'][0];
         $myNewArray['wp_user_id'] = $aid->user_id;
@@ -2960,35 +2985,39 @@ function my_plugin_activate() {
    }
    
    
-  $user_additional_field[0]['name']= 'Address 1';
-  $user_additional_field[0]['key']= 'address_line_1';
-  
-  $user_additional_field[1]['name']= 'Address 2';
-  $user_additional_field[1]['key']= 'address_line_2';
-  
-  $user_additional_field[2]['name']= 'City';
-  $user_additional_field[2]['key']= 'usercity';
-  
-  $user_additional_field[3]['name']= 'State';
-  $user_additional_field[3]['key']= 'userstate';
-  
-  $user_additional_field[4]['name']= 'Zipcode';
-  $user_additional_field[4]['key']= 'userzipcode';
-  
-  $user_additional_field[5]['name']= 'Country';
-  $user_additional_field[5]['key']= 'usercountry';
-  
-  $user_additional_field[6]['name']= 'Phone 1';
-  $user_additional_field[6]['key']= 'user_phone_1';
-  
-  $user_additional_field[7]['name']= 'Phone 2';
-  $user_additional_field[7]['key']= 'user_phone_2';
-  
-  $user_additional_field[8]['name']= 'Registration Codes (Comma separated list of values)';
-  $user_additional_field[8]['key']= 'reg_codes';
+  $user_additional_field[0]['name']= 'Prefix';
+  $user_additional_field[0]['key']= 'prefix';
    
-  $user_additional_field[9]['name']= 'Notes';
-  $user_additional_field[9]['key']= 'usernotes';
+  $user_additional_field[1]['name']= 'Address 1';
+  $user_additional_field[1]['key']= 'address_line_1';
+  
+  $user_additional_field[2]['name']= 'Address 2';
+  $user_additional_field[2]['key']= 'address_line_2';
+  
+  $user_additional_field[3]['name']= 'City';
+  $user_additional_field[3]['key']= 'usercity';
+  
+  $user_additional_field[4]['name']= 'State';
+  $user_additional_field[4]['key']= 'userstate';
+  
+  $user_additional_field[5]['name']= 'Zipcode';
+  $user_additional_field[5]['key']= 'userzipcode';
+  
+  $user_additional_field[6]['name']= 'Country';
+  $user_additional_field[6]['key']= 'usercountry';
+  
+  $user_additional_field[7]['name']= 'Phone 1';
+  $user_additional_field[7]['key']= 'user_phone_1';
+  
+  $user_additional_field[8]['name']= 'Phone 2';
+  $user_additional_field[8]['key']= 'user_phone_2';
+  
+  $user_additional_field[9]['name']= 'Registration Codes';
+  $user_additional_field[9]['key']= 'reg_codes';
+   
+  $user_additional_field[10]['name']= 'Notes';
+  $user_additional_field[10]['key']= 'usernotes';
+  
   
   update_option( 'EGPL_Settings_Additionalfield', $user_additional_field);
  
@@ -3086,6 +3115,11 @@ function my_plugin_activate() {
   $create_pages_list[20]['name'] = 'role-assignment';
   $create_pages_list[20]['temp'] = 'temp/managerole_assignment.php';
  
+  $create_pages_list[21]['title'] = 'Order Reporting';
+  $create_pages_list[21]['name'] = 'order-reporting';
+  $create_pages_list[21]['temp'] = 'temp/product-order-reporting-template.php';
+  
+  
   foreach($create_pages_list as $key=>$value){
       
      
@@ -3492,8 +3526,10 @@ class PageTemplater {
                          'temp/sync_to_floorplan.php'=>'Sync to Floorplan',
                          'temp/bulk_edit_task.php'=>'Bulk Edit Task',
                          'temp/bulk_edit_task_list.php'=>'Bulk Edit Task List view',
-                         'temp/managerole_assignment.php'=>'Role Assignment'
-                    
+                         'temp/managerole_assignment.php'=>'Role Assignment',
+                         'temp/product-order-reporting-table-template.php'=>'Order Report',
+                     
+                   
                     
                 );
 			
@@ -3594,12 +3630,15 @@ add_shortcode('showuserfield', 'showuserfield_func');
 function sponsor_roles_fun() {
     global $wp_roles;
     global $current_user, $wpdb;
+    $role='';
+    if ( is_user_logged_in() ) {
     $all_roles = $wp_roles->roles;
     $editable_roles = apply_filters('editable_roles', $all_roles);
     
     $role = $wpdb->prefix . 'capabilities';
     $current_user->role = array_keys($current_user->$role);
     $role = $editable_roles[$current_user->role[0]]['name'];
+    }
     return $role;
 }
 
@@ -4583,7 +4622,50 @@ function changeuseremailaddress($request){
     
 }
 
-
+function checkwelcomealreadysend($request){
+    
+     try{
+      
+        
+         
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID);
+        
+        $lastInsertId = contentmanagerlogging('Check Welcome Email Send',"Admin Action",serialize($request),''.$user_ID,$user_info->user_email,"pre_action_data");
+        $emailaddress_array=explode(",", $request['emailAddress']);
+        $usertimezone=intval($request['usertimezone']);
+        foreach($emailaddress_array as $key=>$emailaddress){
+            
+            $user = get_user_by( 'email', $emailaddress );
+            $welcome_email_date = get_user_meta($user->ID, 'convo_welcomeemail_datetime', true);
+            if(!empty($welcome_email_date)){
+                
+                $last_send_welcome_email= date('d-M-Y H:i:s', $welcome_email_date/1000);
+                if($usertimezone > 0){
+                    $last_send_welcome_date_time = (new DateTime($last_send_welcome_email))->sub(new DateInterval('PT'.abs($usertimezone).'H'))->format('d-M-Y H:i:s');
+                }else{
+                    $last_send_welcome_date_time = (new DateTime($last_send_welcome_email))->add(new DateInterval('PT'.abs($usertimezone).'H'))->format('d-M-Y H:i:s');
+                
+                }
+                $responce[$emailaddress]=$last_send_welcome_date_time;
+            }
+            
+        }
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($responce));
+        
+       echo json_encode($responce);
+         
+    }catch (Exception $e) {
+       
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+    }
+ 
+ die();  
+    
+    
+}
 
 function isValidEmail($email){ 
     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;

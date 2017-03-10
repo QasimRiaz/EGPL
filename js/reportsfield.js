@@ -785,43 +785,43 @@ function removeSaveReport(){
          
          
          
-      swal({
-							title: "Are you sure?",
-							text: 'Click confirm to delete this Report template.',
-							type: "warning",
-							showCancelButton: true,
-							confirmButtonClass: "btn-danger",
-							confirmButtonText: "Yes, delete it!",
-							cancelButtonText: "No, cancel please!",
-							closeOnConfirm: false,
-							closeOnCancel: false
-						},
-						function(isConfirm) {
-                                                    
-                                                    
-                                                     
-							if (isConfirm) {
-                                                             removeTemplateReport(saveReportName);
-								swal({
-									title: "Deleted!",
-									text: "Report deleted Successfully",
-									type: "success",
-									confirmButtonClass: "btn-success"
-								},function() {
-                                                                    var  dropdownvalue = "defult";
-                                                                        jQuery("#example2").empty();
-                                                                         reportload(dropdownvalue);
-                                                                 }
-                                                            );
-							} else {
-								swal({
-									title: "Cancelled",
-									text: "Report is safe :)",
-									type: "error",
-									confirmButtonClass: "btn-danger"
-								});
-							}
-						});
+        swal({
+            title: "Are you sure?",
+            text: 'Click confirm to delete this Report template.',
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel please!",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        },
+                function (isConfirm) {
+
+
+
+                    if (isConfirm) {
+                        removeTemplateReport(saveReportName);
+                        swal({
+                            title: "Deleted!",
+                            text: "Report deleted Successfully",
+                            type: "success",
+                            confirmButtonClass: "btn-success"
+                        }, function () {
+                            var dropdownvalue = "defult";
+                            jQuery("#example2").empty();
+                            reportload(dropdownvalue);
+                        }
+                        );
+                    } else {
+                        swal({
+                            title: "Cancelled",
+                            text: "Report is safe :)",
+                            type: "error",
+                            confirmButtonClass: "btn-danger"
+                        });
+                    }
+                });
     
    
      }

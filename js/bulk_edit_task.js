@@ -7,7 +7,9 @@
 jQuery(document).ready(function() {
   
    t = jQuery('.bulkedittask').DataTable( {
+         "order": [[ 0, "desc" ]],
         initComplete: function () {
+            
            this.api().columns([1]).every( function () {
                 var column = this;
                 jQuery(".specialsearchfilter")
@@ -116,9 +118,9 @@ jQuery(window).load(function() {
             col5,
             col6
           
-        ] ).draw().nodes().to$().addClass("bulkaddnewtask");
+        ]).draw().nodes().to$().addClass("bulkaddnewtask");
         
-        
+        t.column(0).order('desc').draw();
         jQuery('#bulktasktype_'+uniquecode).select2();
         jQuery('#row-'+uniquecode+'-levels').select2();
         jQuery('#row-'+uniquecode+'-userid').select2();
@@ -215,7 +217,46 @@ $eventSelect.on("select2:select", function (e) {
 
 });
 //$eventSelect.on("select2:unselect", function (e) { console.log('unselect');});
+jQuery('.bulktasktypedrop').on("select2:selecting", function(e) {
+    console.log(e.currentTarget['id']);
+    var oldselectingvalue ='';
+    oldselectingvalue = jQuery('#'+e.currentTarget['id']).val();
+    
+    swal({
+            title: "Warning !",
+            text: 'Changing task input type can result in losing user submissions that were made for this task in the past. Are you sure you want to continue?',
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        },
+        function(isConfirm) {
 
+
+
+            if (isConfirm) {
+              
+                swal({
+                    title: "Success",
+                    text: "Task input type change successfully.",
+                    type: "success",
+                    confirmButtonClass: "btn-success"
+                });
+            
+            } else {
+                jQuery('#'+e.currentTarget['id']).val(oldselectingvalue).trigger("change");
+                swal({
+                    title: "Cancelled",
+                    text: "Task input type safe ",
+                    type: "error",
+                    confirmButtonClass: "btn-danger"
+                });
+            }
+        });
+});
 
 function bulktask_descripiton(e){
     

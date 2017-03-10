@@ -279,7 +279,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                             <form method="post" action="javascript:void(0);" onSubmit="bulkemail_preview()">
                                  <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">From <strong>*</strong></label>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         
                                        <div class="form-control-wrapper form-control-icon-left">
 								<input type="text" id="fromname" class="form-control" placeholder="Name" required>
@@ -287,7 +287,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 							</div>
                                     </div>
                                      <div class="col-sm-3">
-                                         <label class="col-sm-2 form-control-label"><?php if(!empty($formemail)){echo $formemail; }else{echo 'noreply@convospark.com';}?> </label>
+                                         <label class="form-control-label"><?php if(!empty($formemail)){echo $formemail; }else{echo 'noreply@convospark.com';}?> </label>
                                        
                                     </div>
                                      <div class="col-sm-3">
