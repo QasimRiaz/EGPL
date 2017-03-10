@@ -239,7 +239,7 @@ if($_GET['contentManagerRequest'] == "checkwelcomealreadysend") {
     
     $test = 'custome_task_manager_data';
     $result = get_option($test);
-    $keys_string[] = 'first_name';
+    $keys_string[]= 'first_name';
     $keys_string[]= 'last_name';
     $keys_string[]= 'date';
     $keys_string[]= 'time';
@@ -248,6 +248,7 @@ if($_GET['contentManagerRequest'] == "checkwelcomealreadysend") {
     $keys_string[]= 'site_title';
     $keys_string[]= 'create_password_url';
     $keys_string[]= 'user_login';
+    $keys_string[]= 'reg_codes';
     
     $bodytext_id = 'welcomebodytext';
     if(!empty($result['custom_meta'])){
@@ -3115,8 +3116,9 @@ function my_plugin_activate() {
   $create_pages_list[20]['temp'] = 'temp/managerole_assignment.php';
  
   $create_pages_list[21]['title'] = 'Order Reporting';
-  $create_pages_list[21]['name'] = 'Order-reporting';
+  $create_pages_list[21]['name'] = 'order-reporting';
   $create_pages_list[21]['temp'] = 'temp/product-order-reporting-template.php';
+  
   
   foreach($create_pages_list as $key=>$value){
       
@@ -3525,8 +3527,9 @@ class PageTemplater {
                          'temp/bulk_edit_task.php'=>'Bulk Edit Task',
                          'temp/bulk_edit_task_list.php'=>'Bulk Edit Task List view',
                          'temp/managerole_assignment.php'=>'Role Assignment',
-                         'temp/product-order-reporting-table-template.php'=>'Order Report'
-                    
+                         'temp/product-order-reporting-table-template.php'=>'Order Report',
+                     
+                   
                     
                 );
 			

@@ -143,13 +143,7 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
 	                <span class="lbl">Users</span>
 	            </span>
 	            <ul class="mynav">
-	                <li class="mythemestyle">
-                             <a href="/user-report/">
-                               <span class="glyphicon glyphicon-th"></span>
-	                       <span class="lbl menumargine">User Report</span>
-                            </a>
-                            
-                        </li>
+	                
 	            <li class="mythemestyle">
                            <a href="/create-user/">
                                <i class="font-icon fa fa-user-plus"></i>
