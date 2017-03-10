@@ -914,36 +914,9 @@ function back_report(){
 function sendwelcomemsg(){
     
     
+    var status = warning_welcome_emailalreadysend();
     
-    swal({
-            title: "Are you sure?",
-            text: 'You want to send the welcome email to the selected users? Their password will be reset and included in the email.',
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Yes, Send it!",
-            cancelButtonText: "No, cancel please!",
-            closeOnConfirm: false,
-            closeOnCancel: false
-        },
-        function(isConfirm) {
-
-
-
-            if (isConfirm) {
-              var status = warning_welcome_emailalreadysend();
-             
-                
-             
-            } else {
-                swal({
-                    title: "Cancelled",
-                    text: "Welcome email was not sent",
-                    type: "error",
-                    confirmButtonClass: "btn-danger"
-                });
-            }
-        });
+   
     
 }
 function warning_welcome_emailalreadysend(){
@@ -1046,21 +1019,49 @@ function warning_welcome_emailalreadysend(){
 
                  });
              }else{
-                  var sendwelcomeemailstatus = conform_send_welcomeemail_report();
+                  
                   
                 
                    
-                
-                  swal({
-                            title: "Success",
-                            text: "Welcome email sent successfully.",
-                            type: "success",
-                            confirmButtonClass: "btn-success",
-                            confirmButtonText: "Ok"
-                        },function(){
-                            location.reload();
-                        }
+                   swal({
+                    title: "Are you sure?",
+                    text: 'You want to send the welcome email to the selected users? Their password will be reset and included in the email.',
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Yes, Send it!",
+                    cancelButtonText: "No, cancel please!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                        function (isConfirm) {
+
+
+
+                            if (isConfirm) {
+
+                            var sendwelcomeemailstatus = conform_send_welcomeemail_report();
+                                swal({
+                                    title: "Success",
+                                    text: "Welcome email sent successfully.",
+                                    type: "success",
+                                    confirmButtonClass: "btn-success",
+                                    confirmButtonText: "Ok"
+                                }, function () {
+                                    location.reload();
+                                }
                                 );
+
+                            } else {
+                                swal({
+                                    title: "Cancelled",
+                                    text: "Welcome email was not sent",
+                                    type: "error",
+                                    confirmButtonClass: "btn-danger"
+                                });
+                            }
+                        });
+                 
                  
             
              }  

@@ -683,7 +683,7 @@ table.dataTable tbody td {
     border-color: #bec6cc !important;
 }
 
-div.dataTables_wrapper {
+#orderreport_wrapper .dataTables_wrapper {
         overflow: auto;
         margin: 0 auto;
     }
@@ -704,3 +704,21 @@ div.dataTables_wrapper {
     }
     .rule-operator-container div button{width:107px !important;}
     .rule-value-container input[type="number"]{    margin-left: 13px !important;}
+    .instock{font-weight: 700 !important;
+    color: #7ad03a !important;
+    background: 0 0 !important;;
+    line-height: 1 !important;;}
+    
+    #manageproduct_wrapper .dt-buttons{
+            float: right !important;
+    margin-bottom: 11px !important;;
+    margin-top: -35px !important;;
+    }
+    
+    .outofstock {
+    font-weight: 700 !important;
+    color: #a44 !important;
+    background: 0 0 !important;
+    line-height: 1 !important;
+}
+#importuserstatus_filter{    margin-bottom: 30px !important;}
