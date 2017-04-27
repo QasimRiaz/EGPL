@@ -3196,6 +3196,11 @@ function my_plugin_activate() {
   $create_pages_list[25]['name'] = 'registrations';
   $create_pages_list[25]['temp'] = 'temp/selfsignup_addsponsor_template.php';
   
+  $create_pages_list[26]['title'] = 'User Report Result';
+  $create_pages_list[26]['name'] = 'user-report-result';
+  $create_pages_list[26]['temp'] = 'temp/users_result_report_template.php';
+  
+  
   
   
   foreach($create_pages_list as $key=>$value){

@@ -331,7 +331,7 @@ function getusersreport($data) {
                             'label'=> $row['title'],
                             'operators'=> ['equal','is_not_empty'],
                             'type'=> 'integer',
-                            'size'=> 25
+                            'size'=> 20
 
                     );
                     
@@ -343,7 +343,7 @@ function getusersreport($data) {
                             'label'=> $row['title'],
                             'operators'=> ['equal','is_not_empty'],
                             'type'=> 'string',
-                            'size'=> 25
+                            'size'=> 20
 
                     );
                      
@@ -367,7 +367,7 @@ function getusersreport($data) {
                             'label'=> $row['title'],
                             'operators'=> ['equal', 'less', 'greater','is_empty','is_not_empty'],
                             'type'=> 'integer',
-                            'size'=> 25
+                            'size'=> 20
 
                     );
                  }else if ($row['type'] == 'customedate') {
@@ -380,7 +380,7 @@ function getusersreport($data) {
                             'plugin_config' => ['format'=> 'dd-M-yyyy', 'todayBtn'=> 'linked', 'todayHighlight'=> true, 'autoclose'=> true],
                             'validation'    => ['format'=> 'DD-MMM-YYYY'],
                             'type'=> 'date',
-                            'size'=> 25
+                            'size'=> 20
 
                     );
                  }else{
@@ -391,7 +391,7 @@ function getusersreport($data) {
                             'label'=> $row['title'],
                             'operators'=> ['contains', 'equal','is_empty','is_not_empty'],
                             'type'=> 'string',
-                            'size'=> 25
+                            'size'=> 20
 
                     ); 
                  }
@@ -519,7 +519,7 @@ function get_userreport_detail($orderreportname) {
 }
 
 
-function userreportresultdraw($data) {
+function userreportresultdraw() {
 
     require_once('../../../wp-load.php');
 

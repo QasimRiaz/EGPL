@@ -737,7 +737,7 @@ table.dataTable tbody td {
 #importuserstatus_filter{    margin-bottom: 30px !important;}
 
 .filteractivecolor{color:#00a8ff !important;}
-.rule-filter-container div{width:300px !important;}
+.rule-filter-container div{width:230px !important;}
 .group-conditions label{    
     background-color: gray !important;
     border-color: gray !important;
