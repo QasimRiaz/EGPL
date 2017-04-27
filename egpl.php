@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           2.17
+ * Version:           2.18
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -17,7 +17,6 @@
 
 //get all the plugin settings
 //get all the plugin settings
-
 if($_GET['contentManagerRequest'] == "checkwelcomealreadysend") {        
     require_once('../../../wp-load.php');
     
@@ -239,6 +238,11 @@ if($_GET['contentManagerRequest'] == "checkwelcomealreadysend") {
     
     $test = 'custome_task_manager_data';
     $result = get_option($test);
+    
+    
+    $additional_fields_settings_key = 'EGPL_Settings_Additionalfield';
+    $additional_fields = get_option($additional_fields_settings_key);
+    
     $keys_string[]= 'first_name';
     $keys_string[]= 'last_name';
     $keys_string[]= 'date';
@@ -248,7 +252,12 @@ if($_GET['contentManagerRequest'] == "checkwelcomealreadysend") {
     $keys_string[]= 'site_title';
     $keys_string[]= 'create_password_url';
     $keys_string[]= 'user_login';
-    $keys_string[]= 'reg_codes';
+    foreach ($additional_fields as $key=>$value){  
+        
+         $keys_string[] = $additional_fields[$key]['key'];
+        
+    }
+   
     
     $bodytext_id = 'welcomebodytext';
     if(!empty($result['custom_meta'])){
@@ -805,15 +814,19 @@ try {
       // $user_email=$to;
        
        
-       foreach($attendeefields_data as $key=>$value){
+        foreach($attendeefields_data as $key=>$Onerowvalue){
         
-           $userdata = get_user_by_email($value['Email']);
-           $t=time();
-           update_user_meta($userdata->ID, 'convo_welcomeemail_datetime', $t*1000);
-           
-                $data_field_array= array();
-                foreach($field_key_string as $index=>$keyvalue){
-                  if($keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'site_url' || $keyvalue == 'user_pass'|| $keyvalue == 'user_login'){
+          $data_field_array= array();
+          $result_email_index = multidimensional_search($Onerowvalue, array('colkey' => 'Email')); // 1 
+            $userdata = get_user_by_email($Onerowvalue[$result_email_index]['colvalue']);
+            $t=time();
+            update_user_meta($userdata->ID, 'convo_welcomeemail_datetime', $t*1000);
+            
+          foreach($Onerowvalue as $key=>$value){    
+            
+             foreach($field_key_string as $index=>$keyvalue){
+                  
+                      if($keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'site_url' || $keyvalue == 'user_pass'|| $keyvalue == 'user_login'){
                       
                        
                       if($keyvalue == 'user_pass'){
@@ -831,26 +844,51 @@ try {
                       
                       
                    }else{
-                       if(!empty($value[$keyvalue])){
-                        if($colsdatatype[$keyvalue]['type'] == 'date') {
+                    if($keyvalue == $value['colkey']){
+                       if (!empty($value['colvalue'])) {
+                           
+                           $result = multidimensional_search($colsdatatype, array('colkey' => $keyvalue)); // 1 
+                        
+                        if($colsdatatype[$result]['type'] == 'date') {
                             
-                          $date_value =   date('d-m-Y', intval($value[$keyvalue])/1000);
+                          $date_value =   date('d-m-Y', intval($value['colvalue'])/1000);
                           $data_field_array[] = array('name'=>$keyvalue,'content'=>$date_value);
                           
                         } else{
-                            
-                          $data_field_array[] = array('name'=>$keyvalue,'content'=>$value[$keyvalue]);  
+                             if ($value['colkey'] == $keyvalue) {
+                                $data_field_array[] = array('name'=>$keyvalue,'content'=>$value['colvalue']);  
+                             }
                         }
                        }else{
-                         $data_field_array[] = array('name'=>$keyvalue,'content'=>'');  
+                           if ($value['colkey'] == $keyvalue) {
+                                $data_field_array[] = array('name'=>$keyvalue,'content'=>''); 
+                           }
                        }
                    }
-                  
-                }
+                      
+                      
+                      
+                      
+                  }
+                 
+                 
+                 
+             }
+            
+              if ($value['colkey'] == 'Email') {
+                        $email_address = $value['colvalue'];
+                } else if ($value['colkey'] == 'first_name') {
+                    $first_name = $value['colvalue'];
+                }     
+          }
+           
+           
                 
-           $to_message_array[]=array('email'=>$value['Email'],'name'=>$value['first_name'],'type'=>'to');
+              
+                
+           $to_message_array[]=array('email'=>$email_address,'name'=>$first_name,'type'=>'to');
            $user_data_array[] =array(
-                'rcpt'=>$value['Email'],
+                'rcpt'=>$email_address,
                 'vars'=>$data_field_array
            );
  
@@ -930,6 +968,9 @@ try {
     $user_info = get_userdata($user_ID);
     $attendeefields_data=json_decode(stripslashes($_POST['attendeeallfields']), true);
     $colsdatatype=json_decode(stripslashes($_POST['datacollist']), true);
+    
+   
+    
     $field_key_string = getInbetweenStrings('{', '}', $body);
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $formemail = $oldvalues['ContentManager']['formemail'];
@@ -945,7 +986,6 @@ try {
     
     
     $site_url = get_option('siteurl' );
-    
     $login_url = get_option('siteurl' );
     $admin_email= get_option('admin_email');
     $data=  date("Y-m-d");
@@ -966,47 +1006,64 @@ try {
         array('name'=>'time','content'=>$time),
         array('name'=>'siteurl','content'=>$site_url)
         );
-    
-   // foreach($emailaddress_array as $email=>$to){
-       
-       $body_message =    $body ;
-      // $user = get_user_by( 'email', $to );
-      // $firstname=$user->first_name;
-      // $lastname=$user->last_name;
-      // $user_email=$to;
-       
-       
-       foreach($attendeefields_data as $key=>$value){
-       
+    $body_message =    $body ;
+     
+       foreach($attendeefields_data as $key=>$Onerowvalue){
                 $data_field_array= array();
+               
+                foreach($Onerowvalue as $key=>$value){    
                 foreach($field_key_string as $index=>$keyvalue){
-                  if($keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'siteurl'){
-                       
-                   }else{
-                       if(!empty($value[$keyvalue])){
-                        if($colsdatatype[$keyvalue]['type'] == 'date') {
-                            
-                          $date_value =   date('d-m-Y', intval($value[$keyvalue])/1000);
-                          $data_field_array[] = array('name'=>$keyvalue,'content'=>$date_value);
-                          
-                        } else{
-                            
-                          $data_field_array[] = array('name'=>$keyvalue,'content'=>$value[$keyvalue]);  
-                        }
-                       }else{
-                         $data_field_array[] = array('name'=>$keyvalue,'content'=>'');  
-                       }
-                   }
-                  
-                }
+                    
                 
-           $to_message_array[]=array('email'=>$value['Email'],'name'=>$value['first_name'],'type'=>'to');
+                    
+                   if($keyvalue == $value['colkey']){
+                        
+                     if ($keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'siteurl') {
+                  
+                        } else {
+
+                    if (!empty($value['colvalue'])) {
+
+                        $result = multidimensional_search($colsdatatype, array('colkey' => $keyvalue)); // 1 
+                        
+                       
+                        if ($colsdatatype[$result]['type'] == 'date') {
+                            if ($value['colkey'] == $keyvalue) {
+                                $date_value = date('d-m-Y', intval($value['colvalue']) / 1000);
+                                $data_field_array[] = array('name' => $keyvalue, 'content' => $date_value);
+                            }
+                        } else {
+
+                            if ($value['colkey'] == $keyvalue) {
+
+                                $data_field_array[] = array('name' => $keyvalue, 'content' => $value['colvalue']);
+                            }
+                        }
+                    } else {
+                        $data_field_array[] = array('name' => $keyvalue, 'content' => '');
+                    }
+                }
+            }
+        }
+              if ($value['colkey'] == 'Email') {
+                        $email_address = $value['colvalue'];
+                } else if ($value['colkey'] == 'first_name') {
+                    $first_name = $value['colvalue'];
+                }    
+                
+    }
+
+        $to_message_array[]=array('email'=>$email_address,'name'=>$first_name,'type'=>'to');
            $user_data_array[] =array(
-                'rcpt'=>$value['Email'],
+                'rcpt'=>$email_address,
                 'vars'=>$data_field_array
-           );
+           ); 
+              
+           
  
         }
+       
+      
        
        
        //$result = send_email($to,$subject,$body_message);
@@ -1148,7 +1205,7 @@ try {
     
     try{
     $subject =$_POST['emailSubject'];
-    $body=$_POST['emailBody'];
+    $body=stripslashes($_POST['emailBody']);
     $welcomeemailfromname = $_POST['welcomeemailfromname'];
     $replaytoemailadd = $_POST['replaytoemailadd'];
     
@@ -1194,20 +1251,20 @@ try {
       
       $body_message = str_replace('[user_email]', $user_email, $body_message);
       $body_message = str_replace('[first_name]', $firstname, $body_message);
-       $body_message = str_replace('[last_name]', $lastname, $body_message);
-       $body_message = str_replace('[site_title]', $site_title, $body_message);
-       $body_message = str_replace('[date]', $data, $body_message);
-       $body_message = str_replace('[time]', $time, $body_message);
-       $body_message = str_replace('[site_url]', $site_url, $body_message);
+      $body_message = str_replace('[last_name]', $lastname, $body_message);
+      $body_message = str_replace('[site_title]', $site_title, $body_message);
+      $body_message = str_replace('[date]', $data, $body_message);
+      $body_message = str_replace('[time]', $time, $body_message);
+      $body_message = str_replace('[site_url]', $site_url, $body_message);
        
-       $subject_body = str_replace('[user_email]', $user_email, $subject_body);
-       $subject_body = str_replace('[first_name]', $firstname, $subject_body);
-       $subject_body = str_replace('[last_name]', $lastname, $subject_body);
-       $subject_body = str_replace('[site_title]', $site_title, $subject_body);
-       $subject_body = str_replace('[user_pass]', $plaintext_pass, $subject_body);
-         $subject_body = str_replace('[date]', $data, $subject_body);
-         $subject_body = str_replace('[time]', $time, $subject_body);
-         $subject_body = str_replace('[site_url]', $site_url, $subject_body);
+      $subject_body = str_replace('[user_email]', $user_email, $subject_body);
+      $subject_body = str_replace('[first_name]', $firstname, $subject_body);
+      $subject_body = str_replace('[last_name]', $lastname, $subject_body);
+      $subject_body = str_replace('[site_title]', $site_title, $subject_body);
+      $subject_body = str_replace('[user_pass]', $plaintext_pass, $subject_body);
+      $subject_body = str_replace('[date]', $data, $subject_body);
+      $subject_body = str_replace('[time]', $time, $subject_body);
+      $subject_body = str_replace('[site_url]', $site_url, $subject_body);
        
        
        
@@ -2914,6 +2971,7 @@ function add_contentmanager_js(){
     // wp_enqueue_script('bulk-email', plugins_url('/js/bulk-email.js', __FILE__), array('jquery'));
      wp_enqueue_script('sweetalert', plugins_url('/EGPL/cmtemplate/js/lib/bootstrap-sweetalert/sweetalert.min.js'), array('jquery'));
      wp_enqueue_script('password_strength_cal', plugins_url('/js/passwordstrength.js', __FILE__), array('jquery'));
+     wp_enqueue_script('selfsignupjs', plugins_url('/js/selfsignupjs.js', __FILE__), array('jquery'));
       //wp_enqueue_script('rolejs', plugins_url('/js/role.js', __FILE__), array('jquery'));
      
    
@@ -2927,6 +2985,7 @@ function my_contentmanager_style() {
     wp_enqueue_style('my-datepicker', plugins_url().'/EGPL/css/datepicker.css');
     wp_enqueue_style('jquery.dataTables', plugins_url().'/EGPL/css/jquery.dataTables.css');
     wp_enqueue_style('shCore', plugins_url().'/EGPL/css/shCore.css');
+   
   
     wp_enqueue_style('my-datatable-tools', plugins_url().'/EGPL/css/dataTables.tableTools.css');
    // wp_enqueue_style('cleditor-css', plugins_url() .'/EGPL/css/jquery.cleditor.css');
@@ -3120,6 +3179,25 @@ function my_plugin_activate() {
   $create_pages_list[21]['temp'] = 'temp/product-order-reporting-template.php';
   
   
+  $create_pages_list[22]['title'] = 'Manage Products';
+  $create_pages_list[22]['name'] = 'manage-products';
+  $create_pages_list[22]['temp'] = 'temp/view_products_manage_all_template.php';
+  
+  $create_pages_list[23]['title'] = 'Add Edit Product';
+  $create_pages_list[23]['name'] = 'add-new-product';
+  $create_pages_list[23]['temp'] = 'temp/add_new_product_template.php';
+  
+  
+  $create_pages_list[24]['title'] = 'Review Registrations';
+  $create_pages_list[24]['name'] = 'review-registration';
+  $create_pages_list[24]['temp'] = 'temp/selfsign_review_profiles.php';
+  
+  $create_pages_list[25]['title'] = 'Registrations';
+  $create_pages_list[25]['name'] = 'registrations';
+  $create_pages_list[25]['temp'] = 'temp/selfsignup_addsponsor_template.php';
+  
+  
+  
   foreach($create_pages_list as $key=>$value){
       
      
@@ -3214,7 +3292,7 @@ add_action( 'init', 'add_contentmanager_settings' );
 
 function add_contentmanager_settings() {
     
-    wp_register_script('adminjs', plugins_url('js/admin-cmanager.js', __FILE__), array('jquery'));
+    wp_register_script('adminjs', plugins_url('js/admin-cmanager.js?v=2.21', __FILE__), array('jquery'));
     wp_enqueue_script('adminjs');
     //$settings_array['ContentManager']['sponsor-name']='Exhibitor';
     //update_option( 'ContenteManager_Settings', $settings_array);
@@ -3258,7 +3336,10 @@ function updatecmanagersettings($object_data){
     $mandrill = $object_data['mandrill'];
     $mapapikey = $object_data['mapapikey'];
     $mapsecretkey = $object_data['mapsecretkey'];
-   
+    $wooseceretkey = $object_data['wooseceretkey'];
+    $wooconsumerkey = $object_data['wooconsumerkey'];
+    $selfsignstatus = $object_data['selfsignstatus'];
+    
     $addresspoints = $object_data['addresspoints'];
     
     $values_edit=$object_data['excludemetakeysedit'];
@@ -3289,6 +3370,10 @@ function updatecmanagersettings($object_data){
     $oldvalues['ContentManager']['adminsitelogo']=$object_data['adminsitelogourl'];
     $oldvalues['ContentManager']['mapapikey']=$mapapikey;
     $oldvalues['ContentManager']['mapsecretkey']=$mapsecretkey;
+    
+    $oldvalues['ContentManager']['wooseceretkey']=$wooseceretkey;
+    $oldvalues['ContentManager']['wooconsumerkey']=$wooconsumerkey;
+    $oldvalues['ContentManager']['selfsignstatus']=$selfsignstatus;
     
     $result=update_option('ContenteManager_Settings', $oldvalues);
     
@@ -3348,14 +3433,19 @@ function excludes_sponsor_meta(){
     
      $oldvalues = get_option( 'ContenteManager_Settings' );
  
-     $sponsor_name=$oldvalues['ContentManager']['sponsor_name'];
-     $attendytype=$oldvalues['ContentManager']['attendytype_key'];
-     $eventdate = $oldvalues['ContentManager']['eventdate'];
-     $formemail = $oldvalues['ContentManager']['formemail'];
-     $mandrill = $oldvalues['ContentManager']['mandrill'];
-     $mapapikey = $oldvalues['ContentManager']['mapapikey'];
-     $mapsecretkey = $oldvalues['ContentManager']['mapsecretkey'];
+     $sponsor_name  = $oldvalues['ContentManager']['sponsor_name'];
+     $attendytype   =  $oldvalues['ContentManager']['attendytype_key'];
+     $eventdate     =   $oldvalues['ContentManager']['eventdate'];
+     $formemail     =   $oldvalues['ContentManager']['formemail'];
+     $mandrill      =    $oldvalues['ContentManager']['mandrill'];
+     $mapapikey     =   $oldvalues['ContentManager']['mapapikey'];
+     $mapsecretkey  = $oldvalues['ContentManager']['mapsecretkey'];
      $adminsitelogo = $oldvalues['ContentManager']['adminsitelogo'];
+     $wooconsumerkey= $oldvalues['ContentManager']['wooconsumerkey'];
+     $wooseceretkey = $oldvalues['ContentManager']['wooseceretkey'];
+     $selfsignstatus = $oldvalues['ContentManager']['selfsignstatus'];
+     
+     
       
      //echo'<pre>';
     // print_r($oldvalues);
@@ -3411,8 +3501,9 @@ function excludes_sponsor_meta(){
         <td><input type="file"  onclick="clearfilepath()" name="adminsitelogo" id="adminsitelogo"></br><img src="'.$adminsitelogo.'" id="uploadlogourl" width="200" height="70"></td>
         <td></td>
        </tr>
-        <tr><td><h4>Event Address</h4></td>
-
+        <tr><td><h4>Self-signup Settings</h4></td>
+        <td><input type="text" name="selfsignstatus"  id="selfsignstatus" value='.$selfsignstatus.'></td>
+        </tr>
         <tr><td><h4>Map Dynamics API Key</h4></td>
  
         <td><input type="text" name="mapapikey"  id="mapapikey" value='.$mapapikey.'></td>
@@ -3421,6 +3512,18 @@ function excludes_sponsor_meta(){
 
         <td>
         <input type="text" name="mapsecretkey"  id="mapsecretkey" value='.$mapsecretkey.'>
+       
+</td>
+       </tr>
+       
+<tr><td><h4>Woocommerce Api Consumer Key</h4></td>
+ 
+        <td><input type="text" name="wooconsumerkey"  id="wooconsumerkey" value='.$wooconsumerkey.'></td>
+       </tr>
+        <tr><td><h4>Woocommerce Api Secret Key</h4></td>
+
+        <td>
+        <input type="text" name="wooseceretkey"  id="wooseceretkey" value='.$wooseceretkey.'>
        
 </td>
        </tr>
@@ -3528,6 +3631,15 @@ class PageTemplater {
                          'temp/bulk_edit_task_list.php'=>'Bulk Edit Task List view',
                          'temp/managerole_assignment.php'=>'Role Assignment',
                          'temp/product-order-reporting-table-template.php'=>'Order Report',
+                        'temp/new_user_report_template.php'=>'User Report',
+                        'temp/view_products_manage_all_template.php'=>'Manage Product',
+                        'temp/add_new_product_template.php'=>'Add New Product',
+                        'temp/users_result_report_template.php'=>'User Report Result',
+                        'temp/selfsignup_addsponsor_template.php'=>'User Self Signup',
+                        'temp/selfsign_review_profiles.php'=>'User Self Signup Report',
+                        'temp/landing-page.php'=>'Landing Page',
+                        
+                        
                      
                    
                     
@@ -4690,4 +4802,155 @@ if (is_admin()) { // note the use of is_admin() to double check that this is hap
         );
         new WP_GitHub_Updater($config);
     }
+add_filter('woocommerce_payment_complete_order_status', 'exp_autocomplete_paid_orders', 10, 2);
+add_action('woocommerce_thankyou', 'exp_autocomplete_all_orders');
+function exp_autocomplete_all_orders($order_id) {
+        
+        if (!$order_id)
+                return;
+        
+        $order = new WC_Order($order_id);
+        
+        $payment_method = get_post_meta($order->id, '_payment_method', true);
+        if($payment_method == 'cheque'){
+            if (count($order->get_items()) > 0) {
+                foreach ($order->get_items() as $item) {
+                    if ('line_item' == $item['type']) {
+                    
+                    $porduct_ids_array[] = $item['item_meta']['_product_id'][0];
+                   
+                    
+                    }
+                }
+            }
+           // echo $order_id;
+            //echo '<pre>';
+           // print_r($porduct_ids_array);exit;
+            exp_updateuser_role_onmpospurches($order,$porduct_ids_array);
+            $order->update_status('completed');
+        }
+}
+function exp_autocomplete_paid_orders($order_status, $order_id) {
+        
+       
+        if (!$order_id)
+                return;
+        $order = new WC_Order($order_id);
+        $payment_method = get_post_meta($order->id, '_payment_method', true);
+        
+        
+            if (count($order->get_items()) > 0) {
+                foreach ($order->get_items() as $item) {
+                    if ('line_item' == $item['type']) {
+                        $porduct_ids_array[] = $item['item_meta']['_product_id'][0];
+                    }
+                }
+            }
+            exp_updateuser_role_onmpospurches($order,$porduct_ids_array);
+            if ($order_status == 'processing' && ($order->status == 'on-hold' || $order->status == 'pending' || $order->status == 'failed')) {
+                return 'completed';
+            }
+            return $order_status;
+}
 
+
+
+
+function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
+    
+        global $current_user;
+       // $lastInsertId = contentmanagerlogging('Purches MPOs',"User Action",serialize($order),''.$current_user->id,$current_user->user_email,"pre_action_data");
+        require_once( 'temp/lib/woocommerce-api.php' );
+        $url = 'https://'.$_SERVER['SERVER_NAME'];
+        $options = array(
+            'debug' => true,
+            'return_as_array' => false,
+            'validate_url' => false,
+            'timeout' => 30,
+            'ssl_verify' => false,
+        );
+        
+        $woocommerce_rest_api_keys = get_option( 'ContenteManager_Settings' );
+        $wooconsumerkey = $woocommerce_rest_api_keys['ContentManager']['wooconsumerkey'];
+        $wooseceretkey = $woocommerce_rest_api_keys['ContentManager']['wooseceretkey'];
+        $woocommerce = new WC_API_Client( $url, $wooconsumerkey, $wooseceretkey, $options );
+        
+        if (count($porduct_ids_array) > 0) {
+                foreach ($porduct_ids_array as $item=>$ids) {
+                   
+                    
+                    $getproduct_detail = $woocommerce->products->get( $ids );
+                    $assign_role[] = $getproduct_detail->product->tax_class;
+                    
+                  
+                }
+            }
+            
+            $user_info = get_userdata($current_user->id);
+            if(!empty($assign_role[0])){
+                if($user_info->roles[0] !='administrator' && $user_info->roles[0] !='contentmanager'){
+                   
+                    $u = new WP_User($current_user->id);
+                    $u->set_role( $assign_role[0] );
+                }
+            }
+            
+            $responce['paymentmethod'] = $payment_method;
+            $responce['paymentstatus'] = 'completed';
+            $responce['assignrole'] = $assign_role[0];
+           // contentmanagerlogging_file_upload ($lastInsertId,serialize($responce));
+}
+
+function multidimensional_search($parents, $searched) { 
+  if (empty($searched) || empty($parents)) { 
+    return false; 
+  } 
+
+  foreach ($parents as $key => $value) { 
+    $exists = true; 
+    foreach ($searched as $skey => $svalue) { 
+      $exists = ($exists && IsSet($parents[$key][$skey]) && $parents[$key][$skey] == $svalue); 
+    } 
+    if($exists){ return $key; } 
+  } 
+
+  return false; 
+} 
+
+
+function registrtionlink_func( $atts ) {
+    
+    $oldvalues = get_option( 'ContenteManager_Settings' );
+    $selfsignstatus = $oldvalues['ContentManager']['selfsignstatus'];
+     if($selfsignstatus == 'enable'){
+         
+         $button_text = '<a href="/registration/" class ="fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat" >Registration</a>';
+     }else{
+         
+         $button_text = "";
+     }
+    return $button_text;
+}
+add_shortcode( 'registrtionlink', 'registrtionlink_func' );
+
+
+add_action( 'wp_footer','checkloginuserstatus_fun' );
+function checkloginuserstatus_fun() {
+    if ( class_exists( 'WooCommerce' ) ) {	
+        if (is_user_logged_in()) {
+
+                    if (current_user_can('subscriber')) {
+
+                        $actual_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
+                            if (strpos($actual_link, 'task-list/') !== false || strpos($actual_link, 'home/') !== false || strpos($actual_link, 'floor-plan/') !== false || strpos($actual_link, 'resources/') !== false || strpos($actual_link, 'registration-codes/') !== false) {
+                            
+                               
+                            
+                                 echo '<script type="text/javascript">swal({title: "Warning", type: "warning", html:true,showConfirmButton:false,text: "<p>You don\'t have a level assigned. You will need to purchase a package. Please go to the shop by clicking the button below.</p><p style=\'margin-top:18px\'><a href=\'/product-category/packages/\' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Shop</a></p>"});</script>';
+                                
+                            }
+                    }
+        } 
+    }
+}

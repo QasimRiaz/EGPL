@@ -235,7 +235,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                     }
 
                                                     foreach ($all_roles as $key => $name) {
-                                                        if($key !='administrator'){
+                                                        if($key !='administrator' && $key !='subscriber'){
                                                         if (in_array($key, $value['roles'])) {
 
                                                             echo '<option value="' . $key . '" selected="selected">' . $name . '</option>';

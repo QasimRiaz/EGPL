@@ -143,7 +143,7 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
 	                <span class="lbl">Users</span>
 	            </span>
 	            <ul class="mynav">
-	                
+	               
 	            <li class="mythemestyle">
                            <a href="/create-user/">
                                <i class="font-icon fa fa-user-plus"></i>
@@ -165,6 +165,14 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
 	                    <span class="lbl menumargine">Sync To Floorplan</span>
 	                </a>
 	            </li> 
+                     <li class="mythemestyle">
+	                <a href="/review-registration/">
+	                  <i class="font-icon fa fa-eye"></i>
+	                    <span class="lbl menumargine">Review Registrations</span>
+	                </a>
+	            </li> 
+                    
+                    
 	            </ul>
 	        </li>
                 <li class="mythemestyle with-sub">
@@ -220,18 +228,29 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
 	                <span class="lbl">Resources</span>
 	            </span>
                     <ul class="mynav">
-                       <li class="mythemestyle">
-	                <a href="/create-resource/">
-	                   <i class="font-icon fa fa-upload"></i>
-	                    <span class="lbl menumargine">Create Resource</span>
-	                </a>
-	            </li>
+                       
 	            <li class="mythemestyle"> 
 	                <a href="/all-resources/">
 	                   <i class="font-icon fa fa-files-o"></i>
-	                    <span class="lbl menumargine">All Resources</span>
+	                    <span class="lbl menumargine">Manage Resources</span>
 	                </a>
 	            </li> 
+                    </ul>
+                </li>
+                   <li class="mythemestyle with-sub">
+	            <span>
+	                  <i style="color:#004598 !important;" class="font-icon fa fa-plus-square"></i>
+	                <span class="lbl">Shop</span>
+	            </span>
+                    <ul class="mynav">
+                       <li class="mythemestyle">
+	                <a href="/manage-products/">
+	                  <i class="font-icon fa fa-bars"></i>
+	                    <span class="lbl menumargine">Manage Products</span>
+	                </a>
+                        </li>
+                       
+	            
                     </ul>
                 </li>
                

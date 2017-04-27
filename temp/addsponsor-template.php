@@ -111,7 +111,7 @@
                                                                          foreach ($all_roles as $key => $name) {
 
 
-                                                                             if ($key != 'administrator' && $key != 'contentmanager') {
+                                                                             if ($key != 'administrator' && $key != 'contentmanager' && $key != 'subscriber') {
                                                                                  echo '<option value="' . $key . '">' . $name . '</option>';
                                                                              }
                                                                          }

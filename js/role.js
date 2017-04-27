@@ -433,6 +433,7 @@ function createroleclone(e){
    
     var rolekey = jQuery(e).attr('id');
     var oldrolename = jQuery(e).attr('name');
+    
     var url = window.location.protocol + "//" + window.location.host + "/";
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=createlevelclone';
     var data = new FormData();
@@ -457,7 +458,7 @@ function createroleclone(e){
 			swal.showInputError("You need to write something!");
 			return false;
 		}
-                data.append('rolename',   inputValue);
+                data.append('rolename',   jQuery.trim(inputValue));
                 jQuery.ajax({
                     url: urlnew,
                     data: data,

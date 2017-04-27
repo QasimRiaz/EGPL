@@ -20,7 +20,9 @@ function updatecontentsettings() {
    var mandrill = jQuery("#mandrill").val();
    var mapapikey = jQuery("#mapapikey").val();
    var mapsecretkey = jQuery("#mapsecretkey").val();
-   
+   var wooseceretkey = jQuery("#wooseceretkey").val();
+   var wooconsumerkey = jQuery("#wooconsumerkey").val();
+   var selfsignstatus = jQuery("#selfsignstatus").val();
    var addresspoints = jQuery("#addresspoints").val();
    var uploadlogourl = jQuery("#uploadlogourl").attr("src");
    if(uploadlogourl == ''){
@@ -46,7 +48,9 @@ function updatecontentsettings() {
        data.append('mapapikey', mapapikey);
        data.append('mapsecretkey', mapsecretkey);
        data.append('addresspoints', addresspoints);
-     
+       data.append('wooseceretkey', wooseceretkey);
+       data.append('wooconsumerkey', wooconsumerkey);
+       data.append('selfsignstatus', selfsignstatus);
 
        jQuery.ajax({
             url: urlnew,

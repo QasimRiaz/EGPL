@@ -287,7 +287,7 @@ display: none !important;
 .table-bordered1 { border: 1px solid rgb(221, 221, 221); }
 .table-bordered > thead > tr > th18,.table-bordered > tbody > tr > th,.table-bordered > tfoot > tr > th,.table-bordered > thead > tr > td,.table-bordered > tbody > tr > td90,.table-bordered > tfoot > tr > td1 { border: 1px solid rgb(221, 221, 221); }
 .table-bordered > thead > tr > th18,.table-bordered > thead > tr > td { border-bottom-width: 2px; }
-.table-striped > tbody > tr:nth-child(2n+1) > td,.table-striped > tbody > tr:nth-child(2n+1) > th { background-color: #f9f9f9; }
+/*.table-striped > tbody > tr:nth-child(2n+1) > td,.table-striped > tbody > tr:nth-child(2n+1) > th { background-color: #f9f9f9; }*/
 table td[class*="col-"],table th[class*="col-"] { position: static; float: none; display: table-cell; }
 label { display: inline-block; margin-bottom: 5px; font-weight: 700; }
 input[type="search"] { box-sizing: border-box; }
@@ -693,6 +693,19 @@ table.dataTable tbody td {
     margin-bottom: 11px !important;;
     margin-top: -35px !important;;
     }
+    #example_wrapper {
+        overflow: auto !important;
+        margin: 0 auto;
+    }
+#selfsignusers_wrapper {
+        overflow: auto !important;
+        margin: 0 auto;
+    }
+#example_wrapper .dt-buttons{
+            float: right !important;
+    margin-bottom: 11px !important;;
+    margin-top: -35px !important;;
+    }
     
     .menumargine{
         
@@ -722,3 +735,12 @@ table.dataTable tbody td {
     line-height: 1 !important;
 }
 #importuserstatus_filter{    margin-bottom: 30px !important;}
+
+.filteractivecolor{color:#00a8ff !important;}
+.rule-filter-container div{width:300px !important;}
+.group-conditions label{    
+    background-color: gray !important;
+    border-color: gray !important;
+    cursor: default !important;
+}
+

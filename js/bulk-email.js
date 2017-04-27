@@ -24,57 +24,21 @@ jQuery(document).ready(function() {
 
 function get_bulk_email_address() {
 
-   var bulkemails = new Array();    
-   var checkedRows = waTable.getData(true);
-   var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
-   for (var i = 0; i < arrData['rows'].length; i++) {
-        var row = "";
-   for (var index in arrData['rows'][i]) {
-       if (typeof(arrData['cols'][index]) != "undefined") {
-           
-           if (arrData['cols'][index].friendly == "Email") {
-               
-               bulkemails.push(arrData['rows'][i][index])
-           }
-       }  
-         
-         
-     }
-    
-    }
+   jQuery('[href="#tabs-1-tab-2"]').tab('show');
+   var $table             = resultuserdatatable.table().node();
+   var $chkbox_checked    = jQuery('tbody input[type="checkbox"]:checked', $table);
    
-    if (bulkemails.length === 0) {
+  console.log($chkbox_checked.length);
+   if ($chkbox_checked.length <= 0) {
         
-        
-        
-        
-        jQuery('#tab2').empty();
-         jQuery(".hookinfo").hide();
-        jQuery('#bulkemail_status').empty();
-         jQuery('#bulkemail_text_fileds').hide();
-         jQuery('#savetemplatediv').hide();
-        jQuery('#bulkemail_status').append('<div class="fusion-alert alert error alert-dismissable alert-danger alert-shadow"> <button type="button" class="close toggle-alert" data-dismiss="alert" aria-hidden="true"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-times-circle" style="color:#262626;"></i></span></button> <span class="alert-icon"><i class="fa fa-lg fa-exclamation-triangle"></i></span>No recipients selected. Please select atleast one from the Report.</div>');
+        jQuery(".sendbulkemailbox").hide();
+        jQuery('.bulkemail_status').empty();
+        jQuery('.bulkemail_status').append('<div class="fusion-alert alert error alert-dismissable alert-danger alert-shadow"> <button type="button" class="close toggle-alert" data-dismiss="alert" aria-hidden="true"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-times-circle" style="color:#262626;"></i></span></button> <span class="alert-icon"><i class="fa fa-lg fa-exclamation-triangle"></i></span>  No recipients selected. Please select atleast one from the Report.</div>');
       
     }else{
-        
-        jQuery('#reportstab').hide();
-        jQuery('#bulkemailtab').show();
-        jQuery('#bulkemail_status').empty();
-        var length =bulkemails.length;
-        jQuery(".hookinfo").show();
-        jQuery('#bulkemail_status').append('<div class="fusion-alert alert success alert-dismissable alert-success alert-shadow"><p>'+length+' recipients selected.</p></div>');
-        jQuery('#bulkemail_text_fileds').show();
-        jQuery('#savetemplatediv').show();
-        jQuery('#emailAddress').val(bulkemails.join(", ")); 
-        var keysnames = '<a class="btn btn-sm btn-primary mergefieldbutton" style="cursor: pointer;" onclick="keys_preview()" >Insert Merge Fields</a>';
-        jQuery( "#sponsor_meta_keys" ).html(keysnames);
-        jQuery('#selectedstatscountforbulk').empty();
-        jQuery('#selectedstatscountforbulk').append(jQuery( "#selectedstatscount" ).text());
-        
-        console.log();
-         
-        
-       //  console.log(bulkemails)    ;
+        jQuery('.bulkemail_status').empty();
+        jQuery(".sendbulkemailbox").show();
+      
     }
    
 }
@@ -137,8 +101,42 @@ function conform_send_bulk_email(){
     var emailSubject =jQuery('#emailsubject').val();
     var emailBody=tinymce.activeEditor.getContent();//jQuery('#bodytext').val();
     var emailAddress=jQuery('#emailAddress').val();
-    var checkedRows = waTable.getData(true);
-    var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
+    var columnheaderdataarray=[];
+    var arrData=[];
+    var tablesettings = jQuery('#example').DataTable().settings();
+    for (var i = 0, iLen = tablesettings[0].aoColumns.length; i < iLen; i++)
+            {
+               if(tablesettings[0].aoColumns[i].sTitle != '<input name="select_all" value="1" type="checkbox">' && tablesettings[0].aoColumns[i].sTitle != "Action"){
+                columnheaderdataarray.push({coltitle:tablesettings[0].aoColumns[i].sTitle,colkey:tablesettings[0].aoColumns[i].title,type:tablesettings[0].aoColumns[i].type});
+                }
+            }
+   
+    var checkedRows = resultuserdatatable.rows('.selected').data();
+    for (var i = 0, iLen = checkedRows.length; i < iLen; i++)
+         {
+          var arrDatarowone=[];   
+          jQuery.each(checkedRows[i], function (key, value) {
+             var getkey=[];
+             
+             if(key !='<input name="select_all" value="1" type="checkbox">' && key !="Action"){
+              var headervalue = columnheaderdataarray.filter(function (person) { 
+                  return person.coltitle == key 
+              
+              });
+            
+             if (headervalue!= 'undefined') {
+                     var $newval =headervalue[0].colkey;
+                     
+                    arrDatarowone.push({colkey:$newval,colvalue:value});   
+             }
+               
+            }
+              
+          });
+         arrData.push(arrDatarowone);
+             
+         }
+   
     var BCC=jQuery('#BCC').val();
     var fromname=jQuery('#fromname').val();
      var statusmessage='';
@@ -153,8 +151,8 @@ function conform_send_bulk_email(){
     data.append('emailAddress', emailAddress);
     data.append('fromname', fromname);
    
-    data.append('attendeeallfields',   JSON.stringify(arrData['rows']));
-    data.append('datacollist',   JSON.stringify(arrData['cols']));
+    data.append('attendeeallfields',   JSON.stringify(arrData));
+    data.append('datacollist',   JSON.stringify(columnheaderdataarray));
      data.append('BCC', BCC);
      jQuery.ajax({
             url: urlnew,
@@ -665,25 +663,31 @@ function updateWelcomeMsg(){
 }
 function keys_preview(){
     
-    var checkedRows = waTable.getData(true);
+    
     var datavaluesfields;
-   var  areaId = "bodytext";
-    
-    var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
-  
-      
-   for (var index in arrData['cols']) {
-       if (typeof(arrData['cols'][index]) != "undefined") {
+    var  areaId = "bodytext";
+    var columnheaderdataarray=[];
+    var tablesettings = jQuery('#example').DataTable().settings();
+    for (var i = 0, iLen = tablesettings[0].aoColumns.length; i < iLen; i++)
+            {
+               if(tablesettings[0].aoColumns[i].sTitle != '<input name="select_all" value="1" type="checkbox">' && tablesettings[0].aoColumns[i].sTitle != "Action"){
+                 columnheaderdataarray.push({colkey:tablesettings[0].aoColumns[i].title});
+                }
+            }
+   console.log(columnheaderdataarray);
+   for (var index in columnheaderdataarray) {
+       if (typeof(columnheaderdataarray[index]) != "undefined") {
            
-          
-          if(arrData['cols'][index].column.indexOf("task") >= 0 ||arrData['cols'][index].column == 'action_edit_delete' || arrData['cols'][index].column == 'undefined'){
-    
-           }else{
-              var keyvalue ='{'+arrData['cols'][index].column+'}';
+          var colvalue = columnheaderdataarray[index].colkey;
+         
+          if(colvalue.search('task') > -1){
+              
+         }else{
+              var keyvalue ='{'+colvalue+'}';
               //console.log(arrData['cols'][index].column) ;
               datavaluesfields+='<a style="cursor: pointer;" class = "addmetafields" onclick=\'insertAtCaret("'+areaId+'","'+keyvalue+'")\' > '+keyvalue+'</a><br>';  
-               
-           }
+          }
+           
                
           
        }  
@@ -904,11 +908,12 @@ function insertAtCaret(areaId,text) {
 function back_report(){
     
     
+    //jQuery('#tabs-1-tab-2').tab('show');
+    //jQuery('').removeClass('active');
+    jQuery('[href="#tabs-1-tab-1"]').tab('show');
+   // jQuery('#tabs-1-tab-2').addClass('active');
     
-    jQuery("#bulkemailtab").hide();
-    jQuery("#reportstab").show();
-    
-    
+   
 }
 
 function sendwelcomemsg(){
@@ -925,12 +930,13 @@ function warning_welcome_emailalreadysend(){
    //jQuery('#bodytext').val();
    var bulkemails = new Array();   
    
-   var checkedRows = waTable.getData(true);
-   var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
-   for (var i = 0; i < arrData['rows'].length; i++) {
+   var checkedRows = resultuserdatatable.rows('.selected').data();
+   
+   for (var i = 0; i < checkedRows.length; i++) {
        
-        bulkemails.push(arrData['rows'][i].Email);
+        bulkemails.push(checkedRows[i].Email);
     }
+   
    
     
    
@@ -944,10 +950,6 @@ function warning_welcome_emailalreadysend(){
     }
     
     var emailAddress=jQuery('#welcomecustomeemail').val();
-   
-    
-    var checkedRows = waTable.getData(true);
-    var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
    
    
      var statusmessage='';
@@ -1089,11 +1091,11 @@ function conform_send_welcomeemail_report(){
    //jQuery('#bodytext').val();
    var bulkemails = new Array();   
    
-   var checkedRows = waTable.getData(true);
-   var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
-   for (var i = 0; i < arrData['rows'].length; i++) {
+   var checkedRows = resultuserdatatable.rows('.selected').data();
+  
+   for (var i = 0; i < checkedRows.length; i++) {
        
-        bulkemails.push(arrData['rows'][i].Email);
+        bulkemails.push(checkedRows[i].Email);
     }
    
     
@@ -1110,21 +1112,52 @@ function conform_send_welcomeemail_report(){
     var emailAddress=jQuery('#welcomecustomeemail').val();
     console.log(emailAddress);
     
-    var checkedRows = waTable.getData(true);
-    var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
    
+    var statusmessage='';
+    var alertclass='';
+    var columnheaderdataarray=[];
+    var arrData=[];
+    var tablesettings = jQuery('#example').DataTable().settings();
+    for (var i = 0, iLen = tablesettings[0].aoColumns.length; i < iLen; i++)
+            {
+               if(tablesettings[0].aoColumns[i].sTitle != '<input name="select_all" value="1" type="checkbox">' && tablesettings[0].aoColumns[i].sTitle != "Action"){
+                columnheaderdataarray.push({coltitle:tablesettings[0].aoColumns[i].sTitle,colkey:tablesettings[0].aoColumns[i].title,type:tablesettings[0].aoColumns[i].type});
+                }
+            }
    
-     var statusmessage='';
-     var alertclass='';
-    
+    var checkedRows = resultuserdatatable.rows('.selected').data();
+    for (var i = 0, iLen = checkedRows.length; i < iLen; i++)
+         {
+          var arrDatarowone=[];   
+          jQuery.each(checkedRows[i], function (key, value) {
+             var getkey=[];
+             
+             if(key !='<input name="select_all" value="1" type="checkbox">' && key !="Action"){
+              var headervalue = columnheaderdataarray.filter(function (person) { 
+                  return person.coltitle == key 
+              
+              });
+            
+             if (headervalue!= 'undefined') {
+                     var $newval =headervalue[0].colkey;
+                     
+                    arrDatarowone.push({colkey:$newval,colvalue:value});   
+             }
+               
+            }
+              
+          });
+         arrData.push(arrDatarowone);
+             
+         }
     jQuery("body").css({'cursor':'wait'});
     var url = window.location.protocol + "//" + window.location.host + "/";
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=sendcustomewelcomeemail';
     var data = new FormData();
    
    
-    data.append('attendeeallfields',   JSON.stringify(arrData['rows']));
-    data.append('datacollist',   JSON.stringify(arrData['cols']));
+    data.append('attendeeallfields',   JSON.stringify(arrData));
+    data.append('datacollist',   JSON.stringify(columnheaderdataarray));
     data.append('emailAddress', emailAddress);
 
      jQuery.ajax({

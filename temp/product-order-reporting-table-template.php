@@ -4,8 +4,11 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
   
         $order_reportsaved_list = get_option('ContenteManager_Orderreport_settings');
         include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-    //echo '<pre>';
-    //echo json_encode($orderreport_all_col_rows_data);exit;
+        
+      
+    
+    
+  
     ?>
     
     <?php include 'cm_header.php';

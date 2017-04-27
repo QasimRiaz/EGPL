@@ -3,7 +3,7 @@
  var roleassignmenttable;
  var listview;
  var newfieldtask =0;
-  var loadinglightbox;
+ var loadinglightbox;
 jQuery(document).ready(function() {
   
    t = jQuery('.bulkedittask').DataTable( {
@@ -83,8 +83,11 @@ jQuery(document).ready(function() {
 jQuery(window).load(function() {
    console.log('finshedloading'); 
    //jQuery('#loadingalert').hide();
+   if ( window.location.href.indexOf("bulk-edit-task") > -1)
+    {
    jQuery('.block-msg-default').remove();
    jQuery('.blockOverlay').remove();
+    }
 });
 
     jQuery('.addnewbulktask').on( 'click', function () {
@@ -414,7 +417,7 @@ function clonebulk_task(e){
      
       swal({
             title: "Are you sure?",
-            text: 'Click confirm to delete this Task. Deleting a task will not delete the data already submitted by users.',
+            text: 'Click confirm to delete this Task. Deleting a task will delete the data already submitted by users.',
             type: "warning",
             showCancelButton: true,
             confirmButtonClass: "btn-danger",

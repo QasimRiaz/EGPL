@@ -1148,16 +1148,22 @@ function sync_bulk_users(){
     jQuery("body").css({'cursor':'wait'});  
     
       
-                var checkedRows = waTable.getData(true);
-                var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
+                var checkedRows = resultuserdatatable.rows('.selected').data();
+                
 
                 var useridstml = "";
                 useridstml += '<form id="myform" action="/sync-to-floorplan/" method="post">';
 
-                for (var i = 0; i < arrData['rows'].length; i++) {
+                for (var i = 0; i < checkedRows.length; i++) {
+                     jQuery.each(checkedRows[i], function(i, item) {
+                         
+                         if(i == 'User ID'){
+                            useridstml += '<input type="hidden" name="userid[]" value="' +item+ '">';  
+                         }
+                         
+                     });
 
-
-                    useridstml += '<input type="hidden" name="userid[]" value="' + arrData['rows'][i].wp_user_id + '">';
+                   
                    // console.log(arrData['rows'][i].wp_user_id);
                 }
      
@@ -1302,3 +1308,155 @@ function isValidEmailAddress(emailAddress) {
     var pattern = new RegExp(/^(("[\w-+\s]+")|([\w-+]+(?:\.[\w-+]+)*)|("[\w-+\s]+")([\w-+]+(?:\.[\w-+]+)*))(@((?:[\w-+]+\.)*\w[\w-+]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][\d]\.|1[\d]{2}\.|[\d]{1,2}\.))((25[0-5]|2[0-4][\d]|1[\d]{2}|[\d]{1,2})\.){2}(25[0-5]|2[0-4][\d]|1[\d]{2}|[\d]{1,2})\]?$)/i);
     return pattern.test(emailAddress);
 };
+
+
+function approvethisuser(elem){
+ 
+  
+ var idsponsor = jQuery(elem).attr("id");
+ 
+
+                                                swal({
+							title: "Are you sure?",
+							text: 'You want to approve this user?',
+							type: "warning",
+							showCancelButton: true,
+							confirmButtonClass: "btn-danger disablespecialevent",
+							confirmButtonText: "Yes, approved it!",
+							cancelButtonText: "No, cancel please!",
+							closeOnConfirm: false,
+							closeOnCancel: false
+						},
+						function(isConfirm) {
+                                                    
+                                                    
+                                                        jQuery("body").css({'cursor':'wait'}); 
+							if (isConfirm) {
+                                                             var Sname = conform_approvethis_user(idsponsor);
+								
+							} else {
+								swal({
+									title: "Cancelled",
+									text: "User is safe :)",
+									type: "error",
+									confirmButtonClass: "btn-danger"
+								});
+							}
+						});
+    
+}
+function conform_approvethis_user(idsponsor){
+    
+    //  console.log(idsponsor);
+     jQuery(".confirm").attr('disabled','disabled');
+     var url = window.location.protocol + "//" + window.location.host + "/";
+     
+     var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=approve_selfsign_user';
+     var data = new FormData();
+     data.append('id', idsponsor);
+     jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                
+               jQuery("body").css({'cursor':'default'}); 
+                swal({
+                    title: "Approved!",
+                    text: "User approved successfully.</br>" + data,
+                    type: "success",
+                    html: true,
+                    confirmButtonClass: "btn-success"
+                }, function () {
+                    location.reload();
+                   }
+                );
+            },error: function (xhr, ajaxOptions, thrownError) {
+                     swal({
+					title: "Error",
+					text: "There was an error during the requested operation. Please try again.",
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				});
+      }
+        });
+    
+}
+
+
+function declinethisuser(elem){
+
+ var idsponsor = jQuery(elem).attr("id");
+ 
+
+                                                swal({
+							title: "Are you sure?",
+							text: 'You want to decline this user?',
+							type: "warning",
+							showCancelButton: true,
+							confirmButtonClass: "btn-danger",
+							confirmButtonText: "Yes, declined it!",
+							cancelButtonText: "No, cancel please!",
+							closeOnConfirm: false,
+							closeOnCancel: false
+						},
+						function(isConfirm) {
+                                                    
+                                                    
+                                                     
+							if (isConfirm) {
+                                                             var Sname = conform_declinethis_user(idsponsor);
+								swal({
+									title: "Declined!",
+									text: "User declined successfully",
+									type: "success",
+									confirmButtonClass: "btn-success"
+								},function() {
+                                                                    location.reload();
+                                                                 }
+                                                            );
+							} else {
+								swal({
+									title: "Cancelled",
+									text: "User is safe :)",
+									type: "error",
+									confirmButtonClass: "btn-danger"
+								});
+							}
+						});
+    
+}
+function conform_declinethis_user(idsponsor){
+    
+    //  console.log(idsponsor);
+     
+     var url = window.location.protocol + "//" + window.location.host + "/";
+     
+     var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=decline_selfsign_user';
+     var data = new FormData();
+     data.append('id', idsponsor);
+     jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                
+            },error: function (xhr, ajaxOptions, thrownError) {
+                     swal({
+					title: "Error",
+					text: "There was an error during the requested operation. Please try again.",
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				});
+      }
+        });
+    
+}

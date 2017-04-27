@@ -97,7 +97,7 @@
    <?php  foreach ($all_roles as $key => $name) {
                                                 $taskcount=0;
                                                 $list='';
-                                              if ($key != 'administrator' && $key != 'contentmanager') {              
+                                              if ($key != 'administrator' && $key != 'contentmanager' && $key != 'subscriber') {              
                                                     
                                                    
 

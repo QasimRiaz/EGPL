@@ -63,7 +63,7 @@ class Mandrill {
         $this->apikey = $apikey;
 
         $this->ch = curl_init();
-        curl_setopt($this->ch, CURLOPT_USERAGENT, 'Mandrill-PHP/1.0.55');
+        curl_setopt($this->ch, CURLOPT_USERAGENT, 'Mandrill-PHP/1.0.54');
         curl_setopt($this->ch, CURLOPT_POST, true);
         curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($this->ch, CURLOPT_HEADER, false);
@@ -71,6 +71,7 @@ class Mandrill {
         curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, 30);
         curl_setopt($this->ch, CURLOPT_TIMEOUT, 600);
 
+        
         $this->root = rtrim($this->root, '/') . '/';
 
         $this->templates = new Mandrill_Templates($this);
