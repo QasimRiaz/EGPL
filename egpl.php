@@ -3094,7 +3094,7 @@ function my_plugin_activate() {
   
   $create_pages_list[2]['title'] = 'User Report';
   $create_pages_list[2]['name'] = 'user-report';
-  $create_pages_list[2]['temp'] = 'temp/sponsor-reports-template.php';
+  $create_pages_list[2]['temp'] = 'temp/new_user_report_template.php';
   
   
    $create_pages_list[3]['title'] = 'Edit User';
