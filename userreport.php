@@ -202,7 +202,7 @@ function getusersreport($data) {
         $columns_list_defult_user_report[9]['type'] = 'string';
         $columns_list_defult_user_report[9]['key'] = 'selfsignupstatus'; 
         
-        $columns_list_defult_user_report[10]['title'] = 'User Company Logo Url';
+        $columns_list_defult_user_report[10]['title'] = 'Company Logo';
         $columns_list_defult_user_report[10]['type'] = 'string';
         $columns_list_defult_user_report[10]['key'] = 'user_profile_url';
         
@@ -729,7 +729,7 @@ function userreportresultdraw() {
         
         
         
-        $columns_list_defult_user_report[10]['title'] = 'User Company Logo Url';
+        $columns_list_defult_user_report[10]['title'] = 'Company Logo';
         $columns_list_defult_user_report[10]['type'] = 'string';
         $columns_list_defult_user_report[10]['key'] = 'user_profile_url';
         

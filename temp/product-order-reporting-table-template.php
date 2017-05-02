@@ -181,7 +181,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
                                                 </div>
                                                 <div class="col-md-4 filtersarraytooltip">
-                                                    <div class="faq-page-cat" title="No Filters Applied" data-toggle="tooltip" placement='bottom' style="cursor: pointer;">
+                                                    <div style="cursor: pointer;" placement="bottom" class="faq-page-cat" title="No Filters Applied" data-toggle="tooltip"   >
                                                         <div class="faq-page-cat-icon"><i style="color:#00a8ff !important" class="reporticon font-icon fa fa fa-filter fa-2x"></i></div>
                                                         <div class="faq-page-cat-title" style="color:#00a8ff">
                                                             Filters applied
