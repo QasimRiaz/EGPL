@@ -52,8 +52,9 @@ if ($_GET['contentManagerRequest'] == "order_report_savefilters") {
 }else if ($_GET['contentManagerRequest'] == "updateproducts") {
 
     require_once('../../../wp-load.php');
-
-    updateproducts($_POST);
+    $send_array_data_ofreg = $_POST;
+    updateproducts($send_array_data_ofreg);
+    die();
    
 }
 
@@ -655,11 +656,13 @@ function updateproducts($updateproducts_data) {
    
     try {
 
-        global $wpdb;
+      
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);
-        $lastInsertId = contentmanagerlogging('Update Product', "Admin Action", $updateproducts_data, $user_ID, $user_info->user_email, "pre_action_data");
-         $url = 'https://'.$_SERVER['SERVER_NAME'];
+        
+        $lastInsertId = contentmanagerlogging('Update Product', "Admin Action", serialize($updateproducts_data), $user_ID, $user_info->user_email, "pre_action_data");
+        
+        $url = 'https://'.$_SERVER['SERVER_NAME'];
         $productimage=$_FILES['updateproductimage'];
         $price = $updateproducts_data['pprice'];
         $productid = $updateproducts_data['productid'];
