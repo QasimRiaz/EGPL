@@ -4818,12 +4818,8 @@ function exp_autocomplete_all_orders($order_id) {
         $order = wc_get_order($order_id);
         $payment_method = get_post_meta($order->id, '_payment_method', true);
         if($payment_method == 'cheque'){
-            if (count($order->get_items()) > 0) {
-                foreach ($order->get_items() as $item) {
-                    if ('line_item' == $item['type']) {
-                    
-                    $porduct_ids_array[] = $item['item_meta']['_product_id'][0];
-                   
+           
+                  foreach ($order->get_items() as $item_id => $item_obj) {
                     
                     $porduct_ids_array[] = wc_get_order_item_meta($item_id, '_product_id', true);
                  }
