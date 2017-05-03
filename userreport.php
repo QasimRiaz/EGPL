@@ -202,7 +202,7 @@ function getusersreport($data) {
         $columns_list_defult_user_report[9]['type'] = 'string';
         $columns_list_defult_user_report[9]['key'] = 'selfsignupstatus'; 
         
-        $columns_list_defult_user_report[10]['title'] = 'Company Logo';
+        $columns_list_defult_user_report[10]['title'] = 'User Company Logo';
         $columns_list_defult_user_report[10]['type'] = 'string';
         $columns_list_defult_user_report[10]['key'] = 'user_profile_url';
         
@@ -729,7 +729,7 @@ function userreportresultdraw() {
         
         
         
-        $columns_list_defult_user_report[10]['title'] = 'Company Logo';
+        $columns_list_defult_user_report[10]['title'] = 'User Company Logo';
         $columns_list_defult_user_report[10]['type'] = 'string';
         $columns_list_defult_user_report[10]['key'] = 'user_profile_url';
         
@@ -919,7 +919,7 @@ function userreportresultdraw() {
 //                    $image_src = '';
 //                }
                 
-                $column_row['User Company Logo Url'] = $all_meta_for_user['user_profile_url'][0];
+                $column_row['User Company Logo'] = $all_meta_for_user['user_profile_url'][0];
                 $column_row['User ID'] = $aid->ID;
                 if (!empty($additional_settings)) {
 
