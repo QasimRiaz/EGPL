@@ -418,7 +418,9 @@ function manageproducts() {
         $wooseceretkey = $woocommerce_rest_api_keys['ContentManager']['wooseceretkey'];
         $woocommerce_object = new WC_API_Client( $url, $wooconsumerkey, $wooseceretkey, $options );
         $all_products= $woocommerce_object->products->get( '', ['filter[limit]' => -1,'filter[post_status]' => 'any']);
-
+        $get_all_roles_array = 'wp_user_roles';
+        $get_all_roles = get_option($get_all_roles_array);
+    
       //  echo '<pre>';
       //  print_r($all_products);exit;
         
@@ -511,7 +513,12 @@ function manageproducts() {
 
             foreach ($columns_list_order_report as $col_keys_index => $col_keys_title) {
                 $findingvaluekey = $columns_list_order_report[$col_keys_index]['key'];
-                if ($columns_list_order_report[$col_keys_index]['key'] == 'created_at') {
+                
+                 if ($columns_list_order_report[$col_keys_index]['key'] == 'tax_class') {
+                     
+                     $column_row[$columns_list_order_report[$col_keys_index]['title']] = $get_all_roles[$single_product->$findingvaluekey]['name'];
+                     
+                 }else if ($columns_list_order_report[$col_keys_index]['key'] == 'created_at') {
 
                     if (!empty($single_product->$findingvaluekey)) {
                         $time = strtotime($single_product->$findingvaluekey);
