@@ -4814,8 +4814,8 @@ function exp_autocomplete_all_orders($order_id) {
         if (!$order_id)
                 return;
         
-        $order = new WC_Order($order_id);
-        
+        //$order = new WC_Order($order_id);
+        $order = wc_get_order($order_id);
         $payment_method = get_post_meta($order->id, '_payment_method', true);
         if($payment_method == 'cheque'){
             if (count($order->get_items()) > 0) {
@@ -4825,12 +4825,11 @@ function exp_autocomplete_all_orders($order_id) {
                     $porduct_ids_array[] = $item['item_meta']['_product_id'][0];
                    
                     
-                    }
-                }
-            }
-           // echo $order_id;
-            //echo '<pre>';
-           // print_r($porduct_ids_array);exit;
+                    $porduct_ids_array[] = wc_get_order_item_meta($item_id, '_product_id', true);
+                 }
+           
+           
+           
             exp_updateuser_role_onmpospurches($order,$porduct_ids_array);
             $order->update_status('completed');
         }
@@ -4840,15 +4839,15 @@ function exp_autocomplete_paid_orders($order_status, $order_id) {
        
         if (!$order_id)
                 return;
-        $order = new WC_Order($order_id);
+        $order = wc_get_order($order_id);
         $payment_method = get_post_meta($order->id, '_payment_method', true);
         
         
             if (count($order->get_items()) > 0) {
-                foreach ($order->get_items() as $item) {
-                    if ('line_item' == $item['type']) {
-                        $porduct_ids_array[] = $item['item_meta']['_product_id'][0];
-                    }
+                foreach ($order->get_items() as $item_id => $item_obj) {
+                   
+                        $porduct_ids_array[] = wc_get_order_item_meta($item_id, '_product_id', true);
+                   
                 }
             }
             exp_updateuser_role_onmpospurches($order,$porduct_ids_array);
@@ -4892,13 +4891,20 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
             }
             
             $user_info = get_userdata($current_user->id);
-            if(!empty($assign_role[0])){
+            
                 if($user_info->roles[0] !='administrator' && $user_info->roles[0] !='contentmanager'){
+                    foreach ($assign_role as $key=>$rolename){
+                       if(!empty($rolename)){
+                           
+                            $u = new WP_User($current_user->id);
+                            $u->set_role( $rolename );
+                           $responce['assignrole'] = $rolename;
+                       } 
+                        
+                    }
                    
-                    $u = new WP_User($current_user->id);
-                    $u->set_role( $assign_role[0] );
                 }
-            }
+           
             
             $responce['paymentmethod'] = $payment_method;
             $responce['paymentstatus'] = 'completed';
@@ -4959,3 +4965,7 @@ function checkloginuserstatus_fun() {
         } 
     }
 }
+
+
+
+

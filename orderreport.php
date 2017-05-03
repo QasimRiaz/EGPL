@@ -52,9 +52,8 @@ if ($_GET['contentManagerRequest'] == "order_report_savefilters") {
 }else if ($_GET['contentManagerRequest'] == "updateproducts") {
 
     require_once('../../../wp-load.php');
-    $send_array_data_ofreg = $_POST;
-    updateproducts($send_array_data_ofreg);
-    die();
+
+    updateproducts($_POST);
    
 }
 
@@ -171,18 +170,14 @@ function loadorderreport() {
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);
         $lastInsertId = contentmanagerlogging('Get Order Report Date', "Admin Action", $orderreportdata, $user_ID, $user_info->user_email, "pre_action_data");
-
-
-        $argsss = array(
-            'numberposts' => -1,
-            'post_type' => 'shop_order'
-        );
-
-        $all_posts = get_posts($argsss);
-
-      //  echo '<pre>';
-      //  print_r($all_posts);exit;
         
+     
+      
+        
+        $query = new WP_Query( array( 'post_type' => 'shop_order' ,'post_status'=>array('wc-cancelled','wc-completed','wc-on-hold','wc-pending'),'posts_per_page' => -1) );
+        $all_posts = $query->posts;
+
+     
         $columns_headers = [];
         $columns_rows_data = [];
 
@@ -514,7 +509,7 @@ function manageproducts() {
             foreach ($columns_list_order_report as $col_keys_index => $col_keys_title) {
                 $findingvaluekey = $columns_list_order_report[$col_keys_index]['key'];
                 
-                 if ($columns_list_order_report[$col_keys_index]['key'] == 'tax_class') {
+                if ($columns_list_order_report[$col_keys_index]['key'] == 'tax_class') {
                      
                      $column_row[$columns_list_order_report[$col_keys_index]['title']] = $get_all_roles[$single_product->$findingvaluekey]['name'];
                      
@@ -663,7 +658,7 @@ function updateproducts($updateproducts_data) {
    
     try {
 
-      
+        
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);
         
@@ -684,9 +679,9 @@ function updateproducts($updateproducts_data) {
                
                 $productpicrul=$url."/wp-content/plugins/woocommerce/assets/images/placeholder.png";
                
-            
             }else{
-              $productpicrul= $updateproducts_data['productimageurl'];
+                
+                $productpicrul= $updateproducts_data['productimageurl'];
               
             }
 
