@@ -1192,3 +1192,518 @@ function conform_send_welcomeemail_report(){
     
     
 }
+
+function old_get_bulk_email_address() {
+
+   var bulkemails = new Array();    
+   var checkedRows = waTable.getData(true);
+   var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
+   for (var i = 0; i < arrData['rows'].length; i++) {
+        var row = "";
+   for (var index in arrData['rows'][i]) {
+       if (typeof(arrData['cols'][index]) != "undefined") {
+           
+           if (arrData['cols'][index].friendly == "Email") {
+               
+               bulkemails.push(arrData['rows'][i][index])
+           }
+       }  
+         
+         
+     }
+    
+    }
+   
+    if (bulkemails.length === 0) {
+        
+        
+        
+        
+        jQuery('#tab2').empty();
+         jQuery(".hookinfo").hide();
+        jQuery('#bulkemail_status').empty();
+         jQuery('#bulkemail_text_fileds').hide();
+         jQuery('#savetemplatediv').hide();
+        jQuery('#bulkemail_status').append('<div class="fusion-alert alert error alert-dismissable alert-danger alert-shadow"> <button type="button" class="close toggle-alert" data-dismiss="alert" aria-hidden="true"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-times-circle" style="color:#262626;"></i></span></button> <span class="alert-icon"><i class="fa fa-lg fa-exclamation-triangle"></i></span>No recipients selected. Please select atleast one from the Report.</div>');
+      
+    }else{
+        
+        jQuery('#reportstab').hide();
+        jQuery('#bulkemailtab').show();
+        jQuery('#bulkemail_status').empty();
+        var length =bulkemails.length;
+        jQuery(".hookinfo").show();
+        jQuery('#bulkemail_status').append('<div class="fusion-alert alert success alert-dismissable alert-success alert-shadow"><p>'+length+' recipients selected.</p></div>');
+        jQuery('#bulkemail_text_fileds').show();
+        jQuery('#savetemplatediv').show();
+        jQuery('#emailAddress').val(bulkemails.join(", ")); 
+        var keysnames = '<a class="btn btn-sm btn-primary mergefieldbutton" style="cursor: pointer;" onclick="old_keys_preview()" >Insert Merge Fields</a>';
+        jQuery( "#sponsor_meta_keys" ).html(keysnames);
+        jQuery('#selectedstatscountforbulk').empty();
+        jQuery('#selectedstatscountforbulk').append(jQuery( "#selectedstatscount" ).text());
+        
+        console.log();
+         
+        
+       //  console.log(bulkemails)    ;
+    }
+   
+}
+function old_back_report(){
+    
+    
+    
+    jQuery("#bulkemailtab").hide();
+    jQuery("#reportstab").show();
+    
+    
+}
+
+function old_bulkemail_preview(){
+    
+     var emailSubject =jQuery('#emailsubject').val();
+     var emailBody=tinymce.activeEditor.getContent();//jQuery('#bodytext').val();
+     
+      
+                                    bulkemailcontentbox =    jQuery.confirm({
+                                             title: 'Preview!',
+                                             content: '<p id="success-msg-div"></p> <br> Subject : '+emailSubject+' <hr> '+emailBody+' <hr> <p style="margin-bottom: -60px !important;"><button type="button" title="Test email will be sent to '+currentAdminEmail+'" class="examplebutton btn mycustomwidth  btn-secondary">Send me a Test Email</button></p>',
+                                             confirmButton:'Send',
+                                             cancelButton:'Close',
+                                             testButton:'Send Test Email',
+                                             confirmButtonClass: 'btn mycustomwidth btn-lg btn-primary mysubmitemailbutton',
+                                             cancelButtonClass: 'btn mycustomwidth btn-lg btn-danger',
+                                             columnClass: 'jconfirm-box-container-special',
+                                             onOpen: function() {
+                                               
+                                                this.$b.find('button.examplebutton').click(function() {
+                                                 conform_send_test_email_for_admin();
+                                                jQuery( "#success-msg-div" ).append('<div class="alert wpb_content_element alert-success"><div class="messagebox_text"><p>we have send a test email on '+currentAdminEmail+' please check your mail.</p></div></div>');
+                                               setTimeout(function() {
+                                                jQuery( "#success-msg-div" ).empty();
+                                                }, 5000);
+                                                     
+                                              });
+    },
+                                          
+                                            confirm: function () {
+                                              old_conform_send_bulk_email();
+                                              
+                                               return false;
+                                            },
+                                            cancel: function () {
+                                              //  location.reload();
+                                            },
+                                            test: function () {
+                                               
+                                            }
+                                       
+                                        });
+                                    
+                                    
+                 
+                                    
+                                    
+    // jAlert( 'Subject : ' +emailSubject+ '<hr>'+
+            // emailBody+'<hr><p style="text-align: center;margin-right: 56px;"><a  class="btn btn-danger" id="popup_ok" onclick="conform_send_bulk_email()">Send</a><a id="popup_okk" class="btn btn-info" style="margin-left: 20px;">Cancel</a></p>'); 
+    
+    
+    
+}
+
+
+
+function old_conform_send_bulk_email(){
+     
+     
+    var emailSubject =jQuery('#emailsubject').val();
+    var emailBody=tinymce.activeEditor.getContent();//jQuery('#bodytext').val();
+    var emailAddress=jQuery('#emailAddress').val();
+    var checkedRows = waTable.getData(true);
+    var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
+    var BCC=jQuery('#BCC').val();
+    var fromname=jQuery('#fromname').val();
+     var statusmessage='';
+     var alertclass='';
+    
+    jQuery("body").css({'cursor':'wait'});
+    var url = window.location.protocol + "//" + window.location.host + "/";
+    var urlnew = url + 'wp-content/plugins/EGPL/olduserreport.php?contentManagerRequest=oldsendbulkemail';
+    var data = new FormData();
+    data.append('emailSubject', emailSubject);
+    data.append('emailBody', emailBody);
+    data.append('emailAddress', emailAddress);
+    data.append('fromname', fromname);
+   
+    data.append('attendeeallfields',   JSON.stringify(arrData['rows']));
+    data.append('datacollist',   JSON.stringify(arrData['cols']));
+     data.append('BCC', BCC);
+     jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                
+                 jQuery('body').css('cursor', 'default');
+                 
+                 if(data.indexOf("successfully") >-1){
+                      statusmessage ='Your message has been sent.';
+                      alertclass= 'alert-success';
+                  }else{
+                      
+                      statusmessage = data;
+                      alertclass= 'alert-danger';
+                  }
+                  
+                
+                bulkemailcontentbox.setContent('<div class="alert wpb_content_element '+alertclass+'"><div class="messagebox_text"><p>'+statusmessage+'</p></div></div>');
+                  
+                  jQuery('.mysubmitemailbutton').hide();
+                 //location.reload();
+                // jQuery( "#sponsor-status" ).append( '<div class="alert wpb_content_element alert-success"><div class="messagebox_text"><p>Resource deleted.</p></div></div>' );
+                // setTimeout(function() {
+                  //      jQuery( "#sponsor-status" ).empty();
+                // }, 2000); // <-- time in milliseconds
+                
+                
+            },error: function (xhr, ajaxOptions, thrownError) {
+                     swal({
+					title: "Error",
+					text: "There was an error during the requested operation. Please try again.",
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				});
+      }
+        });
+    
+    
+    
+    
+    
+}
+
+function old_sendwelcomemsg(){
+    
+    
+    var status = old_warning_welcome_emailalreadysend();
+    
+   
+    
+}
+function old_warning_welcome_emailalreadysend(){
+     
+     
+   //jQuery('#bodytext').val();
+   var bulkemails = new Array();   
+   
+   var checkedRows = waTable.getData(true);
+   var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
+   for (var i = 0; i < arrData['rows'].length; i++) {
+       
+        bulkemails.push(arrData['rows'][i].Email);
+    }
+   
+    
+   
+    if (bulkemails.length === 0) {
+        
+    }else{
+        
+        var length =bulkemails.length;
+        jQuery('#welcomecustomeemail').val(bulkemails.join(", ")); 
+     
+    }
+    
+    var emailAddress=jQuery('#welcomecustomeemail').val();
+   
+    
+    var checkedRows = waTable.getData(true);
+    var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
+   
+   
+     var statusmessage='';
+     var alertclass='';
+    
+    jQuery("body").css({'cursor':'wait'});
+    var url = window.location.protocol + "//" + window.location.host + "/";
+    var urlnew = url + 'wp-content/plugins/EGPL/olduserreport.php?contentManagerRequest=oldcheckwelcomealreadysend';
+    var data = new FormData();
+    var curdate = new Date()
+    var usertimezone = curdate.getTimezoneOffset()/60;
+   
+    data.append('usertimezone', usertimezone);
+    data.append('emailAddress', emailAddress);
+
+     jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                
+                 jQuery('body').css('cursor', 'default');
+                 var datatablehtml ='<p><strong>The following users in your selection have already been sent the welcome emails. Are you sure you want to send again as it will change their passwords?</strong></p><div style="height: 300px;overflow: auto;"><table class="table"><tr><td>Email</td><td>Welcome Email Sent On</td></tr>';
+                 
+                 
+                 var dataarray = jQuery.parseJSON(data);
+                 if(data !='null'){
+                   swal.close();
+                 jQuery.each(dataarray, function (key, value) {
+                      
+                      
+                      
+                      datatablehtml+='<tr><td>'+key+'</td><td>'+value+'</td></tr>';
+                      
+                  });
+                  
+                datatablehtml+='</table></div>';
+                  
+                 jQuery.confirm({
+                        title: 'Warning !',
+                        content: datatablehtml,
+                        confirmButton:'Confirm',
+                        cancelButton:'Cancel',
+                        confirmButtonClass: 'btn  btn-lg btn-primary ',
+                        cancelButtonClass: 'btn  btn-lg btn-danger',
+                        confirm: function () {
+                         var sendwelcomeemailstatus = old_conform_send_welcomeemail_report();
+                         
+                   
+                
+                        swal({
+                            title: "Success",
+                            text: "Welcome email sent successfully.",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            confirmButtonText: "Ok"
+                        },function(){
+                            location.reload();
+                        });
+                       
+                            return true;
+                        },
+                        cancel: function () {
+                   
+                        }
+
+                 });
+             }else{
+                  
+                  
+                
+                   
+                   swal({
+                    title: "Are you sure?",
+                    text: 'You want to send the welcome email to the selected users? Their password will be reset and included in the email.',
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Yes, Send it!",
+                    cancelButtonText: "No, cancel please!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                        function (isConfirm) {
+
+
+
+                            if (isConfirm) {
+
+                            var sendwelcomeemailstatus = old_conform_send_welcomeemail_report();
+                                swal({
+                                    title: "Success",
+                                    text: "Welcome email sent successfully.",
+                                    type: "success",
+                                    confirmButtonClass: "btn-success",
+                                    confirmButtonText: "Ok"
+                                }, function () {
+                                    location.reload();
+                                }
+                                );
+
+                            } else {
+                                swal({
+                                    title: "Cancelled",
+                                    text: "Welcome email was not sent",
+                                    type: "error",
+                                    confirmButtonClass: "btn-danger"
+                                });
+                            }
+                        });
+                 
+                 
+            
+             }  
+                
+            },error: function (xhr, ajaxOptions, thrownError) {
+                     swal({
+					title: "Error",
+					text: "There was an error during the requested operation. Please try again.",
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				}
+                                        );
+      }
+        });
+    
+    
+    
+    
+    
+}
+function old_conform_send_welcomeemail_report(){
+     
+     
+   //jQuery('#bodytext').val();
+   var bulkemails = new Array();   
+   
+   var checkedRows = waTable.getData(true);
+   var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
+   for (var i = 0; i < arrData['rows'].length; i++) {
+       
+        bulkemails.push(arrData['rows'][i].Email);
+    }
+   
+    
+   
+    if (bulkemails.length === 0) {
+        
+    }else{
+        
+        var length =bulkemails.length;
+        jQuery('#welcomecustomeemail').val(bulkemails.join(", ")); 
+     
+    }
+    
+    var emailAddress=jQuery('#welcomecustomeemail').val();
+    console.log(emailAddress);
+    
+    var checkedRows = waTable.getData(true);
+    var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
+   
+   
+     var statusmessage='';
+     var alertclass='';
+    
+    jQuery("body").css({'cursor':'wait'});
+    var url = window.location.protocol + "//" + window.location.host + "/";
+    var urlnew = url + 'wp-content/plugins/EGPL/olduserreport.php?contentManagerRequest=oldsendcustomewelcomeemail';
+    var data = new FormData();
+   
+   
+    data.append('attendeeallfields',   JSON.stringify(arrData['rows']));
+    data.append('datacollist',   JSON.stringify(arrData['cols']));
+    data.append('emailAddress', emailAddress);
+
+     jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                
+                 jQuery('body').css('cursor', 'default');
+                 
+                 var message = jQuery.parseJSON(data);
+                 return message;
+                 
+                
+                
+            },error: function (xhr, ajaxOptions, thrownError) {
+                     swal({
+					title: "Error",
+					text: "There was an error during the requested operation. Please try again.",
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				});
+      }
+        });
+    
+    
+    
+    
+    
+}
+
+function old_sync_bulk_users(){
+    
+    var url = window.location.protocol + "//" + window.location.host + "/"; 
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=GetMapdynamicsApiKeys';
+    var syncurl = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=insertmapdynamicsuser';
+    var data = new FormData();
+    var useridarray = {};
+    jQuery("body").css({'cursor':'wait'});  
+    
+      
+                var checkedRows = waTable.getData(true);
+                var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
+
+                var useridstml = "";
+                useridstml += '<form id="myform" action="/sync-to-floorplan/" method="post">';
+
+                for (var i = 0; i < arrData['rows'].length; i++) {
+
+
+                    useridstml += '<input type="hidden" name="userid[]" value="' + arrData['rows'][i].wp_user_id + '">';
+                   // console.log(arrData['rows'][i].wp_user_id);
+                }
+     
+                useridstml += '</form>';
+                
+                jQuery("body").append(useridstml);
+                document.getElementById('myform').submit();
+                
+}
+function old_keys_preview(){
+    
+    var checkedRows = waTable.getData(true);
+    var datavaluesfields;
+   var  areaId = "bodytext";
+    
+    var arrData = typeof checkedRows != 'object' ? JSON.parse(checkedRows) : checkedRows;
+  
+      
+   for (var index in arrData['cols']) {
+       if (typeof(arrData['cols'][index]) != "undefined") {
+           
+          
+          if(arrData['cols'][index].column.indexOf("task") >= 0 ||arrData['cols'][index].column == 'action_edit_delete' || arrData['cols'][index].column == 'undefined'){
+    
+           }else{
+              var keyvalue ='{'+arrData['cols'][index].column+'}';
+              //console.log(arrData['cols'][index].column) ;
+              datavaluesfields+='<a style="cursor: pointer;" class = "addmetafields" onclick=\'insertAtCaret("'+areaId+'","'+keyvalue+'")\' > '+keyvalue+'</a><br>';  
+               
+           }
+               
+          
+       }  
+         
+         
+    
+    
+    }
+     datavaluesfields = datavaluesfields.replace('undefined', ''); 
+                              currentmergetegpreivew  =           jQuery.confirm({
+                                             title: 'Click a merge field below to insert in the editor',
+                                             content: '<hr><p>'+datavaluesfields+'</p>',
+                                             confirmButtonClass: 'btn mycustomwidth btn-lg btn-primary',
+                                             confirmButton:'Close',
+                                             cancelButton:false,
+                                              
+                                        });
+                                    
+      
+    
+    
+}

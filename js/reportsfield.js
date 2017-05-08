@@ -9,14 +9,15 @@ var attendeeTypeKey=null;
 var eventdate = null;
 var totalattendeecount= 0;
 jQuery(document).ready(function() {
- 
+  console.log('testhere')
      if ( window.location.href.indexOf("dashboard") > -1)
     {
         var reportname= 'defult';
             reportload(reportname);
            
 
-    }else if(window.location.href.indexOf("user-report123") > -1){
+    }else if(window.location.href.indexOf("old-user-report") > -1){
+        console.log('testhere')
         var reportname= 'defult';
             reportload(reportname);
          if(localStorage.getItem("activeusercount") !=""){

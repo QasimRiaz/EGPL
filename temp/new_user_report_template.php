@@ -154,7 +154,8 @@ include 'cm_left_menu_bar.php';
 
                             <div class="col-sm-6" >
                                 <select class="select2"  data-placeholder="Select Columns"  id="userbycolumnsname" data-allow-clear="true" >
-
+                                    <optgroup label="User Details" id="usercontactfieldssortby"></optgroup>
+                                    <optgroup label="Tasks" id="usertaskfieldssortby"></optgroup>
                                 </select>
 
                             </div>
@@ -178,7 +179,13 @@ include 'cm_left_menu_bar.php';
                             </div>
                             <div class="col-sm-6"></div>
                         </div>
-
+                        
+                           <div class="form-group row">
+                               <div class="col-sm-12" >
+                                   <p><strong style="color:red">You are viewing the Beta version of the new report. To revert back to the previous report, </strong><a href="old-user-report/">click here</a></p>
+                               </div>
+                           </div>
+                        
 
                     </div>
                    
@@ -211,7 +218,7 @@ include 'cm_left_menu_bar.php';
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/query-builder.js?v=2.19"></script>
 
 
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report.js?v=2.109"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report.js?v=2.21"></script>
 
     <?php
 } else {

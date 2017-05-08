@@ -162,9 +162,9 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                                                 <span class="label label-pill label-danger" id="bulkemailcounter">0</span>
                                                                             </button>
                                                                             <div class="dropdown-menu">
-                                                                                <a class="dropdown-item" onclick="get_bulk_email_address()"><i class="fa fa-mail-forward"></i> Bulk Email</a>
-                                                                                <a class="dropdown-item" onclick="sendwelcomemsg()"><i class="fa fa-paper-plane"></i> Welcome Email</a>
-                                                                                <a class="dropdown-item" onclick="sync_bulk_users()"><i class="fa fa-refresh"></i> Sync to Floorplan</a>
+                                                                                <a class="dropdown-item" onclick="old_get_bulk_email_address()"><i class="fa fa-mail-forward"></i> Bulk Email</a>
+                                                                                <a class="dropdown-item" onclick="old_sendwelcomemsg()"><i class="fa fa-paper-plane"></i> Welcome Email</a>
+                                                                                <a class="dropdown-item" onclick="old_sync_bulk_users()"><i class="fa fa-refresh"></i> Sync to Floorplan</a>
                                                                                 
                                                                                 
                                                                             </div>
@@ -263,7 +263,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 								
 								
 								<div class="faq-page-cat-txt">
-                                                                    <a type="button" onclick="back_report()" class="btn btn-inline btn-primary"><i class="font-icon fa fa-chevron-left"></i> Back to report</a>
+                                                                    <a type="button" onclick="old_back_report()" class="btn btn-inline btn-primary"><i class="font-icon fa fa-chevron-left"></i> Back to report</a>
                                                                    
                                                                 </div>
 							</div>
@@ -276,7 +276,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                       
        
                         <div class="box-typical box-typical-padding">
-                            <form method="post" action="javascript:void(0);" onSubmit="bulkemail_preview()">
+                            <form method="post" action="javascript:void(0);" onSubmit="old_bulkemail_preview()">
                                  <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">From <strong>*</strong></label>
                                     <div class="col-sm-3">

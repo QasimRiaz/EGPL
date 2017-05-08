@@ -148,7 +148,7 @@ jQuery(document).ready(function () {
                 
             }else{
                 
-           
+            jQuery('#builder').queryBuilder('setRules', JSON.parse('{"condition":"AND","rules":[],"valid":true}'));
             jQuery.each(columsheader, function (key, value) {
                
                
