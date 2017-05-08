@@ -287,7 +287,9 @@ jQuery(document).ready(function () {
 
 function updateDataTableSelectAllCtrl(resultuserdatatable){
     
-
+    var datatable = jQuery('#example').DataTable();
+    
+  
    var $table             = resultuserdatatable.table().node();
    var $chkbox_all        = jQuery('tbody input[type="checkbox"]', $table);
    var $chkbox_checked    = jQuery('tbody input[type="checkbox"]:checked', $table);
@@ -330,9 +332,10 @@ function updateDataTableSelectAllCtrl(resultuserdatatable){
    }else{
        jQuery('#newsendbulkemailstatus').prop('disabled', true);
    }
-   jQuery("#ntableselectedstatscount").append($chkbox_checked.length);
-   jQuery("#newbulkemailcounter").append($chkbox_checked.length);
-   jQuery("#selectedstatscountforbulk").append($chkbox_checked.length);
+  
+   jQuery("#ntableselectedstatscount").append(datatable.rows( '.selected' ).count());
+   jQuery("#newbulkemailcounter").append(datatable.rows( '.selected' ).count());
+   jQuery("#selectedstatscountforbulk").append(datatable.rows( '.selected' ).count());
    
 }
 
