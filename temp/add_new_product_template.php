@@ -65,7 +65,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                 <h5 class="m-t-lg with-border"></h5>
                 
 
-              <form method="post" action="javascript:void(0);" onSubmit="add_new_product()">
+              <form method="post" action="javascript:void(0);" onSubmit="check_whocat_selet()">
                 
               
 
@@ -189,7 +189,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                       } else { ?>
                                             <?php foreach ($product_cat_list->product_categories as $key => $value) { ?>
 
-                                              <option value="<?php echo $value->id; ?>" selected="selected"><?php echo $value->name; ?></option>
+                                              <option value="<?php echo $value->id; ?>" ><?php echo $value->name; ?></option>
 
                                       <?php }
                                   } ?>

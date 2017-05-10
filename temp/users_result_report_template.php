@@ -340,7 +340,7 @@ include 'cm_left_menu_bar.php';
     <?php
     include 'cm_footer.php';
     ?>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report_result.js?v=2.26"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report_result.js?v=2.19"></script>
 
     <?php
 } else {

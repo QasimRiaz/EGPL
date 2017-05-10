@@ -82,6 +82,47 @@ tinymce.init({
 
 });
 
+function check_whocat_selet(){
+    
+    
+     
+     var pcategoriesname = jQuery("#pcategories option:selected").text();
+     var roleassign = jQuery("#roleassign option:selected").val();
+     if(pcategoriesname == 'Add-ons' && roleassign !=""){
+        swal({
+            title: "Warning",
+            text: 'You have selected a level for an Add-on product. This is usually not recommended. Are you sure you want to do this?',
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes, continue!",
+            cancelButtonText: "No, cancel please!",
+            closeOnConfirm: false,
+            closeOnCancel: false
+            },
+                function (isConfirm) {
+
+                    if (isConfirm) {
+                        
+                    add_new_product();
+
+                    }else{
+                       
+                       
+                       swal.close(); 
+                        
+                    }
+                });
+    
+    }else{
+         add_new_product();
+        
+    } 
+    
+    
+}
+
+
 
 function add_new_product(){
     jQuery("body").css({'cursor': 'wait'});
@@ -95,6 +136,7 @@ function add_new_product(){
     var stockstatus = jQuery("#pstrockstatus option:selected").val(); 
     var pstatus = jQuery("#pstatus option:selected").val(); 
     var pcategories = jQuery("#pcategories option:selected").val();
+    var pcategoriesname = jQuery("#pcategories option:selected").text();
     var roleassign = jQuery("#roleassign option:selected").val();
     var pdescrpition = tinyMCE.get('pdescription').getContent();
     var pshortdescrpition  = tinyMCE.get('pshortdescription').getContent();
@@ -105,6 +147,7 @@ function add_new_product(){
     var urlupdateproduct = url + 'wp-content/plugins/EGPL/orderreport.php?contentManagerRequest=updateproducts';
     
     var data = new FormData();
+
     
     data.append('ptitle', ptitle);
     data.append('pprice', pprice);
@@ -161,7 +204,7 @@ function add_new_product(){
     }else{
      var productimage = jQuery('#productimage')[0].files[0];
      data.append('productimage', productimage);
-    jQuery.ajax({
+       jQuery.ajax({
             url: urlnewproduct,
             data: data,
             cache: false,

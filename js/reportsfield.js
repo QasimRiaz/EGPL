@@ -9,7 +9,7 @@ var attendeeTypeKey=null;
 var eventdate = null;
 var totalattendeecount= 0;
 jQuery(document).ready(function() {
-  console.log('testhere')
+ 
      if ( window.location.href.indexOf("dashboard") > -1)
     {
         var reportname= 'defult';
@@ -17,7 +17,6 @@ jQuery(document).ready(function() {
            
 
     }else if(window.location.href.indexOf("old-user-report") > -1){
-        console.log('testhere')
         var reportname= 'defult';
             reportload(reportname);
          if(localStorage.getItem("activeusercount") !=""){
@@ -102,7 +101,7 @@ function reportload(reportname){
            
            
             
-             var speratdata = data.split('//');
+            var speratdata = data.split('//');
             obj = jQuery.parseJSON(speratdata[0]);
             var settingsArray = jQuery.parseJSON(speratdata[2]);
             rowsObj = jQuery.parseJSON(speratdata[1]);
@@ -648,131 +647,6 @@ function taskstatusdrawChart(drawchartstatus) {
     
 
 
- 
- 
- var mapdata = [];
- var colsstatsname = new Array();
- var pendingcountdata = [];
- var complatecountdata = [];
- var emptycountdata = [];
- var divheight = 645;
-   google.charts.load('current', {'packages': ['gauge']});
-    google.charts.setOnLoadCallback(activeusergaugechart);
- //mapdata.push(['Genre', 'Complete', 'Pending', 'Empty', {role: 'annotation'}]);
- statscolcount=0;
-
-  
-  
- for (var index in drawchartstatus['cols']) {
-            
-            var colvalue=drawchartstatus['cols'][index].column;
-                 
-
-            //Now convert each value to string and comma-seprated
-           
-            
-            if (colvalue.indexOf("status") !=-1) {
-              
-               var resultmy = _.pluck(drawchartstatus['rows'], colvalue);
-               var countresult = _.countBy(resultmy);
-             
-               if(typeof (countresult.Pending) == 'undefined'){
-                     var pendingcount = 0;
-               }else{
-                   var pendingcount = countresult.Pending;
-               }
-               if(typeof (countresult.Complete) == 'undefined'){
-                     var completecount = 0;
-               }else{
-                   var completecount = countresult.Complete;
-               }
-               if(typeof (countresult.null) == 'undefined'){
-                     var pendingcount = 0;
-               }else{
-                   var pendingcount = countresult.null;
-               }
-               if(statscolcount > 35 ){
-                   divheight = divheight + 15;
-                  
-                   jQuery("#attendee_totalamount_chart").css({"overflow-y" : "scroll"});
-                }
-                statscolcount++;
-               
-                complatecountdata.push(completecount);
-                pendingcountdata.push(pendingcount);
-               // emptycountdata.push(emptycount);
-                colsstatsname.push(drawchartstatus['cols'][index].friendly);
-            }
-              
-       
-            }
-      
-        mapdata.push({name:'Pending',data:pendingcountdata,color:'#F5F5F5 '});
-        mapdata.push({name:'Complete',data:complatecountdata,color:'#7cb5ec'});
-      //  mapdata.push({name:'Empty',data:emptycountdata,color:'#434348'});     
-    //console.log(mapdata);
-    //console.log(colsstatsname);
-
-   
-    jQuery('#attendee_totalamount_chart').highcharts({
-        chart: {
-            type: 'bar',
-           height :divheight,
-            style: {
-            fontFamily: "Signika, serif",
-            color: '#6e6e70'
-        }
-        },
-        title: {
-            text: ''
-        },
-        xAxis: {
-            labels:{style: {
-            color: '#6e6e70'
-         }},
-          //  categories: ['Company Name as it should appear in all conference materials Status', 'Company Logo (PNG File)', 'Final Payment of booth space is due', 'Product Description', 'Hotel or Lodging Accommodations','Company Name as it should appear in all conference materials Status', 'Company Logo (PNG File)', 'Final Payment of booth space is due', 'Product Description', 'Hotel or Lodging Accommodations','Company Name as it should appear in all conference materials Status', 'Company Logo (PNG File)', 'Final Payment of booth space is due', 'Product Description', 'Hotel or Lodging Accommodations','Company Name as it should appear in all conference materials Status', 'Company Logo (PNG File)', 'Final Payment of booth space is due', 'Product Description', 'Hotel or Lodging Accommodations','Company Name as it should appear in all conference materials Status', 'Company Logo (PNG File)', 'Final Payment of booth space is due', 'Product Description', 'Hotel or Lodging Accommodations','Company Name as it should appear in all conference materials Status', 'Company Logo (PNG File)', 'Final Payment of booth space is due', 'Product Description', 'Hotel or Lodging Accommodations','Company Name as it should appear in all conference materials Status', 'Company Logo (PNG File)', 'Final Payment of booth space is due', 'Product Description', 'Hotel or Lodging Accommodations','Company Name as it should appear in all conference materials Status', 'Company Logo (PNG File)', 'Final Payment of booth space is due', 'Product Description', 'Hotel or Lodging Accommodations']
-       categories:colsstatsname
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: ''
-            }, labels: {
-                style: {
-            color: '#6e6e70'
-         },
-        formatter: function() {
-           
-            return  this.value+'%';
-        }
-    }
-        },
-        legend: {
-            reversed: true,
-                  
-   
-  
-    verticalAlign: 'top',
-  
-   
-   
-        },exporting: { enabled: false },
-        plotOptions: {
-            series: {
-                stacking: 'percent'
-            }
-        },credits: {
-      enabled: false
-  },
-         series: mapdata,//[{
-          //  name: 'Pending',
-          //  data: [5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2,5, 3, 4, 7, 2]
-       // }, {
-        //    name: 'Complate',
-       //     data: [2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1,2, 2, 3, 2, 1]
-       // }]
-    });
- 
     
 }
 
@@ -946,192 +820,15 @@ function view_profile(elem){
 }
 function taskstatusdrawChart_high_chart (drawchartstatus) {
     
-  overdeweusergraph(drawchartstatus);  
- var mapdatatask = [];
-
- for (var index in drawchartstatus['cols']) {
-            
-            var colvalue=drawchartstatus['cols'][index].column;
-            // console.log(colvalue);
-             
-             
-            
-           
-            //Now convert each value to string and comma-seprated
-            if (colvalue.indexOf(attendeeTypeKey) !=-1) {
-              
-               var resultmy = _.pluck(drawchartstatus['rows'], colvalue);
-               var countresult = _.countBy(resultmy);
-            // console.log(resultmy);
-            }
-             if (colvalue.indexOf("user_register_date") !=-1) {
-               
-               var registerdata = _.pluck(drawchartstatus['rows'], colvalue);
-               var userdatedata = _.countBy(registerdata);
-              
-              //  console.log(countresult);
-            }
-            
-          
-            
-           
-           }
-            
-          
-           
-         // console.log(thisweekuserdata);    
-         //  console.log(userdatedata); 
-           
-          // console.log(totalamu);
-//           
-           for (var index in countresult) {
-                
-               
-                
-                 mapdatatask.push({name:index,y:countresult[index]});
-        
-           } 
-           
-           
-           
-      var colorlength = mapdatatask.length;     
-    
-   
-  //  var data = google.visualization.arrayToDataTable(mapdata);
-   // var totalamountdata = google.visualization.arrayToDataTable(totalamu);
-  
-   
+  //overdeweusergraph(drawchartstatus);  
  
-    
-    var options = {
-           
-                 height:300,  
-            hAxis: { titleTextStyle: {color: 'red'}}
-        };
-        var totalamuoptions = {
-        
-                width: 900,
-          height: 500,
-        hAxis: {
-            format: 'd-M-yy',
-           
-          },
-        bar: {groupWidth: "95%"},
-        legend: { position: "none" },
-      };
-      
-     
-     
-   
-   
-   
-     
-   //  jQuery( "#lastregisterdate" ).append(lastregisterdate);
      
  if (window.location.href.indexOf("dashboard") > -1 )
     {    
    
      
      
-     
-    // var piachart = new google.visualization.PieChart(document.getElementById('totalattendee'));
-    // var barchart = new google.visualization.ColumnChart(document.getElementById('totalamoutn'));
-   
-   
     
-   
-    //  var piachart = new google.visualization.PieChart(document.getElementById('user_piechart'));
-   // piachart.draw(data, options);
-   // barchart.draw(totalamountdata, totalamuoptions);
-  
-   //     // Load the fonts
-Highcharts.createElement('link', {
-   href: '//fonts.googleapis.com/css?family=Signika:400,700',
-   rel: 'stylesheet',
-   type: 'text/css'
-}, null, document.getElementsByTagName('head')[0]);
-
-// Add the background image to the container
-Highcharts.wrap(Highcharts.Chart.prototype, 'getContainer', function (proceed) {
-   proceed.call(this);
-   //this.container.style.background = 'url(https://www.highcharts.com/samples/graphics/sand.png)';
-});
-Highcharts.getOptions().plotOptions.pie.colors =  randomColor({ count: colorlength,hue: 'blue'});
-    
-
-
-var usercount = drawchartstatus['rows'].length;
-// Apply the theme
-
-   
-    // piachart.draw(data, options);
-    if(attendeeTypeKey != ""){
-      jQuery('#attendee_pyi_chart').highcharts({
-
-      chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: 0,
-            plotShadow: false,
-            height :300,
-            
-        },
-        title: {
-            text: usercount+'<br><span style="font-size:12px;color:#6e6e70;">Users</span>',
-            align: 'center',
-            verticalAlign: 'middle',
-            y:0,
-           
-            style: {
-                    
-                    fontSize:'150%'
-                }
-        },
-        tooltip: {
-             pointFormat: '{series.name}: <b>{point.name}</b>'
-        },
-        plotOptions: {
-            series: {
-            cursor: 'pointer',
-            point: {
-                events: {
-                    click: function() {
-                        location.href = '/role-assignment/?rolename='+this.name;
-                    }
-                }
-            }
-            },
-            pie: {
-                dataLabels: {
-                    enabled: true,
-                   
-                    style: {
-                        fontWeight: 'bold',
-                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                     
-                    }
-                },
-                
-                endAngle: 360,
-                 center: ['50%', '50%'],
-               
-            }
-        },exporting: { enabled: false },credits: {
-      enabled: false
-  },
-        series: [{
-            type: 'pie',
-            name: 'Users',
-            innerSize: '70%',
-            data: mapdatatask,showInLegend: false
-        }]
-
-
-    });
-        }
-
-     
-   // console.log(mapdatatask); 
-   
     jQuery('.panel').lobiPanel({
 				sortable: true
 			});
@@ -1148,61 +845,8 @@ var usercount = drawchartstatus['rows'].length;
 
 function activeusergaugechart(){
     
-    var allRows = waTable.getData(false);
-    var activeusercountnumber = 0;
-    var totaluser = 0;
-    for (var index in allRows['rows']) {
 
-
-
-        if (allRows['rows'][index]['last_login'] != "") {
-            activeusercountnumber++;
-        }
-
-        totaluser++;
-
-
-
-    }
-
-    var activeusertitle = '<strong>'+activeusercountnumber + '</strong> out of <strong>' + totaluser + '</strong> users have logged in to the portal';
-    jQuery("#titleactiveuser").append(activeusertitle);
-
-    var activeusercountprc = Math.round((activeusercountnumber/totaluser)*100);
-  
-     var data = google.visualization.arrayToDataTable([
-          ['Label', 'Value'],
-          ['Users', activeusercountprc]
-         
-        ]);
-
-
-     if(totaluser < 61){
-        totaluser = 70; 
-     }
-
-
-        var options = {
-          width: 200, height: 200,
-          redFrom: 0, redTo: 30,
-          yellowFrom:30, yellowTo: 60,
-          greenFrom: 60, greenTo: 100,
-          minorTicks: 5,
-          redColor:'#d8e8f9',
-          yellowColor:'#b4d6fb',
-          greenColor:'#9ac3ea',
-                  
-          max:100
-        };
-var formatter = new google.visualization.NumberFormat(
-    {suffix: '%',pattern:'#'}
-);
-formatter.format(data,1);
-        var chart = new google.visualization.Gauge(document.getElementById('activeusergraph'));
-        chart.draw(data, options);
-
-       
-       
+    
      
     
     
@@ -1213,145 +857,7 @@ formatter.format(data,1);
 function overdeweusergraph(drawchartstatus){
     
       
-var curr = new Date; // get current date
-var first = curr.getDate() - curr.getDay() +1; // First day is the day of the month - the day of the week
-var last = first - 6; // last day is the first day + 6
 
-var lastday = new Date(curr.setDate(curr.getDate()));
-var firstday = new Date(curr.setDate(curr.getDate()-6));
-
-
-
-  
-startweek  = Date.parse(firstday)/ 1000;
-ensdweek  = Date.parse(lastday)/ 1000;
-
-
-console.log(startweek+'---------'+startweek);
-//  var users = [
-//  { 'user': 'barney', 'age': 36, 'active': true },
-//  { 'user': 'fred',   'age': 36, 'active': true }
-//];
-
-// using the `_.matches` callback shorthand
-
-//var resultmy11= _.pluck(_.where(users, { 'age': 36, 'active': true }), 'user');
- //var countresult1 = _.countBy(resultmy11);
-//console.log(countresult1);
-   
- var mapdata = new Array();
- var totalamu = new Array();
-  var thisweekuserdata = new Array();
-// var trackselctiondata = new Array();
-
-    var d = new Date();
-    var weekday = new Array(7);
-    weekday[0] = "Sunday";
-    weekday[1] = "Monday";
-    weekday[2] = "Tuesday";
-    weekday[3] = "Wednesday";
-    weekday[4] = "Thursday";
-    weekday[5] = "Friday";
-    weekday[6] = "Saturday";
-
-    var n = weekday[d.getDay()];
-    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-];
- // incomechartdataarray.push(['Days', 'Value',{type: 'string', role: 'tooltip'}]);
-var getdatsarray  =getDates(firstday,lastday);
-
- console.log(ensdweek);
- for (var index in drawchartstatus['rows']){
-     
-     
-    
-     
-      
-              
-                if ((drawchartstatus['rows'][index].last_login/1000 < ensdweek) && (drawchartstatus['rows'][index].last_login/1000 > startweek)){
-                      console.log(drawchartstatus['rows'][index].last_login);
-                      
-                      
-                      var lastlogindate = new Date(drawchartstatus['rows'][index].last_login);
-                      var dayname = lastlogindate.getDate()+'-'+monthNames[lastlogindate.getMonth()];
-                    //  dataarray = [dayname,Number(drawchartstatus['rows'][index].UM_total),drawchartstatus['rows'][index].UM_total];
-                     // dataarray =['MON',  130, ' '];
-                      drawchartstatus['rows'][index].weekday = dayname;
-                     // incomechartdataarray.push(dataarray);
-                      thisweekuserdata.push(drawchartstatus['rows'][index]);
-                 }
-                 
-             
-       
-           
-     
- }
-
- 
- var totalnumberofweekday = _.pluck(thisweekuserdata, 'weekday');
-//  console.log(totalnumberofweekday);
- var groupbyweekday = _.countBy(totalnumberofweekday);
- var thisweekloignuserlist =  new Array();
- var thisweekheader =  new Array();
-
-     for (var index in getdatsarray) {
- 
- 
-        if(getdatsarray[index] in groupbyweekday){
-           
-             var countvalue = groupbyweekday[getdatsarray[index]];
-             thisweekloignuserlist.push(countvalue);
-            
-        }else{
-             thisweekloignuserlist.push(0);
-        }
-    
-                   
-   
-   }
-   
-  
-  jQuery('#overdue').highcharts({
-        chart: {
-            type: 'areaspline',
-             height :235
-            
-        },title: {
-            text: false
-        },legend: {
-            enabled: false
-        },
-       exporting: { enabled: false },
-        xAxis: {
-            categories:getdatsarray,
-            plotBands: [{ // visualize the weekend
-              
-                
-            }]
-        },
-        yAxis: {
-            title: {
-                text: 'Number of active users'
-            }
-        },
-        tooltip: {
-            shared: true,
-            valueSuffix: ' User Logins'
-        },
-        credits: {
-            enabled: false
-        },
-        plotOptions: {
-            areaspline: {
-                fillOpacity: 0.5
-            }
-        },
-        series: [{
-           name :'This week',
-            data: thisweekloignuserlist
-        }]
-    });
     
     
 }

@@ -6,8 +6,9 @@ if ($_GET['contentManagerRequest'] == 'approve_selfsign_user') {
     require_once('../../../wp-load.php');
     
      $user_id = $_POST['id'];
+     $user_role_assignment = $_POST['userassignrole'];
   
-     approve_selfsign_user($user_id);
+     approve_selfsign_user($user_id,$user_role_assignment);
      
     
 }else if ($_GET['contentManagerRequest'] == 'decline_selfsign_user') {
@@ -1195,7 +1196,7 @@ function decline_selfsignuser_metas($user_id){
   die();   
 }
 
-function approve_selfsign_user($user_id){
+function approve_selfsign_user($user_id,$user_assignrole){
     
     try{
     
@@ -1212,6 +1213,9 @@ function approve_selfsign_user($user_id){
     $lastInsertId = contentmanagerlogging('Approved Self Signed User',"Admin Action",serialize($all_meta_for_user),$user_ID,$user_info->user_email,"Declined");
     update_user_meta( $user_id, 'selfsignupstatus', 'Approved' );
     $user_info_approved = get_userdata($user_id);
+    
+    $u = new WP_User($user_id);
+    $u->set_role( $user_assignrole );
     
     if(!empty($mapapikey) && !empty($mapsecretkey)){
           

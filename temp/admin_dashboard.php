@@ -9,7 +9,7 @@
        include 'cm_header.php';
        include 'cm_left_menu_bar.php';
        ?>
-       
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 <div id="example2" style="display:none;"></div> 
 <div class="page-content">
@@ -47,7 +47,7 @@
 									<div class="tab-pane" id="w-3-tab-2" role="tabpanel">
                                                                             <div style="text-align: center;color:#6e6e70;"><span id="titleactiveuser"></span></div>
                                                                            
-                                                                            <div id="activeusergraph" class="box-typical-body panel-body" style="height: 240px;">
+                                                                            <div id="activeusergraph" class="box-typical-body panel-body" style="max-width: 400px;height: 240px;">
                                                                                     
                                                                                 </div><!--.box-typical-body-->
 									</div>
@@ -105,13 +105,7 @@
                                               
                                                 <table class="tbl-typical" id="taskduesoon">
 
-                                                    <?php
-                                                    $gettaskresult = gettaskduesoon();
-
-
-
-                                                    echo $gettaskresult;
-                                                    ?>
+                                                    
                                                 </table>
                                             </div><!--.box-typical-body-->
                                         </div>

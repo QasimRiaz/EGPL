@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           2.20
+ * Version:           2.19
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -2270,7 +2270,7 @@ function getReportsdatanew($report_name,$usertimezone){
      $get_all_roles_array = 'wp_user_roles';
      $get_all_roles = get_option($get_all_roles_array);
     
-    $k = 14;
+    $k = 13;
     $unique_id=0;
     $showhideMYFieldsArray = array();
      $Rname = "";
@@ -2286,7 +2286,6 @@ function getReportsdatanew($report_name,$usertimezone){
      $userID="";
      $companylogourl="";
      $mapdynamicsid="";
-     $status="";
      $companylogourl_show=true;
      $mapdynamicsid_show=true;
      $userID_show=true;
@@ -2300,7 +2299,7 @@ function getReportsdatanew($report_name,$usertimezone){
      $RRole_show=false;
      $Lname_show=false;
      $welcomeemail_show=true;
-     $status_show = true;
+     
      
      
       if($report_name != "defult"){
@@ -2391,13 +2390,7 @@ function getReportsdatanew($report_name,$usertimezone){
           }else{
              $userID_show = true; 
           }
-          if (array_key_exists("selfsignupstatus", $sponsor_report_data[$report_name])){
-                $status = $sponsor_report_data[$report_name]['selfsignupstatus'];
-                $status_show=false;
-          }else{
-             $status_show = true; 
-          }
-       
+        
           
         
    }
@@ -2410,7 +2403,7 @@ function getReportsdatanew($report_name,$usertimezone){
     $showhideMYFieldsArray['first_name'] = array('index' => 5, 'type' => 'string','unique' => true, 'hidden' => $Fname_show, 'friendly'=> "First Name",'filter'=>$Fname);
     $showhideMYFieldsArray['last_name'] = array('index' => 6, 'type' => 'string','unique' => true, 'hidden' => $Lname_show, 'friendly'=> "Last Name",'filter'=>$Lname);
     
-    $showhideMYFieldsArray['user_name'] = array('index' => 7, 'type' => 'string','unique' => true, 'hidden' => $Rname_show, 'friendly'=> $sponsor_name." Name",'filter'=>$Rname);
+    $showhideMYFieldsArray['sponsor_name'] = array('index' => 7, 'type' => 'string','unique' => true, 'hidden' => $Rname_show, 'friendly'=> $sponsor_name." Name",'filter'=>$Rname);
     
     $showhideMYFieldsArray['Email'] = array('index' => 8, 'type' => 'string','unique' => true, 'hidden' => $Remail_show,'friendly'=> "Email",'filter'=>$Remail);
     $showhideMYFieldsArray['convo_welcomeemail_datetime'] = array('index' => 9, 'type' => 'date','unique' => true, 'hidden' => $welcomeemail_show,'friendly'=> "Welcome Email Sent On",'filter'=>$welcomeemail);
@@ -2418,7 +2411,6 @@ function getReportsdatanew($report_name,$usertimezone){
     $showhideMYFieldsArray['exhibitor_map_dynamics_ID'] = array('index' => 10, 'type' => 'string','unique' => true, 'hidden' => $mapdynamicsid_show,'friendly'=> "Floorplan ID",'filter'=>$mapdynamicsid);
     $showhideMYFieldsArray['user_profile_url'] = array('index' => 11, 'type' => 'string','unique' => true, 'hidden' => $companylogourl_show,'friendly'=> "User Company Logo Url",'filter'=>$companylogourl);
     $showhideMYFieldsArray['wp_user_id'] = array('index' => 12, 'type' => 'string','unique' => true, 'hidden' => $userID_show,'friendly'=> "User ID",'filter'=>$userID);
-    $showhideMYFieldsArray['selfsignupstatus'] = array('index' => 13, 'type' => 'string','unique' => true, 'hidden' => $status_show,'friendly'=> "Status",'filter'=>$status);
     
     
     if(!empty($additional_settings)){
@@ -2609,15 +2601,12 @@ function getReportsdatanew($report_name,$usertimezone){
      
         $myNewArray['first_name'] = $user_data->first_name;
         $myNewArray['last_name'] = $user_data->last_name;
-        $myNewArray['user_name'] = $user_data->display_name;
+        $myNewArray['sponsor_name'] = $user_data->display_name;
         $myNewArray['Email'] = $user_data->user_email;
         $myNewArray['convo_welcomeemail_datetime'] =  $last_send_welcome_timestamp;
         $myNewArray['exhibitor_map_dynamics_ID'] = $all_meta_for_user['exhibitor_map_dynamics_ID'][0];
         $myNewArray['user_profile_url'] = $all_meta_for_user['user_profile_url'][0];
         $myNewArray['wp_user_id'] = $aid->user_id;
-        $myNewArray['selfsignupstatus'] = $all_meta_for_user['selfsignupstatus'][0];
-        
-       
         if(!empty($additional_settings)){
        
             foreach ($additional_settings as $key=>$valuename){
@@ -3211,7 +3200,7 @@ function my_plugin_activate() {
   $create_pages_list[26]['name'] = 'user-report-result';
   $create_pages_list[26]['temp'] = 'temp/users_result_report_template.php';
   
-
+  
   
   
   foreach($create_pages_list as $key=>$value){
@@ -4723,13 +4712,12 @@ function changeuseremailaddress($request){
                 //echo $result_update;
                 //echo  "UPDATE ".$tablename." SET user_login=".$newemail.",user_email=".$newemail." WHERE ID=".$userid."";
                 $result_status['msg'] = 'update';
-               
-                if($result_update == 1 && $welcome_email_status == 'checked'){
+                if($result_update == 1){
+                if($welcome_email_status == 'checked'){
                     custome_email_send($userid,$newemail);
                 }
-               
+                }
             }
-            
         }else{
             
             $result_status['msg'] = 'Email address is invalid. Please try again and enter a valid email.';
