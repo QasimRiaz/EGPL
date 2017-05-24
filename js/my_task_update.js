@@ -1,25 +1,7 @@
 
 jQuery.noConflict();
 
-/*function update_time_stamp(elem){
- 
- 
- var url      = window.location.protocol + "//" + window.location.host + "/";
- var id = jQuery(elem).attr("id");
- var value =id.replace('status', 'datetime');
- var statusvlaue = jQuery("#"+id+" option:selected").text();
- if(statusvlaue == 'Complete'){
- jQuery.ajax({ url: url+'wp-content/plugins/user-forms-stats/user-forms-stats.php?f=update_task_datetime',
- data: {action:value},
- type: 'post',
- success: function(output) {
- //alert(statusvlaue);
- }
- });
- }else{
- // alert(statusvlaue);
- }
- }*/
+var filesizestatus = 0;
 jQuery(document).ready(function() {
   
     jQuery( ".sf-sub-indicator" ).addClass( "icon-play" ); 
@@ -104,7 +86,7 @@ jQuery("input").change(function(event) {
 jQuery('textarea').keyup(function() {
 
   
-  console.log('11111111111111111111111111111111111111');
+
  
     
  
@@ -212,6 +194,19 @@ function update_user_meta_custome(elem) {
         //var metaupdate =jQuery('#my'+value).val();
 
         var file = jQuery('#my' + value)[0].files[0];
+        console.log(file);
+        if(file != undefined && file != ""  ){
+            
+           var filezier = parseInt(jQuery('#my' + value)[0].files[0].size);
+           var convertintombs = filezier/(1024*1024);
+            
+        }else{
+            var convertintombs = 1
+        }
+       
+       
+        if(convertintombs <= 100){
+        
         
         if(file !=""){
             
@@ -286,7 +281,22 @@ function update_user_meta_custome(elem) {
       }
         });
         // }
-
+    }else{
+            jQuery("body").css({'cursor':'default'});
+            swal({
+                title: "File too large",
+                text: "Could not upload. File size must be less than 50MB.",
+                type: "error",
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Ok"
+            },function(){
+                
+                location.reload();
+                
+            });
+        
+        
+    }
         //alert(metaupdate);
         //l.stop();
     }
@@ -294,6 +304,8 @@ function update_user_meta_custome(elem) {
 jQuery(document).ready(function() {
     
    [].slice.call( document.querySelectorAll( 'button.taskcustomesubmit' ) ).forEach( function( bttn ) {
+       
+                               
 				new ProgressButton( bttn, {
 					callback : function( instance ) {
 						var progress = 0,
@@ -306,13 +318,14 @@ jQuery(document).ready(function() {
                                                                     if(erroralert == true){
 									instance._stop(-1);
                                                                         erroralert=false;
-                                                                       swal({
-					title: "Error",
-					text: "There was an error during the requested operation. Please try again.",
-					type: "error",
-					confirmButtonClass: "btn-danger",
-					confirmButtonText: "Ok"
-				});
+                                                                        swal({
+                                                                                title: "Error",
+                                                                                text: "There was an error during the requested operation. Please try again.",
+                                                                                type: "error",
+                                                                                confirmButtonClass: "btn-danger",
+                                                                                confirmButtonText: "Ok"
+                                                                        });
+                                                                        
                                                                     }else{
                                                                         instance._stop(1);
                                                                     }
@@ -322,6 +335,8 @@ jQuery(document).ready(function() {
 							}, 200 );
 					}
 				} );
+                            
+                            
 			} );
 });
 

@@ -28,6 +28,10 @@ if ($_GET['usertask_update'] == "update_submission_status") {
 }else if ($_GET['usertask_update'] == 'user_file_upload') {
 
     require_once('../../../wp-load.php');
+    
+   
+    
+    
     $keyvalue = $_POST['action'];
     $updatevalue=$_FILES['file'];
     $status=$_POST['status'];

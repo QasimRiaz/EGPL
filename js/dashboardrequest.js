@@ -64,6 +64,8 @@ jQuery(document).ready(function() {
                         areaspline: {
                             fillOpacity: 0.5
                         }
+                        
+                        
                     },
                     series: [{
                             name: 'This week',
@@ -108,7 +110,7 @@ jQuery(document).ready(function() {
                 jQuery('#activeusergraph').highcharts({
                     chart: {
                         type: 'solidgauge',
-                         width:428
+                        
                     },
                     title: null,
                     pane: {
@@ -137,7 +139,10 @@ jQuery(document).ready(function() {
                         minorTickInterval: null,
                         tickAmount: 2,
                         title: {
-                            y: -70
+                            
+                            align: 'center',
+                            verticalAlign: 'middle',
+                            y: 0,
                         },
                         labels: {
                             y: 16
@@ -156,7 +161,7 @@ jQuery(document).ready(function() {
                         min: 0,
                         max: getactiveuserlogin.totaluser,
                         title: {
-                            text: 'Users'
+                            text: ''
                         }
                     },exporting: {enabled: false},
                     credits: {
@@ -167,7 +172,7 @@ jQuery(document).ready(function() {
                             data: [getactiveuserlogin.activeuser],
                             dataLabels: {
                                 format: '<div style="text-align:center"><span style="font-size:25px;color:' +
-                                        ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
+                                        ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">'+activeusercountprc+' %</span><br/>' +
                                         '<span style="font-size:12px;color:silver">Users</span></div>'
                             },
                             tooltip: {
@@ -325,7 +330,8 @@ jQuery(document).ready(function() {
                     plotOptions: {
                         series: {
                             stacking: 'percent'
-                        }
+                        },
+                        
                     }, credits: {
                         enabled: false
                     },

@@ -57,7 +57,8 @@ if ($_GET['dashboardRequest'] == 'getdashboarddailygraph') {
         $duetaskcount = 0;
         $user_pie_chart_stats = count_users();
         
-      
+        
+       
        
         foreach ($flat as $index => $taskdate) {
             
@@ -68,15 +69,8 @@ if ($_GET['dashboardRequest'] == 'getdashboarddailygraph') {
              
              foreach ($get_thistask_roles as $index_key=>$rolename){
                  
-                 if($rolename == 'all'){
-                     $taskassignmentcount_singlerole = intval($user_pie_chart_stats['total_users']);
-                     $totaltaskcount = $taskassignmentcount_singlerole; 
-                 }else{
-                   $taskassignmentcount_singlerole = intval($user_pie_chart_stats['avail_roles'][$rolename]);
-                   $totaltaskcount = $totaltaskcount + $taskassignmentcount_singlerole;  
-                 }
-                 
-                
+                 $taskassignmentcount_singlerole = intval($user_pie_chart_stats['avail_roles'][$rolename]);
+                 $totaltaskcount = $totaltaskcount + $taskassignmentcount_singlerole;
              }
              
             
@@ -141,7 +135,8 @@ if ($_GET['dashboardRequest'] == 'getdashboarddailygraph') {
         $taskstatus_graph_data['scrollstatus'] = $scroll;
 
         
-       
+        echo '<pre>';
+        print_r($html_task_due_soon);exit;
         
         
         echo json_encode($taskstatus_graph_data) .'//'. json_encode($html_task_due_soon);

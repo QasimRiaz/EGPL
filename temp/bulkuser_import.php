@@ -7,17 +7,15 @@
 //    echo '<pre>';
 //    print_r($all_roles);exit;
    
-
+       $welcomeemail_template_info_key='AR_Contentmanager_Email_Template_welcome';
+       $welcomeemail_template_info = get_option($welcomeemail_template_info_key);
+      
 
 
 
     include 'cm_header.php';
     include 'cm_left_menu_bar.php';
-      
-      
-   
-    
-                ?>
+    ?>
 
 
    <div class="page-content">
@@ -70,7 +68,7 @@
                     
                     <div class="row">
                         <div class="col-sm-3"></div>
-                            <div class="col-sm-9">
+                            <div class="col-sm-9" id="bulkchecknewuserdiv">
                                 <div class="checkbox">
                                     <input  type="checkbox" id="check-1" >
                                     Send welcome emails.<br/>
@@ -80,7 +78,29 @@
 
                             </div>
                     </div>
-                    
+                    <div class="row" id="bulkshowlistofselectwelcomeemail" style="display:none;margin-bottom: 15px;">
+                        <label class="col-sm-3 form-control-label">Select Welcome Email Template</label>
+                            <div class="col-sm-9">
+                                
+                                    <select style="width:100%;height:38px;"class="form-control" id="selectedwelcomeemailtemp">
+                                    <?php  foreach ($welcomeemail_template_info as $key=>$value) { 
+                                            
+                                            $template_name = ucwords(str_replace('_', ' ', $key));
+                                            if($key == "welcome_email_template"){
+                                                 echo  '<option value="' . $key . '" selected="selected">Default Welcome Email</option>';
+                                            }else{
+                                                 echo  '<option value="' . $key . '" >'.$template_name.'</option>';
+                                            }
+                                          
+                                         }
+                                        ?>
+                                     
+                                   </select>
+                                
+                               
+
+                            </div>
+                    </div>
                       <h5 class="m-t-lg with-border"></h5>        
                     <div class="form-group row">
                                     <label class="col-sm-3 form-control-label"></label>

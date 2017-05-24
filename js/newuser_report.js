@@ -79,11 +79,12 @@ jQuery(document).ready(function () {
             if(tech == 'edit'){
                 
                  var filtervalue = jQuery("#querybuilderfilter").val();
+                 console.log(filtervalue);
                  var showcollist = jQuery("#showcolonreport").val();
                  var orderby     = jQuery("#orderby").val();
                  var orderbycolname = jQuery("#orderbycolname").val();
                  var loadreportname = jQuery("#loadreportname").val();
-                 
+                 console.log(orderbycolname)
                  if(showcollist == ""){
            
                     window.location.href = url+"/user-report/";
@@ -139,7 +140,7 @@ jQuery(document).ready(function () {
                         }
                     }
                 if(columsheader[key].title !='Action'){
-                    if(orderbycolname == key){
+                    if(orderbycolname == columsheader[key].title){
                          if(columsheader[key].key.search('task') > -1){
                              jQuery('#usertaskfieldssortby').append('<option value="' + columsheader[key].title + '" selected="selected">' + columsheader[key].title + '</option>');
                         

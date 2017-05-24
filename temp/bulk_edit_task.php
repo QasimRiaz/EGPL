@@ -118,7 +118,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                             <?php 
                             
                             foreach ($all_roles as $key=>$name) {
-                                if($key !='administrator'){
+                                if($key !='administrator' && $key !='subscriber'){
                                     echo '<option value="' . $key . '">' . $name . '</option>';
                                 }
                             }

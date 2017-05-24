@@ -2,9 +2,6 @@
 // Template Name: Bulk Edit Task 
 if (current_user_can('administrator') || current_user_can('contentmanager')) {
     
-    
-   
-    
     $user_reportsaved_list = get_option('ContenteManager_usersreport_settings');
     $get_email_template='AR_Contentmanager_Email_Template';
     $email_template_data = get_option($get_email_template);
@@ -13,40 +10,70 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $formemail = $oldvalues['ContentManager']['formemail'];
     $base_url = get_site_url();
-    ?>
-
-    <?php include 'cm_header.php'; ?>
-    <!--    user-reporting jQuery Querybuilder css-->
+    
+    $welcomeemail_template_info_key='AR_Contentmanager_Email_Template_welcome';
+    $welcomeemail_template_info = get_option($welcomeemail_template_info_key);
+    
+    $test = 'custome_task_manager_data';
+    $result_task_array_list = get_option($test);
+    
+    
+    
+    
+    include 'cm_header.php'; 
+    include 'cm_left_menu_bar.php';
+    
+    if(isset($_REQUEST)){ 
+        
+        
+        $querybuilderfilter = htmlentities(stripslashes($_POST['filterdata-hiddenfield']));
+        $showcolonreport = htmlentities(stripslashes($_POST['selectedcolumnskeys-hiddenfield']));
+        $orderby = $_POST['userbytype-hiddenfield'];
+        $orderbycolname = $_POST['userbycolname-hiddenfield'];
+        $selectedcolumnslebel_hiddenfield = htmlentities(stripslashes($_POST['selectedcolumnslebel-hiddenfield']));
+        $selectedcolumnskeys_hiddenfield = htmlentities(stripslashes($_POST['selectedcolumnskeys-hiddenfield']));
+        $userbytype_hiddenfield = $_POST['userbytype-hiddenfield'];
+        $loadreportname_hiddenfield = $_POST['loadreportname-hiddenfield'];
    
-
-
-    <?php
-
-include 'cm_left_menu_bar.php';
+        
+    }
+   if($_GET['report'] != 'run' ){ 
+        
+        $loadreportname = $_GET['report'];
+        $get_report_detial = $user_reportsaved_list[$loadreportname];
+        $queryfilter = json_decode($get_report_detial[0]);
+        $querybuilderfilter = htmlentities(stripslashes(json_encode($queryfilter->rules)));
+        $showcolonreport = htmlentities(stripslashes($get_report_detial[1]));
+        $orderby = $get_report_detial[2];
+        $orderbycolname = $get_report_detial[3];
+        $selectedcolumnslebel_hiddenfield = htmlentities(stripslashes($get_report_detial[1]));
+        $selectedcolumnskeys_hiddenfield = htmlentities(stripslashes($get_report_detial[1]));
+        $userbytype_hiddenfield = $get_report_detial[3];
+        $loadreportname_hiddenfield = $loadreportname;
+   
+        
+    }
 
     ?>
-   
-     <input type="hidden" id='querybuilderfilter' value='{"condition":"AND","rules":<?php echo stripslashes($_POST['filterdata-hiddenfield']);?>,"valid":true}' > 
-     <input type="hidden" id='showcolonreport' value="<?php echo htmlentities(stripslashes($_POST['selectedcolumnskeys-hiddenfield'])); ?>" >
-     <input type="hidden" id='orderby' value="<?php echo $_POST['userbytype-hiddenfield'];?>" > 
-     <input type="hidden" id='orderbycolname' value="<?php echo $_POST['userbycolname-hiddenfield'];?>" >
+     <input type="hidden" id='querybuilderfilter' value='{"condition":"AND","rules":<?php echo $querybuilderfilter;?>,"valid":true}' > 
+     <input type="hidden" id='showcolonreport' value="<?php echo $showcolonreport; ?>" >
+     <input type="hidden" id='orderby' value="<?php echo $orderby;?>" > 
+     <input type="hidden" id='orderbycolname' value="<?php echo $orderbycolname ?>" >
      
      <?php if(isset($_REQUEST)){ 
          
          ?>
             <form action="<?php echo $base_url;?>/user-report/?report=edit" method="post"  id="runreportresult"  >
                     <input type="hidden" name='usertimezone-hiddenfield' id='usertimezone-hiddenfield' value='<?php echo $_POST['usertimezone-hiddenfield'];?>' > 
-                    <input type="hidden" name='filterdata-hiddenfield' id='filterdata-hiddenfield' value="<?php echo htmlentities(stripslashes($_POST['filterdata-hiddenfield']));?>" > 
-                    <input type="hidden" name='selectedcolumnslebel-hiddenfield' id='selectedcolumnslebel-hiddenfield' value="<?php echo htmlentities(stripslashes($_POST['selectedcolumnslebel-hiddenfield']));?>" > 
-                    <input type="hidden" name='selectedcolumnskeys-hiddenfield' id='selectedcolumnskeys-hiddenfield' value="<?php echo htmlentities(stripslashes($_POST['selectedcolumnskeys-hiddenfield']));?>" > 
-                    <input type="hidden" name='userbytype-hiddenfield' id='userbytype-hiddenfield' value="<?php echo $_POST['userbytype-hiddenfield'];?>" > 
-                    <input type="hidden" name='userbycolname-hiddenfield' id='userbycolname-hiddenfield' value="<?php echo $_POST['userbycolname-hiddenfield'];?>" > 
-                    <input type="hidden" name='loadreportname-hiddenfield' id='loadreportname-hiddenfield' value="<?php echo $_POST['loadreportname-hiddenfield'];?>" > 
+                    <input type="hidden" name='filterdata-hiddenfield' id='filterdata-hiddenfield' value="<?php echo $querybuilderfilter ;?>" > 
+                    <input type="hidden" name='selectedcolumnslebel-hiddenfield' id='selectedcolumnslebel-hiddenfield' value="<?php echo $selectedcolumnslebel_hiddenfield;?>" > 
+                    <input type="hidden" name='selectedcolumnskeys-hiddenfield' id='selectedcolumnskeys-hiddenfield' value="<?php echo $selectedcolumnskeys_hiddenfield;?>" > 
+                    <input type="hidden" name='userbytype-hiddenfield' id='userbytype-hiddenfield' value="<?php echo $userbytype_hiddenfield;?>" > 
+                    <input type="hidden" name='userbycolname-hiddenfield' id='userbycolname-hiddenfield' value="<?php echo $orderbycolname;?>" > 
+                    <input type="hidden" name='loadreportname-hiddenfield' id='loadreportname-hiddenfield' value="<?php echo $loadreportname_hiddenfield;?>" > 
             </form>             
      <?php } ?>
-     
-     
-     
+     <div id="hiddenform" style="display:none;"></div>
      <div class="page-content">
         <div class="container-fluid">
             <header class="section-header">
@@ -59,11 +86,38 @@ include 'cm_left_menu_bar.php';
                     </div>
                 </div>
             </header>
-
-
-
-
             
+            <select id="hiddenlistemaillist" style="display: none;">
+                
+                <?php  foreach ($welcomeemail_template_info as $key=>$value) { 
+                                            
+                                            $template_name = ucwords(str_replace('_', ' ', $key));
+                                            if($key == "welcome_email_template"){
+                                                 echo  '<option value="' . $key . '" selected="selected">Defult Welcome Email</option>';
+                                            }else{
+                                                 echo  '<option value="' . $key . '" >'.$template_name.'</option>';
+                                            }
+                                          
+                                         }
+                ?>
+                                     
+                
+            </select>
+            <select id="hiddenfileuploadtasklist" style="display: none;">
+                
+                <?php   if(!empty($result_task_array_list)){foreach ($result_task_array_list['profile_fields'] as $profile_field_name => $profile_field_settings) { 
+                                            
+                                            
+                                            if($profile_field_settings['type'] == 'color'){
+                                                 echo  '<option value="' . $profile_field_name . '" selected="selected">'.$profile_field_settings['label'].'</option>';
+                                            }
+                                          
+                                         }
+                }
+                ?>
+                                     
+                
+            </select>
             <input type="hidden" id='welcomecustomeemail' > 
             <section class="tabs-section">
                 <div class="tabs-section-nav tabs-section-nav-icons">
@@ -96,7 +150,61 @@ include 'cm_left_menu_bar.php';
                 <div class="tab-content">
                   
                     <div role="tabpanel" class="tab-pane fade in active"  id="tabs-1-tab-1">
+                        
+                        
+                        <div class="form-group row">
 
+                            
+                            <div class="col-sm-9" >
+                                   <section class="box-typical faq-page">
+                                <div class="faq-page-header-search">
+                                    <div class="search">
+                                        <div class="row">
+                                            <div class="col-md-12">
+
+                                                <fieldset class="form-group">
+
+                                                    <select style="width:100%;height:38px;" class="form-control" onchange="customloaduserreport()" id="customloaduserreportss">
+                                                        <option disabled selected hidden>Load a Report</option>
+                                                        <option value="defult"></option>
+                                                            <?php
+                                                            foreach ($user_reportsaved_list as $key => $value) {
+
+                                                                if(!empty($loadreportname_hiddenfield)){
+                                                                    if($loadreportname_hiddenfield == $key){
+                                                                         echo '<option value="' . $key . '" selected="selected">' . $key . '</option>';  
+                                                                    }else{
+                                                                         echo '<option value="' . $key . '">' . $key . '</option>';  
+                                                                        
+                                                                    }
+                                                                    
+                                                                }else{
+                                                                   echo '<option value="' . $key . '">' . $key . '</option>';  
+                                                                }
+                                                               
+                                                            }
+                                                            ?>
+                                                    </select>
+                                                </fieldset>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div><!--.faq-page-header-search-->
+
+
+
+                            </section><!--.faq-page-->
+                             
+                            </div>
+                             <div class="col-sm-3" >
+
+                                <button   style="margin-top: 9px !important;" class="btn btn-lg mycustomwidth btn-success backtofilter">Customize Report</button>
+
+                            </div> 
+                            
+                        </div>
                         <section class="faq-page-cats" style="border-bottom:none;">
                             <div class="row">
 
@@ -134,7 +242,9 @@ include 'cm_left_menu_bar.php';
                                                     <a class="dropdown-item" onclick="get_bulk_email_address()"><i class="fa fa-mail-forward"></i> Bulk Email</a>
                                                     <a class="dropdown-item" onclick="sendwelcomemsg()"><i class="fa fa-paper-plane"></i> Welcome Email</a>
                                                     <a class="dropdown-item" onclick="sync_bulk_users()"><i class="fa fa-refresh"></i> Sync to Floorplan</a>
-
+                                                    <a class="dropdown-item" onclick="reportbulkdownload()"><i class="fa fa-download"></i> Bulk Download</a>
+                                                    
+                                                    
 
                                                 </div>
                                             </div>
@@ -142,28 +252,27 @@ include 'cm_left_menu_bar.php';
                                         </div>
                                     </div>
                                 </div>
-
-
-
-
                             </div><!--.row-->
                         </section><!--.faq-page-cats-->
                         <h5 class="m-t-lg with-border"></h5>
-
-
                         <table id="example" class="stripe row-border order-column display table table-striped table-bordered" cellspacing="0" width="100%">
-                            
-                            
                         </table>
                         <h5 class="m-t-lg with-border"></h5>
                         <div class="form-group row">
 
                             <div class="col-sm-3" style="text-align: left;">
 
-                                <button   class="btn btn-lg mycustomwidth btn-success backtofilter">Edit Report</button>
+                                <button   class="btn btn-lg mycustomwidth btn-success backtofilter">Customize Report</button>
 
                             </div>
+                            
+                          
                             <div class="col-sm-9" ></div>
+                        </div>
+                        <div class="form-group row">
+                               <div class="col-sm-12" >
+                                   <p><strong style="color:red">You are viewing the Beta version of the new report. To revert back to the previous report, </strong><a href="old-user-report/">click here</a></p>
+                               </div>
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="tabs-1-tab-2">
@@ -200,9 +309,9 @@ include 'cm_left_menu_bar.php';
 							<div class="input-group">
 								<input style="height: 38px;" placeholder="Email Template Name" id="emailtemplate" type="text" class="form-control" required>
 								<div class="input-group-btn">
-									<button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-										Action
-									</button>
+									<button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
+										
+									
 									<div class="dropdown-menu dropdown-menu-right">
 										<button type="submit"  name="saveemailtemplate"  class="dropdown-item"  ><i class="font-icon fa fa-save" aria-hidden="true"></i> Save</button>
 										<a class="dropdown-item" onclick="removeemailtemplate()"><i class="font-icon fa fa-remove" aria-hidden="true"></i>Delete</a>
@@ -212,8 +321,6 @@ include 'cm_left_menu_bar.php';
 							</div>
 						</div>
                                                  </form>		
-								
-						
 						</div>
 					</div>
 					</div>
@@ -248,8 +355,6 @@ include 'cm_left_menu_bar.php';
 						</div>
 					</div><!--.row-->
 				</section><!--.faq-page-cats-->
-
-			
 			</section><!--.faq-page-->
                         <div class="bulkemail_status"></div>
                         <div class="box-typical box-typical-padding sendbulkemailbox">
@@ -324,23 +429,12 @@ include 'cm_left_menu_bar.php';
                     
                 </div><!--.tab-content-->
             </section><!--.tabs-section-->
-
-
-
-
-
-
         </div>
     </div>
-
-
-
-
-
     <?php
     include 'cm_footer.php';
     ?>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report_result.js?v=2.19"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report_result.js?v=2.2L"></script>
 
     <?php
 } else {

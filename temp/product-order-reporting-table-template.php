@@ -26,9 +26,21 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
     <?php
         }
-    include 'cm_left_menu_bar.php';
+   include 'cm_left_menu_bar.php';
     if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+        
+        if(isset($_GET['orderreport'])){
+            
+            
+            $orderreportload_settings  = $order_reportsaved_list[$_GET['orderreport']];
     ?>
+         <input type="hidden" id='filtersrowsdata' value='<?php echo $orderreportload_settings[0]; ?>' >
+         <input type="hidden" id='showcolorderreportname' value='<?php echo $orderreportload_settings[1]; ?>' >
+         <input type="hidden" id='orderbycolname' value="<?php echo $orderreportload_settings[2]; ?>" >
+         <input type="hidden" id='orderby' value="<?php echo $orderreportload_settings[3]; ?>" >
+        
+        
+        <?php } ?>
     <div class="page-content">
         <div class="container-fluid">
             <header class="section-header">
@@ -51,16 +63,16 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                 <li class="nav-item" style="width: 50%;">
                                     <a class="nav-link active reloadclass" href="#tabs-1-tab-1" role="tab" data-toggle="tab">
                                         <span class="nav-link-in">
-                                            <i class="fa fa-filter" ></i>
-                                            Define Report
+                                            <i class="fa  fa-list-alt" ></i>
+                                            Report
                                         </span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="#tabs-1-tab-2" role="tab" data-toggle="tab">
                                         <span class="nav-link-in">
-                                            <i class="fa fa-list-alt"></i>
-                                            Report
+                                            <i class="fa fa-filter"></i>
+                                            Define Report
                                         </span>
                                     </a>
                                 </li>
@@ -71,7 +83,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
 
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane fade in active" id="tabs-1-tab-1">
+                        <div role="tabpanel" class="tab-pane fade" id="tabs-1-tab-2">
                             <br>
                              <section class="box-typical faq-page">
 				<div class="faq-page-header-search">
@@ -81,7 +93,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 							
 								<fieldset class="form-group">
 									
-                                                                    <select style="width:100%;height:38px;"class="form-control" onchange="loadorderreport()" id="loadorderreport">
+                                                                    <select style="width:100%;height:38px;"class="form-control" onchange="loadorderreport('')" id="loadorderreport">
                                                                             <option disabled selected hidden>Load a Report</option>
                                                                             <option value="defult"></option>
                                                                             <option value="defult">Save Current Template As</option>
@@ -89,7 +101,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
                                                                                 <?php
                                                                                 foreach ($order_reportsaved_list as $key => $value) {
-
+                                                                                    
 
                                                                                     echo '<option value="' . $key . '">' . $key . '</option>';
                                                                                 }
@@ -164,7 +176,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                 
                                 <div class="col-sm-6" style="text-align: left;">
                                     <button class="btn btn-danger btn-lg  resetorderfilters">Reset</button>&nbsp;&nbsp;
-                                    <button class="btn btn-lg mycustomwidth btn-success drawdatatable">Run Report</button>
+                                    <button class="btn btn-lg mycustomwidth btn-success" onclick="request_getapplyfiltersonordereport()">Run Report</button>
 
                                 </div>
                                 <div class="col-sm-6"></div>
@@ -172,8 +184,62 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                            
 
                         </div>
-                        <div role="tabpanel" class="tab-pane fade" id="tabs-1-tab-2">
+                       
+                            <div role="tabpanel" class="tab-pane fade in active" id="tabs-1-tab-1">
+                                       <div class="form-group row">
+
                             
+                            <div class="col-sm-9" >
+                                   <section class="box-typical faq-page">
+                                <div class="faq-page-header-search">
+                                    <div class="search">
+                                        <div class="row">
+                                            <div class="col-md-12">
+
+                                                <fieldset class="form-group">
+
+                                                    <select style="width:100%;height:38px;" class="form-control" onchange="customeloadorderreport()" id="customeloadorderreport">
+                                                        <option disabled selected hidden>Load a Report</option>
+                                                        <option value="defult"></option>
+                                                             <?php
+                                                                                foreach ($order_reportsaved_list as $key => $value) {
+                                                                                      if(isset($_GET['orderreport'])){
+                                                                                          if($_GET['orderreport'] == $key){
+                                                                                              echo '<option value="' . $key . '" selected="selected">' . $key . '</option>';
+                                                                                          }else{
+                                                                                            echo '<option value="' . $key . '">' . $key . '</option>';  
+                                                                                          }
+                                                                                           
+                                                                                      }else{
+                                                                                          
+                                                                                         echo '<option value="' . $key . '">' . $key . '</option>';  
+                                                                                      }
+
+                                                                                   
+                                                                                }
+                                                                ?>
+                                                    </select>
+                                                </fieldset>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div><!--.faq-page-header-search-->
+
+
+
+                            </section><!--.faq-page-->
+                             
+                            </div>
+                             <div class="col-sm-3" >
+
+                                <button   style="margin-top: 9px !important;" class="btn btn-lg mycustomwidth btn-success backtofilter">Customize Report</button>
+
+                            </div> 
+                            
+                        </div>
+                                <hr>
                             <section class="faq-page-cats" style="border-bottom:none;">
 					<div class="row">
 						
@@ -199,7 +265,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 					</div><!--.row-->
 				</section><!--.faq-page-cats-->
                                 <br>
-                                
+                         
                             
                             <table id="orderreport" class="stripe row-border order-column display table table-striped table-bordered" cellspacing="0" width="100%">
                               
@@ -209,7 +275,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                 
                                  <div class="col-sm-3" style="text-align: left;">
 
-                                    <button class="btn btn-lg mycustomwidth btn-success backtofilter">Edit Report</button>
+                                    <button class="btn btn-lg mycustomwidth btn-success backtofilter">Customize Report</button>
 
                                 </div>
                                 <div class="col-sm-9" ></div>
@@ -271,7 +337,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/doT.js?v=2.17"></script>
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/interact.js?v=2.17"></script>
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/query-builder.js?v=2.17"></script>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/product-order-report.js?v=2.17"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/product-order-report.js?v=2.20"></script>
    <?php
      }
 } else {

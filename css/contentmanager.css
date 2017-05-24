@@ -745,4 +745,34 @@ table.dataTable tbody td {
     border-color: gray !important;
     cursor: default !important;
 }
+#example_filter{
+    
+    text-align: left !important;
+    float: none !important;
+}
 
+#example_paginate{
+    
+   margin-top: -47px !important;
+    float: right;
+}
+#example_length{
+    
+    margin-top: 17px !important;
+}
+
+#orderreport_filter{
+    
+    text-align: left !important;
+    float: none !important;
+}
+
+#orderreport_paginate{
+    
+   margin-top: -47px !important;
+    float: right;
+}
+#orderreport_length{
+    
+    margin-top: 17px !important;
+}

@@ -47,7 +47,7 @@
 									<div class="tab-pane" id="w-3-tab-2" role="tabpanel">
                                                                             <div style="text-align: center;color:#6e6e70;"><span id="titleactiveuser"></span></div>
                                                                            
-                                                                            <div id="activeusergraph" class="box-typical-body panel-body" style="max-width: 400px;height: 240px;">
+                                                                            <div id="activeusergraph" style="height: 240px;">
                                                                                     
                                                                                 </div><!--.box-typical-body-->
 									</div>

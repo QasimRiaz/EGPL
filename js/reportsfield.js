@@ -592,7 +592,7 @@ function get_all_files() {
                  document.getElementById('myform').submit();
              }else{
                  swal({
-									title: "Cancelled",
+									title: "Error",
 									text: "There was an error during the requested operation. Please try again.",
 									type: "error",
 									confirmButtonClass: "btn-danger"
