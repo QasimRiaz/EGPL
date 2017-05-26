@@ -50,7 +50,7 @@ function bulkemail_preview(){
      
       
                                     bulkemailcontentbox =    jQuery.confirm({
-                                             title: 'Preview!',
+                                             title: 'Preview',
                                              content: '<p id="success-msg-div"></p> <br> Subject : '+emailSubject+' <hr> '+emailBody+' <hr> <p style="margin-bottom: -60px !important;"><button type="button" title="Test email will be sent to '+currentAdminEmail+'" class="examplebutton btn mycustomwidth  btn-secondary">Send me a Test Email</button></p>',
                                              confirmButton:'Send',
                                              cancelButton:'Close',
@@ -520,7 +520,7 @@ function welcomeemail_preview(){
     
       
                                         jQuery.confirm({
-                                             title: 'Preview!',
+                                             title: 'Preview',
                                              content: '<p id="success-msg-div"></p> <br> Subject : '+emailSubject+' <hr> '+content+' <hr> <p style="margin-bottom: -69px !important;"><button type="button" title="Test email will be sent to '+currentAdminEmail+'" class="btn mycustomwidth btn-inline btn-primary examplebutton">Send me a Test Email</button></p>',
                                              confirmButton:'Save',
                                              cancelButton:'Close',
@@ -1254,7 +1254,7 @@ function old_bulkemail_preview(){
      
       
                                     bulkemailcontentbox =    jQuery.confirm({
-                                             title: 'Preview!',
+                                             title: 'Preview',
                                              content: '<p id="success-msg-div"></p> <br> Subject : '+emailSubject+' <hr> '+emailBody+' <hr> <p style="margin-bottom: -60px !important;"><button type="button" title="Test email will be sent to '+currentAdminEmail+'" class="examplebutton btn mycustomwidth  btn-secondary">Send me a Test Email</button></p>',
                                              confirmButton:'Send',
                                              cancelButton:'Close',

@@ -185,7 +185,7 @@ jQuery(document).ready(function () {
                         
                 }else{
                     
-                    if (columsheader[key].title == 'Action' || columsheader[key].title == 'First Name' || columsheader[key].title == 'Last Name' || columsheader[key].title == 'Last login' || columsheader[key].title == 'Email' || columsheader[key].title == 'Company Name' ) {
+                    if (columsheader[key].title == 'Action' || columsheader[key].title == 'First Name' || columsheader[key].title == 'Last Name' || columsheader[key].title == 'Last login' || columsheader[key].title == 'Email' || columsheader[key].title == 'Company Name' || columsheader[key].title == 'Level' ) {
                             
                             jQuery('#usercontactfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
                            
@@ -244,7 +244,7 @@ function resetallfilters() {
     jQuery('#userbycolumnsname').empty();
     jQuery.each(columsheader, function (key, value) {
 
-        if (columsheader[key].title == 'Action' || columsheader[key].title == 'First Name' || columsheader[key].title == 'Last Name' || columsheader[key].title == 'Last login' || columsheader[key].title == 'Email' || columsheader[key].title == 'Company Name' ) {
+        if (columsheader[key].title == 'Action' || columsheader[key].title == 'First Name' || columsheader[key].title == 'Last Name' || columsheader[key].title == 'Last login' || columsheader[key].title == 'Email' || columsheader[key].title == 'Company Name' || columsheader[key].title == 'Level') {
 
             jQuery('#userreportcolumns').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
             jQuery('#userbycolumnsname').append('<option value="' + columsheader[key].title + '" >' + columsheader[key].title + '</option>');
@@ -274,7 +274,6 @@ jQuery('.drawdatatable').on('click', function () {
     var selectedcolumnskeys  =  [];
     var selectedcolumnslebel = jQuery('#userreportcolumns').select2("data");
     var selectedcolumnslebelarray = []; 
-    console.log(selectedcolumnslebel);
     var userbycolname = jQuery('#userbycolumnsname').select2("val");
     var loadreportname = jQuery('#loaduserreport option:selected').val();
     var userbytype = jQuery('#sortingtype').select2("val");
@@ -288,6 +287,25 @@ jQuery('.drawdatatable').on('click', function () {
         selectedcolumnslebelarray.push(value.text);
         selectedcolumnskeys.push(value.id)
     });
+    
+    //console.log(filterdata)
+    //console.log(selectedcolumnskeys);
+    
+    jQuery.each(filterdata.rules, function (key, value) {
+       
+       
+        if (jQuery.inArray(value.id, selectedcolumnskeys) == -1) {
+            
+           // console.log(value.id);
+            selectedcolumnskeys.push(value.id)
+            
+        }
+        
+        
+    });
+    
+    
+    console.log(selectedcolumnskeys);
     
    
     

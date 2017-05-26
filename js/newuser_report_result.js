@@ -46,9 +46,9 @@ jQuery(document).ready(function () {
        
        }else{
            
-        var showcollist = JSON.parse('["action_edit_delete","company_name","last_login","first_name","last_name","Email"]');   
+        var showcollist = JSON.parse('["action_edit_delete","company_name","last_login","first_name","last_name","Email","Role"]');   
         var ordercolname = 'Company Name';
-        var orderby = 'desc';
+        var orderby = 'asc';
        }
        
       
@@ -101,6 +101,7 @@ jQuery(document).ready(function () {
              resultuserdatatable = jQuery('#example').DataTable({
                                         data: newrowsdata,
                                         columns: newcolumnsheaderarrayfortable,
+                                        
                                         'columnDefs': [{
                                                          'targets': 0,
                                                          'searchable': false,
@@ -110,9 +111,8 @@ jQuery(document).ready(function () {
                                                              return '<input type="checkbox" class="checkcheckedstatus" name="id[]" value="' + jQuery('<div/>').text(data).html() + '">';
                                                          }
                                                      }],
-                                                 'order': [[2, 'asc']],
-                    
-                                                  dom: 'fBrlpt',
+                                                
+                                                 dom: 'fBrlptrfBrlp',
                                                     
                                                     buttons: [
                                                         {

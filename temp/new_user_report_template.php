@@ -215,7 +215,7 @@ include 'cm_left_menu_bar.php';
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/query-builder.js?v=2.19"></script>
 
 
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report.js?v=2.21"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report.js?v=2.28"></script>
 
     <?php
 } else {

@@ -759,6 +759,8 @@ table.dataTable tbody td {
 #example_length{
     
     margin-top: 17px !important;
+    margin-bottom: 0px !important;
+   
 }
 
 #orderreport_filter{
@@ -775,4 +777,15 @@ table.dataTable tbody td {
 #orderreport_length{
     
     margin-top: 17px !important;
+}
+
+#example_wrapper .dataTables_length{
+    
+        margin-bottom: -39px;
+    margin-top: 21px !important;
+}
+#example_wrapper .dataTables_filter{
+    
+    
+    float: none !important;
 }
