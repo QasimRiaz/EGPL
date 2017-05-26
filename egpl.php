@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           4.0
+ * Version:           4.1
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -17,7 +17,30 @@
 
 //get all the plugin settings
 //get all the plugin settings
-if($_GET['contentManagerRequest'] == "checkwelcomealreadysend") {        
+if($_GET['contentManagerRequest'] == "getuseremailids") {        
+    require_once('../../../wp-load.php');
+    $fields = array( 'ID','user_email' );
+    $args = array(
+        'role__not_in' => array('administrator'),
+        'fields' => $fields,
+    );
+     
+    
+     $get_all_ids = get_users($args);
+    
+    $indexplus = 0;
+    
+    foreach ($get_all_ids as $user) {
+        
+            $getuserresult[$indexplus]['id'] = $user->ID;
+            $getuserresult[$indexplus]['text'] = $user->user_email;
+            $indexplus++;
+    }
+    echo json_encode($getuserresult);
+    die();
+   
+  
+}else if($_GET['contentManagerRequest'] == "checkwelcomealreadysend") {        
     require_once('../../../wp-load.php');
     
     checkwelcomealreadysend($_POST);
