@@ -2,6 +2,14 @@
 // Template Name: Bulk Edit Task 
 if (current_user_can('administrator') || current_user_can('contentmanager')) {
     
+   // $get_all_roles_array = 'wp_user_roles';
+  //  $get_all_roles = get_option($get_all_roles_array);
+    
+    
+  //  echo '<pre>';
+  //  print_r($get_all_roles);exit;
+    
+    
     $user_reportsaved_list = get_option('ContenteManager_usersreport_settings');
     $get_email_template='AR_Contentmanager_Email_Template';
     $email_template_data = get_option($get_email_template);
@@ -16,7 +24,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     
     $test = 'custome_task_manager_data';
     $result_task_array_list = get_option($test);
-    
+    $userreportcontent =   stripslashes($oldvalues['ContentManager']['userreportcontent']);
     
     
     
@@ -271,7 +279,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                         </div>
                         <div class="form-group row">
                                <div class="col-sm-12" >
-                                   <p><strong style="color:red">You are viewing the Beta version of the new report. To revert back to the previous report, </strong><a href="old-user-report/">click here</a></p>
+                                  <?php echo $userreportcontent;?>
                                </div>
                         </div>
                     </div>
@@ -437,9 +445,11 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report_result.js?v=2.29"></script>
 
     <?php
-} else {
+}else{
+    
     $redirect = get_site_url();
     wp_redirect($redirect);
     exit;
+    
 }
 ?>

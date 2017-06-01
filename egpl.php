@@ -3018,6 +3018,8 @@ function my_contentmanager_style() {
     wp_enqueue_style('my-datepicker', plugins_url().'/EGPL/css/datepicker.css');
     wp_enqueue_style('jquery.dataTables', plugins_url().'/EGPL/css/jquery.dataTables.css');
     wp_enqueue_style('shCore', plugins_url().'/EGPL/css/shCore.css');
+   
+  
     wp_enqueue_style('my-datatable-tools', plugins_url().'/EGPL/css/dataTables.tableTools.css');
    // wp_enqueue_style('cleditor-css', plugins_url() .'/EGPL/css/jquery.cleditor.css');
    // wp_enqueue_style('contentmanager-css', plugins_url() .'/EGPL/css/forntend.css');
@@ -3040,7 +3042,12 @@ function my_plugin_activate() {
             $get_all_roles[$key]['capabilities']['unfiltered_upload'] = 1;
             $get_all_roles[$key]['capabilities']['upload_files'] = 1;
            }
-            
+          
+           if($key == 'subscriber'){
+               
+               $get_all_roles[$key]['name'] = 'Unassigned';
+               
+           }
             
         }
         
@@ -3328,7 +3335,7 @@ add_action( 'init', 'add_contentmanager_settings' );
 
 function add_contentmanager_settings() {
     
-    wp_register_script('adminjs', plugins_url('js/admin-cmanager.js?v=2.21', __FILE__), array('jquery'));
+    wp_register_script('adminjs', plugins_url('js/admin-cmanager.js?v=2.25', __FILE__), array('jquery'));
     wp_enqueue_script('adminjs');
     //$settings_array['ContentManager']['sponsor-name']='Exhibitor';
     //update_option( 'ContenteManager_Settings', $settings_array);
@@ -3375,6 +3382,7 @@ function updatecmanagersettings($object_data){
     $wooseceretkey = $object_data['wooseceretkey'];
     $wooconsumerkey = $object_data['wooconsumerkey'];
     $selfsignstatus = $object_data['selfsignstatus'];
+    $userreportcontent =   $object_data['userreportcontent']; 
     
     $addresspoints = $object_data['addresspoints'];
     
@@ -3406,6 +3414,8 @@ function updatecmanagersettings($object_data){
     $oldvalues['ContentManager']['adminsitelogo']=$object_data['adminsitelogourl'];
     $oldvalues['ContentManager']['mapapikey']=$mapapikey;
     $oldvalues['ContentManager']['mapsecretkey']=$mapsecretkey;
+    $oldvalues['ContentManager']['userreportcontent']=stripslashes($userreportcontent);
+    
     
     $oldvalues['ContentManager']['wooseceretkey']=$wooseceretkey;
     $oldvalues['ContentManager']['wooconsumerkey']=$wooconsumerkey;
@@ -3469,18 +3479,18 @@ function excludes_sponsor_meta(){
     
      $oldvalues = get_option( 'ContenteManager_Settings' );
  
-     $sponsor_name  = $oldvalues['ContentManager']['sponsor_name'];
-     $attendytype   =  $oldvalues['ContentManager']['attendytype_key'];
-     $eventdate     =   $oldvalues['ContentManager']['eventdate'];
-     $formemail     =   $oldvalues['ContentManager']['formemail'];
-     $mandrill      =    $oldvalues['ContentManager']['mandrill'];
-     $mapapikey     =   $oldvalues['ContentManager']['mapapikey'];
-     $mapsecretkey  = $oldvalues['ContentManager']['mapsecretkey'];
-     $adminsitelogo = $oldvalues['ContentManager']['adminsitelogo'];
-     $wooconsumerkey= $oldvalues['ContentManager']['wooconsumerkey'];
-     $wooseceretkey = $oldvalues['ContentManager']['wooseceretkey'];
-     $selfsignstatus = $oldvalues['ContentManager']['selfsignstatus'];
-     
+     $sponsor_name      =   $oldvalues['ContentManager']['sponsor_name'];
+     $attendytype       =   $oldvalues['ContentManager']['attendytype_key'];
+     $eventdate         =   $oldvalues['ContentManager']['eventdate'];
+     $formemail         =   $oldvalues['ContentManager']['formemail'];
+     $mandrill          =   $oldvalues['ContentManager']['mandrill'];
+     $mapapikey         =   $oldvalues['ContentManager']['mapapikey'];
+     $mapsecretkey      =   $oldvalues['ContentManager']['mapsecretkey'];
+     $adminsitelogo     =   $oldvalues['ContentManager']['adminsitelogo'];
+     $wooconsumerkey    =   $oldvalues['ContentManager']['wooconsumerkey'];
+     $wooseceretkey     =   $oldvalues['ContentManager']['wooseceretkey'];
+     $selfsignstatus    =   $oldvalues['ContentManager']['selfsignstatus'];
+     $userreportcontent =   stripslashes($oldvalues['ContentManager']['userreportcontent']);
      
       
      //echo'<pre>';
@@ -3552,7 +3562,7 @@ function excludes_sponsor_meta(){
 </td>
        </tr>
        
-<tr><td><h4>Woocommerce Api Consumer Key</h4></td>
+       <tr><td><h4>Woocommerce Api Consumer Key</h4></td>
  
         <td><input type="text" name="wooconsumerkey"  id="wooconsumerkey" value='.$wooconsumerkey.'></td>
        </tr>
@@ -3560,9 +3570,13 @@ function excludes_sponsor_meta(){
 
         <td>
         <input type="text" name="wooseceretkey"  id="wooseceretkey" value='.$wooseceretkey.'>
-       
-</td>
+        </td>
        </tr>
+       <tr><td><h4>User Report bottom content</h4></td>
+ 
+        <td><textarea style="width:300px;height:100px" id="userreportcontent" >'.$userreportcontent.'</textarea></td>
+       </tr>
+
        <tr>
        <td style="text-align: center;"><a style="margin-top: 20px;
 " onclick="updatecontentsettings()" class="button">Save</a></td>

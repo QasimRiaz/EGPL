@@ -24,6 +24,7 @@ function updatecontentsettings() {
    var wooconsumerkey = jQuery("#wooconsumerkey").val();
    var selfsignstatus = jQuery("#selfsignstatus").val();
    var addresspoints = jQuery("#addresspoints").val();
+   var userreportcontent = jQuery("#userreportcontent").val();
    var uploadlogourl = jQuery("#uploadlogourl").attr("src");
    if(uploadlogourl == ''){
        
@@ -51,6 +52,7 @@ function updatecontentsettings() {
        data.append('wooseceretkey', wooseceretkey);
        data.append('wooconsumerkey', wooconsumerkey);
        data.append('selfsignstatus', selfsignstatus);
+       data.append('userreportcontent', userreportcontent);
 
        jQuery.ajax({
             url: urlnew,
