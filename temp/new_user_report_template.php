@@ -163,8 +163,8 @@ include 'cm_left_menu_bar.php';
                             <div class="col-sm-6" >
                                 <select class="select2"  id="sortingtype" data-allow-clear="true">
 
-                                    <option value='asc'>Ascending</option>
-                                    <option value='desc' selected="selected">Descending</option>
+                                    <option value='asc' selected="selected">Ascending</option>
+                                    <option value='desc' >Descending</option>
 
                                 </select>
 
@@ -215,7 +215,7 @@ include 'cm_left_menu_bar.php';
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/query-builder.js?v=2.19"></script>
 
 
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report.js?v=2.28"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report.js?v=2.30"></script>
 
     <?php
 } else {

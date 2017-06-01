@@ -34,8 +34,8 @@ jQuery(document).ready(function () {
        var userbycolname   = jQuery('#userbycolname-hiddenfield').val();
        var loadreportname   = jQuery('#loadreportname-hiddenfield').val();
        
-       console.log(filterdata)
-       console.log(orderby)
+      // console.log(filterdata)
+     //  console.log(orderby)
        
        data.append('filterdata', filterdata);
        data.append('selectedcolumnslebel', selectedcolumnslebel);
@@ -90,7 +90,7 @@ jQuery(document).ready(function () {
                     newcolumnsheaderarrayfortable.push({visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type, render: function (data) {if (data !== null && data !== "") {var javascriptDate = new Date(data);javascriptDate = javascriptDate.getDate() + "/" + months[javascriptDate.getMonth()] + "/" + javascriptDate.getFullYear() +" "+javascriptDate.getHours()+":"+javascriptDate.getMinutes()+":"+javascriptDate.getSeconds();return javascriptDate;} else {return "";} }});
                 }else {
                     if(newcolumsheader[nkey].title == 'Action' ){
-                        newcolumnsheaderarrayfortable.push({class:'noExport',visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type});
+                        newcolumnsheaderarrayfortable.push({class:'noExport noclick',visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type});
                     }else{
                         newcolumnsheaderarrayfortable.push({visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type});
                     }
@@ -101,7 +101,7 @@ jQuery(document).ready(function () {
              resultuserdatatable = jQuery('#example').DataTable({
                                         data: newrowsdata,
                                         columns: newcolumnsheaderarrayfortable,
-                                        
+                                       
                                         'columnDefs': [{
                                                          'targets': 0,
                                                          'searchable': false,
@@ -113,7 +113,7 @@ jQuery(document).ready(function () {
                                                      }],
                                                 
                                                  dom: 'fBrlptrfBrlp',
-                                                    
+                                                 
                                                     buttons: [
                                                         {
                                                             extend: 'excelHtml5',
@@ -146,6 +146,7 @@ jQuery(document).ready(function () {
       resultuserdatatable.column(':contains(' + ordercolname + ')').order(orderby).draw();
       var rows_selected = [];
       jQuery('#example tbody').on('click', 'input[type="checkbox"]', function(e){
+          
       var $row = jQuery(this).closest('tr');
 
       // Get row data
@@ -178,11 +179,11 @@ jQuery(document).ready(function () {
       // Prevent click event from propagating to parent
       e.stopPropagation();
    });
-
+   
    // Handle click on table cells with checkboxes
-   jQuery('#example').on('click', 'tbody td, thead th:first-child', function(e){
-      jQuery(this).parent().find('input[type="checkbox"]').trigger('click');
-   });
+//   jQuery('#example').on('click', 'tbody td, thead th:first-child', function(e){
+//      jQuery(this).parent().find('input[type="checkbox"]').trigger('click');
+//   });
 
    // Handle click on "Select all" control
    jQuery('thead input[name="select_all"]', resultuserdatatable.table().container()).on('click', function(e){
@@ -245,12 +246,12 @@ if ( window.location.href.indexOf("user-report-result/?report=run") > -1)
     
      var data = resultuserdatatable.row( jQuery(elem).parents('tr') ).data();
      var tablesettings = jQuery('#example').DataTable().settings();
-      console.log(data)
+     // console.log(data)
      var curr_dat ='';
      var tablehtml='';
      var monthnames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
      tablehtml  = '<table class="table table-striped table-bordered table-condensed" width="100%"><tbody>'; 
-    console.log(tablesettings[0].aoColumns);
+   // console.log(tablesettings[0].aoColumns);
      jQuery.each( data, function( i, l ){
          
        for (var counter = 0, iLen = tablesettings[0].aoColumns.length; counter < iLen; counter++)
@@ -259,7 +260,7 @@ if ( window.location.href.indexOf("user-report-result/?report=run") > -1)
      if(tablesettings[0].aoColumns[counter].sTitle == i){      
       if(i != 'Action'){
        if(tablesettings[0].aoColumns[counter].type == 'date'){
-           console.log(l)
+          // console.log(l)
             if(l !="" && l != null ){
                  var d = new Date(l);
                 var curr_date = d.getDate();
@@ -313,6 +314,7 @@ function updateDataTableSelectAllCtrl(resultuserdatatable){
    var $chkbox_checked    = jQuery('tbody input[type="checkbox"]:checked', $table);
    var chkbox_select_all  = jQuery('thead input[name="select_all"]', $table).get(0);
    var selectedcount =  +(jQuery("#ntableselectedstatscount").html());
+   
    jQuery(".selectedusericon").removeClass('filteractivecolor');
    jQuery(".selecteduserbox").removeClass('filteractivecolor');
    jQuery(".bulkbtuton").removeClass('filteractivecolor');
@@ -354,7 +356,8 @@ function updateDataTableSelectAllCtrl(resultuserdatatable){
    jQuery("#ntableselectedstatscount").append(datatable.rows( '.selected' ).count());
    jQuery("#newbulkemailcounter").append(datatable.rows( '.selected' ).count());
    jQuery("#selectedstatscountforbulk").append(datatable.rows( '.selected' ).count());
-   if(datatable.rows( '.selected' ).count() > 0){
+   
+    if(datatable.rows( '.selected' ).count() > 0){
             
             jQuery('#reportbulkdownload').removeAttr('disabled');
         }else{
@@ -427,7 +430,7 @@ function reportbulkdownload(){
 function get_all_selected_users_files(selectedtaskkey) {
 
     var datatable = jQuery('#example').DataTable();
-    console.log(selectedtaskkey);
+   // console.log(selectedtaskkey);
     var listofids = [];
     
     var selectedrowsdatalist = datatable.rows( '.selected' ).data();

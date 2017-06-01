@@ -240,21 +240,59 @@ function resetallfilters() {
 
     jQuery("#userreportname").val('');
 
-    jQuery("#userreportcolumns").empty();
-    jQuery('#userbycolumnsname').empty();
+    jQuery("#usercontactfields").empty();
+    jQuery('#usertaskfields').empty();
+    jQuery("#usercontactfieldssortby").empty();
+    jQuery('#usertaskfieldssortby').empty();
+    
+   
     jQuery.each(columsheader, function (key, value) {
 
-        if (columsheader[key].title == 'Action' || columsheader[key].title == 'First Name' || columsheader[key].title == 'Last Name' || columsheader[key].title == 'Last login' || columsheader[key].title == 'Email' || columsheader[key].title == 'Company Name' || columsheader[key].title == 'Level') {
+                    if (columsheader[key].title == 'Action' || columsheader[key].title == 'First Name' || columsheader[key].title == 'Last Name' || columsheader[key].title == 'Last login' || columsheader[key].title == 'Email' || columsheader[key].title == 'Company Name' || columsheader[key].title == 'Level') {
+                        
+                         if(columsheader[key].key.search('task') > -1){
+                             jQuery('#usertaskfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
+                        
+                         }else{
+                             jQuery('#usercontactfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
+                        
+                         }
+                    } else {
 
-            jQuery('#userreportcolumns').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
-            jQuery('#userbycolumnsname').append('<option value="' + columsheader[key].title + '" >' + columsheader[key].title + '</option>');
+                        if(columsheader[key].key.search('task') > -1){
+                             jQuery('#usertaskfields').append('<option value="' + columsheader[key].key + '" >' + columsheader[key].title + '</option>');
+                        
+                         }else{
+                             jQuery('#usercontactfields').append('<option value="' + columsheader[key].key + '">' + columsheader[key].title + '</option>');
+                        
+                         }
+                    }
+                    
+                    if (columsheader[key].title == 'Company Name') {
+                                
+                                 jQuery('#usercontactfieldssortby').append('<option value="' + columsheader[key].title + '" selected="selected">' + columsheader[key].title + '</option>');
 
-        } else {
+                            
+                            
+                        }else if(columsheader[key].title != 'Action') {
 
-            jQuery('#userreportcolumns').append('<option value="' + columsheader[key].key + '" >' + columsheader[key].title + '</option>');
+                             if(columsheader[key].key.search('task') > -1){
+                                 
+                                jQuery('#usertaskfieldssortby').append('<option value="' + columsheader[key].title + '">' + columsheader[key].title + '</option>');
+ 
+                             }else{
+                                 
+                                 jQuery('#usercontactfieldssortby').append('<option value="' + columsheader[key].title + '" >' + columsheader[key].title + '</option>');
 
-        }
-    });
+                             }
+
+                        }
+                    
+                });
+                jQuery('#userreportcolumns').select2();
+                jQuery('#userbycolumnsname').select2();
+                jQuery('#sortingtype').select2();
+                
     jQuery("#loaduserreport option:selected").prop("selected", false);
     jQuery("#loaduserreport option[value=defult]").attr("selected","selected") ;
     jQuery('#userreportcolumns').select2();
@@ -325,8 +363,6 @@ jQuery('.drawdatatable').on('click', function () {
     
 
 });
-
-
 
 jQuery('.reloadclass').on('click', function () {
 

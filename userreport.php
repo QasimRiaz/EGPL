@@ -62,6 +62,7 @@ if ($_GET['contentManagerRequest'] == 'get_all_selected_users_files') {
         
        $random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
        $user_id = register_new_user( $username, $email );//wp_create_user($username, $random_password, $email);
+       
        if ( ! is_wp_error( $user_id ) ) {
        
        $result=$user_id;
@@ -78,8 +79,8 @@ if ($_GET['contentManagerRequest'] == 'get_all_selected_users_files') {
             
              
     }else{
-      
-        $message['msg'] = $user_id->errors['invalid_username'][0];
+        
+        $message['msg'] = $user_id->errors['invalid_email'][0];
     } 
     } else {
         

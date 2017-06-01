@@ -3018,8 +3018,6 @@ function my_contentmanager_style() {
     wp_enqueue_style('my-datepicker', plugins_url().'/EGPL/css/datepicker.css');
     wp_enqueue_style('jquery.dataTables', plugins_url().'/EGPL/css/jquery.dataTables.css');
     wp_enqueue_style('shCore', plugins_url().'/EGPL/css/shCore.css');
-   
-  
     wp_enqueue_style('my-datatable-tools', plugins_url().'/EGPL/css/dataTables.tableTools.css');
    // wp_enqueue_style('cleditor-css', plugins_url() .'/EGPL/css/jquery.cleditor.css');
    // wp_enqueue_style('contentmanager-css', plugins_url() .'/EGPL/css/forntend.css');
