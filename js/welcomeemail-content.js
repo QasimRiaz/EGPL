@@ -57,6 +57,8 @@ function multi_welcomeemail_save_template(){
     var url = window.location.protocol + "//" + window.location.host + "/";
     var welcomeemailtemplatename = jQuery('#welcomeemailtemplatename').val();
     
+    
+    
     var emailSubject =jQuery('#welcomeemailsubject').val();
     var emailBody=tinymce.activeEditor.getContent();//jQuery('#welcomebodytext').val();
     var welcomeemailfromname =jQuery('#welcomeemailfromname').val();

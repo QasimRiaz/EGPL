@@ -39,7 +39,7 @@
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/role.js?v=2.29"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.fileDownload.js?v=2.29"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/admin-modernizr.custom.js?v=2.29"></script>
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/welcomeemail-content.js?v=2.29"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/welcomeemail-content.js?v=2.22"></script>
         
         <script src="https://code.highcharts.com/highcharts.js"></script>
         <script src="https://code.highcharts.com/highcharts-more.js"></script>

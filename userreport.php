@@ -166,9 +166,13 @@ if ($_GET['contentManagerRequest'] == 'get_all_selected_users_files') {
     $replaytoemailadd =$_POST['replaytoemailadd'];
     $welcomeemailfromname =$_POST['welcomeemailfromname'];
     $template_name = $_POST['welcomeemailtemplatename'];
+    if($template_name == 'Welcome Email'){
+        $templatestringname = "welcome_email_template";
+    }else{
+     $templatestringname = strtolower(preg_replace('/\s+/', '_', $template_name));   
+    }
     
     
-    $templatestringname = strtolower(preg_replace('/\s+/', '_', $template_name));
     $settitng_key='AR_Contentmanager_Email_Template_welcome';
     $sponsor_info = get_option($settitng_key);
     

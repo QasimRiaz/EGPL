@@ -78,7 +78,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                             }else{
                                                               if($key == 'welcome_email_template'){
                                                                 
-                                                                echo '<option value="' . $key . '" selected="selected">Default Welcome Email</option>';  
+                                                                echo '<option value="' . $key . '" selected="selected">Welcome Email</option>';  
                                                               }else{
                                                               $template_name = ucwords(str_replace('_', ' ', $key));
                                                               echo '<option value="' . $key . '">' . $template_name . '</option>';
@@ -87,7 +87,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                             }else{
                                                             if($key == 'welcome_email_template'){
                                                                 
-                                                                echo '<option value="' . $key . '" selected="selected">Default Welcome Email</option>';  
+                                                                echo '<option value="' . $key . '" selected="selected">Welcome Email</option>';  
                                                             }else{
                                                               
                                                               $template_name = ucwords(str_replace('_', ' ', $key));
@@ -106,7 +106,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                             <form method="post" action="javascript:void(0);" onSubmit="multi_welcomeemail_save_template()">    	
                                                 <div class="form-group">
                                                     <div class="input-group">
-                                                        <input style="height: 38px;" placeholder="Template Name" value="<?php if(isset($_GET['loademailtemplate'])){echo $template_name_selected;}?>" id="welcomeemailtemplatename" type="text" class="form-control" required>
+                                                        <input style="height: 38px;" placeholder="Template Name" value="<?php if(isset($_GET['loademailtemplate'])){echo $template_name_selected;}else{echo 'Welcome Email';}?>" id="welcomeemailtemplatename" type="text" class="form-control" required>
                                                         <div class="input-group-btn">
                                                             <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 Action
