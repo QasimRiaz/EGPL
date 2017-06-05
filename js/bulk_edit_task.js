@@ -4,6 +4,7 @@
  var listview;
  var newfieldtask =0;
  var loadinglightbox;
+  var taskuseremaillist = [];
 jQuery(document).ready(function() {
   
    t = jQuery('.bulkedittask').DataTable( {
@@ -193,7 +194,60 @@ jQuery(window).load(function() {
    
    });
             
-            
+ jQuery(document).ready(function() {
+    
+    
+    var url = window.location.protocol + "//" + window.location.host + "/";
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getuseremailids';
+    var data = new FormData();
+    jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                
+               taskuseremaillist = jQuery.parseJSON(data);
+               
+               
+           }
+       });
+       var $myneweventSelect = jQuery(".js-example-events");
+
+
+$myneweventSelect.on("select2:open", function (e) { 
+    jQuery("body").css({'cursor':'wait'});
+    var selectedemailsids = [];
+    var id = jQuery(this).attr('id');
+    var lastdata = jQuery(this).select2('data');
+    jQuery.each(lastdata, function (optionkey, optionkeyvalue) {
+
+        selectedemailsids.push(optionkeyvalue.text);
+
+    });
+    
+    //jQuery(this).find('option').not(':selected').remove();
+    
+    jQuery.each(taskuseremaillist, function (key, value) {
+
+        var newState = new Option(value.text, value.id, false, false);
+
+        if (selectedemailsids.length > 0) {
+            if (jQuery.inArray(value.text, selectedemailsids) == -1) {
+
+                jQuery('#' + id).append(newState);
+            }
+
+        } else {
+
+            jQuery('#' + id).append(newState);
+        }
+    });
+    jQuery("body").css({'cursor':'default'});
+});
+   });           
     
             
 

@@ -122,7 +122,7 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
 	            </span>
 	            <ul class="mynav">
 	                <li class="mythemestyle">
-                             <a href="/user-report/">
+                             <a href="/user-report-result/">
                                <span class="glyphicon glyphicon-th"></span>
 	                       <span class="lbl menumargine">User Report</span>
                             </a>

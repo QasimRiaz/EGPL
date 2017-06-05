@@ -9,11 +9,24 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
   
     $settitng_key='AR_Contentmanager_Email_Template_welcome';
     $sponsor_info = get_option($settitng_key);
-     $oldvalues = get_option( 'ContenteManager_Settings' );
-     $formemail = $oldvalues['ContentManager']['formemail'];
+    $oldvalues = get_option( 'ContenteManager_Settings' );
+    $formemail = $oldvalues['ContentManager']['formemail'];
 
-
-    $content = $sponsor_info['welcome_email_template']['welcomeboday'];
+     //echo '<pre>';
+     //print_r($sponsor_info);exit;
+     
+     
+    if(isset($_GET['loademailtemplate'])){
+        
+        $loadreportname = $_GET['loademailtemplate'];
+    }else{
+        
+        $loadreportname = 'welcome_email_template';
+        
+    }
+    
+    $template_name_selected = ucwords(str_replace('_', ' ', $loadreportname));
+    $content = $sponsor_info[$loadreportname]['welcomeboday'];
     $editor_id = 'welcomebodytext';
     include 'cm_header.php';
     include 'cm_left_menu_bar.php';
@@ -41,13 +54,93 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
                 <h5 class="m-t-lg with-border"></h5>
 
+                  <section class="box-typical faq-page">
+                            <div class="faq-page-header-search">
+                                <div class="search">
+                                    <div class="row">
+                                        <div class="col-md-6">
+
+                                            <fieldset class="form-group">
+
+                                                <select style="width:100%;height:38px;"class="form-control" onchange="loadmultiwelcomeemailtemplate()" id="loadmultiwelcomeemailtemplate">
+                                                    <option disabled hidden>Load a Template</option>
+                                                    <option value="">Save Current Template As</option>
+                                                    <optgroup label="Saved Templates" id="multiloaduserreportlist">
+                                                    <?php
+                                                        foreach ($sponsor_info as $key=>$value) {
+                                                            
+                                                            
+                                                            if(isset($_GET['loademailtemplate'])){
+                                                                
+                                                                if($key == $_GET['loademailtemplate']){
+                                                                $template_name = ucwords(str_replace('_', ' ', $key));
+                                                                echo '<option value="' . $key . '" selected="selected">'.$template_name.'</option>';  
+                                                            }else{
+                                                              if($key == 'welcome_email_template'){
+                                                                
+                                                                echo '<option value="' . $key . '" selected="selected">Default Welcome Email</option>';  
+                                                              }else{
+                                                              $template_name = ucwords(str_replace('_', ' ', $key));
+                                                              echo '<option value="' . $key . '">' . $template_name . '</option>';
+                                                              }
+                                                            }
+                                                            }else{
+                                                            if($key == 'welcome_email_template'){
+                                                                
+                                                                echo '<option value="' . $key . '" selected="selected">Default Welcome Email</option>';  
+                                                            }else{
+                                                              
+                                                              $template_name = ucwords(str_replace('_', ' ', $key));
+                                                              echo '<option value="' . $key . '">' . $template_name . '</option>';  
+                                                            }
+                                                            }
+                                                        }
+                                                        ?>
+                                                    </optgroup>
+                                                </select>
+                                            </fieldset>
+                                        </div>
+
+                                        <div class="col-md-6">
+
+                                            <form method="post" action="javascript:void(0);" onSubmit="multi_welcomeemail_save_template()">    	
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <input style="height: 38px;" placeholder="Template Name" value="<?php if(isset($_GET['loademailtemplate'])){echo $template_name_selected;}?>" id="welcomeemailtemplatename" type="text" class="form-control" required>
+                                                        <div class="input-group-btn">
+                                                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                Action
+                                                            </button>
+                                                            <div class="dropdown-menu dropdown-menu-right">
+                                                                <button type="submit"  name="saveuserreport"  class="dropdown-item"  ><i class="font-icon fa fa-save" aria-hidden="true"></i> Save</button>
+                                                                <a class="dropdown-item" onclick="multi_welcome_removeeuserreport()"><i class="font-icon fa fa-remove" aria-hidden="true"></i>Delete</a>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>		
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--.faq-page-header-search-->
+
+
+
+                        </section><!--.faq-page-->
+                
+                
+                 <h5 class="m-t-lg with-border"></h5>
+                
               <form method="post" action="javascript:void(0);" onSubmit="welcomeemail_preview()">
                     
                    <div class="form-group row">
                                     <label class="col-sm-3 form-control-label">From Name <strong>*</strong></label>
                                     <div class="col-sm-5">
                                        <div class="form-control-wrapper form-control-icon-left">    
-							<input type="text"  class="form-control" id="welcomeemailfromname" placeholder="From Name" value="<?php echo  $sponsor_info['welcome_email_template']['fromname'];?>" required>
+							<input type="text"  class="form-control" id="welcomeemailfromname" placeholder="From Name" value="<?php echo  $sponsor_info[$loadreportname]['fromname'];?>" required>
 							<i class="font-icon fa fa-arrow-right"></i>	
                                        </div>
                                     </div>
@@ -60,7 +153,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     <label class="col-sm-3 form-control-label">Reply-To <i style="cursor: pointer;" title = 'Please input an email address. When the recipient hits Reply on the message, this email address will be selected to receive their reply.' class="reporticon font-icon fa fa-question-circle"></i></label>
                                     <div class="col-sm-9">
                                        <div class="form-control-wrapper form-control-icon-left">    
-							<input type="text"  class="form-control" id="replaytoemailadd" placeholder="Reply To Email address" value="<?php echo  $sponsor_info['welcome_email_template']['replaytoemailadd'];?>" >
+							<input type="text"  class="form-control" id="replaytoemailadd" placeholder="Reply To Email address" value="<?php echo  $sponsor_info[$loadreportname]['replaytoemailadd'];?>" >
 							<i class="fa fa-mail-reply"></i>	
                                        </div>
                                     </div>
@@ -70,7 +163,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     <label class="col-sm-3 form-control-label">Bcc <i style="cursor: pointer;" title='Please input an (only one) email address. All outgoing Welcome emails will be blind carbon copied to this address.'class="reporticon font-icon fa fa-question-circle"></i></label>
                                     <div class="col-sm-9">
                                        <div class="form-control-wrapper form-control-icon-left">    
-							<input type="text"  class="form-control" id="BCC" placeholder="BCC" value="<?php echo  $sponsor_info['welcome_email_template']['BCC'];?>" >
+							<input type="text"  class="form-control" id="BCC" placeholder="BCC" value="<?php echo  $sponsor_info[$loadreportname]['BCC'];?>" >
 							<i class="font-icon fa fa-copy"></i>	
                                        </div>
                                     </div>
@@ -80,7 +173,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     <label class="col-sm-3 form-control-label">Subject <strong>*</strong></label>
                                     <div class="col-sm-9">
                                        <div class="form-control-wrapper form-control-icon-left">    
-							<input type="text"  class="form-control" id="welcomeemailsubject" placeholder="Subject" value="<?php echo  $sponsor_info['welcome_email_template']['welcomesubject'];?>" >
+							<input type="text"  class="form-control" id="welcomeemailsubject" placeholder="Subject" value="<?php echo  $sponsor_info[$loadreportname]['welcomesubject'];?>" >
 							<i class="font-icon fa fa-edit"></i>	
                                        </div>
                                     </div>

@@ -50,7 +50,7 @@ function bulkemail_preview(){
      
       
                                     bulkemailcontentbox =    jQuery.confirm({
-                                             title: 'Preview!',
+                                             title: 'Preview',
                                              content: '<p id="success-msg-div"></p> <br> Subject : '+emailSubject+' <hr> '+emailBody+' <hr> <p style="margin-bottom: -60px !important;"><button type="button" title="Test email will be sent to '+currentAdminEmail+'" class="examplebutton btn mycustomwidth  btn-secondary">Send me a Test Email</button></p>',
                                              confirmButton:'Send',
                                              cancelButton:'Close',
@@ -520,7 +520,7 @@ function welcomeemail_preview(){
     
       
                                         jQuery.confirm({
-                                             title: 'Preview!',
+                                             title: 'Preview',
                                              content: '<p id="success-msg-div"></p> <br> Subject : '+emailSubject+' <hr> '+content+' <hr> <p style="margin-bottom: -69px !important;"><button type="button" title="Test email will be sent to '+currentAdminEmail+'" class="btn mycustomwidth btn-inline btn-primary examplebutton">Send me a Test Email</button></p>',
                                              confirmButton:'Save',
                                              cancelButton:'Close',
@@ -541,8 +541,9 @@ function welcomeemail_preview(){
     },
                                           
                                             confirm: function () {
-                                               updateWelcomeMsg();
-                                               this.setContent('<div class="alert wpb_content_element alert-success"><div class="messagebox_text"><p>Your message has been saved.</p></div></div>');
+                                               //updateWelcomeMsg();
+                                               
+                                               multi_welcomeemail_save_template();
                                                jQuery('.mysubmitemailbutton').hide();
                                               
                                                return false;
@@ -961,7 +962,8 @@ function warning_welcome_emailalreadysend(){
     var data = new FormData();
     var curdate = new Date()
     var usertimezone = curdate.getTimezoneOffset()/60;
-   
+    var hiddentemplatelist = jQuery("#hiddenlistemaillist").html();  
+    
     data.append('usertimezone', usertimezone);
     data.append('emailAddress', emailAddress);
 
@@ -989,7 +991,7 @@ function warning_welcome_emailalreadysend(){
                       
                   });
                   
-                datatablehtml+='</table></div>';
+                datatablehtml+='</table></div><p><strong>Select Welcome Email Template :</strong><select style="margin-left: 14px;border: #cccccc 1px solid;border-radius: 7px;height: 36px;width: 53%;"id="welcomeemailtemplate">'+hiddentemplatelist+'</select> </p>';
                   
                  jQuery.confirm({
                         title: 'Warning !',
@@ -999,19 +1001,17 @@ function warning_welcome_emailalreadysend(){
                         confirmButtonClass: 'btn  btn-lg btn-primary ',
                         cancelButtonClass: 'btn  btn-lg btn-danger',
                         confirm: function () {
-                         var sendwelcomeemailstatus = conform_send_welcomeemail_report();
-                         
-                   
-                
-                        swal({
+                         var selectedtemplateemailname = jQuery( "#welcomeemailtemplate option:selected" ).val(); 
+                         var sendwelcomeemailstatus = conform_send_welcomeemail_report(selectedtemplateemailname);
+                         swal({
                             title: "Success",
                             text: "Welcome email sent successfully.",
                             type: "success",
                             confirmButtonClass: "btn-success",
                             confirmButtonText: "Ok"
-                        },function(){
-                            location.reload();
-                        });
+                            },function(){
+                                window.location.reload();
+                            });
                        
                             return true;
                         },
@@ -1022,50 +1022,36 @@ function warning_welcome_emailalreadysend(){
                  });
              }else{
                   
-                  
                 
+                jQuery.confirm({
+                        title: 'Are you sure?',
+                        content: '<p>You want to send the welcome email to the selected users? Their password will be reset and included in the email.<p><strong>Select Welcome Email Template :</strong><select style="margin-left: 14px;border: #cccccc 1px solid;border-radius: 7px;height: 36px;width: 53%;"id="welcomeemailtemplate">'+hiddentemplatelist+'</select> </p>',
+                        confirmButton:'Yes, Send It!',
+                        cancelButton:'No, cancel please!',
+                        confirmButtonClass: 'btn  btn-lg btn-primary ',
+                        cancelButtonClass: 'btn  btn-lg btn-danger',
+                        confirm: function () {
+                        var selectedtemplateemailname = jQuery( "#welcomeemailtemplate option:selected" ).val(); 
+                        var sendwelcomeemailstatus = conform_send_welcomeemail_report(selectedtemplateemailname);
+                         swal({
+                            title: "Success",
+                            text: "Welcome email sent successfully.",
+                            type: "success",
+                            confirmButtonClass: "btn-success",
+                            confirmButtonText: "Ok"
+                            },function(){
+                                location.reload();
+                            });
+                       
+                            return true;
+                        },
+                        cancel: function () {
                    
-                   swal({
-                    title: "Are you sure?",
-                    text: 'You want to send the welcome email to the selected users? Their password will be reset and included in the email.',
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Yes, Send it!",
-                    cancelButtonText: "No, cancel please!",
-                    closeOnConfirm: false,
-                    closeOnCancel: false
-                },
-                        function (isConfirm) {
+                        }
 
-
-
-                            if (isConfirm) {
-
-                            var sendwelcomeemailstatus = conform_send_welcomeemail_report();
-                                swal({
-                                    title: "Success",
-                                    text: "Welcome email sent successfully.",
-                                    type: "success",
-                                    confirmButtonClass: "btn-success",
-                                    confirmButtonText: "Ok"
-                                }, function () {
-                                    location.reload();
-                                }
-                                );
-
-                            } else {
-                                swal({
-                                    title: "Cancelled",
-                                    text: "Welcome email was not sent",
-                                    type: "error",
-                                    confirmButtonClass: "btn-danger"
-                                });
-                            }
-                        });
-                 
-                 
-            
+                 });
+                   
+              
              }  
                 
             },error: function (xhr, ajaxOptions, thrownError) {
@@ -1085,7 +1071,7 @@ function warning_welcome_emailalreadysend(){
     
     
 }
-function conform_send_welcomeemail_report(){
+function conform_send_welcomeemail_report(selectedtemplateemailname){
      
      
    //jQuery('#bodytext').val();
@@ -1159,6 +1145,7 @@ function conform_send_welcomeemail_report(){
     data.append('attendeeallfields',   JSON.stringify(arrData));
     data.append('datacollist',   JSON.stringify(columnheaderdataarray));
     data.append('emailAddress', emailAddress);
+    data.append('selectedtemplateemailname', selectedtemplateemailname);
 
      jQuery.ajax({
             url: urlnew,
@@ -1266,7 +1253,7 @@ function old_bulkemail_preview(){
      
       
                                     bulkemailcontentbox =    jQuery.confirm({
-                                             title: 'Preview!',
+                                             title: 'Preview',
                                              content: '<p id="success-msg-div"></p> <br> Subject : '+emailSubject+' <hr> '+emailBody+' <hr> <p style="margin-bottom: -60px !important;"><button type="button" title="Test email will be sent to '+currentAdminEmail+'" class="examplebutton btn mycustomwidth  btn-secondary">Send me a Test Email</button></p>',
                                              confirmButton:'Send',
                                              cancelButton:'Close',

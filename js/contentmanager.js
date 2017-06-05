@@ -213,24 +213,14 @@ function calltoinsertorupdateuser(){
                 ]
             });
         }      
-             
          }   
-   
         });
-        
-       
    });
-   
-      
-        
-   
-    
-    
-    
 }
 var resuorcemsg;
 var  resuorcestatus;
 var settingArray;
+
 
 function add_new_sponsor(){
    var url = window.location.protocol + "//" + window.location.host + "/";
@@ -242,7 +232,10 @@ function add_new_sponsor(){
   if (jQuery('#checknewuser').is(":checked")){
        
         
+         var loadwelcomeemailtemplate = jQuery( "#selectedwelcomeemailtemp option:selected" ).val();
+         
          data.append('welcomeemailstatus', 'send');
+         data.append('welcomeemailtempname', loadwelcomeemailtemplate);
        
     }else{
         
@@ -919,8 +912,9 @@ function bulk_import_user(){
     
     if (jQuery('#check-1').is(":checked")){
        
-         
+         var seletwelcomeemailtemplate= jQuery( "#selectedwelcomeemailtemp option:selected" ).val();
          data.append('welcomeemailstatus', 'send');
+         data.append('seletwelcomeemailtemplate', seletwelcomeemailtemplate);
     }else{
         
        data.append('welcomeemailstatus', 'notsend'); 
@@ -1183,12 +1177,12 @@ function changeuseremailaddress(){
     var url = window.location.protocol + "//" + window.location.host + "/";
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=changeuseremailaddress';
     var data = new FormData();
-    
+    var hiddentemplatelist = jQuery("#hiddenlistemaillist").html();
     data.append('userid',   userid);
     data.append('oldemailaddress',   oldemailaddress);
      jQuery.confirm({
             title: "Change Email Address",
-            content: '<div id="titlestatus" ></div><div ><p></p><input placeholder="New Email Address" style="margin-bottom: 10px;padding: 9px;border: #d6e2e8 solid 1px; width: 100%; height: 35px; border-radius: 3px;" type="text" id="newemailaddress" ><p style="color:red;margin: 5px 0px;">This action will also change the login name for this user so we recommend that you send a welcome email message to the new email address.</p><br><p style="margin: 5px 0px;"><input checked type="checkbox" value="checked" id="welcomememailstatus"> Send a welcome email (and new password) to the new email address</p></div>',
+            content: '<div id="titlestatus" ></div><div ><p></p><input placeholder="New Email Address" style="margin-bottom: 10px;padding: 9px;border: #d6e2e8 solid 1px; width: 100%; height: 35px; border-radius: 3px;" type="text" id="newemailaddress" ><p style="color:red;margin: 5px 0px;">This action will also change the login name for this user so we recommend that you send a welcome email message to the new email address.</p><br><p style="margin: 5px 0px;"><input checked type="checkbox" value="checked" id="welcomememailstatus"> Send a welcome email (and new password) to the new email address</p><p><strong>Select Welcome Email Template :</strong><select style="margin-left: 14px;border: #cccccc 1px solid;border-radius: 7px;height: 36px;width: 53%;"id="welcomeemailtemplate">'+hiddentemplatelist+'</select> </p></div>',
             confirmButtonClass: 'mycustomwidth specialbuttoncolor',
            
             confirmButton:'Update',
@@ -1204,6 +1198,8 @@ function changeuseremailaddress(){
                    
                
                 if (jQuery('#welcomememailstatus').is(':checked')) {
+                     var selectedtemplateemailname = jQuery( "#welcomeemailtemplate option:selected" ).val();
+                     data.append('selectedtemplateemailname',   selectedtemplateemailname);
                      welcomememailstatus = 'checked';
                 }else{
                      welcomememailstatus = 'unchecked';
@@ -1228,7 +1224,7 @@ function changeuseremailaddress(){
                         if(finalresult.msg == 'update'){
                         swal({
                                 title: "Success!",
-                                text: 'The email and login name for the user has been changed to' + newemailaddress,
+                                text: 'The email and login name for the user has been changed to ' + newemailaddress,
                                 type: "success",
                                 confirmButtonClass: "btn-success"
                             },
@@ -1313,39 +1309,63 @@ function isValidEmailAddress(emailAddress) {
 function approvethisuser(elem){
  
   
- var idsponsor = jQuery(elem).attr("id");
  
+ 
+   
+    var idsponsor = jQuery(elem).attr("id");
+    jQuery.confirm({
+        title: '<p style="text-align:center;" >Are you sure?</p>',
+        content: '<p><h3 style="text-align:center;">Do you want to approve this user? This will send them a welcome email.</h3></p><p style="text-align:center;">Here you can assign a level to this user.</p><p style="text-align:center;"><strong>Assign Level :  </strong> <select id="selectassignlevel" style="width: 200px;border: 1px #0c0c0c solid;border-radius: 3px;height: 36px;">'+jQuery("#assignuserroles").html()+'</select></p>',
+        confirmButton: 'Yes, approve it!',
+        cancelButton: 'No, cancel please!',
+       
+        confirmButtonClass: 'btn mycustomwidth btn-lg btn-primary',
+        cancelButtonClass: 'btn  btn-lg btn-danger',
+       
+        
+        confirm: function () {
+            jQuery("body").css("cursor", "wait");
+            var userassignrole = jQuery('#selectassignlevel option:selected').val();
+            jQuery(".fa-check-circle-o").css("cursor", "not-allowed");
+           
+            conform_approvethis_user(idsponsor,userassignrole);
+           
+        },
+        cancel: function () {
+            //  location.reload();
+        }
 
-                                                swal({
-							title: "Are you sure?",
-							text: 'You want to approve this user?',
-							type: "warning",
-							showCancelButton: true,
-							confirmButtonClass: "btn-danger disablespecialevent",
-							confirmButtonText: "Yes, approved it!",
-							cancelButtonText: "No, cancel please!",
-							closeOnConfirm: false,
-							closeOnCancel: false
-						},
-						function(isConfirm) {
-                                                    
-                                                    
-                                                        jQuery("body").css({'cursor':'wait'}); 
-							if (isConfirm) {
-                                                             var Sname = conform_approvethis_user(idsponsor);
-								
-							} else {
-								swal({
-									title: "Cancelled",
-									text: "User is safe :)",
-									type: "error",
-									confirmButtonClass: "btn-danger"
-								});
-							}
-						});
+    });
+//                                                swal({
+//							title: "Are you sure?",
+//							text: 'You want to approve this user?',
+//							type: "warning",
+//							showCancelButton: true,
+//							confirmButtonClass: "btn-danger disablespecialevent",
+//							confirmButtonText: "Yes, approved it!",
+//							cancelButtonText: "No, cancel please!",
+//							closeOnConfirm: false,
+//							closeOnCancel: false
+//						},
+//						function(isConfirm) {
+//                                                    
+//                                                    
+//                                                        jQuery("body").css({'cursor':'wait'}); 
+//							if (isConfirm) {
+//                                                             var Sname = conform_approvethis_user(idsponsor);
+//								
+//							} else {
+//								swal({
+//									title: "Cancelled",
+//									text: "User is safe :)",
+//									type: "error",
+//									confirmButtonClass: "btn-danger"
+//								});
+//							}
+//						});
     
 }
-function conform_approvethis_user(idsponsor){
+function conform_approvethis_user(idsponsor,userassignrole){
     
     //  console.log(idsponsor);
      jQuery(".confirm").attr('disabled','disabled');
@@ -1353,7 +1373,12 @@ function conform_approvethis_user(idsponsor){
      
      var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=approve_selfsign_user';
      var data = new FormData();
+    
+    
+     
      data.append('id', idsponsor);
+     data.append('userassignrole', userassignrole);
+     
      jQuery.ajax({
             url: urlnew,
             data: data,

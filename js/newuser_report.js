@@ -79,26 +79,27 @@ jQuery(document).ready(function () {
             if(tech == 'edit'){
                 
                  var filtervalue = jQuery("#querybuilderfilter").val();
+                 console.log(filtervalue);
                  var showcollist = jQuery("#showcolonreport").val();
                  var orderby     = jQuery("#orderby").val();
                  var orderbycolname = jQuery("#orderbycolname").val();
                  var loadreportname = jQuery("#loadreportname").val();
-                 
+                 console.log(orderbycolname)
                  if(showcollist == ""){
            
                     window.location.href = url+"/user-report/";
                  }
-                 console.log(orderbycolname)
-                // console.log(JSON.parse(showcollist));
-                 console.log(showcollist);
                 
-                  
                  jQuery('#loaduserreport option[value="'+loadreportname+'"]').attr('selected', 'selected');
                  jQuery("#userreportname").val(loadreportname);
                  
                  jQuery('#builder').queryBuilder('setRules', JSON.parse(filtervalue));
-                 jQuery("#userreportcolumns").empty();
-                 jQuery('#userbycolumnsname').empty();
+                 jQuery("#usercontactfields").empty();
+                 jQuery('#usertaskfields').empty();
+                 jQuery("#usercontactfieldssortby").empty();
+                 jQuery('#usertaskfieldssortby').empty();
+                 
+                 
                  jQuery('#sortingtype').empty();
 
                 if (orderby == 'asc') {
@@ -112,29 +113,53 @@ jQuery(document).ready(function () {
                     jQuery('#sortingtype').append('<option value="asc">Asending</option>');
 
                 }
-                console.log(columsheader);
+               
                 
                
                 jQuery.each(columsheader, function (key, value) {
 
-                    if (jQuery.inArray(columsheader[key].key, JSON.parse(showcollist)) !== -1) {
-
-                        jQuery('#userreportcolumns').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
-                        if (orderbycolname == columsheader[key].title) {
-
-                            jQuery('#userbycolumnsname').append('<option value="' + columsheader[key].title + '" selected="selected">' + columsheader[key].title + '</option>');
-
-                        } else if(columsheader[key].title !='Action') {
-
-                            jQuery('#userbycolumnsname').append('<option value="' + columsheader[key].title + '" >' + columsheader[key].title + '</option>');
-
-                        }
-
+                    if (jQuery.inArray(columsheader[key].key, JSON.parse(showcollist)) !== -1 ) {
+                        if(columsheader[key].key.search('task') > -1){
+                            
+                            jQuery('#usertaskfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
+                        
+                        }else{
+                           
+                            jQuery('#usercontactfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
+                         }
                     } else {
 
-                        jQuery('#userreportcolumns').append('<option value="' + columsheader[key].key + '" >' + columsheader[key].title + '</option>');
+                         if(columsheader[key].key.search('task') > -1){
+                            
+                            jQuery('#usertaskfields').append('<option value="' + columsheader[key].key + '" >' + columsheader[key].title + '</option>');
 
+                        }else{
+                    
+                            jQuery('#usercontactfields').append('<option value="' + columsheader[key].key + '" >' + columsheader[key].title + '</option>');
+
+                        }
                     }
+                if(columsheader[key].title !='Action'){
+                    if(orderbycolname == columsheader[key].title){
+                         if(columsheader[key].key.search('task') > -1){
+                             jQuery('#usertaskfieldssortby').append('<option value="' + columsheader[key].title + '" selected="selected">' + columsheader[key].title + '</option>');
+                        
+                         }else{
+                            jQuery('#usercontactfieldssortby').append('<option value="' + columsheader[key].title + '" selected="selected">' + columsheader[key].title + '</option>');
+                         
+                         }
+                    }else{
+                        
+                        if(columsheader[key].key.search('task') > -1){
+                             jQuery('#usertaskfieldssortby').append('<option value="' + columsheader[key].title + '" >' + columsheader[key].title + '</option>');
+                        
+                         }else{
+                             jQuery('#usercontactfieldssortby').append('<option value="' + columsheader[key].title + '" >' + columsheader[key].title + '</option>');
+                        
+                         }
+                        
+                    }
+                }
                 });
                 
                 
@@ -145,49 +170,46 @@ jQuery(document).ready(function () {
                  jQuery('body').css('cursor', 'default');
                  jQuery('.block-msg-default').hide();
                  jQuery('.blockOverlay').hide();  
+                 
+                 
                 
             }else{
                 
             jQuery('#builder').queryBuilder('setRules', JSON.parse('{"condition":"AND","rules":[],"valid":true}'));
             jQuery.each(columsheader, function (key, value) {
                
-               
-                   
                if(columsheader[key].key.search('task') > -1){
-                   
-               }else{
-                if(columsheader[key].title == 'Company Name'){
+                            
+                            jQuery('#usertaskfields').append('<option value="' + columsheader[key].key + '">' + columsheader[key].title + '</option>');
+                            jQuery('#usertaskfieldssortby').append('<option value="' + columsheader[key].title + '" >' + columsheader[key].title + '</option>');
+                        
+                }else{
                     
-                   jQuery('#userbycolumnsname').append('<option value="' + columsheader[key].title + '"  selected="selected">' + columsheader[key].title + '</option>');
- 
-                }else if(columsheader[key].title != 'Action'){
-                   jQuery('#userbycolumnsname').append('<option value="' + columsheader[key].title + '" >' + columsheader[key].title + '</option>');
- 
-                }
-                }
-               if(columsheader[key].key.search('task') > -1){
-                if (columsheader[key].title == 'Action' || columsheader[key].title == 'First Name' || columsheader[key].title == 'Last Name' || columsheader[key].title == 'Last login' || columsheader[key].title == 'Email' || columsheader[key].title == 'Company Name' ) {
-
-                    jQuery('#usertaskfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
-                    
-                } else {
-
-                    jQuery('#usertaskfields').append('<option value="' + columsheader[key].key + '" >' + columsheader[key].title + '</option>');
-                    
-                }
-            }else{
-                if (columsheader[key].title == 'Action' || columsheader[key].title == 'First Name' || columsheader[key].title == 'Last Name' || columsheader[key].title == 'Last login' || columsheader[key].title == 'Email' || columsheader[key].title == 'Company Name' ) {
-
-                    jQuery('#usercontactfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
-                    
-                } else {
-
-                    jQuery('#usercontactfields').append('<option value="' + columsheader[key].key + '" >' + columsheader[key].title + '</option>');
-                    
-                }
-            }
+                    if (columsheader[key].title == 'Action' || columsheader[key].title == 'First Name' || columsheader[key].title == 'Last Name' || columsheader[key].title == 'Last login' || columsheader[key].title == 'Email' || columsheader[key].title == 'Company Name' || columsheader[key].title == 'Level' ) {
+                            
+                            jQuery('#usercontactfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
+                           
+                            }else{
+                           
+                            jQuery('#usercontactfields').append('<option value="' + columsheader[key].key + '" >' + columsheader[key].title + '</option>');
+                             
+                    }
+                    if(columsheader[key].title !='Action'){       
+                     if(columsheader[key].title == 'Company Name' ){
+                               
+                               jQuery('#usercontactfieldssortby').append('<option value="' + columsheader[key].title + '" selected="selected">' + columsheader[key].title + '</option>');
+                        
+                           }else{
+                              jQuery('#usercontactfieldssortby').append('<option value="' + columsheader[key].title + '" >' + columsheader[key].title + '</option>');
+                        
+                           }
+                    }
+               }
+           
             });
+            
             jQuery('#userreportcolumns').select2();
+            jQuery('#userbycolumnsname').select2();
             
                 jQuery('body').css('cursor', 'default');
                 jQuery('.block-msg-default').hide();
@@ -218,21 +240,59 @@ function resetallfilters() {
 
     jQuery("#userreportname").val('');
 
-    jQuery("#userreportcolumns").empty();
-    jQuery('#userbycolumnsname').empty();
+    jQuery("#usercontactfields").empty();
+    jQuery('#usertaskfields').empty();
+    jQuery("#usercontactfieldssortby").empty();
+    jQuery('#usertaskfieldssortby').empty();
+    
+   
     jQuery.each(columsheader, function (key, value) {
 
-        if (columsheader[key].title == 'Action' || columsheader[key].title == 'First Name' || columsheader[key].title == 'Last Name' || columsheader[key].title == 'Last login' || columsheader[key].title == 'Email' || columsheader[key].title == 'Company Name' ) {
+                    if (columsheader[key].title == 'Action' || columsheader[key].title == 'First Name' || columsheader[key].title == 'Last Name' || columsheader[key].title == 'Last login' || columsheader[key].title == 'Email' || columsheader[key].title == 'Company Name' || columsheader[key].title == 'Level') {
+                        
+                         if(columsheader[key].key.search('task') > -1){
+                             jQuery('#usertaskfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
+                        
+                         }else{
+                             jQuery('#usercontactfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
+                        
+                         }
+                    } else {
 
-            jQuery('#userreportcolumns').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
-            jQuery('#userbycolumnsname').append('<option value="' + columsheader[key].title + '" >' + columsheader[key].title + '</option>');
+                        if(columsheader[key].key.search('task') > -1){
+                             jQuery('#usertaskfields').append('<option value="' + columsheader[key].key + '" >' + columsheader[key].title + '</option>');
+                        
+                         }else{
+                             jQuery('#usercontactfields').append('<option value="' + columsheader[key].key + '">' + columsheader[key].title + '</option>');
+                        
+                         }
+                    }
+                    
+                    if (columsheader[key].title == 'Company Name') {
+                                
+                                 jQuery('#usercontactfieldssortby').append('<option value="' + columsheader[key].title + '" selected="selected">' + columsheader[key].title + '</option>');
 
-        } else {
+                            
+                            
+                        }else if(columsheader[key].title != 'Action') {
 
-            jQuery('#userreportcolumns').append('<option value="' + columsheader[key].key + '" >' + columsheader[key].title + '</option>');
+                             if(columsheader[key].key.search('task') > -1){
+                                 
+                                jQuery('#usertaskfieldssortby').append('<option value="' + columsheader[key].title + '">' + columsheader[key].title + '</option>');
+ 
+                             }else{
+                                 
+                                 jQuery('#usercontactfieldssortby').append('<option value="' + columsheader[key].title + '" >' + columsheader[key].title + '</option>');
 
-        }
-    });
+                             }
+
+                        }
+                    
+                });
+                jQuery('#userreportcolumns').select2();
+                jQuery('#userbycolumnsname').select2();
+                jQuery('#sortingtype').select2();
+                
     jQuery("#loaduserreport option:selected").prop("selected", false);
     jQuery("#loaduserreport option[value=defult]").attr("selected","selected") ;
     jQuery('#userreportcolumns').select2();
@@ -252,7 +312,6 @@ jQuery('.drawdatatable').on('click', function () {
     var selectedcolumnskeys  =  [];
     var selectedcolumnslebel = jQuery('#userreportcolumns').select2("data");
     var selectedcolumnslebelarray = []; 
-    console.log(selectedcolumnslebel);
     var userbycolname = jQuery('#userbycolumnsname').select2("val");
     var loadreportname = jQuery('#loaduserreport option:selected').val();
     var userbytype = jQuery('#sortingtype').select2("val");
@@ -266,6 +325,25 @@ jQuery('.drawdatatable').on('click', function () {
         selectedcolumnslebelarray.push(value.text);
         selectedcolumnskeys.push(value.id)
     });
+    
+    //console.log(filterdata)
+    //console.log(selectedcolumnskeys);
+    
+    jQuery.each(filterdata.rules, function (key, value) {
+       
+       
+        if (jQuery.inArray(value.id, selectedcolumnskeys) == -1) {
+            
+           // console.log(value.id);
+            selectedcolumnskeys.push(value.id)
+            
+        }
+        
+        
+    });
+    
+    
+    console.log(selectedcolumnskeys);
     
    
     
@@ -463,8 +541,12 @@ function loaduserreport() {
                 console.log(getuserreportsavedlist[1]);
                 jQuery('#builder').queryBuilder('setRules', JSON.parse(getuserreportsavedlist[0]));
                 jQuery('body').css('cursor', 'default');
-                jQuery("#userreportcolumns").empty();
-                jQuery('#userbycolumnsname').empty();
+                jQuery("#usercontactfields").empty();
+                jQuery('#usertaskfields').empty();
+                jQuery("#usercontactfieldssortby").empty();
+                jQuery('#usertaskfieldssortby').empty();
+                
+                
                 jQuery('#sortingtype').empty();
 
                 if (getuserreportsavedlist[2] == 'asc') {
@@ -481,23 +563,50 @@ function loaduserreport() {
                 jQuery.each(columsheader, function (key, value) {
 
                     if (jQuery.inArray(columsheader[key].key, JSON.parse(getuserreportsavedlist[1])) !== -1) {
-
-                        jQuery('#userreportcolumns').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
-                        if (getuserreportsavedlist[3] == columsheader[key].key) {
-
-                            jQuery('#userbycolumnsname').append('<option value="' + columsheader[key].title + '" selected="selected">' + columsheader[key].title + '</option>');
-
-                        }else if(columsheader[key].title != 'Action') {
-
-                            jQuery('#userbycolumnsname').append('<option value="' + columsheader[key].title + '" >' + columsheader[key].title + '</option>');
-
-                        }
-
+                        
+                         if(columsheader[key].key.search('task') > -1){
+                             jQuery('#usertaskfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
+                        
+                         }else{
+                             jQuery('#usercontactfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
+                        
+                         }
                     } else {
 
-                        jQuery('#userreportcolumns').append('<option value="' + columsheader[key].key + '" >' + columsheader[key].title + '</option>');
-
+                        if(columsheader[key].key.search('task') > -1){
+                             jQuery('#usertaskfields').append('<option value="' + columsheader[key].key + '" >' + columsheader[key].title + '</option>');
+                        
+                         }else{
+                             jQuery('#usercontactfields').append('<option value="' + columsheader[key].key + '">' + columsheader[key].title + '</option>');
+                        
+                         }
                     }
+                    
+                    if (getuserreportsavedlist[3] == columsheader[key].title) {
+                             if(columsheader[key].key.search('task') > -1){
+                                 
+                                jQuery('#usertaskfieldssortby').append('<option value="' + columsheader[key].title + '" selected="selected">' + columsheader[key].title + '</option>');
+ 
+                             }else{
+                                 
+                                 jQuery('#usercontactfieldssortby').append('<option value="' + columsheader[key].title + '" selected="selected">' + columsheader[key].title + '</option>');
+
+                             }
+                            
+                        }else if(columsheader[key].title != 'Action') {
+
+                             if(columsheader[key].key.search('task') > -1){
+                                 
+                                jQuery('#usertaskfieldssortby').append('<option value="' + columsheader[key].title + '">' + columsheader[key].title + '</option>');
+ 
+                             }else{
+                                 
+                                 jQuery('#usercontactfieldssortby').append('<option value="' + columsheader[key].title + '" selected="selected">' + columsheader[key].title + '</option>');
+
+                             }
+
+                        }
+                    
                 });
                 jQuery('#userreportcolumns').select2();
                 jQuery('#userbycolumnsname').select2();

@@ -17,7 +17,9 @@
        $additional_fields_settings_key = 'EGPL_Settings_Additionalfield';
        $additional_fields = get_option($additional_fields_settings_key);
        $sponsor_name = $sponsor_info['ContentManager']['sponsor-name'];
-     
+       
+       $welcomeemail_template_info_key='AR_Contentmanager_Email_Template_welcome';
+       $welcomeemail_template_info = get_option($welcomeemail_template_info_key);
       
       global $wp_roles;
      
@@ -41,7 +43,22 @@
                     </div>
                 </div>
             </header>
-
+            <select id="hiddenlistemaillist" style="display: none;">
+                
+                <?php  foreach ($welcomeemail_template_info as $key=>$value) { 
+                                            
+                                            $template_name = ucwords(str_replace('_', ' ', $key));
+                                            if($key == "welcome_email_template"){
+                                                 echo  '<option value="' . $key . '" selected="selected">Defult Welcome Email</option>';
+                                            }else{
+                                                 echo  '<option value="' . $key . '" >'.$template_name.'</option>';
+                                            }
+                                          
+                                         }
+                ?>
+                                     
+                
+            </select>
             <div class="box-typical box-typical-padding">
                 <p>
                 You can edit the selected user here and change their password. </p>

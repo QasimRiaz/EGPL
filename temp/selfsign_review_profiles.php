@@ -24,8 +24,12 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
    $user_query = new WP_User_Query( $args );
    $authors = $user_query->get_results();
    
+   $get_all_roles_array = 'wp_user_roles';
+   $get_all_roles = get_option($get_all_roles_array);
+   
    
    ?>
+
 
    <div class="page-content">
         <div class="container-fluid">
@@ -39,7 +43,16 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                     </div>
                 </div>
             </header>
-           
+           <select id="assignuserroles" style="display: none;" >
+               <option value="subscriber" selected="selected"></option>   
+    <?php  
+    foreach ($get_all_roles as $key => $item) {
+        if($item['name'] !='Administrator' && $item['name'] !='Content Manager' && $item['name'] !='Subscriber'){
+        ?>
+            <option value="<?php echo $key;?>"><?php echo $item['name'];?></option>   
+            
+    <?php }} ?>
+</select>
            <div class="box-typical box-typical-padding"  > 
             
             

@@ -801,7 +801,6 @@ function productclone($productcloneid) {
     try {
 
         global $wpdb;
-        
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);
         $lastInsertId = contentmanagerlogging('Clone Product', "Admin Action", $productcloneid, $user_ID, $user_info->user_email, "pre_action_data");
@@ -819,14 +818,14 @@ function productclone($productcloneid) {
             'timeout' => 30,
             'ssl_verify' => false,
         );
-        
        $woocommerce_rest_api_keys = get_option( 'ContenteManager_Settings' );
        $wooconsumerkey = $woocommerce_rest_api_keys['ContentManager']['wooconsumerkey'];
        $wooseceretkey = $woocommerce_rest_api_keys['ContentManager']['wooseceretkey']; 
+       
        $woocommerce_object = new WC_API_Client( $url, $wooconsumerkey, $wooseceretkey, $options );
        $get_product_clone = $woocommerce_object->products->get($postid);
         
-       $product_cat_list = $woocommerce_object->products->get_categories() ;
+        $product_cat_list = $woocommerce_object->products->get_categories() ;
         foreach ($product_cat_list->product_categories as $key => $value) {
              
              if($get_product_clone->product->categories[0] == $value->name){

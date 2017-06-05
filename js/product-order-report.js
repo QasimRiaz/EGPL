@@ -3,12 +3,15 @@ var filtersarray = '';
 var rowsdata = '';
 var columsheader = '';
 var columnsheaderarrayfortable = [];
+var orderreportstatusloading ="";
 var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 jQuery(document).ready(function () {
 
     jQuery("body").css({'cursor': 'wait'});
     jQuery('[data-toggle="tooltip"]').tooltip();
+    orderreportstatusloading = getUrlParameter('orderreport');
+   
     var $b = jQuery('#builder');
 
     var options = {
@@ -136,7 +139,7 @@ jQuery(document).ready(function () {
                         { "type": "date", "targets": 1 }
                         
                     ],
-                    dom: 'lBrtip',
+                    dom: 'fBrlpt',
                     buttons: [
                         {
                             extend: 'excelHtml5',
@@ -166,20 +169,43 @@ jQuery(document).ready(function () {
                 jQuery('#filteredordercount').empty();
                 var filterrowscount = ordertablereport.api().rows({filter: 'applied'});
                 jQuery('#filteredordercount').append(filterrowscount[0].length);
+                jQuery('#builder').queryBuilder('setRules', JSON.parse('{"condition":"AND","rules":[],"valid":true}'));
+                if (orderreportstatusloading != undefined) {
+                    
+                   
+                    
+                    jQuery("body").css({'cursor': 'wait'});
+                    loadorderreport(decodeURIComponent(orderreportstatusloading));
+                    jQuery("#loadorderreport option:selected").prop("selected", false);
+                    jQuery('#loadorderreport').val(decodeURIComponent(orderreportstatusloading));  
+                    getapplyfiltersonordereport();
+                    
+                }
 
             }
 
         }
     });
-
-
+    
+    
+    
+   
 
 
 
 
 });
 
-
+function request_getapplyfiltersonordereport(){
+    
+    orderreportstatusloading = undefined;
+    var loadreportname = jQuery( "#loadorderreport option:selected" ).val();
+    jQuery("#customeloadorderreport option:selected").prop("selected", false);
+    jQuery('#customeloadorderreport').val(loadreportname);
+    getapplyfiltersonordereport();
+    
+    
+}
 jQuery('.resetorderfilters').on('click', function () {
     //ordertablereport = jQuery('#orderreport').dataTable();
 
@@ -220,16 +246,31 @@ function resetallfilters() {
 
 
 
-jQuery('.drawdatatable').on('click', function () {
+function getapplyfiltersonordereport() {
 
-
-    var jsondataorder = jQuery('#builder').queryBuilder('getRules');
-    var selectedcolumns = jQuery('#orderreportcolumns').select2("val");
-    var orderbycolname = jQuery('#orderbycolumnsname').select2("val");
-    var orderbytype = jQuery('#sortingtype').select2("val");
+    if(orderreportstatusloading != undefined ){
+        
+        
+        var jsondataorder = JSON.parse(jQuery('#filtersrowsdata').val());
+        var selectedcolumns = JSON.parse(jQuery('#showcolorderreportname').val());
+        var orderbycolname = jQuery('#orderbycolname').val();
+        var orderbytype = jQuery('#orderby').val();
+        console.log(jsondataorder);
+        console.log(selectedcolumns);
+        
+        
+    }else{
+        
+        var jsondataorder = jQuery('#builder').queryBuilder('getRules');
+        var selectedcolumns = jQuery('#orderreportcolumns').select2("val");
+        var orderbycolname = jQuery('#orderbycolumnsname').select2("val");
+        var orderbytype = jQuery('#sortingtype').select2("val"); 
+        
+    }
+    
+    
     var filteroutput = '';
     jQuery('.filtersarraytooltip').empty();
-
     jQuery.fn.dataTableExt.afnFiltering.length = 0;
     ordertablereport.dataTable().fnDraw();
     var tablesettings = jQuery('#orderreport').DataTable().settings();
@@ -492,16 +533,12 @@ jQuery('.drawdatatable').on('click', function () {
 
 
 
-
-        jQuery('.nav a[href="#tabs-1-tab-2"]').tab('show');
+        jQuery("body").css({'cursor': 'default'});
+        jQuery('.nav a[href="#tabs-1-tab-1"]').tab('show');
 
     }
+}
 
-
-
-
-
-});
 
 jQuery('.reloadclass').on('click', function () {
 
@@ -509,7 +546,7 @@ jQuery('.reloadclass').on('click', function () {
 });
 jQuery('.backtofilter').on('click', function () {
 
-    jQuery('.nav a[href="#tabs-1-tab-1"]').tab('show');
+    jQuery('.nav a[href="#tabs-1-tab-2"]').tab('show');
 
 });
 
@@ -597,7 +634,8 @@ function removeeorderreport() {
                             type: "success",
                             confirmButtonClass: "btn-success"
                         }, function () {
-
+                            var url = window.location.protocol + "//" + window.location.host + "/";
+                             window.location.href = url + "order-report/";
 
                         }
                         );
@@ -652,9 +690,19 @@ function confrimremoveorderreport(orderreportname) {
     });
 }
 
-function loadorderreport() {
+function loadorderreport(loadingreportname) {
+    
     jQuery("body").css({'cursor': 'wait'});
-    var dropdownvalue = jQuery("#loadorderreport option:selected").val();
+    console.log(loadingreportname+'_testher');
+    if(loadingreportname !=""){
+        
+        var dropdownvalue = loadingreportname;
+       
+    }else{
+        var dropdownvalue = jQuery("#loadorderreport option:selected").val();
+        
+    }
+    
     if (dropdownvalue != "defult") {
 
         jQuery("#orderreportname").val(dropdownvalue);
@@ -737,4 +785,21 @@ function loadorderreport() {
 
 
 
+}
+
+function customeloadorderreport(){
+    
+        var loadreportname = jQuery( "#customeloadorderreport option:selected" ).val();
+       
+        var url = window.location.protocol + "//" + window.location.host + "/";
+
+        if(loadreportname == 'defult'){
+          window.location.href = url + "order-report/";
+
+        }else{
+          window.location.href = url + "order-report/?orderreport="+ encodeURI(loadreportname);
+        }
+
+    
+    
 }

@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           2.20
+ * Version:           2.21
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -17,7 +17,30 @@
 
 //get all the plugin settings
 //get all the plugin settings
-if($_GET['contentManagerRequest'] == "checkwelcomealreadysend") {        
+if($_GET['contentManagerRequest'] == "getuseremailids") {        
+    require_once('../../../wp-load.php');
+    $fields = array( 'ID','user_email' );
+    $args = array(
+        'role__not_in' => array('administrator'),
+        'fields' => $fields,
+    );
+     
+    
+     $get_all_ids = get_users($args);
+    
+    $indexplus = 0;
+    
+    foreach ($get_all_ids as $user) {
+        
+            $getuserresult[$indexplus]['id'] = $user->ID;
+            $getuserresult[$indexplus]['text'] = $user->user_email;
+            $indexplus++;
+    }
+    echo json_encode($getuserresult);
+    die();
+   
+  
+}else if($_GET['contentManagerRequest'] == "checkwelcomealreadysend") {        
     require_once('../../../wp-load.php');
     
     checkwelcomealreadysend($_POST);
@@ -545,12 +568,14 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
     $username = str_replace("+","",$_POST['username']);;
     $email = $_POST['email'];
     $role =$_POST['sponsorlevel'];
+    $welcomeemailtemplatename = $_POST['welcomeemailtempname'];
     $loggin_data=$_POST;
     
     
     unset($_POST['username']);
     unset($_POST['email']);
     unset($_POST['sponsorlevel']);
+    unset($_POST['welcomeemailtempname']);
     
   //  print_r($_POST);
     $welcomeemail_status = $_POST['welcomeemailstatus'];
@@ -621,7 +646,7 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
        add_new_sponsor_metafields($user_id,$meta_array,$role);
        if($welcomeemail_status == 'send'){
             $useremail='';
-            custome_email_send($user_id,$useremail);
+            custome_email_send($user_id,$useremail,$welcomeemailtemplatename);
             $t=time();
             update_user_meta($user_id, 'convo_welcomeemail_datetime', $t*1000);
        }      
@@ -754,13 +779,15 @@ try {
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $mandrill = $oldvalues['ContentManager']['mandrill'];
     $mandrill = new Mandrill($mandrill);
+    $sendcustomewelcomeemail = $_POST['selectedtemplateemailname'];
+    
     
     $settitng_key='AR_Contentmanager_Email_Template_welcome';
     $sponsor_info = get_option($settitng_key);
     
     
-    $subject = $sponsor_info['welcome_email_template']['welcomesubject'];
-    $body=stripslashes ($sponsor_info['welcome_email_template']['welcomeboday']);
+    $subject = $sponsor_info[$sendcustomewelcomeemail]['welcomesubject'];
+    $body=stripslashes ($sponsor_info[$sendcustomewelcomeemail]['welcomeboday']);
     $emailAddress=$_POST['emailAddress'];
     $emailaddress_array=explode(",", $emailAddress);
     $user_ID = get_current_user_id();
@@ -772,10 +799,11 @@ try {
     $formemail = $oldvalues['ContentManager']['formemail'];
    
     if(empty($formemail)){
+        
         $formemail = 'noreply@convospark.com';
         
     }
-   $bcc =  $sponsor_info['welcome_email_template']['BCC'];
+   $bcc =  $sponsor_info[$sendcustomewelcomeemail]['BCC'];
  
    $fromname = $_POST['fromname'];
   
@@ -910,7 +938,7 @@ try {
         'from_email' => $formemail,
         'from_name' => $fromname,
         'to' => $to_message_array,
-        'headers' => array('Reply-To' => $sponsor_info['welcome_email_template']['replaytoemailadd']),
+        'headers' => array('Reply-To' => $sponsor_info[$sendcustomewelcomeemail]['replaytoemailadd']),
         
         'track_opens' => true,
         'track_clicks' => true,
@@ -1574,6 +1602,7 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
     $file=$_FILES['file'];
     
     $welcomeemailstatus=$_POST['welcomeemailstatus'];
+    $selectwelcomeemailtempname=$_POST['seletwelcomeemailtemplate'];
     
     add_filter( 'upload_dir', 'wpse_183245_upload_dir' );
     $resourceurl = bulk_import_user_file($file);
@@ -1587,7 +1616,7 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
     if(!empty($resourceurl)){
     // echo $resourceurl;
       $filename_import = basename($resourceurl);      
-      $responce  =  bulkimport_userfile($filename_import,$welcomeemailstatus);
+      $responce  =  bulkimport_userfile($filename_import,$welcomeemailstatus,$selectwelcomeemailtempname);
         
     }else{
        
@@ -1711,13 +1740,7 @@ function roleassignnewtasks($request){
             
         }
        }
-        
-        
-        
-       
-        
-        
-        //echo '<pre>';
+       //echo '<pre>';
         //print_r($result_old['profile_fields']);exit;
         
         
@@ -1770,7 +1793,6 @@ function editrolename($request){
            
             $result_status['msg']= 'already exists';
         }
-        
         
         contentmanagerlogging_file_upload ($lastInsertId,serialize($result_status));
         
@@ -2966,7 +2988,7 @@ function getReportsdatanew($report_name,$usertimezone){
 
 add_action('wp_enqueue_scripts', 'add_contentmanager_js');
 function add_contentmanager_js(){
-      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'1.1.0', true);
+      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'2.1.0', true);
     
      wp_enqueue_script( 'jquery.alerts', plugins_url() . '/EGPL/js/jquery.alerts.js', array(), '1.1.0', true );
      wp_enqueue_script( 'boot-date-picker', plugins_url() . '/EGPL/js/bootstrap-datepicker.js', array(), '1.2.0', true );
@@ -3020,7 +3042,12 @@ function my_plugin_activate() {
             $get_all_roles[$key]['capabilities']['unfiltered_upload'] = 1;
             $get_all_roles[$key]['capabilities']['upload_files'] = 1;
            }
-            
+          
+           if($key == 'subscriber'){
+               
+               $get_all_roles[$key]['name'] = 'Unassigned';
+               
+           }
             
         }
         
@@ -3308,7 +3335,7 @@ add_action( 'init', 'add_contentmanager_settings' );
 
 function add_contentmanager_settings() {
     
-    wp_register_script('adminjs', plugins_url('js/admin-cmanager.js?v=2.21', __FILE__), array('jquery'));
+    wp_register_script('adminjs', plugins_url('js/admin-cmanager.js?v=2.25', __FILE__), array('jquery'));
     wp_enqueue_script('adminjs');
     //$settings_array['ContentManager']['sponsor-name']='Exhibitor';
     //update_option( 'ContenteManager_Settings', $settings_array);
@@ -3355,6 +3382,7 @@ function updatecmanagersettings($object_data){
     $wooseceretkey = $object_data['wooseceretkey'];
     $wooconsumerkey = $object_data['wooconsumerkey'];
     $selfsignstatus = $object_data['selfsignstatus'];
+    $userreportcontent =   $object_data['userreportcontent']; 
     
     $addresspoints = $object_data['addresspoints'];
     
@@ -3386,6 +3414,8 @@ function updatecmanagersettings($object_data){
     $oldvalues['ContentManager']['adminsitelogo']=$object_data['adminsitelogourl'];
     $oldvalues['ContentManager']['mapapikey']=$mapapikey;
     $oldvalues['ContentManager']['mapsecretkey']=$mapsecretkey;
+    $oldvalues['ContentManager']['userreportcontent']=stripslashes($userreportcontent);
+    
     
     $oldvalues['ContentManager']['wooseceretkey']=$wooseceretkey;
     $oldvalues['ContentManager']['wooconsumerkey']=$wooconsumerkey;
@@ -3449,18 +3479,18 @@ function excludes_sponsor_meta(){
     
      $oldvalues = get_option( 'ContenteManager_Settings' );
  
-     $sponsor_name  = $oldvalues['ContentManager']['sponsor_name'];
-     $attendytype   =  $oldvalues['ContentManager']['attendytype_key'];
-     $eventdate     =   $oldvalues['ContentManager']['eventdate'];
-     $formemail     =   $oldvalues['ContentManager']['formemail'];
-     $mandrill      =    $oldvalues['ContentManager']['mandrill'];
-     $mapapikey     =   $oldvalues['ContentManager']['mapapikey'];
-     $mapsecretkey  = $oldvalues['ContentManager']['mapsecretkey'];
-     $adminsitelogo = $oldvalues['ContentManager']['adminsitelogo'];
-     $wooconsumerkey= $oldvalues['ContentManager']['wooconsumerkey'];
-     $wooseceretkey = $oldvalues['ContentManager']['wooseceretkey'];
-     $selfsignstatus = $oldvalues['ContentManager']['selfsignstatus'];
-     
+     $sponsor_name      =   $oldvalues['ContentManager']['sponsor_name'];
+     $attendytype       =   $oldvalues['ContentManager']['attendytype_key'];
+     $eventdate         =   $oldvalues['ContentManager']['eventdate'];
+     $formemail         =   $oldvalues['ContentManager']['formemail'];
+     $mandrill          =   $oldvalues['ContentManager']['mandrill'];
+     $mapapikey         =   $oldvalues['ContentManager']['mapapikey'];
+     $mapsecretkey      =   $oldvalues['ContentManager']['mapsecretkey'];
+     $adminsitelogo     =   $oldvalues['ContentManager']['adminsitelogo'];
+     $wooconsumerkey    =   $oldvalues['ContentManager']['wooconsumerkey'];
+     $wooseceretkey     =   $oldvalues['ContentManager']['wooseceretkey'];
+     $selfsignstatus    =   $oldvalues['ContentManager']['selfsignstatus'];
+     $userreportcontent =   stripslashes($oldvalues['ContentManager']['userreportcontent']);
      
       
      //echo'<pre>';
@@ -3532,7 +3562,7 @@ function excludes_sponsor_meta(){
 </td>
        </tr>
        
-<tr><td><h4>Woocommerce Api Consumer Key</h4></td>
+       <tr><td><h4>Woocommerce Api Consumer Key</h4></td>
  
         <td><input type="text" name="wooconsumerkey"  id="wooconsumerkey" value='.$wooconsumerkey.'></td>
        </tr>
@@ -3540,9 +3570,13 @@ function excludes_sponsor_meta(){
 
         <td>
         <input type="text" name="wooseceretkey"  id="wooseceretkey" value='.$wooseceretkey.'>
-       
-</td>
+        </td>
        </tr>
+       <tr><td><h4>User Report bottom content</h4></td>
+ 
+        <td><textarea style="width:300px;height:100px" id="userreportcontent" >'.$userreportcontent.'</textarea></td>
+       </tr>
+
        <tr>
        <td style="text-align: center;"><a style="margin-top: 20px;
 " onclick="updatecontentsettings()" class="button">Save</a></td>
@@ -3891,7 +3925,7 @@ global $wpdb;
 
 
 
-function custome_email_send($user_id,$userlogin=''){
+function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename=''){
         global $wpdb, $wp_hasher;
         $user = get_userdata($user_id);
         
@@ -3905,7 +3939,11 @@ function custome_email_send($user_id,$userlogin=''){
             $user_email = $userlogin;
             $user_login = $userlogin;
         }
-        
+        if(empty($welcomeemailtemplatename)){
+            
+           $welcomeemailtemplatename = "welcome_email_template"; 
+            
+        }
         
         
         $plaintext_pass=wp_generate_password( 8, false, false );
@@ -3924,25 +3962,13 @@ function custome_email_send($user_id,$userlogin=''){
         
         }
         
-        $subject = $sponsor_info['welcome_email_template']['welcomesubject'];
-		$bcc =  $sponsor_info['welcome_email_template']['BCC'];
-		
-       // $headers = 'From: '.$sponsor_info['welcome_email_template']['fromname'].' <noreply@convospark.com>' . "\r\n";
-       // $headers .= 'Reply-To: '.$sponsor_info['welcome_email_template']['replaytoemailadd'];
-        
-         $headers []= 'From: '.$sponsor_info['welcome_email_template']['fromname'].' <'.$formemail.'>' . "\r\n";
-         $headers []= 'Reply-To: '.$sponsor_info['welcome_email_template']['replaytoemailadd'];
-       
+        $subject = $sponsor_info[$welcomeemailtemplatename]['welcomesubject'];
+	$bcc =  $sponsor_info[$welcomeemailtemplatename]['BCC'];
+	$headers []= 'From: '.$sponsor_info[$welcomeemailtemplatename]['fromname'].' <'.$formemail.'>' . "\r\n";
+        $headers []= 'Reply-To: '.$sponsor_info[$welcomeemailtemplatename]['replaytoemailadd'];
         $headers []= 'Bcc:'.$bcc;
         
-        
-      //  $message  = sprintf(__('New user registration on your blog %s:'), get_option('blogname')) . "\r\n\r\n";
-      //  $message .= sprintf(__('Username: %s'), $user_login) . "\r\n\r\n";
-      //  $message .= sprintf(__('E-mail: %s'), $user_email) . "\r\n";
-
-      //  @wp_mail(get_option('admin_email'), sprintf(__('[%s] New User Registration'), get_option('blogname')), $message);
-       // Generate something random for a password reset key.
-	$key = wp_generate_password( 20, false );
+        $key = wp_generate_password( 20, false );
 
 	/** This action is documented in wp-login.php */
 	do_action( 'retrieve_password_key', $user->user_login, $key );
@@ -3957,7 +3983,7 @@ function custome_email_send($user_id,$userlogin=''){
         $create_rest_password_link .= '<' . network_site_url("wp-login.php?action=rp&key=$key&login=" . rawurlencode($user->user_login), 'login') . ">\r\n\r\n";
         
         
-         $message=$sponsor_info['welcome_email_template']['welcomeboday'];
+        $message=$sponsor_info[$welcomeemailtemplatename]['welcomeboday'];
          
          $subject_body = $subject ; 
          $body_message =stripslashes ($message) ;
@@ -4122,7 +4148,7 @@ function settings_key_data($atts) {
 add_shortcode('contentmanagersettings', 'settings_key_data');
 
 
-function bulkimport_userfile($fileurl,$welcomeemailstatus){
+function bulkimport_userfile($fileurl,$welcomeemailstatus,$selectwelcomeemailtempname){
     
    
    
@@ -4236,7 +4262,7 @@ function bulkimport_userfile($fileurl,$welcomeemailstatus){
   
    if($welcomeemailstatus == 'send'){ 
         
-       $welcomeemail_status = send_bulk_import_welcome_email($to_message_array,$user_data_array); 
+       $welcomeemail_status = send_bulk_import_welcome_email($to_message_array,$user_data_array,$selectwelcomeemailtempname); 
    
    }else{
        
@@ -4372,7 +4398,7 @@ function checkimportrowstatus($username,$email,$firstname,$lastname,$role,$compa
     return $status; 
 }
 
-function send_bulk_import_welcome_email($to_message_array,$user_data_array){
+function send_bulk_import_welcome_email($to_message_array,$user_data_array,$selectwelcomeemailtempname){
     
     
     
@@ -4401,13 +4427,13 @@ try {
         
       
        
-    $subject = $sponsor_info['welcome_email_template']['welcomesubject'];
-    $body=stripslashes ($sponsor_info['welcome_email_template']['welcomeboday']);
+    $subject = $sponsor_info[$selectwelcomeemailtempname]['welcomesubject'];
+    $body=stripslashes ($sponsor_info[$selectwelcomeemailtempname]['welcomeboday']);
     
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
-    $replay_to = $sponsor_info['welcome_email_template']['replaytoemailadd'];
-    $formname =$sponsor_info['welcome_email_template']['fromname'];
+    $replay_to = $sponsor_info[$selectwelcomeemailtempname]['replaytoemailadd'];
+    $formname =$sponsor_info[$selectwelcomeemailtempname]['fromname'];
     
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $formemail = $oldvalues['ContentManager']['formemail'];
@@ -4415,7 +4441,7 @@ try {
         $formemail = 'noreply@convospark.com';
         
     }
-    $bcc = $sponsor_info['welcome_email_template']['BCC'];
+    $bcc = $sponsor_info[$selectwelcomeemailtempname]['BCC'];
    
    
     $site_url = get_option('siteurl' );
@@ -4702,6 +4728,7 @@ function changeuseremailaddress($request){
         $lastInsertId = contentmanagerlogging('Edit user email',"Admin Action",serialize($request),''.$user_ID,$user_info->user_email,"pre_action_data");
         $newemail = $request['newemailaddress'];
         $welcome_email_status = $request['welcomememailstatus'];
+        $welcome_selected_email_template = $request['selectedtemplateemailname'];
         $userid = $request['userid'];
         $email_status = isValidEmail($newemail);
         if($email_status){
@@ -4725,7 +4752,7 @@ function changeuseremailaddress($request){
                 $result_status['msg'] = 'update';
                
                 if($result_update == 1 && $welcome_email_status == 'checked'){
-                    custome_email_send($userid,$newemail);
+                    custome_email_send($userid,$newemail,$welcome_selected_email_template);
                 }
                
             }

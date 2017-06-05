@@ -1,7 +1,8 @@
 <?php
 // Template Name: Bulk Edit Task 
 if (current_user_can('administrator') || current_user_can('contentmanager')) {
-
+    
+    
     $user_reportsaved_list = get_option('ContenteManager_usersreport_settings');
     $get_email_template='AR_Contentmanager_Email_Template';
     $email_template_data = get_option($get_email_template);
@@ -64,7 +65,7 @@ include 'cm_left_menu_bar.php';
                 
                 
             <?php } ?>
-                <form action="<?php echo $base_url;?>/user-report-result/" method="post"  id="runreportresult"  >
+                <form action="<?php echo $base_url;?>/user-report-result/?report=run" method="post"  id="runreportresult"  >
                     
                     <input type="hidden" id='usertimezone-hiddenfield' name='usertimezone-hiddenfield' value='' > 
                     <input type="hidden" id='filterdata-hiddenfield' name='filterdata-hiddenfield'value="" > 
@@ -162,8 +163,8 @@ include 'cm_left_menu_bar.php';
                             <div class="col-sm-6" >
                                 <select class="select2"  id="sortingtype" data-allow-clear="true">
 
-                                    <option value='asc'>Ascending</option>
-                                    <option value='desc' selected="selected">Descending</option>
+                                    <option value='asc' selected="selected">Ascending</option>
+                                    <option value='desc' >Descending</option>
 
                                 </select>
 
@@ -180,11 +181,7 @@ include 'cm_left_menu_bar.php';
                             <div class="col-sm-6"></div>
                         </div>
                         
-                           <div class="form-group row">
-                               <div class="col-sm-12" >
-                                   <p><strong style="color:red">You are viewing the Beta version of the new report. To revert back to the previous report, </strong><a href="old-user-report/">click here</a></p>
-                               </div>
-                           </div>
+                          
                         
 
                     </div>
@@ -218,7 +215,7 @@ include 'cm_left_menu_bar.php';
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/query-builder.js?v=2.19"></script>
 
 
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report.js?v=2.21"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report.js?v=2.30"></script>
 
     <?php
 } else {

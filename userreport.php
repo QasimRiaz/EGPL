@@ -1,13 +1,23 @@
 <?php
-
-
-if ($_GET['contentManagerRequest'] == 'approve_selfsign_user') {
+if ($_GET['contentManagerRequest'] == 'get_all_selected_users_files') {
+    
+    require_once('../../../wp-load.php');
+    
+    
+    selecteduser_getuploadfiles_download($_POST);
+    die();
+    
+  
+     
+    
+}else if ($_GET['contentManagerRequest'] == 'approve_selfsign_user') {
     
     require_once('../../../wp-load.php');
     
      $user_id = $_POST['id'];
+     $user_role_assignment = $_POST['userassignrole'];
   
-     approve_selfsign_user($user_id);
+     approve_selfsign_user($user_id,$user_role_assignment);
      
     
 }else if ($_GET['contentManagerRequest'] == 'decline_selfsign_user') {
@@ -52,6 +62,7 @@ if ($_GET['contentManagerRequest'] == 'approve_selfsign_user') {
         
        $random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
        $user_id = register_new_user( $username, $email );//wp_create_user($username, $random_password, $email);
+       
        if ( ! is_wp_error( $user_id ) ) {
        
        $result=$user_id;
@@ -68,8 +79,8 @@ if ($_GET['contentManagerRequest'] == 'approve_selfsign_user') {
             
              
     }else{
-      
-        $message['msg'] = $user_id->errors['invalid_username'][0];
+        
+        $message['msg'] = $user_id->errors['invalid_email'][0];
     } 
     } else {
         
@@ -140,6 +151,80 @@ if ($_GET['contentManagerRequest'] == 'approve_selfsign_user') {
     
     die();
    
+}else if ($_GET['contentManagerRequest'] == 'multitemplatewelcomeemail') {
+    
+    require_once('../../../wp-load.php');
+    
+   try{ 
+       
+       $user_ID = get_current_user_id();
+       $user_info = get_userdata($user_ID);
+       $lastInsertId = contentmanagerlogging('Welcome Email Template',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
+       
+    $welcome_subject =$_POST['emailSubject'];
+    $welcome_body =$_POST['emailBody'];
+    $replaytoemailadd =$_POST['replaytoemailadd'];
+    $welcomeemailfromname =$_POST['welcomeemailfromname'];
+    $template_name = $_POST['welcomeemailtemplatename'];
+    
+    
+    $templatestringname = strtolower(preg_replace('/\s+/', '_', $template_name));
+    $settitng_key='AR_Contentmanager_Email_Template_welcome';
+    $sponsor_info = get_option($settitng_key);
+    
+    $result='';
+      
+    
+    $sponsor_info[$templatestringname]['welcomesubject'] = $welcome_subject;
+    $sponsor_info[$templatestringname]['fromname'] = $welcomeemailfromname;
+    $sponsor_info[$templatestringname]['replaytoemailadd'] = $replaytoemailadd;
+    $sponsor_info[$templatestringname]['welcomeboday'] = stripslashes($welcome_body);
+    $sponsor_info[$templatestringname]['BCC'] = $_POST['BCC'];
+     
+     //contentmanagerlogging('Welcome Email Template',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,$result);
+    
+    $result= update_option($settitng_key, $sponsor_info);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
+    
+   } catch (Exception $e) {
+       
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+ }
+     die();
+	 
+}else if ($_GET['contentManagerRequest'] == 'multitemplatewelcomeemailremoved') {
+    
+    require_once('../../../wp-load.php');
+    
+   try{ 
+       
+       $user_ID = get_current_user_id();
+       $user_info = get_userdata($user_ID);
+       $lastInsertId = contentmanagerlogging('Remove Welcome Email Template',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
+       
+    
+    $template_name = $_POST['welcomeemailtemplatename'];
+    echo $template_name;
+    $settitng_key='AR_Contentmanager_Email_Template_welcome';
+    $sponsor_info = get_option($settitng_key);
+    
+    unset($sponsor_info[$template_name]);
+    
+    
+    
+    $result= update_option($settitng_key, $sponsor_info);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
+    
+   } catch (Exception $e) {
+       
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+ }
+     die();
+	 
 }
 
 
@@ -524,23 +609,25 @@ function userreportresultdraw() {
     require_once('../../../wp-load.php');
 
     try {
+        if(isset($_POST['filterdata'])){
+            
+            $search_filter_array   =  json_decode(stripslashes($_POST['filterdata']));
+            $search_filter_collabel      = json_decode(stripslashes($_POST['selectedcolumnslebel']));
+            $search_filter_colarray      = json_decode(stripslashes($_POST['selectedcolumnskeys']));
+            $search_filter_Ordercolname  = $_POST['userbycolname'];
+            $search_filter_Order         = $_POST['userbytype'];
+        }
         
-        $search_filter_array   =  json_decode(stripslashes($_POST['filterdata']));
-       // echo '<pre>';
-       // print_r($search_filter_array);exit;
+      
         
-        $search_filter_collabel      = json_decode(stripslashes($_POST['selectedcolumnslebel']));
-        $search_filter_colarray      = json_decode(stripslashes($_POST['selectedcolumnskeys']));
+        
         $search_filter_usertimezone  = json_decode(stripslashes($_POST['usertimezone']));
-        $search_filter_Ordercolname  = $_POST['userbycolname'];
-        $search_filter_Order         = $_POST['userbytype'];
         $base_url = "https://" . $_SERVER['SERVER_NAME'];
-        $args['meta_query']['relation']= 'AND';
-        $args['role__not_in']= 'Administrator';
-        //$args['orderby']= $search_filter_Ordercolname;
         
-       
-    
+        $args['role__not_in']= 'Administrator';
+        
+       if(isset($_POST['filterdata'])){
+        $args['meta_query']['relation']= 'AND';
         foreach($search_filter_array as $filter){
         
             if($filter->operator == 'is_not_empty'){
@@ -660,7 +747,9 @@ function userreportresultdraw() {
         array_push($args['meta_query'],$filter_apply_array);
        }
     }
-    
+ }
+ 
+ 
         $user_query = new WP_User_Query( $args );
         $authors = $user_query->get_results();
         
@@ -857,6 +946,8 @@ function userreportresultdraw() {
        foreach ($authors as $aid) {
 
             $user_data = get_userdata($aid->ID);
+            
+           
             $all_meta_for_user = get_user_meta($aid->ID);
             
             if (!empty($all_meta_for_user) && !in_array("administrator", $user_data->roles)) {
@@ -1155,7 +1246,8 @@ function userreportresultdraw() {
         contentmanagerlogging_file_upload($lastInsertId, serialize($orderreport_all_col_rows_data));
         
         
-        
+       // echo '<pre>';
+       // print_r($columns_rows_data);exit;
         echo json_encode($columns_rows_data) . '//' . json_encode($columns_headers);
     } catch (Exception $e) {
 
@@ -1195,7 +1287,7 @@ function decline_selfsignuser_metas($user_id){
   die();   
 }
 
-function approve_selfsign_user($user_id){
+function approve_selfsign_user($user_id,$user_assignrole){
     
     try{
     
@@ -1212,6 +1304,9 @@ function approve_selfsign_user($user_id){
     $lastInsertId = contentmanagerlogging('Approved Self Signed User',"Admin Action",serialize($all_meta_for_user),$user_ID,$user_info->user_email,"Declined");
     update_user_meta( $user_id, 'selfsignupstatus', 'Approved' );
     $user_info_approved = get_userdata($user_id);
+    
+    $u = new WP_User($user_id);
+    $u->set_role( $user_assignrole );
     
     if(!empty($mapapikey) && !empty($mapsecretkey)){
           
@@ -1321,3 +1416,41 @@ function selfsign_registration_emails($user_id,$send_email_type){
 }
 
 
+
+ 
+ function  selecteduser_getuploadfiles_download($selected_task_data){
+    
+    try{
+        
+        
+       $selected_task_key = $selected_task_data['selectedtaskkey'];
+       $user_ids_array = json_decode(stripslashes($selected_task_data['selecteduserids']), true);
+       $user_ID = get_current_user_id();
+       $user_info = get_userdata($user_ID);
+       $lastInsertId = contentmanagerlogging('Selected Bulk Download',"Admin Action",serialize($selected_task_data),$user_ID,$user_info->user_email,"pre_action_data");
+       
+       
+        foreach ($user_ids_array as $kesy=>$ids){
+            
+            $file_url = get_user_meta($ids, $selected_task_key);
+            $user_company_name = get_user_meta($ids, 'company_name', true);
+
+            if (!empty($file_url[0]['file'])) {
+
+                $user_file_list[] = $user_company_name . '*' . $file_url[0]['file'];
+            }
+        }
+        echo   json_encode($user_file_list);
+       
+       
+       
+    }catch (Exception $e) {
+       
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+       die();
+      
+ }
+  die();   
+}

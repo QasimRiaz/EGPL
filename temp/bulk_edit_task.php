@@ -118,7 +118,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                             <?php 
                             
                             foreach ($all_roles as $key=>$name) {
-                                if($key !='administrator'){
+                                if($key !='administrator' && $key !='subscriber'){
                                     echo '<option value="' . $key . '">' . $name . '</option>';
                                 }
                             }
@@ -249,13 +249,13 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                 </select>
                                                 <br>
 
-                                                <select class="select2" data-placeholder="Select Users" title="Select Users" data-allow-clear="true" id="row-<?php echo $task_code; ?>-userid" data-toggle="tooltip" multiple="multiple" >
+                                                <select class="select2 js-example-events" data-placeholder="Select Users" title="Select Users" data-allow-clear="true" id="row-<?php echo $task_code; ?>-userid" data-toggle="tooltip" multiple="multiple" >
                                                     <?php
                                                     foreach ($get_all_ids as $user) {
-                                                        if (in_array($user->ID, $value['usersids'])) {
-                                                            echo '<option value="' . $user->ID . '" selected="selected">' . $user->user_email . '</option>';
-                                                        } else {
-                                                            echo '<option value="' . $user->ID . '">' . $user->user_email . '</option>';
+                                                        if(!empty($value['usersids'])){
+                                                            if (in_array($user->ID, $value['usersids'])) {
+                                                                echo '<option value="' . $user->ID . '" selected="selected">' . $user->user_email . '</option>';
+                                                            }
                                                         }
                                                     }
                                                     ?>

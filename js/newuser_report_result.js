@@ -10,33 +10,46 @@ jQuery(document).ready(function () {
  if ( window.location.href.indexOf("user-report-result") > -1)
     {
        jQuery("body").css({'cursor': 'wait'}); 
+        var data = new FormData();
+        var curdate = new Date();
+        var usertimezone = curdate.getTimezoneOffset()/60;
+         data.append('usertimezone', usertimezone);
+         var url = window.location.protocol + "//" + window.location.host + "/";
+       if ( window.location.href.indexOf("user-report-result/?report") > -1){
+           
+           
+       
+     
        var showcollist = JSON.parse(jQuery('#selectedcolumnskeys-hiddenfield').val());
+       
        var ordercolname = jQuery('#userbycolname-hiddenfield').val();
        var orderby = jQuery('#userbytype-hiddenfield').val();
        
-       var usertimezone = jQuery('#usertimezone-hiddenfield').val();
+      
+      
        var filterdata   = jQuery('#filterdata-hiddenfield').val();
        var selectedcolumnslebel   = jQuery('#selectedcolumnslebel-hiddenfield').val();
        var selectedcolumnskeys   = jQuery('#selectedcolumnskeys-hiddenfield').val();
        var userbytype   = jQuery('#userbytype-hiddenfield').val();
        var userbycolname   = jQuery('#userbycolname-hiddenfield').val();
        var loadreportname   = jQuery('#loadreportname-hiddenfield').val();
-       var data = new FormData();
-       var url = window.location.protocol + "//" + window.location.host + "/";
-        console.log(usertimezone);
-       if(usertimezone == ""){
-           
-           window.location.href = url+"/user-report/";
-       }
        
+      // console.log(filterdata)
+     //  console.log(orderby)
        
-       data.append('usertimezone', usertimezone);
        data.append('filterdata', filterdata);
        data.append('selectedcolumnslebel', selectedcolumnslebel);
        data.append('selectedcolumnskeys', selectedcolumnskeys);
        data.append('userbytype', userbytype);
        data.append('userbycolname', userbycolname);
        data.append('loadreportname', loadreportname);
+       
+       }else{
+           
+        var showcollist = JSON.parse('["action_edit_delete","company_name","last_login","first_name","last_name","Email","Role"]');   
+        var ordercolname = 'Company Name';
+        var orderby = 'asc';
+       }
        
       
        var hideFromExport = [0,1];
@@ -77,18 +90,18 @@ jQuery(document).ready(function () {
                     newcolumnsheaderarrayfortable.push({visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type, render: function (data) {if (data !== null && data !== "") {var javascriptDate = new Date(data);javascriptDate = javascriptDate.getDate() + "/" + months[javascriptDate.getMonth()] + "/" + javascriptDate.getFullYear() +" "+javascriptDate.getHours()+":"+javascriptDate.getMinutes()+":"+javascriptDate.getSeconds();return javascriptDate;} else {return "";} }});
                 }else {
                     if(newcolumsheader[nkey].title == 'Action' ){
-                        newcolumnsheaderarrayfortable.push({class:'noExport',visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type});
+                        newcolumnsheaderarrayfortable.push({class:'noExport noclick',visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type});
                     }else{
                         newcolumnsheaderarrayfortable.push({visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type});
                     }
                 }
             
             });
-            console.log(newcolumnsheaderarrayfortable);
-            console.log(showcollist);
+            
              resultuserdatatable = jQuery('#example').DataTable({
                                         data: newrowsdata,
                                         columns: newcolumnsheaderarrayfortable,
+                                       
                                         'columnDefs': [{
                                                          'targets': 0,
                                                          'searchable': false,
@@ -98,10 +111,9 @@ jQuery(document).ready(function () {
                                                              return '<input type="checkbox" class="checkcheckedstatus" name="id[]" value="' + jQuery('<div/>').text(data).html() + '">';
                                                          }
                                                      }],
-                                                 'order': [[2, 'asc']],
-                    
-                                                  dom: 'lBrtip',
-                                                    
+                                                
+                                                 dom: 'fBrlptrfBrlp',
+                                                 
                                                     buttons: [
                                                         {
                                                             extend: 'excelHtml5',
@@ -129,10 +141,12 @@ jQuery(document).ready(function () {
            
            
        });
+       
       jQuery('body').css('cursor', 'default');
       resultuserdatatable.column(':contains(' + ordercolname + ')').order(orderby).draw();
       var rows_selected = [];
       jQuery('#example tbody').on('click', 'input[type="checkbox"]', function(e){
+          
       var $row = jQuery(this).closest('tr');
 
       // Get row data
@@ -165,11 +179,11 @@ jQuery(document).ready(function () {
       // Prevent click event from propagating to parent
       e.stopPropagation();
    });
-
+   
    // Handle click on table cells with checkboxes
-   jQuery('#example').on('click', 'tbody td, thead th:first-child', function(e){
-      jQuery(this).parent().find('input[type="checkbox"]').trigger('click');
-   });
+//   jQuery('#example').on('click', 'tbody td, thead th:first-child', function(e){
+//      jQuery(this).parent().find('input[type="checkbox"]').trigger('click');
+//   });
 
    // Handle click on "Select all" control
    jQuery('thead input[name="select_all"]', resultuserdatatable.table().container()).on('click', function(e){
@@ -182,11 +196,13 @@ jQuery(document).ready(function () {
       // Prevent click event from propagating to parent
       e.stopPropagation();
    });
-
+   jQuery('.filtersarraytooltip').empty();
+if ( window.location.href.indexOf("user-report-result/?report=run") > -1)
+    {
     var jsondatauser = JSON.parse(jQuery("#querybuilderfilter").val());
-     console.log(jsondatauser.rules)
+     
     var filteroutput = '';
-    jQuery('.filtersarraytooltip').empty();
+    
     var tablesettings = jQuery('#example').DataTable().settings();
     jQuery.each(jsondatauser.rules, function (key, value) {
             
@@ -203,14 +219,17 @@ jQuery(document).ready(function () {
             
 
         });
-        console.log(filteroutput)
+    }else{
+        
+        var filteroutput="";
+    }
         if (filteroutput == "") {
             filteroutput = 'No Filters Applied';
         }
         
         var filterrowscount = resultuserdatatable.data().count() ;
         var tooltiphtml = ' <div class="faq-page-cat" id="filterapplied" title="' + filteroutput + '" style="cursor: pointer;" ><div class="faq-page-cat-icon"><i style="color:#00a8ff !important;" class="reporticon font-icon fa fa fa-filter fa-2x"></i></div><div class="faq-page-cat-title" style="color:#00a8ff"> Filters applied </div><div class="faq-page-cat-txt" id="filteredusercount" >' + filterrowscount + '</div></div>';
-
+        
 
     jQuery('.filtersarraytooltip').append(tooltiphtml);
     jQuery('#filterapplied').tooltip({html: true, placement: 'bottom'});       
@@ -227,12 +246,12 @@ jQuery(document).ready(function () {
     
      var data = resultuserdatatable.row( jQuery(elem).parents('tr') ).data();
      var tablesettings = jQuery('#example').DataTable().settings();
-      console.log(data)
+     // console.log(data)
      var curr_dat ='';
      var tablehtml='';
      var monthnames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
      tablehtml  = '<table class="table table-striped table-bordered table-condensed" width="100%"><tbody>'; 
-    console.log(tablesettings[0].aoColumns);
+   // console.log(tablesettings[0].aoColumns);
      jQuery.each( data, function( i, l ){
          
        for (var counter = 0, iLen = tablesettings[0].aoColumns.length; counter < iLen; counter++)
@@ -241,7 +260,7 @@ jQuery(document).ready(function () {
      if(tablesettings[0].aoColumns[counter].sTitle == i){      
       if(i != 'Action'){
        if(tablesettings[0].aoColumns[counter].type == 'date'){
-           console.log(l)
+          // console.log(l)
             if(l !="" && l != null ){
                  var d = new Date(l);
                 var curr_date = d.getDate();
@@ -295,6 +314,7 @@ function updateDataTableSelectAllCtrl(resultuserdatatable){
    var $chkbox_checked    = jQuery('tbody input[type="checkbox"]:checked', $table);
    var chkbox_select_all  = jQuery('thead input[name="select_all"]', $table).get(0);
    var selectedcount =  +(jQuery("#ntableselectedstatscount").html());
+   
    jQuery(".selectedusericon").removeClass('filteractivecolor');
    jQuery(".selecteduserbox").removeClass('filteractivecolor');
    jQuery(".bulkbtuton").removeClass('filteractivecolor');
@@ -337,6 +357,13 @@ function updateDataTableSelectAllCtrl(resultuserdatatable){
    jQuery("#newbulkemailcounter").append(datatable.rows( '.selected' ).count());
    jQuery("#selectedstatscountforbulk").append(datatable.rows( '.selected' ).count());
    
+    if(datatable.rows( '.selected' ).count() > 0){
+            
+            jQuery('#reportbulkdownload').removeAttr('disabled');
+        }else{
+            
+           jQuery('#reportbulkdownload').attr('disabled','disabled');
+        }
 }
 
 jQuery('.backtofilter').on('click', function () {
@@ -344,3 +371,121 @@ jQuery('.backtofilter').on('click', function () {
     jQuery("#runreportresult").submit();
 
 })
+
+function customloaduserreport(){
+    
+    
+    var loadreportname = jQuery( "#customloaduserreportss option:selected" ).val();
+    var url = window.location.protocol + "//" + window.location.host + "/";
+    
+    if(loadreportname == 'defult'){
+         window.location.href = url + "user-report-result/";
+   
+    }else{
+         window.location.href = url + "user-report-result/?report="+ encodeURI(loadreportname);
+   
+    }
+    
+    
+    
+}
+
+
+
+function reportbulkdownload(){
+    
+    
+    
+     var hiddentemplatelist = jQuery("#hiddenfileuploadtasklist").html();  
+    jQuery.confirm({
+        title: '<p style="text-align:center;" >Bulk Download Files</p>',
+        content: '<p><strong>Select a Task :</strong><select style="margin-left: 14px;border: #cccccc 1px solid;border-radius: 7px;height: 36px;width: 76%;"id="downloadtaskkey">'+hiddentemplatelist+'</select> </p><p>Do you want to download files uploaded by selected users in the selected task?</p>',
+        confirmButton: 'Yes, download it!',
+        cancelButton: 'No, cancel please!',
+       
+        confirmButtonClass: 'btn mycustomwidth btn-lg btn-primary',
+        cancelButtonClass: 'btn  btn-lg btn-danger',
+       
+        
+        confirm: function () {
+           jQuery("body").css({'cursor':'wait'});
+           var selectedtaskkey = jQuery("#downloadtaskkey option:selected").val();
+           get_all_selected_users_files(selectedtaskkey);
+           
+           
+           
+        },
+        cancel: function () {
+            //  location.reload();
+        }
+
+    });
+    
+    
+    
+    
+    
+}
+
+function get_all_selected_users_files(selectedtaskkey) {
+
+    var datatable = jQuery('#example').DataTable();
+   // console.log(selectedtaskkey);
+    var listofids = [];
+    
+    var selectedrowsdatalist = datatable.rows( '.selected' ).data();
+    
+    jQuery.each(selectedrowsdatalist, function (key, value) {
+       
+         jQuery.each(value, function (secondkey, secondvalue) {
+             if(secondkey == 'User ID'){
+                
+                 listofids.push(secondvalue);
+             }
+             
+         });
+         
+    });
+    
+    
+    var data = new FormData();
+    var url = window.location.protocol + "//" + window.location.host + "/";
+    var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=get_all_selected_users_files';
+    data.append('selectedtaskkey', selectedtaskkey);
+    data.append('selecteduserids',  JSON.stringify(listofids));
+     jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                jQuery("body").css({'cursor':'default'});
+               jQuery('#hiddenform').empty();
+               if(jQuery.parseJSON(data) !=null){
+               var hiddenformhtml ="";
+                 hiddenformhtml += '<form id="myform" action="'+url+'wp-content/plugins/EGPL/bulkdownload.php" method="post"><input type="hidden" name="zipfoldername" value="'+selectedtaskkey+'">';
+                
+                 jQuery.each(jQuery.parseJSON(data), function(key, value) {
+                   
+                     hiddenformhtml += '<input type="hidden" name="result[]" value="'+ value+ '">';
+                 });
+                hiddenformhtml += '</form>' ;
+                
+                
+                jQuery( "#hiddenform" ).append(hiddenformhtml);
+                
+                 document.getElementById('myform').submit();
+             }else{
+                 swal({
+                        title: "Error",
+			text: "There are no files uploaded by selected users.",
+			type: "error",
+			confirmButtonClass: "btn-danger"
+		});
+             }
+            }
+        });
+ 
+}
