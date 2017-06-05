@@ -544,7 +544,6 @@ function welcomeemail_preview(){
                                                //updateWelcomeMsg();
                                                
                                                multi_welcomeemail_save_template();
-                                               this.setContent('<div class="alert wpb_content_element alert-success"><div class="messagebox_text"><p>Your message has been saved.</p></div></div>');
                                                jQuery('.mysubmitemailbutton').hide();
                                               
                                                return false;

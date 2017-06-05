@@ -364,6 +364,8 @@ jQuery('.drawdatatable').on('click', function () {
 
 });
 
+
+
 jQuery('.reloadclass').on('click', function () {
 
 
