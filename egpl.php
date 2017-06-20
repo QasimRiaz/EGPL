@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           2.21
+ * Version:           2.20
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -1788,7 +1788,7 @@ function editrolename($request){
         if($result_update == 'newvalue'){
             $get_all_roles[$levelkey]['name'] = $levelnamenew;
             $restults = update_option($get_all_roles_array, $get_all_roles);
-             $result_status['msg']= 'update';
+            $result_status['msg']= 'update';
         }else{
            
             $result_status['msg']= 'already exists';

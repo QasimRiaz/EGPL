@@ -19,9 +19,13 @@ $zip->open($tmp_file, ZipArchive::CREATE);
     # download file
     foreach ($filesnames_download as $file_name) {
     $data_image_company = explode("*",$file_name);
-    $download_file = file_get_contents($data_image_company[1]);
+    
+     //$zip->addFile($data_image_company[1]);
+      $fileName = $data_image_company[0].'_'.basename($file_name);
+      $zip->addFile($data_image_company[1], $fileName);
+   // $download_file = file_get_contents($data_image_company[1]);
     #add it to the zip
-    $zip->addFromString($data_image_company[0].'_'.basename($file_name),$download_file);
+    //$zip->addFromString($data_image_company[0].'_'.basename($file_name),$data_image_company[1]);
     }
 # close zip
 $zip->close();
