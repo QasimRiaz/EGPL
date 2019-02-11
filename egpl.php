@@ -3578,8 +3578,9 @@ function my_plugin_activate() {
                 'supports'            => $supports,
               );
 
-              register_post_type( 'expo_genie_log', $args );
+           $getError =    register_post_type( 'expo_genie_log', $args );
                 
+        
                 
                 // create tables for each site
                 $get_all_roles_array = 'wp_'.$blog_id['blog_id'].'_user_roles';
@@ -4310,8 +4311,24 @@ function mycustomelogin($user_login, $user) {
         $tablename = 'contentmanager_'.$blog_id.'_log';
     } 
     
-    $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
-    $wpdb->query($wpdb->prepare($query, "Login", "User Action",serialize($user),$user->ID,$user->user_email,$result));
+   // $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
+  //  $wpdb->query($wpdb->prepare($query, "Login", "User Action",serialize($user),$user->ID,$user->user_email,$result));
+    $activitylog = array(
+        'post_title'    => wp_strip_all_tags( 'Login' ),
+        'post_content'  => "",
+        'post_status'   => 'publish',
+        'post_author'   => $user->ID,
+        'post_type'=>'expo_genie_log'
+    );
+    $logID = wp_insert_post( $activitylog );
+    $_SERVER['currentuseremail'] = $email;
+    update_post_meta( $logID, 'actiontype', 'User Action' );
+    update_post_meta( $logID, 'preactiondata', $user );
+    update_post_meta( $logID, 'currentuserinfo', $_SERVER );
+    update_post_meta( $logID, 'email', $user->user_email );
+    update_post_meta( $logID, 'ip', $_SERVER['REMOTE_ADDR'] );
+    update_post_meta( $logID, 'browseragent', $_SERVER['HTTP_USER_AGENT'] );
+    update_post_meta( $logID, 'result', $result );
 
 }
 add_action('wp_login', 'mycustomelogin', 10, 2);
@@ -4337,9 +4354,24 @@ if ( is_user_logged_in() ) :
         $tablename = 'contentmanager_'.$blog_id.'_log';
     }
     
-    $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
-$wpdb->query($wpdb->prepare($query, "Login", "User Action",serialize($current_user),$postid,$current_user->user_email,$result));
-
+   // $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
+//$wpdb->query($wpdb->prepare($query, "Login", "User Action",serialize($current_user),$postid,$current_user->user_email,$result));
+  $activitylog = array(
+        'post_title'    => wp_strip_all_tags( 'Login' ),
+        'post_content'  => "",
+        'post_status'   => 'publish',
+        'post_author'   => $postid,
+        'post_type'=>'expo_genie_log'
+    );
+    $logID = wp_insert_post( $activitylog );
+    $_SERVER['currentuseremail'] = $email;
+    update_post_meta( $logID, 'actiontype', 'User Action' );
+    update_post_meta( $logID, 'preactiondata', $current_user );
+    update_post_meta( $logID, 'currentuserinfo', $_SERVER );
+    update_post_meta( $logID, 'email', $current_user->user_email );
+    update_post_meta( $logID, 'ip', $_SERVER['REMOTE_ADDR'] );
+    update_post_meta( $logID, 'browseragent', $_SERVER['HTTP_USER_AGENT'] );
+    update_post_meta( $logID, 'result', $result );
 
     endif;
 }
@@ -4362,9 +4394,24 @@ function my_front_end_login_fail($error,$user) {
 $_SERVER['currentuser'] = $user;
  
     global $wpdb;
-    $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
-    $wpdb->query($wpdb->prepare($query, "Login Failed", "User Action",serialize($message),'',$_SERVER['currentuser'],''));
-
+   // $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
+   // $wpdb->query($wpdb->prepare($query, "Login Failed", "User Action",serialize($message),'',$_SERVER['currentuser'],''));
+     $activitylog = array(
+        'post_title'    => wp_strip_all_tags( 'Login Failed' ),
+        'post_content'  => "",
+        'post_status'   => 'publish',
+        'post_author'   => 1,
+        'post_type'=>'expo_genie_log'
+    );
+    $logID = wp_insert_post( $activitylog );
+    $_SERVER['currentuseremail'] = $email;
+    update_post_meta( $logID, 'actiontype', 'User Action' );
+    update_post_meta( $logID, 'preactiondata', $message );
+    update_post_meta( $logID, 'currentuserinfo', $_SERVER );
+    update_post_meta( $logID, 'email', $user );
+    update_post_meta( $logID, 'ip', $_SERVER['REMOTE_ADDR'] );
+    update_post_meta( $logID, 'browseragent', $_SERVER['HTTP_USER_AGENT'] );
+    update_post_meta( $logID, 'result', '' );
 
 }
 
@@ -4396,8 +4443,25 @@ function customelogout() {
     }
     $_SERVER['currentuser'] = $current_user->user_email;
     $result="1";
-     $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
-$wpdb->query($wpdb->prepare($query, "Logout", "User Action",serialize($current_user),$postid,$_SERVER,$result));
+    
+    $activitylog = array(
+        'post_title'    => wp_strip_all_tags( 'Logout' ),
+        'post_content'  => "",
+        'post_status'   => 'publish',
+        'post_author'   => $postid,
+        'post_type'=>'expo_genie_log'
+    );
+    $logID = wp_insert_post( $activitylog );
+    $_SERVER['currentuseremail'] = $email;
+    update_post_meta( $logID, 'actiontype', 'User Action' );
+    update_post_meta( $logID, 'preactiondata', $current_user );
+    update_post_meta( $logID, 'currentuserinfo', $_SERVER );
+    update_post_meta( $logID, 'email', $current_user->user_email );
+    update_post_meta( $logID, 'ip', $_SERVER['REMOTE_ADDR'] );
+    update_post_meta( $logID, 'browseragent', $_SERVER['HTTP_USER_AGENT'] );
+    update_post_meta( $logID, 'result', $result );
+    //$query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
+    //$wpdb->query($wpdb->prepare($query, "Logout", "User Action",serialize($current_user),$postid,$_SERVER,$result));
     
     //switch_to_blog(1);
     wp_logout();
@@ -6252,3 +6316,45 @@ function viewfloorplanbutton( $atts ){
       
 }
 add_shortcode( 'viewfloorplanbutton', 'viewfloorplanbutton' );
+add_filter('manage_expo_genie_log_posts_columns', 'bs_event_table_head');
+function bs_event_table_head( $defaults ) {
+    
+    
+    
+    
+    
+    $defaults['action-type-name']  = 'Action Type';
+    $defaults['currentuseremail']    = 'User Email';
+    $defaults['ip-address']   = 'IP Address';
+    $defaults['browser-agent'] = 'Browser Agent';
+    $defaults['request-data-and-time'] = 'Date & Time';
+    return $defaults;
+}
+
+add_action( 'manage_expo_genie_log_posts_custom_column', 'bs_event_table_content', 10, 2 );
+
+function bs_event_table_content( $column_name, $post_id ) {
+    if ($column_name == 'action-type-name') {
+    $event_date = get_post_meta( $post_id, 'action-type-name', true );
+      echo   $event_date ;
+    }
+    if ($column_name == 'ip-address') {
+    $event_date = get_post_meta( $post_id, 'ip-address', true );
+      echo   $event_date ;
+    }
+    if ($column_name == 'browser-agent') {
+    $event_date = get_post_meta( $post_id, 'browser-agent', true );
+      echo   $event_date ;
+    }
+    if ($column_name == 'request-data-and-time') {
+    $event_date = get_post_meta( $post_id, 'request-data-and-time', true );
+      echo   $event_date ;
+    }
+    if ($column_name == 'currentuseremail') {
+    $event_date = get_post_meta( $post_id, 'currentuseremail', true );
+      echo   $event_date ;
+    }
+    
+
+}
+
