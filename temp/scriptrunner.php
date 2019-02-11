@@ -93,6 +93,8 @@
                     update_post_meta( $tasksID, 'usersids', $taskObject['usersids'] );
                     update_post_meta( $tasksID, 'descrpition', $taskObject['descrpition'] );
                     update_post_meta( $tasksID, 'key', $taskObject['key'] );
+                    update_post_meta( $tasksID, 'options', $taskObject['options'] );
+                    
                     
                    $counter++;
                    

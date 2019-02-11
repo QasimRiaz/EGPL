@@ -286,7 +286,7 @@
                            break;
                    }
                    
-                   $status_col .= '<select style="font-size: 16px; width: 112px; " name="' . $profile_field_name .'_status"  id="' . $profile_field_name . '_status" class="selectclass editclassselect" >';
+                   $status_col .= '<select style="font-size: 16px; width: 57% !important; " name="' . $profile_field_name .'_status"  id="' . $profile_field_name . '_status" class="selectclass editclassselect" >';
                    
                   
                    $status_col .= '<option value="Pending">Pending</option>';
@@ -297,7 +297,7 @@
                    }
                    
                    
-                   $status_col .= '</select><button onclick="update_user_meta_custome(this)" id="update_' . $profile_field_name . '_status" class="progress-button" data-style="shrink" data-horizontal>Save</button>';
+                   $status_col .= '</select><button style="width: 30%;margin-left: 10%;"onclick="update_user_meta_custome(this)" id="update_' . $profile_field_name . '_status" class="progress-button" data-style="shrink" data-horizontal>Save</button>';
 
                    
                    

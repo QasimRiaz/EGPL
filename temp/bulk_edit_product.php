@@ -89,7 +89,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                 <div class="tbl">
                     <div class="tbl-row">
                         <div class="tbl-cell">
-                            <h3>Manage Tasks</h3>
+                            <h3>Manage Booth Products</h3>
 
                         </div>
                     </div>
