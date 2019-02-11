@@ -50,13 +50,8 @@
         currentsiteurl = '<?php echo $site_url;?>';
         
         
-<<<<<<< HEAD
     </script>   
     <style>
-=======
-    </script>  
- <style>
->>>>>>> origin/master
         .content{
             
             
@@ -65,11 +60,7 @@
             padding:0px !important;
         }
         
-<<<<<<< HEAD
     </style>    
-=======
-    </style>   
->>>>>>> origin/master
 <div id="content" class="full-width">
 
         <div id="sponsor-status"></div>
