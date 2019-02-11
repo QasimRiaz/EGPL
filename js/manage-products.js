@@ -1,11 +1,21 @@
+
+
+
+
 var manageproducts;
 var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 jQuery(document).ready(function () {
+    
+    
+    
+    jQuery('#selectedtasks').select2();
+    
+    
     if ( window.location.href.indexOf("manage-products") > -1)
     {
     jQuery("body").css({'cursor': 'wait'});
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/orderreport.php?contentManagerRequest=manageproducts';
     jQuery.ajax({
         url: urlnew,
@@ -41,14 +51,18 @@ jQuery(document).ready(function () {
             if (data != '') {
                 jQuery('body').css('cursor', 'default');
                 manageproducts = jQuery('#manageproduct');
-                manageproducts.dataTable({
+                manageproducts.DataTable({
                     data: productrowsdata,
                     columns: productcolusheaderdataarray,
+                   
                     "columnDefs": [
                         
                         { "width": "140", "targets": 0 }
                     ],
                 });
+               
+                
+                
             jQuery('[data-toggle="tooltip"]').tooltip();
                 
 
@@ -82,6 +96,41 @@ tinymce.init({
 
 });
 
+function customefilterapplyontable(){
+    
+    
+    var table = jQuery('#manageproduct').DataTable();
+    var getfilterValue =  jQuery("#filterdropdown option:selected").val();
+    
+    console.log(getfilterValue);
+    
+    table.column( 3 ).search(getfilterValue).draw();
+                    
+                    
+    
+    
+}
+function checkptoducttype(){
+    
+    
+   
+    var selectedproductType = jQuery('#pcategories option:selected').text();
+    
+    if(selectedproductType ==  'Packages'){
+        
+        jQuery("#assignmentlevelfield").show();
+    }else{
+        
+        jQuery("#assignmentlevelfield").hide();
+        
+    }
+    
+    
+    
+    
+    
+    
+}
 function check_whocat_selet(){
     
     
@@ -137,18 +186,42 @@ function add_new_product(){
     var pstatus = jQuery("#pstatus option:selected").val(); 
     var pcategories = jQuery("#pcategories option:selected").val();
     var pcategoriesname = jQuery("#pcategories option:selected").text();
-    var roleassign = jQuery("#roleassign option:selected").val();
-    var pdescrpition = tinyMCE.get('pdescription').getContent();
-    var pshortdescrpition  = tinyMCE.get('pshortdescription').getContent();
+    var menu_order = jQuery("#menu_order").val();
+    var selectedtaskvalues = jQuery('#selectedtasks').select2("val");
+    var getcatname = jQuery('#getcatname').val();
+    
+    
+    
+    
+    if(pcategoriesname == 'Product'){
+        
+        var roleassign = "";
+        
+    }else{
+        
+       var roleassign = jQuery("#roleassign option:selected").val();  
+    }
    
     
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    if(getcatname == 'Booth'){
+        var pshortdescrpition = "";
+    }else{
+        var pshortdescrpition  = tinyMCE.get('pshortdescription').getContent();
+    }
+    var pdescrpition = tinyMCE.get('pdescription').getContent();
+    
+   
+    
+    var url = currentsiteurl+'/';
     var urlnewproduct = url + 'wp-content/plugins/EGPL/orderreport.php?contentManagerRequest=addnewproducts';
     var urlupdateproduct = url + 'wp-content/plugins/EGPL/orderreport.php?contentManagerRequest=updateproducts';
     
     var data = new FormData();
-
-    
+    if(selectedtaskvalues != 'null'){
+        data.append('selectedtaskvalues', JSON.stringify(selectedtaskvalues));
+    }else{
+         data.append('selectedtaskvalues', '');
+    }
     data.append('ptitle', ptitle);
     data.append('pprice', pprice);
     data.append('pquanitity', pquanitity);
@@ -158,6 +231,7 @@ function add_new_product(){
     data.append('pdescrpition', pdescrpition);
     data.append('pshortdescrpition', pshortdescrpition);
     data.append('roleassign', roleassign);
+    data.append('menu_order', menu_order);
     
     if(productid !=""){
         var updateproductimage = jQuery('#updateproductimage')[0].files[0];
@@ -174,7 +248,10 @@ function add_new_product(){
             type: 'POST',
             success: function(data) {
                 jQuery('body').css('cursor', 'default');
-                if(data == 'update successfully'){
+                
+                var data = data.replace(/\s/g, '');
+                console.log(data)
+                if(data == 'updatesuccessfully'){
                     
                     swal({
                     title: "Success",
@@ -183,7 +260,7 @@ function add_new_product(){
                     confirmButtonClass: "btn-success",
                     confirmButtonText: "Ok"
                     },function() {
-                         window.location.href = '/manage-products/';
+                         window.location.href = currentsiteurl+'/manage-products/';
                     }
                             );
                     
@@ -213,7 +290,8 @@ function add_new_product(){
             type: 'POST',
             success: function(data) {
                 jQuery('body').css('cursor', 'default');
-                if(data == 'created successfully'){
+                var data = data.replace(/\s/g, '');
+                if(data == 'createdsuccessfully'){
                     
                     swal({
                     title: "Success",
@@ -221,7 +299,7 @@ function add_new_product(){
                     type: "success",
                     confirmButtonClass: "btn-success",
                     confirmButtonText: "Ok"
-                    },function(){window.location.href = '/manage-products/';}
+                    },function(){window.location.href = currentsiteurl+'/manage-products/';}
                             );
                     
                     
@@ -288,7 +366,7 @@ function confrim_deleteproduct(postid){
   
    
     
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/orderreport.php?contentManagerRequest=deleteproduct';
     var data = new FormData();
     
@@ -362,7 +440,7 @@ function confrim_productclone(postid){
   
    
    
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/orderreport.php?contentManagerRequest=productclone';
     var data = new FormData();
     

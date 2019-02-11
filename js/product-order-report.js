@@ -55,7 +55,7 @@ jQuery(document).ready(function () {
 
 // init
     jQuery('#builder').queryBuilder(options);
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl + "/" ;
     var urlnew = url + 'wp-content/plugins/EGPL/orderreport.php?contentManagerRequest=loadorderreport';
     jQuery.ajax({
         url: urlnew,
@@ -553,7 +553,7 @@ jQuery('.backtofilter').on('click', function () {
 
 function order_report_savefilters() {
 
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl + "/";
     var selectedcolumns = jQuery('#orderreportcolumns').select2("val");
     var orderbycolname = jQuery('#orderbycolumnsname').select2("val");
     var orderbytype = jQuery('#sortingtype').select2("val");
@@ -578,17 +578,20 @@ function order_report_savefilters() {
 
             var getorderreportsavedlist = jQuery.parseJSON(data);
             jQuery("#loadorderreportlist").empty();
+            jQuery("#customeloadorderreport").empty();
             jQuery.each(getorderreportsavedlist, function (i, item) {
 
                 if (item == orderreportname) {
 
 
                     jQuery("#loadorderreportlist").append("<option value='" + item + "' selected='selected'>" + item + "</option>");
+                    jQuery("#customeloadorderreport").append("<option value='" + item + "' selected='selected'>" + item + "</option>");
 
 
                 } else {
 
                     jQuery("#loadorderreportlist").append(jQuery("<option/>").attr("value", item).text(item));
+                    jQuery("#customeloadorderreport").append(jQuery("<option/>").attr("value", item).text(item));
                 }
 
             });
@@ -634,7 +637,7 @@ function removeeorderreport() {
                             type: "success",
                             confirmButtonClass: "btn-success"
                         }, function () {
-                            var url = window.location.protocol + "//" + window.location.host + "/";
+                            var url = currentsiteurl + "/";
                              window.location.href = url + "order-report/";
 
                         }
@@ -655,7 +658,7 @@ function removeeorderreport() {
 
 function confrimremoveorderreport(orderreportname) {
 
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl + "/";
     var urlnew = url + 'wp-content/plugins/EGPL/orderreport.php?contentManagerRequest=order_report_removefilter';
     var data = new FormData();
 
@@ -707,7 +710,7 @@ function loadorderreport(loadingreportname) {
 
         jQuery("#orderreportname").val(dropdownvalue);
 
-        var url = window.location.protocol + "//" + window.location.host + "/";
+        var url = currentsiteurl + "/";
         var urlnew = url + 'wp-content/plugins/EGPL/orderreport.php?contentManagerRequest=get_orderreport_detail';
         var data = new FormData();
         data.append('reportname', dropdownvalue);
@@ -791,7 +794,7 @@ function customeloadorderreport(){
     
         var loadreportname = jQuery( "#customeloadorderreport option:selected" ).val();
        
-        var url = window.location.protocol + "//" + window.location.host + "/";
+        var url = currentsiteurl + "/";
 
         if(loadreportname == 'defult'){
           window.location.href = url + "order-report/";

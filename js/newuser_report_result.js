@@ -14,13 +14,13 @@ jQuery(document).ready(function () {
         var curdate = new Date();
         var usertimezone = curdate.getTimezoneOffset()/60;
          data.append('usertimezone', usertimezone);
-         var url = window.location.protocol + "//" + window.location.host + "/";
+         var url = currentsiteurl+'/';
        if ( window.location.href.indexOf("user-report-result/?report") > -1){
            
            
        
      
-       var showcollist = JSON.parse(jQuery('#selectedcolumnskeys-hiddenfield').val());
+       var showcollist = JSON.parse(jQuery('#selectedcolumnslebel-hiddenfield').val());
        
        var ordercolname = jQuery('#userbycolname-hiddenfield').val();
        var orderby = jQuery('#userbytype-hiddenfield').val();
@@ -46,12 +46,12 @@ jQuery(document).ready(function () {
        
        }else{
            
-        var showcollist = JSON.parse('["action_edit_delete","company_name","last_login","first_name","last_name","Email","Role"]');   
+        var showcollist = JSON.parse('["Action","Company Name","Last login","First Name","Last Name","Email","Level"]');   
         var ordercolname = 'Company Name';
         var orderby = 'asc';
        }
        
-      
+      console.log(showcollist);
        var hideFromExport = [0,1];
        var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=userreportresultdraw';
        jQuery.ajax({
@@ -75,7 +75,7 @@ jQuery(document).ready(function () {
             
             jQuery.each(newcolumsheader, function (nkey, value) {
                
-              if(jQuery.inArray( newcolumsheader[nkey].key, showcollist )!= -1){
+              if(jQuery.inArray( newcolumsheader[nkey].title, showcollist )!= -1){
                  
                    visiblestatus = true;
               }else{
@@ -101,7 +101,7 @@ jQuery(document).ready(function () {
              resultuserdatatable = jQuery('#example').DataTable({
                                         data: newrowsdata,
                                         columns: newcolumnsheaderarrayfortable,
-                                       
+                                        aLengthMenu : [[100, 150, 200, -1], [100, 150, 200, "All"]],
                                         'columnDefs': [{
                                                          'targets': 0,
                                                          'searchable': false,
@@ -376,7 +376,7 @@ function customloaduserreport(){
     
     
     var loadreportname = jQuery( "#customloaduserreportss option:selected" ).val();
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     
     if(loadreportname == 'defult'){
          window.location.href = url + "user-report-result/";
@@ -449,7 +449,7 @@ function get_all_selected_users_files(selectedtaskkey) {
     
     
     var data = new FormData();
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=get_all_selected_users_files';
     data.append('selectedtaskkey', selectedtaskkey);
     data.append('selecteduserids',  JSON.stringify(listofids));

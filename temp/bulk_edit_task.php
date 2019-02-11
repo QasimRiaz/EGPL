@@ -6,6 +6,18 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     $sponsor_id = get_current_user_id();
     $test = 'custome_task_manager_data';
     $result = get_option($test);
+    
+    $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+    );
+    $listOFtaskArray = get_posts( $args );
+    
+   
     //$result = json_decode(json_encode($result), true);
     //echo '<pre>';
     //print_r($result);exit;
@@ -19,15 +31,24 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
         'fields' => $fields,
     );
     $get_all_ids = get_users($args);
+    
+    
     global $wp_roles;
-
-    $all_roles = $wp_roles->get_names();
+    if (is_multisite()) {
+                $blog_id = get_current_blog_id();
+                $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+            }else{
+                $get_all_roles_array = 'wp_user_roles';
+            }
+     $all_roles = get_option($get_all_roles_array);
+    //$all_roles = $wp_roles->roles;
+    
    // $options_values='';
     // foreach ($result['profile_fields'] as $key=>$value){  
         $tasktitle_list = array();
-        foreach ($result['profile_fields'] as $key=>$value){ 
+        foreach($listOFtaskArray as $taskKey=>$tasksObject){
     
-            $tasktitle_list[] = htmlspecialchars($value['label']);
+            $tasktitle_list[] = htmlspecialchars($tasksObject->post_title);
     
         }
      sort($tasktitle_list);
@@ -60,7 +81,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                 <div class="tbl">
                     <div class="tbl-row">
                         <div class="tbl-cell">
-                            <h3>Bulk Edit Tasks</h3>
+                            <h3>Manage Tasks</h3>
 
                         </div>
                     </div>
@@ -81,8 +102,8 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                        <select class="specialsearchfilter select2" id="customers_select_search" data-placeholder="Quick Search"  data-allow-clear="true" style="width:95%;border: #d6e2e8 solid 1px; height: 36px; border-radius: 3px;  padding-left: 10px;">
    
                            <option value=""></option>
-                     <?php  foreach ($tasktitle_list as $key=>$value){ ?>
-                        <option value="<?php echo $value;?>"><?php echo $value;?></option>
+                     <?php  foreach ($tasktitle_list as $Qkey=>$Qvalue){ ?>
+                        <option value="<?php echo $Qvalue;?>"><?php echo $Qvalue;?></option>
                         
                        
                      <?php  }?>
@@ -119,7 +140,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                             
                             foreach ($all_roles as $key=>$name) {
                                 if($key !='administrator' && $key !='subscriber'){
-                                    echo '<option value="' . $key . '">' . $name . '</option>';
+                                    echo '<option value="' . $key . '">' . $name['name'] . '</option>';
                                 }
                             }
                             ?>
@@ -147,16 +168,75 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     <th >Type</th>
                                     <th >Due Date</th>
                                     <th >User/Level</th>
-                                    <th >Description</th>
+                                    <th >Specifications</th>
 
                                 </tr>
                             </thead>
                             <tbody>
 
                                 <?php
-                                foreach ($result['profile_fields'] as $key => $value) {
+                                foreach ($listOFtaskArray as $taskskey => $tasksObject) {
 
-                                    $task_code = end(split('_', $key));
+                                    $task_code = $tasksObject->ID;
+                                    $tasksID = $tasksObject->ID;
+                                    
+                                    $value = [];
+                                    $value_value = get_post_meta( $tasksID, 'value' , false);
+                                    $value_unique = get_post_meta( $tasksID, 'unique' , false);
+                                    $value_class = get_post_meta( $tasksID, 'class' , false);
+                                    $value_after = get_post_meta( $tasksID, 'after', false);
+                                    $value_required = get_post_meta( $tasksID, 'required' , false);
+                                    $value_allow_tags = get_post_meta( $tasksID, 'allow_tags' , false);
+                                    $value_add_to_profile = get_post_meta( $tasksID, 'add_to_profile' , false);
+                                    $value_allow_multi = get_post_meta( $tasksID, 'allow_multi', false);
+                                    $value_label = get_post_meta( $tasksID, 'label' , false);
+                                    $value_type = get_post_meta( $tasksID, 'type' , false);
+                                    $value_lin_url = get_post_meta( $tasksID, 'link_url' , false);
+                                    $value_linkname = get_post_meta( $tasksID, 'linkname', false);
+                                    $value_attr = get_post_meta( $tasksID, 'duedate', false);
+                                    
+                                    
+                                    $value_taskattrs = get_post_meta( $tasksID, 'taskattrs', false);
+                                    $value_taskMWC = get_post_meta( $tasksID, 'taskMWC' , false);
+                                    $value_taskMWDDP = get_post_meta( $tasksID, 'taskMWDDP' , false);
+                                    $value_roles = get_post_meta( $tasksID, 'roles' , false);
+                                    $value_usersids = get_post_meta( $tasksID, 'usersids' , false);
+                                    $value_descrpition = get_post_meta( $tasksID, 'descrpition', false);
+                                    $value_key = get_post_meta( $tasksID, 'key', false);
+                                    $key  = $value_key[0];
+                                    $value['value'] = $value_value[0];
+                                    $value['unique'] = $value_unique[0];
+                                    $value['class'] =$value_class[0];
+                                    $value['after'] =$value_after[0];
+                                    $value['required'] =$value_required[0];
+                                    $value['allow_tags'] =$value_allow_tags[0];
+                                    $value['add_to_profile'] =$value_add_to_profile[0];
+                                    $value['allow_multi'] =$value_allow_multi[0];
+                                    $value['label'] =$value_label[0];
+                                    $value['type'] =$value_type[0];
+                                    $value['lin_url'] =$value_lin_url[0];
+                                    $value['linkname'] =$value_linkname[0];
+                                    $value['attrs'] =$value_attr[0];
+                                    $value['taskattrs'] =$value_taskattrs[0];
+                                    $value['taskMWC'] =$value_taskMWC[0];
+                                    $value['taskMWDDP'] =$value_taskMWDDP[0];
+                                    $value['roles'] =$value_roles[0];
+                                    $value['usersids'] =$value_usersids[0];
+                                    $value['descrpition'] =$value_descrpition[0];
+                                    if($value['type'] == "select-2"){
+                                        
+                                            $getarraysValue = get_post_meta( $tasksID, 'options', false);
+                                            
+                                            if(!empty($getarraysValue[0])){
+
+                                                
+                                                 $value['options'] =$getarraysValue[0];
+                                                 
+                                             }
+                                   }
+                                   
+                                    
+                                    
                                     ?>
 
                                     <tr>
@@ -165,10 +245,10 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                 
                                                 <i data-toggle="tooltip" class="hi-icon fa fa-clone saveeverything" id="<?php echo $task_code; ?>" onclick="clonebulk_task(this)" title="Create a clone" ></i>
                                                 <i  data-toggle="tooltip" title="Advanced" name="<?php echo $task_code; ?>" onclick="bulktasksettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i>
-                                                <i  data-toggle="tooltip" title="Remove this task" onclick="removebulk_task(this)" class="hi-icon fusion-li-icon fa fa-times-circle" ></i>
+                                                <i  data-toggle="tooltip" title="Remove this task" name="<?php echo $task_code; ?>" onclick="removebulk_task(this)" class="hi-icon fusion-li-icon fa fa-times-circle" ></i>
                                                  
                                             </div> </td>
-                                        <td><input type="text" style="margin-top: 10px;margin-bottom: 10px;" id="row-<?php echo $task_code; ?>-title" class="form-control" name="tasklabel" placeholder="Title" data-toggle="tooltip" title="Title" value="<?php echo htmlspecialchars($value['label']); ?>" required> 
+                                        <td><input type="text" style="margin-top: 10px;margin-bottom: 10px;" id="row-<?php echo $task_code; ?>-title" class="form-control" name="tasklabel" placeholder="Title" data-toggle="tooltip" title="Title" value="<?php echo $value['label']; ?>" required> 
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-key"  value="<?php echo $key; ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-attribute"  value="<?php echo $value['taskattrs']; ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-taskMWC"  value="<?php  if(isset($value['taskMWC'])){ echo $value['taskMWC']; }?>" ></span>
@@ -199,7 +279,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                 <div class="bulktasktype_<?php echo $task_code; ?>" style="display: none;margin-top:10px;margin-bottom: 10px;" >
                                                     <input type="text"  class="form-control" name="linkurl" id="row-<?php echo $task_code; ?>-linkurl" placeholder="Link URL" title="Link URL" data-toggle="tooltip" value="<?php echo $value['lin_url']; ?>" > 
                                                     <br>
-                                                    <input type="text"  class="form-control" name="linkname" id="row-<?php echo $task_code; ?>-linkname" placeholder="Link Name"  title="Link Name" data-toggle="tooltip" value="<?php echo $value['linkname']; ?>" > 
+                                                    <input type="text"  class="form-control" name="linkname" id="row-<?php echo $task_code; ?>-linkname" placeholder="Link Name"  title="Link Name" data-toggle="tooltip" value="<?php echo htmlspecialchars($value['linkname']); ?>" > 
                                                 </div>
                                             <?php } ?>
 
@@ -208,14 +288,14 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                             if ($value['type'] == 'select-2') {
                                                 $options_values = "";
                                                 foreach ($value['options'] as $Okey => $Ovalue) {
-                                                    $options_values .= $Ovalue['label'] . ',';
+                                                    $options_values .= $Ovalue->label . ',';
                                                 }
                                                 ?>
                                                 <div class="dbulktasktype_<?php echo $task_code; ?>" style="display: block;margin-top:10px;margin-bottom: 10px;" >
                                                     <?php } else { ?>
                                                     <div class="dbulktasktype_<?php echo $task_code; ?>" style="display: none;margin-top:10px;margin-bottom: 10px;" > 
                                                 <?php } ?>
-                                                    <input type="text"  class="form-control" name="dropdownvalues" id="row-<?php echo $task_code; ?>-dropdownvlaues" data-toggle="tooltip" placeholder="Comma separated list of values" title="Comma separated list of values" value="<?php echo rtrim($options_values, ','); ?>" /> 
+                                                    <input type="text"  class="form-control" name="dropdownvalues" id="row-<?php echo $task_code; ?>-dropdownvlaues" data-toggle="tooltip" placeholder="Comma separated list of values" title="Comma separated list of values" value="<?php echo htmlspecialchars(rtrim($options_values, ',')); ?>" /> 
                                                 </div> 
                                             </div>
                                         </td>
@@ -238,10 +318,10 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                         if($key !='administrator' && $key !='subscriber'){
                                                         if (in_array($key, $value['roles'])) {
 
-                                                            echo '<option value="' . $key . '" selected="selected">' . $name . '</option>';
+                                                            echo '<option value="' . $key . '" selected="selected">' . $name['name'] . '</option>';
                                                         } else {
 
-                                                            echo '<option value="' . $key . '">' . $name . '</option>';
+                                                            echo '<option value="' . $key . '">' . $name['name'] . '</option>';
                                                         }
                                                         }
                                                     }
@@ -252,11 +332,13 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                 <select class="select2 js-example-events" data-placeholder="Select Users" title="Select Users" data-allow-clear="true" id="row-<?php echo $task_code; ?>-userid" data-toggle="tooltip" multiple="multiple" >
                                                     <?php
                                                     foreach ($get_all_ids as $user) {
-                                                        if(!empty($value['usersids'])){
+                                                       // if(!empty($value['usersids'])){
                                                             if (in_array($user->ID, $value['usersids'])) {
                                                                 echo '<option value="' . $user->ID . '" selected="selected">' . $user->user_email . '</option>';
+                                                            }else{
+                                                                 echo '<option value="' . $user->ID . '" >' . $user->user_email . '</option>';
                                                             }
-                                                        }
+                                                       // }
                                                     }
                                                     ?>
                                                 </select>
@@ -267,13 +349,13 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                             <div class="addscrol">
                                                 <div id="row-<?php echo $task_code; ?>-descrpition" class='edittaskdiscrpition_<?php echo $task_code; ?>'><?php echo $value['descrpition']; ?></div>
 
-                                                <p ><i class="font-icon fa fa-edit" id='taskdiscrpition_<?php echo $task_code; ?>'title="Edit your task description" data-toggle="tooltip" style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i>
+                                                <p ><i class="font-icon fa fa-edit" id='taskdiscrpition_<?php echo $task_code; ?>'title="Edit your task specifications" data-toggle="tooltip" style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i>
         <?php if (!empty($value['descrpition'])) { ?>
 
-                                                        <span id="desplaceholder-<?php echo $task_code; ?>" style="display:none;margin-left: 10px;color:gray;">Description</span>
+                                                        <span id="desplaceholder-<?php echo $task_code; ?>" style="display:none;margin-left: 10px;color:gray;">Specifications</span>
         <?php } else { ?>
 
-                                                        <span id="desplaceholder-<?php echo $task_code; ?>" style="margin-left: 10px;color:gray;">Description</span>
+                                                        <span id="desplaceholder-<?php echo $task_code; ?>" style="margin-left: 10px;color:gray;">Specifications</span>
         <?php }; ?>
                                                 </p>
                                             </div> 

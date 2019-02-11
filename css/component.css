@@ -16,12 +16,20 @@
 }
 
 /* General styles for all types of buttons */
+.editclassselect {
+	width: 55% !important;
+	
+}
+.edittaskclass{
+	width: 50px !important;
+	margin-left: 6px;
+}
 .progress-button {
 	position: relative;
 	display: inline-block;
 	outline: none;
 	border: none;
-	background: #f26522;
+	background: #1388CA;
 	color: #fff;
 	
 	
@@ -30,6 +38,7 @@
         border-radius: 5px;
         height: 38px;
         width: 110px;
+		
 }
 
 .progress-button[disabled],
@@ -593,7 +602,7 @@
 
 .disableremovebutton{
     
-    background-color: #c1c1c1 !important;
+    background-color: #95d35f !important;
     height: 38px !important;
     font-size: 1em !important;
     color: white !important;

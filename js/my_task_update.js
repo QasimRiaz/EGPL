@@ -9,7 +9,28 @@ jQuery(document).ready(function() {
     
 });
 
+
+ function closeIFramemain(){
+       var parentsitename = "https://"+window.name+'/home';
+       console.log(parentsitename);
+       
+        window.top.location.href = parentsitename;
+       
+    }
+    
+function movetolivesite(){
+        
+        
+        window.top.location.href = "/landing-page";
+        
+    }
+
 jQuery( document ).ready(function() {
+    
+    
+   
+    
+    
     jQuery( ".remove_upload" ).click(function() {
         
         
@@ -140,9 +161,10 @@ function update_user_meta_custome(elem) {
     
     jQuery("body").css({'cursor':'wait'})
     var id = jQuery(elem).attr("id");
+    console.log(id)
     var sponsorid=getUrlParameter('sponsorid');
     
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var statusid = id.replace('update_', '');
     var statusvalue ;
     var value = statusid.replace('_status', '');
@@ -173,10 +195,25 @@ function update_user_meta_custome(elem) {
                    jQuery("." + value+'_submissionstatus').css( "background-color", "#d5f1d5");
                    jQuery('#update_'+value+'_remove').addClass('specialremoveiconenable');
                    jQuery('#'+id).children('.content').text('Submitted');
-                   jQuery('#'+id).addClass('disableremovebutton');
-                   jQuery("#" + value).prop("disabled", true);
+                   
+                   
                }
-               
+               if(sponsorid){
+                   
+                    swal({
+                                 title: "Success",
+                                 text: "Value has been updated successfully.",
+                                 type: "success",
+                                 confirmButtonClass: "btn-success",
+                                 confirmButtonText: "Ok"
+                             });
+                }else{
+                    
+                    if(metaupdate !=""){
+                        jQuery('#'+id).addClass('disableremovebutton');
+                        jQuery("#" + value).prop("disabled", true);
+                    }
+                }
                
                
             },error: function (xhr, ajaxOptions, thrownError) {
@@ -203,12 +240,7 @@ function update_user_meta_custome(elem) {
         }else{
             var convertintombs = 1
         }
-       
-       
-        if(convertintombs <= 100){
-        
-        
-        if(file !=""){
+        if(file){
             
             statusvalue = 'Complete';
             
@@ -216,6 +248,11 @@ function update_user_meta_custome(elem) {
            
             statusvalue = 'Pending';
         }
+        console.log(statusvalue);
+       
+        if(convertintombs < 50){
+        
+        
         
         // if (typeof(file) != 'undefined') {
         var lastvalue = jQuery('#hd_' + value).val();
@@ -346,7 +383,7 @@ function remove_task_value_readyfornew(e){
     
      var removebuttonid = jQuery(e).attr('id');
      var task_name_key = jQuery(e).attr('name');
-     var url = window.location.protocol + "//" + window.location.host + "/";
+     var url = currentsiteurl+'/';
      var elementType = jQuery("#my" + task_name_key).is("input[type='file']");
      var tasktype='';
      if (elementType == false) {
@@ -481,7 +518,7 @@ function update_task_submission_status(submissiontaskstatuskey,tasktype){
     
     
     var sponsorid=getUrlParameter('sponsorid');
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/usertask_update.php?usertask_update=update_submission_status';
     var data = new FormData();
     data.append('sponsorid',   sponsorid);

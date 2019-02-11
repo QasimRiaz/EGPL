@@ -226,7 +226,7 @@ try {
         
            $userdata = get_user_by_email($value['Email']);
            $t=time();
-           update_user_meta($userdata->ID, 'convo_welcomeemail_datetime', $t*1000);
+           update_user_option($userdata->ID, 'convo_welcomeemail_datetime', $t*1000);
            
                 $data_field_array= array();
                 foreach($field_key_string as $index=>$keyvalue){
@@ -348,7 +348,7 @@ function old_checkwelcomealreadysend($request){
         foreach($emailaddress_array as $key=>$emailaddress){
             
             $user = get_user_by( 'email', $emailaddress );
-            $welcome_email_date = get_user_meta($user->ID, 'convo_welcomeemail_datetime', true);
+            $welcome_email_date = get_user_option('convo_welcomeemail_datetime', $user->ID);
             if(!empty($welcome_email_date)){
                 
                 $last_send_welcome_email= date('d-M-Y H:i:s', $welcome_email_date/1000);

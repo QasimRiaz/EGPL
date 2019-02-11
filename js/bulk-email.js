@@ -44,7 +44,16 @@ function get_bulk_email_address() {
 }
 
 function bulkemail_preview(){
-    
+    var checkbccstatus = checkemailstatus();
+    if(checkbccstatus ==  false){
+            swal({
+                    title: "Error",
+                    text: "Invalid BCC email address. Please input a single valid email address.",
+                    type: "error",
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Ok"
+                });
+    }else{
      var emailSubject =jQuery('#emailsubject').val();
      var emailBody=tinymce.activeEditor.getContent();//jQuery('#bodytext').val();
      
@@ -73,7 +82,7 @@ function bulkemail_preview(){
                                             confirm: function () {
                                               conform_send_bulk_email();
                                               
-                                               return false;
+                                               return true;
                                             },
                                             cancel: function () {
                                               //  location.reload();
@@ -90,7 +99,7 @@ function bulkemail_preview(){
                                     
     // jAlert( 'Subject : ' +emailSubject+ '<hr>'+
             // emailBody+'<hr><p style="text-align: center;margin-right: 56px;"><a  class="btn btn-danger" id="popup_ok" onclick="conform_send_bulk_email()">Send</a><a id="popup_okk" class="btn btn-info" style="margin-left: 20px;">Cancel</a></p>'); 
-    
+        }
     
     
 }
@@ -138,12 +147,14 @@ function conform_send_bulk_email(){
          }
    
     var BCC=jQuery('#BCC').val();
+//    var CC=jQuery('#CC').val();
+    var RTO=jQuery('#replaytoemailadd').val();
     var fromname=jQuery('#fromname').val();
      var statusmessage='';
      var alertclass='';
     
     jQuery("body").css({'cursor':'wait'});
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=sendbulkemail';
     var data = new FormData();
     data.append('emailSubject', emailSubject);
@@ -154,6 +165,8 @@ function conform_send_bulk_email(){
     data.append('attendeeallfields',   JSON.stringify(arrData));
     data.append('datacollist',   JSON.stringify(columnheaderdataarray));
      data.append('BCC', BCC);
+     //data.append('CC', CC);
+     data.append('RTO', RTO);
      jQuery.ajax({
             url: urlnew,
             data: data,
@@ -168,14 +181,32 @@ function conform_send_bulk_email(){
                  if(data.indexOf("successfully") >-1){
                       statusmessage ='Your message has been sent.';
                       alertclass= 'alert-success';
-                  }else{
+                       swal({
+					title: "Success",
+					text: "Your message has been sent.",
+					type: "success",
+					confirmButtonClass: "btn-success",
+					confirmButtonText: "Ok"
+				});
                       
+                      
+                  }else{
+                       swal({
+					title: "Error",
+					text: data,
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				});
                       statusmessage = data;
                       alertclass= 'alert-danger';
                   }
                   
                 
-                bulkemailcontentbox.setContent('<div class="alert wpb_content_element '+alertclass+'"><div class="messagebox_text"><p>'+statusmessage+'</p></div></div>');
+               /// bulkemailcontentbox.setContent('<div class="alert wpb_content_element '+alertclass+'"><div class="messagebox_text"><p>'+statusmessage+'</p></div></div>');
+                  
+                  
+                  
                   
                   jQuery('.mysubmitemailbutton').hide();
                  //location.reload();
@@ -209,7 +240,7 @@ function conform_send_test_email_for_admin(){
    
      
     jQuery("body").css({'cursor':'wait'});
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=sendadmintestemail';
     var data = new FormData();
     data.append('emailSubject', emailSubject);
@@ -259,8 +290,10 @@ function templateupdatefilter(){
        
        if(dropdownvalue != "saveCurrentEmailtemplate"){
           
+          
+            console.log(dropdownvalue);
             jQuery("#emailtemplate").val(dropdownvalue);
-            var url = window.location.protocol + "//" + window.location.host + "/";
+            var url = currentsiteurl+'/';
             var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=get_email_template';
             var data = new FormData();
             var emailtemplatename = jQuery("#emailtemplate").val();
@@ -284,6 +317,8 @@ function templateupdatefilter(){
                // jQuery("#bodytext").val();
                  jQuery("#bodytext").val(emailtemplatenamelist.emailboday);
                  tinymce.activeEditor.setContent(emailtemplatenamelist.emailboday);
+                 jQuery("#CC").val(emailtemplatenamelist.CC);
+                 jQuery("#replaytoemailadd").val(emailtemplatenamelist.RTO);
                  jQuery("#BCC").val(emailtemplatenamelist.BCC);
                  jQuery("#fromname").val(emailtemplatenamelist.fromname);
                  
@@ -319,8 +354,20 @@ function templateupdatefilter(){
 
 function update_admin_email_template(){
     
-     var url = window.location.protocol + "//" + window.location.host + "/";
-     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=update_admin_email_template';
+    
+    var checkbccstatus = checkemailstatus();
+    if(checkbccstatus ==  false){
+            swal({
+                    title: "Error",
+                    text: "Please input only one and valid email address in BCC field. Multiple emails are not allowed.",
+                    type: "error",
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Ok"
+                });
+    }else{
+    
+    var url = currentsiteurl+'/'; 
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=update_admin_email_template';
      var data = new FormData();
      var emailtemplatename = jQuery("#emailtemplate").val();
      var fromname = jQuery("#fromname").val();
@@ -330,6 +377,8 @@ function update_admin_email_template(){
      var emailsubject = jQuery("#emailsubject").val();
      var emailboday =  tinymce.activeEditor.getContent();//jQuery("#bodytext").val();
      var BCC =      jQuery("#BCC").val();
+//     var CC =      jQuery("#CC").val();
+     var RTO =      jQuery("#replaytoemailadd").val();
      //console.log(emailboday);
      
      
@@ -339,6 +388,8 @@ function update_admin_email_template(){
      data.append('emailsubject', emailsubject);
      data.append('emailboday', emailboday);
      data.append('BCC', BCC);
+    // data.append('CC', CC);
+     data.append('RTO', RTO);
      data.append('fromname', fromname);
     
        
@@ -396,7 +447,7 @@ function update_admin_email_template(){
                 
             }});
     
-    
+    }
     
 }
 function removeemailtemplate(){
@@ -454,8 +505,8 @@ function removeemailtemplate(){
 
 function conform_remove_email_template(emailtemplatename){
 
-     var url = window.location.protocol + "//" + window.location.host + "/";
-     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=remove_email_template';
+    var url = currentsiteurl+'/'; 
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=remove_email_template';
      var data = new FormData();
      data.append('emailtemplatename', emailtemplatename);
  
@@ -576,7 +627,7 @@ function welcome_email_send_admin(){
     var replaytoemailadd=jQuery('#replaytoemailadd').val();
      
     jQuery("body").css({'cursor':'wait'});
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=sendadmintestemailwelcome';
     var data = new FormData();
     data.append('emailSubject', emailSubject);
@@ -626,7 +677,7 @@ function updateWelcomeMsg(){
     var BCC=jQuery('#BCC').val();
     
     jQuery("body").css({'cursor':'wait'});
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=updatewelocmecontent';
     var data = new FormData();
     data.append('welcomeemailSubject', emailSubject);
@@ -722,7 +773,7 @@ function getpagecontent_foreditor(){
     jQuery( "#pagetitle" ).val("");
    
     jQuery("#mycustomeditor").val("");
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getpageContent';
     var data = new FormData();
     data.append('pageID', pageID);
@@ -768,7 +819,7 @@ function conform_update_content_page(){
    // console.log(contentbody);
     var contentbodyID =jQuery('#pagecontentid').val();
   
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=updatepagecontent';
     var data = new FormData();
     data.append('contenttitle', contenttitle);
@@ -812,7 +863,7 @@ function conform_update_content_page(){
 
 function welcome_available_merge_fields(){
       jQuery("body").css({'cursor':'wait'});
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getavailablemergefields';
     var data = new FormData();
     var welcomedatafieldskeys="";
@@ -930,15 +981,32 @@ function warning_welcome_emailalreadysend(){
      
    //jQuery('#bodytext').val();
    var bulkemails = new Array();   
-   
+   var warningstatus =  false;
    var checkedRows = resultuserdatatable.rows('.selected').data();
    
    for (var i = 0; i < checkedRows.length; i++) {
        
         bulkemails.push(checkedRows[i].Email);
+      
+
     }
    
-   
+   jQuery.each(checkedRows,function(index,value){
+      
+        
+    jQuery.each(value,function(index2,value2){
+       
+       if(index2 == "Welcome Email Sent On"){
+           
+          if(value2 !=""){
+           warningstatus = true;
+          }
+       }
+     });
+       
+       
+       
+   });
     
    
     if (bulkemails.length === 0) {
@@ -957,7 +1025,7 @@ function warning_welcome_emailalreadysend(){
      var alertclass='';
     
     jQuery("body").css({'cursor':'wait'});
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=checkwelcomealreadysend';
     var data = new FormData();
     var curdate = new Date()
@@ -977,24 +1045,21 @@ function warning_welcome_emailalreadysend(){
             success: function(data) {
                 
                  jQuery('body').css('cursor', 'default');
-                 var datatablehtml ='<p><strong>The following users in your selection have already been sent the welcome emails. Are you sure you want to send again as it will change their passwords?</strong></p><div style="height: 300px;overflow: auto;"><table class="table"><tr><td>Email</td><td>Welcome Email Sent On</td></tr>';
-                 
-                 
+                if(warningstatus == true){
+                 var datatablehtml ='<p><strong><span style="text-decoration: underline;">Important Note:</span> </strong> Please see the chart below to check if any users selected have already been sent the Welcome Email. Re-sending the Welcome Email will reset their password.</p><div style="max-height: 300px;overflow: auto;"><table class="table"><tr><td><strong>Email</strong></td><td><strong>Welcome Email Sent On</strong></td></tr>';
                  var dataarray = jQuery.parseJSON(data);
-                 if(data !='null'){
+                
                    swal.close();
                  jQuery.each(dataarray, function (key, value) {
                       
-                      
-                      
-                      datatablehtml+='<tr><td>'+key+'</td><td>'+value+'</td></tr>';
+                    datatablehtml+='<tr><td>'+key+'</td><td>'+value+'</td></tr>';
                       
                   });
                   
                 datatablehtml+='</table></div><p><strong>Select Welcome Email Template :</strong><select style="margin-left: 14px;border: #cccccc 1px solid;border-radius: 7px;height: 36px;width: 53%;"id="welcomeemailtemplate">'+hiddentemplatelist+'</select> </p>';
                   
                  jQuery.confirm({
-                        title: 'Warning !',
+                        title: '<p style="text-align:center;margin-top: 5px;margin-bottom: -24px;">Send Welcome Email</p>',
                         content: datatablehtml,
                         confirmButton:'Confirm',
                         cancelButton:'Cancel',
@@ -1137,7 +1202,7 @@ function conform_send_welcomeemail_report(selectedtemplateemailname){
              
          }
     jQuery("body").css({'cursor':'wait'});
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=sendcustomewelcomeemail';
     var data = new FormData();
    
@@ -1247,6 +1312,7 @@ function old_back_report(){
 }
 
 function old_bulkemail_preview(){
+     
     
      var emailSubject =jQuery('#emailsubject').val();
      var emailBody=tinymce.activeEditor.getContent();//jQuery('#bodytext').val();
@@ -1314,7 +1380,7 @@ function old_conform_send_bulk_email(){
      var alertclass='';
     
     jQuery("body").css({'cursor':'wait'});
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/olduserreport.php?contentManagerRequest=oldsendbulkemail';
     var data = new FormData();
     data.append('emailSubject', emailSubject);
@@ -1416,7 +1482,7 @@ function old_warning_welcome_emailalreadysend(){
      var alertclass='';
     
     jQuery("body").css({'cursor':'wait'});
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/olduserreport.php?contentManagerRequest=oldcheckwelcomealreadysend';
     var data = new FormData();
     var curdate = new Date()
@@ -1580,7 +1646,7 @@ function old_conform_send_welcomeemail_report(){
      var alertclass='';
     
     jQuery("body").css({'cursor':'wait'});
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/olduserreport.php?contentManagerRequest=oldsendcustomewelcomeemail';
     var data = new FormData();
    
@@ -1624,7 +1690,7 @@ function old_conform_send_welcomeemail_report(){
 
 function old_sync_bulk_users(){
     
-    var url = window.location.protocol + "//" + window.location.host + "/"; 
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=GetMapdynamicsApiKeys';
     var syncurl = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=insertmapdynamicsuser';
     var data = new FormData();

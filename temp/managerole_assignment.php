@@ -1,28 +1,33 @@
 <?php
 // Template Name: Bulk Edit Task 
 if (current_user_can('administrator') || current_user_can('contentmanager')) {
-    
-    
-  
-    
-    
-    
+    global $wp_roles;
+    $all_roles = $wp_roles->get_names();
     
     
     include 'cm_header.php';
     include 'cm_left_menu_bar.php';
 
     $sponsor_id = get_current_user_id();
-    $test = 'custome_task_manager_data';
-    global $wp_roles;
-    $all_roles = $wp_roles->get_names();
+
+    
+    $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+    );
+    $result = get_posts( $args );
+   
     foreach ($all_roles as $key=>$name){
         
         if($name == $_GET['rolename']){
             $rolekey = $key;
         }
     }
-    $result = get_option($test);
+    
      $Rolename=$rolekey;
      $Rolename_display=$_GET['rolename'];
     ?>
@@ -54,26 +59,28 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                
                                 <?php
                                 
-                                foreach ($result['profile_fields'] as $profile_field_name => $profile_field_settings) {
-
-                                        if (strpos($profile_field_name, "task") !== false) {
-
-
-                                            if (strpos($profile_field_name, "status") !== false || strpos($profile_field_name, "datetime") !== false) {
+                                foreach ($result as $tasksIDKey => $tasksObject) {
                                                 
-                                            } else {
-                                                // echo $key;
-                                                $os = $profile_field_settings['roles'];
-
+                                    
+                                                $tasksID = $tasksObject->ID;
+                                                $value_label = get_post_meta( $tasksID, 'label' , false);
+                                                $value_key = get_post_meta( $tasksID, 'key', false);
+                                                $profile_field_name_key = $value_key[0];
+                                                $value_roles = get_post_meta( $tasksID, 'roles' , false);
+                                                $os = $value_roles[0];
+                                                
+                                                
+                                                
+                                                
                                                 if (in_array($Rolename, $os) || in_array('all', $os)) {
                                                     // print_r(  $os );
                                                    
                                                 }else{
                                                     
-                                                     echo '<option value="'.$profile_field_name.'">'.$profile_field_settings['label'] . '</option>';
+                                                     echo '<option value="'.$tasksID.'">'.$value_label[0] . '</option>';
                                                 }
-                                            }
-                                        }
+                                           
+                                        
                                     }
                                     ?>
                                 
@@ -99,31 +106,32 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                        
                                     <?php
                                 
-                                foreach ($result['profile_fields'] as $profile_field_name => $profile_field_settings) {
+                                foreach ($result as $tasksIDKey => $tasksObject) {
 
-                                        if (strpos($profile_field_name, "task") !== false) {
+                                       
 
 
-                                            if (strpos($profile_field_name, "status") !== false || strpos($profile_field_name, "datetime") !== false) {
-                                                
-                                            } else {
-                                                // echo $key;
-                                                $os = $profile_field_settings['roles'];
+                                                $tasksID = $tasksObject->ID;
+                                                $value_label = get_post_meta( $tasksID, 'label' , false);
+                                                $value_key = get_post_meta( $tasksID, 'key', false);
+                                                $profile_field_name_key = $value_key[0];
+                                                $value_roles = get_post_meta( $tasksID, 'roles' , false);
+                                                $os = $value_roles[0];
 
                                                 if (in_array($Rolename, $os)) {
                                                     // print_r(  $os );
-                                                    echo ' <tr><td ><p class="assignedtasks" id="'.$profile_field_name.'">'.$profile_field_settings['label'] . '</p></td>';
+                                                    echo ' <tr><td ><p class="assignedtasks" id="'.$tasksID.'">'.$value_label[0] . '</p></td>';
                                                     echo '<td ><i style=" cursor: pointer;margin-left: 10px;" onclick="removetask_forthisrole(this)" title="Remove this task" class="fusion-li-icon fa fa-times-circle fa-2x" style="color:#262626;"></i></td></tr>';
                                                 
                                                     
                                                 }else if(in_array('all', $os)){
                                                     
-                                                    echo ' <tr ><td ><p id="'.$profile_field_name.'">'.$profile_field_settings['label'] . '</p></td>';
+                                                    echo ' <tr ><td ><p id="'.$tasksID.'">'.$value_label[0] . '</p></td>';
                                                     echo '<td ><i style=" color:gray;margin-left: 10px;"  title="You can\'t remove this task." class="fusion-li-icon fa fa-times-circle fa-2x" style="color:#262626;"></i></td></tr>';
                                                  
                                                 }
-                                            }
-                                        }
+                                            
+                                        
                                     }
                                     ?>
                                      

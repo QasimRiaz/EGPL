@@ -565,6 +565,14 @@ li.active a, li.active a:hover {
         background-color: white;
         height: 622px ;
     }
+    .bulkproductedits tbody tr {
+        float: left;
+        margin: 10px;
+        border: 1px solid #aaa;
+        box-shadow: 3px 3px 6px rgba(0,0,0,0.25);
+        background-color: white;
+        height: 460px ;
+    }
     .cards tbody td {
         display: block;
         width: 279px;
@@ -610,6 +618,12 @@ li.active a, li.active a:hover {
     .addscrol{
         
             height: 118px !important;
+            overflow: auto !important;
+        
+    }
+    .addscrolproducts{
+        
+            height: 70px !important;
             overflow: auto !important;
         
     }
@@ -788,4 +802,26 @@ table.dataTable tbody td {
     
     
     float: none !important;
+}
+
+.marginetopbottom{
+    
+    margin-bottom: 10px !important;
+    margin-top:10px !important;
+    
+}
+.ourcustomebutton{
+    
+  
+    font-size: 12px!important;
+    background: #2196F3!important;
+    border: #2196F3!important;
+    float: right!important;
+    margin-bottom: 10px !important;
+}
+.imagepreviewbutton{
+    
+    margin-right: 10% !important;
+    margin-top: 36px !important;
+    
 }

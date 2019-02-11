@@ -245,18 +245,79 @@ function savebulktask_update($request){
          
          
         
+        $listoftaks = json_decode(stripslashes($request['bulktaskdata']));
+        $removetaskslist = json_decode(stripslashes($request['deletedtaskslist']));  
          
+        foreach ($removetaskslist as $tasksIndex=>$removetaskID){
+            
+            
+            wp_delete_post($removetaskID);
+            
+        }
+        
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);  
         $lastInsertId = contentmanagerlogging('Save Bulk Task',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
        
-        $tasksdata=json_decode(stripslashes($request['bulktaskdata']));
-        $tasksdata = json_decode(json_encode($tasksdata), true);
-        $test = 'custome_task_manager_data';
-        $result = get_option($test);
-        $result['profile_fields'] = $tasksdata;
-        $user_info = get_userdata($user_ID);
-        $restults = update_option($test, $result);
+        
+        foreach ($listoftaks as $taksKey=>$taskObject){
+            
+            
+            
+        if( strpos( $taksKey, "addnewtasks" ) !== false) {
+            
+          
+                $taskaObjectData = array(
+                    'post_title'    => wp_strip_all_tags( $taskObject->label ),
+                    'post_content'  => "",
+                    'post_status'   => 'draft',
+                    'post_author'   => $user_ID,
+                    'post_type'=>'egpl_custome_tasks'
+                );
+                $tasksID = wp_insert_post( $taskaObjectData );
+            
+            }else{
+                
+                $tasksID = $taksKey;
+                
+                
+            }
+            
+            
+            update_post_meta( $tasksID, 'value', $taskObject->value );
+            update_post_meta( $tasksID, 'unique', $taskObject->unique );
+            update_post_meta( $tasksID, 'class', $taskObject->class );
+            update_post_meta( $tasksID, 'after', $taskObject->after );
+            update_post_meta( $tasksID, 'required', $taskObject->required );
+            update_post_meta( $tasksID, 'allow_tags', $taskObject->allow_tags );
+            update_post_meta( $tasksID, 'add_to_profile', $taskObject->add_to_profile );
+            update_post_meta( $tasksID, 'allow_multi', $taskObject->allow_multi );
+            update_post_meta( $tasksID, 'label', $taskObject->label );
+            update_post_meta( $tasksID, 'type', $taskObject->type );
+            update_post_meta( $tasksID, 'link_url', $taskObject->lin_url );
+            update_post_meta( $tasksID, 'linkname', $taskObject->linkname );
+            update_post_meta( $tasksID, 'duedate', $taskObject->attrs );
+            update_post_meta( $tasksID, 'taskattrs', $taskObject->taskattrs );
+            update_post_meta( $tasksID, 'taskMWC', $taskObject->taskMWC );
+            update_post_meta( $tasksID, 'taskMWDDP', $taskObject->taskMWDDP );
+            update_post_meta( $tasksID, 'roles', $taskObject->roles );
+            update_post_meta( $tasksID, 'usersids', $taskObject->usersids );
+            update_post_meta( $tasksID, 'descrpition', $taskObject->descrpition );
+            update_post_meta( $tasksID, 'key', $taskObject->key );
+            update_post_meta( $tasksID, 'SystemTask', 0 );
+            
+            
+            
+            if(!empty($taskObject->options)){
+                
+                update_post_meta( $tasksID, 'options', $taskObject->options );
+            }
+           
+            
+            
+            
+        }
+        
         
         contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
         

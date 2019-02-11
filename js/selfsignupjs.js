@@ -1,7 +1,7 @@
 function selfisignupadd_new_sponsor(){
     
     
-  var url = window.location.protocol + "//" + window.location.host + "/";
+  var url = currentsiteurl + "/";
   var email =  jQuery("#Semail").val();
   var profilepic = jQuery('#profilepic')[0].files[0]; 
   var data = new FormData();
@@ -22,6 +22,55 @@ function selfisignupadd_new_sponsor(){
             data.append(jQuery(this).attr( "name" ), jQuery(this).val());
        });
        
+        jQuery('.mycustomedropdown').each(function() {
+           
+           
+           var ID = jQuery(this).attr( "id" );
+           var mydata = jQuery("#"+ID).val();
+           
+           console.log(mydata);
+           
+           
+           var selectedValues = "";
+           jQuery.each(mydata,function(index,value){
+               
+               console.log(value);
+                selectedValues += value+';';
+                
+           });
+           
+           
+           
+          data.append(jQuery(this).attr( "id" ), selectedValues);
+           
+           
+           
+       });
+       jQuery('.mycustomesingledropdown').each(function() {
+          
+          var ID = jQuery(this).attr( "id" );
+          var value = jQuery("#"+ID).val();
+          var selectedValues = "";
+          selectedValues += value+';'; 
+          data.append(jQuery(this).attr( "id" ), selectedValues); 
+           
+       });
+      
+       
+       jQuery('.mycustomcheckbox').each(function() {
+           
+            var ID = jQuery(this).attr( "id" );
+            if(jQuery(this).prop("checked")) {
+                data.append(jQuery(this).attr( "id" ), true);
+              } else {
+                 data.append(jQuery(this).attr( "id" ), false);
+              }
+           
+           
+       });
+       
+       
+       
        
        jQuery.ajax({
             url: urlnew,
@@ -31,7 +80,7 @@ function selfisignupadd_new_sponsor(){
             processData: false,
             type: 'POST',
             success: function(data) {
-                
+                console.log(data);
                var message = jQuery.parseJSON(data);
               
                
@@ -41,7 +90,7 @@ function selfisignupadd_new_sponsor(){
                     jQuery("form")[0].reset();
                     swal({
 					title: "Success",
-					text: 'Registration request has been sent successfully',
+					text: message.showmsg,
 					type: "success",
                                         html:true,
 					confirmButtonClass: "btn-success",

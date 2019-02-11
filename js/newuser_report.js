@@ -17,6 +17,7 @@ jQuery(document).ready(function () {
 
  if ( window.location.href.indexOf("user-report") > -1)
     {
+        
     jQuery("body").css({'cursor': 'wait'});
     
     var tech = getUrlParameter('report');
@@ -28,7 +29,7 @@ jQuery(document).ready(function () {
 
 // init
     
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=getusersreport';
     var curdate = new Date();
     var usertimezone = curdate.getTimezoneOffset()/60;
@@ -118,7 +119,7 @@ jQuery(document).ready(function () {
                
                 jQuery.each(columsheader, function (key, value) {
 
-                    if (jQuery.inArray(columsheader[key].key, JSON.parse(showcollist)) !== -1 ) {
+                    if (jQuery.inArray(columsheader[key].title, JSON.parse(showcollist)) !== -1 ) {
                         if(columsheader[key].key.search('task') > -1){
                             
                             jQuery('#usertaskfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');
@@ -315,7 +316,7 @@ jQuery('.drawdatatable').on('click', function () {
     var userbycolname = jQuery('#userbycolumnsname').select2("val");
     var loadreportname = jQuery('#loaduserreport option:selected').val();
     var userbytype = jQuery('#sortingtype').select2("val");
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=setsessioninphp';
     var curdate = new Date();
     var usertimezone = curdate.getTimezoneOffset()/60;
@@ -379,8 +380,19 @@ jQuery('.backtofilter').on('click', function () {
 
 function user_report_savefilters() {
 
-    var url = window.location.protocol + "//" + window.location.host + "/";
-    var selectedcolumns = jQuery('#userreportcolumns').select2("val");
+    var url = currentsiteurl+'/';
+    var getdataselectedarray =  jQuery('#userreportcolumns').select2('data');
+    var selectedcolumns = [];
+    jQuery.each(getdataselectedarray, function (i, item) {
+        
+        selectedcolumns.push(item.text);
+        
+        
+    });
+    
+   
+    console.log(selectedcolumns);
+    
     var userbycolname = jQuery('#userbycolumnsname').select2("val");
     var userbytype = jQuery('#sortingtype').select2("val");
     var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=user_report_savefilters';
@@ -460,7 +472,7 @@ function removeeuserreport() {
                             type: "success",
                             confirmButtonClass: "btn-success"
                         }, function () {
-                            var url = window.location.protocol + "//" + window.location.host + "/";
+                            var url = currentsiteurl+'/';
                            window.location.href = url+"user-report/";
                         }
                         );
@@ -480,7 +492,7 @@ function removeeuserreport() {
 
 function confrimremoveuserreport(userreportname) {
 
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=user_report_removefilter';
     var data = new FormData();
 
@@ -522,7 +534,7 @@ function loaduserreport() {
 
         jQuery("#userreportname").val(dropdownvalue);
 
-        var url = window.location.protocol + "//" + window.location.host + "/";
+        var url = currentsiteurl+'/';
         var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=get_userreport_detail';
         var data = new FormData();
         data.append('reportname', dropdownvalue);
@@ -562,7 +574,7 @@ function loaduserreport() {
                 }
                 jQuery.each(columsheader, function (key, value) {
 
-                    if (jQuery.inArray(columsheader[key].key, JSON.parse(getuserreportsavedlist[1])) !== -1) {
+                    if (jQuery.inArray(columsheader[key].title, JSON.parse(getuserreportsavedlist[1])) !== -1) {
                         
                          if(columsheader[key].key.search('task') > -1){
                              jQuery('#usertaskfields').append('<option value="' + columsheader[key].key + '" selected="selected">' + columsheader[key].title + '</option>');

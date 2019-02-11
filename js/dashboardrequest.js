@@ -1,8 +1,13 @@
+
+//currentsiteurl;
+//currentsiteurl = jQuery('#currentsiteurl').val();
 jQuery(document).ready(function() {
+    
+    
     
   if ( window.location.href.indexOf("dashboard") > -1){
     
-  var url = window.location.protocol + "//" + window.location.host + "/";
+  var url = currentsiteurl+'/';
   var urlnew = url + 'wp-content/plugins/EGPL/dashboardrequest.php?dashboardRequest=getdashboarddailygraph';
   var getactiveuser = url + 'wp-content/plugins/EGPL/dashboardrequest.php?dashboardRequest=getdashboardactiveusergraph';
   var taskbargraph = url + 'wp-content/plugins/EGPL/dashboardrequest.php?dashboardRequest=gettaskstatusbardata';
@@ -36,7 +41,7 @@ jQuery(document).ready(function() {
                         height: 235
 
                     }, title: {
-                        text: false
+                        text: ''
                     }, legend: {
                         enabled: false
                     },
@@ -102,7 +107,10 @@ jQuery(document).ready(function() {
                 jQuery("#titleactiveuser").append(activeusertitle);
 
                 var activeusercountprc = Math.round((getactiveuserlogin.activeuser / getactiveuserlogin.totaluser) * 100);
-
+                if((isNaN(activeusercountprc))){
+                    
+                    activeusercountprc = 0;
+                }
 
                
 
@@ -225,7 +233,7 @@ jQuery(document).ready(function() {
                                 point: {
                                     events: {
                                         click: function () {
-                                            location.href = '/role-assignment/?rolename=' + this.name;
+                                            location.href = currentsiteurl+'/role-assignment/?rolename=' + this.name;
                                         }
                                     }
                                 }

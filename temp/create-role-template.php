@@ -2,31 +2,26 @@
 // Silence is golden.
    if (current_user_can('administrator') || current_user_can('contentmanager') ) {
        
-  
-	 global $wp_roles;
-     
-     $role_key=strtolower('My new special level old');
+   
     
-     $get_all_roles_array = 'wp_user_roles';
-     $get_all_roles = get_option($get_all_roles_array);
-     $result_update = 'newvalue';
-     foreach ($get_all_roles as $key => $item) {
-            
-           
-            if($role_key == strtolower($item['name'])){
-                
-     //            echo $role_key.'-----';
-       //          echo strtolower($item['name']).'<br>';
-                $result_update = 'already';
-                break;
-            }
-    }
-     // echo '<pre>';
-    // print_r($get_all_roles);
-   // echo $result_update;exit;
-   // exit;
+    global $wp_roles;
+    $site_url  = get_site_url();
+
+   // $all_roles = $wp_roles->roles;
+    
+  
+    
           
-    $all_roles = $wp_roles->get_names();
+    
+     //$get_all_roles_array = 'wp_user_roles';
+     if (is_multisite()) {
+                $blog_id = get_current_blog_id();
+                $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+            }else{
+                $get_all_roles_array = 'wp_user_roles';
+            }
+     $get_all_roles = get_option($get_all_roles_array);
+     
     
     
     $list="";
@@ -94,7 +89,7 @@
 						</thead>
 						
 						<tbody>
-   <?php  foreach ($all_roles as $key => $name) {
+   <?php  foreach ($get_all_roles as $key => $name) {
                                                 $taskcount=0;
                                                 $list='';
                                               if ($key != 'administrator' && $key != 'contentmanager' && $key != 'subscriber') {              
@@ -126,12 +121,12 @@
            
         
                           echo '<tr>
-                                                           <td><a href="/role-assignment/?rolename='.$name.'"><label style="cursor: pointer;"  id="mrolename" title="'.$list.'">' . $name . '  ('.$taskcount.' tasks)</label></a></td>
+                                                           <td><a href="'.$site_url.'/role-assignment/?rolename='.$name['name'].'"><label style="cursor: pointer;"  id="mrolename" title="'.$list.'">' . $name['name'] . '  ('.$taskcount.' tasks)</label></a></td>
                                                            <td><div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a">
    
     
-    <i class="hi-icon fusion-li-icon fa fa-pencil-square fa-2x"  title="Edit Level Name" name="'.$name.'" onclick="editrolename(this)" id="'.$key.'" ></i>
-    <i class="hi-icon fusion-li-icon fa fa-clone fa-2x" name="'.$name.'" title="Create a Clone" onclick="createroleclone(this)" id="'.$key.'" ></i>
+    <i class="hi-icon fusion-li-icon fa fa-pencil-square fa-2x"  title="Edit Level Name" name="'.$name['name'].'" onclick="editrolename(this)" id="'.$key.'" ></i>
+    <i class="hi-icon fusion-li-icon fa fa-clone fa-2x" name="'.$name['name'].'" title="Create a Clone" onclick="createroleclone(this)" id="'.$key.'" ></i>
     <i class="hi-icon fusion-li-icon fa fa-times-circle fa-2x" onclick="delete_role_name(this)" id="'.$key.'" name="delete-sponsor" title="Remove Level" ></i>
 </div></td>
                                                            </tr>';                          

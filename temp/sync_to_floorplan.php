@@ -62,7 +62,7 @@ $count_length = count($get_all_ids);
                 <div class="tbl">
                     <div class="tbl-row">
                         <div class="tbl-cell">
-                            <h3>Sync To Floorplan</h3>
+                            <h3>Sync to ConvoMaps</h3>
                            
                         </div>
                     </div>

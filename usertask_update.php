@@ -11,20 +11,22 @@ if ($_GET['usertask_update'] == "update_submission_status") {
     die();
 }else if ($_GET['usertask_update'] == "update_user_meta_custome") {
 
+    
     require_once('../../../wp-load.php');
     $keyvalue = $_POST['action'];
    
     $updatevalue=$_POST['updatevalue'];
     
     $reg_value = $updatevalue;
-
-
- 
-    
- 
     $status=$_POST['status'];
     $sponsorid=$_POST['sponsorid'];
     update_user_meta_custome($keyvalue,$reg_value,$status,$sponsorid,$_POST);
+    
+     
+    
+   
+    
+    
 }else if ($_GET['usertask_update'] == 'user_file_upload') {
 
     require_once('../../../wp-load.php');
@@ -50,10 +52,89 @@ if ($_GET['usertask_update'] == "update_submission_status") {
        $user_info = get_userdata($postid);
        $lastInsertId = contentmanagerlogging('Save Task File',"User Action",serialize($_POST),$postid,$user_info->user_email,"pre_action_data");
        user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$lastInsertId);
-    
+      
     
 }
 
+function updatetocvent($postid,$updatevalue,$keyvalue){
+    
+    
+     $oldvalues = get_option( 'ContenteManager_Settings' );
+     $cventAccountNo = $oldvalues['ContentManager']['cventaccountname'];
+     $cventUsername = $oldvalues['ContentManager']['cventusername'];
+     $cventAPiName = $oldvalues['ContentManager']['cventapipassword'];
+     
+    
+     
+     
+     
+    if(!empty($cventAccountNo) && !empty($cventUsername) && !empty($cventAPiName)){
+       
+        
+       
+        require('temp/php-cvent-master/CventClient.class.php');
+        include 'defult-content.php';
+        
+        $bar = get_user_option( 'contactStub', $postid );
+        
+        if(!empty($bar)){
+        $cventID[0] = $bar;
+        
+        
+        
+        
+        $cc = new CventClient();
+        $cc->Login($cventAccountNo, $cventUsername, $cventAPiName);
+        $type = 'Update';
+        $getContact = $cc->RetrieveContacts($cventID);
+        
+        
+        
+        
+        $getContact['request_input_value_expogenie'] = $request_value;
+        
+        $lastInsertId = contentmanagerlogging('Update Cvent Custome Field Retrieve',"User Action",serialize($getContact),$postid,$user_info->user_email,"pre_action_data");
+       
+        
+        
+        if($cventmappingarray[$keyvalue]['type']  == 'custome'){
+        
+            foreach($getContact[0]->CustomFieldDetail as $key=>$value){
+
+
+
+                    if($cventmappingarray[$keyvalue]['id'] == $value->FieldId){
+
+                        $contactUpdate[0]->CustomFieldDetail[0]->FieldName = $value->FieldName;
+                        $contactUpdate[0]->CustomFieldDetail[0]->FieldType = $value->FieldType;
+                        $contactUpdate[0]->CustomFieldDetail[0]->FieldValue = $updatevalue;
+                        $contactUpdate[0]->CustomFieldDetail[0]->FieldId = $value->FieldId;
+
+
+                    }
+
+
+
+
+            }
+        }
+        
+        $contactUpdate[0]->Id = $cventID[0];
+        
+       
+        
+        
+        $lastInsertId = contentmanagerlogging('Update Cvent Custome Field Pre Request',"User Action",serialize($contactUpdate),$postid,$user_info->user_email,"pre_action_data");
+     
+      
+        
+        $result = $cc->CreateUpdateContacts($type, $contactUpdate);
+        
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
+        }
+    
+}
+}
 function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$lastInsertId) {
     
     //$key = $_POST['value'];
@@ -99,7 +180,8 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
 	'rtx'                          => 'text/richtext',
 	'css'                          => 'text/css',
 	'htm|html'                     => 'text/html',
-	
+            'svg'                          => 'image/svg+xml',
+        
 	// Audio formats
 	'mp3|m4a|m4b'                  => 'audio/mpeg',
 	'ra|ram'                       => 'audio/x-realaudio',
@@ -229,6 +311,10 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
     $subject = $postid . ' <' . $site_url . '>';
     
     contentmanagerlogging_file_upload ($lastInsertId,serialize($email_body_message_for_admin));
+    updatetocvent($postid,$movefile['url'],$keyvalue);
+    
+    
+    
     //wp_mail($to, $subject, $email_body_message_for_admin,$headers);
    } catch (Exception $e) {
        
@@ -289,6 +375,12 @@ function update_user_meta_custome($keyvalue,$updatevalue,$status,$sponsorid,$log
     // contentmanagerlogging ('Save Task',"User Action",serialize($log_obj),$postid,$user_info->user_email,$result);
     //wp_mail($to, $subject, $email_body_message_for_admin,$headers);
  
+     updatetocvent($postid,$updatevalue,$keyvalue);
+     
+     
+     
+     
+     
   } catch (Exception $e) {
        
          contentmanagerlogging_file_upload ($lastInsertId,serialize($e));

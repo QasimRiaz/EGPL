@@ -1,3 +1,8 @@
+<link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap-select.min.css?v=2.19">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/awesome-bootstrap-checkbox.css?v=2.19">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap-slider.min.css?v=2.19">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/selectize.bootstrap3.css?v=2.19">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/query-builder.default.css?v=2.19">
 <?php
 // Template Name: Bulk Edit Task 
 if (current_user_can('administrator') || current_user_can('contentmanager')) {
@@ -5,10 +10,12 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
    // $get_all_roles_array = 'wp_user_roles';
   //  $get_all_roles = get_option($get_all_roles_array);
     
+	
     
   //  echo '<pre>';
   //  print_r($get_all_roles);exit;
     
+
     
     $user_reportsaved_list = get_option('ContenteManager_usersreport_settings');
     $get_email_template='AR_Contentmanager_Email_Template';
@@ -49,9 +56,11 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
         
         $loadreportname = $_GET['report'];
         $get_report_detial = $user_reportsaved_list[$loadreportname];
+       
         $queryfilter = json_decode($get_report_detial[0]);
         $querybuilderfilter = htmlentities(stripslashes(json_encode($queryfilter->rules)));
         $showcolonreport = htmlentities(stripslashes($get_report_detial[1]));
+       
         $orderby = $get_report_detial[2];
         $orderbycolname = $get_report_detial[3];
         $selectedcolumnslebel_hiddenfield = htmlentities(stripslashes($get_report_detial[1]));
@@ -63,24 +72,39 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     }
 
     ?>
+
      <input type="hidden" id='querybuilderfilter' value='{"condition":"AND","rules":<?php echo $querybuilderfilter;?>,"valid":true}' > 
      <input type="hidden" id='showcolonreport' value="<?php echo $showcolonreport; ?>" >
      <input type="hidden" id='orderby' value="<?php echo $orderby;?>" > 
      <input type="hidden" id='orderbycolname' value="<?php echo $orderbycolname ?>" >
+	 
+	 
+	 
+				
+	 <input type="hidden" id='welcomecustomeemail' >
      
      <?php if(isset($_REQUEST)){ 
          
          ?>
-            <form action="<?php echo $base_url;?>/user-report/?report=edit" method="post"  id="runreportresult"  >
+		 
+				<input type="hidden" id='querybuilderfilter' value='{"condition":"AND","rules":<?php echo stripslashes($_POST['filterdata-hiddenfield']);?>,"valid":true}' > 		
+                <input type="hidden" id='showcolonreport' value="<?php echo htmlentities(stripslashes($_POST['selectedcolumnskeys-hiddenfield'])); ?>" > 
+                <input type="hidden" id='orderby' value="<?php echo $_POST['userbytype-hiddenfield'];?>" > 
+                <input type="hidden" id='orderbycolname' value="<?php echo $_POST['userbycolname-hiddenfield'];?>" > 
+                <input type="hidden" id='loadreportname' value="<?php echo $_POST['loadreportname-hiddenfield'];?>" >
+		 
+		 <?php } ?>
+		 
+            <form action="<?php echo $base_url;?>/user-report-result/?report=edit" method="post"  id="runreportresult"  >
                     <input type="hidden" name='usertimezone-hiddenfield' id='usertimezone-hiddenfield' value='<?php echo $_POST['usertimezone-hiddenfield'];?>' > 
                     <input type="hidden" name='filterdata-hiddenfield' id='filterdata-hiddenfield' value="<?php echo $querybuilderfilter ;?>" > 
                     <input type="hidden" name='selectedcolumnslebel-hiddenfield' id='selectedcolumnslebel-hiddenfield' value="<?php echo $selectedcolumnslebel_hiddenfield;?>" > 
-                    <input type="hidden" name='selectedcolumnskeys-hiddenfield' id='selectedcolumnskeys-hiddenfield' value="<?php echo $selectedcolumnskeys_hiddenfield;?>" > 
+                    <input type="hidden" name='selectedcolumnskeys-hiddenfield' id='selectedcolumnskeys-hiddenfield' value="<?php echo $selectedcolumnslebel_hiddenfield;//$selectedcolumnskeys_hiddenfield;?>" > 
                     <input type="hidden" name='userbytype-hiddenfield' id='userbytype-hiddenfield' value="<?php echo $userbytype_hiddenfield;?>" > 
                     <input type="hidden" name='userbycolname-hiddenfield' id='userbycolname-hiddenfield' value="<?php echo $orderbycolname;?>" > 
                     <input type="hidden" name='loadreportname-hiddenfield' id='loadreportname-hiddenfield' value="<?php echo $loadreportname_hiddenfield;?>" > 
             </form>             
-     <?php } ?>
+     
      <div id="hiddenform" style="display:none;"></div>
      <div class="page-content">
         <div class="container-fluid">
@@ -101,7 +125,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                             
                                             $template_name = ucwords(str_replace('_', ' ', $key));
                                             if($key == "welcome_email_template"){
-                                                 echo  '<option value="' . $key . '" selected="selected">Defult Welcome Email</option>';
+                                                 echo  '<option value="' . $key . '" selected="selected">Default Welcome Email</option>';
                                             }else{
                                                  echo  '<option value="' . $key . '" >'.$template_name.'</option>';
                                             }
@@ -131,7 +155,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                 <div class="tabs-section-nav tabs-section-nav-icons">
                     <div class="tbl">
                         <ul class="nav" role="tablist">
-                            <li class="nav-item" style="width:50%;">
+                            <li class="nav-item" style="width:33%;">
                                 <a class="nav-link active" href="#tabs-1-tab-1" role="tab" data-toggle="tab">
                                     <span class="nav-link-in">
                                         <i class="fa fa-list-alt"></i>
@@ -139,7 +163,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     </span>
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item" style="width:33%;">
                                 <a class="nav-link" href="#tabs-1-tab-2" role="tab" onclick="get_bulk_email_address()" data-toggle="tab">
                                     <span class="nav-link-in">
                                          <i class="fa fa-mail-forward"></i>
@@ -148,7 +172,14 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     </span>
                                 </a>
                             </li>
-                           
+<!--                           <li class="nav-item">
+                                <a class="nav-link" href="#tabs-1-tab-3" role="tab" data-toggle="tab">
+                                    <span class="nav-link-in">
+                                         <i class="fa fa-filter"></i>
+											Customize Report
+                                    </span>
+                                </a>
+                            </li>-->
 
                         </ul>
                     </div>
@@ -174,7 +205,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
                                                     <select style="width:100%;height:38px;" class="form-control" onchange="customloaduserreport()" id="customloaduserreportss">
                                                         <option disabled selected hidden>Load a Report</option>
-                                                        <option value="defult"></option>
+                                                      
                                                             <?php
                                                             foreach ($user_reportsaved_list as $key => $value) {
 
@@ -236,7 +267,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="faq-page-cat" title="Compose and send a bulk email message to the currently selected users">
+                                    <div class="faq-page-cat" >
                                         <div class="faq-page-cat-icon"><i class="bulkbtuton reporticon font-icon fa fa-users fa-2x"></i></div>
 
                                         <div class="faq-page-cat-txt">
@@ -352,7 +383,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 							</div>
 						</div>-->
 						<div class="col-md-4">
-							<div class="faq-page-cat" title="Compose and send a bulk email message to the currently selected users">
+							<div class="faq-page-cat" >
 								
 								
 								<div class="faq-page-cat-txt">
@@ -386,7 +417,16 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     </div>
                                 </div>
                                
-                                
+                                <div class="form-group row">
+                                        <label class="col-sm-2 form-control-label">Reply-To <i style="cursor: pointer;" title = 'Please input an email address. When the recipient hits Reply on the message, this email address will be selected to receive their reply.' class="reporticon font-icon fa fa-question-circle"></i></label>
+                                        <div class="col-sm-10">
+                                            <div class="form-control-wrapper form-control-icon-left">    
+                                                <input type="text"  class="form-control" id="replaytoemailadd" placeholder="Reply To Email address" value="<?php echo $sponsor_info[$loadreportname]['replaytoemailadd']; ?>" >
+                                                <i class="fa fa-mail-reply"></i>	
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 
                                 
                                 <div class="form-group row">
@@ -399,6 +439,16 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                         
                                     </div>
                                 </div>
+<!--                                <div class="form-group row">
+                                    <label class="col-sm-2 form-control-label">CC <i style="cursor: pointer;" title='Please input one or multiple email address (comma separated). All outgoing Welcome emails will be carbon copied to these address(es).'class="reporticon font-icon fa fa-question-circle"></i></label>
+                                    <div class="col-sm-10">
+                                            <div class="form-control-wrapper form-control-icon-left">
+								<input type="text"  class="form-control" id="CC" placeholder="CC" >
+								<i class="font-icon fa fa-copy"></i>
+							</div>
+                                        
+                                    </div>
+                                </div>-->
                                 <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">Subject <strong>*</strong></label>
                                     <div class="col-sm-10">
@@ -435,6 +485,113 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                         </div>
                     </div>
                     
+					<div role="tabpanel" class="tab-pane fade" id="tabs-1-tab-3">
+					
+					   <br>
+                        <section class="box-typical faq-page">
+                            <div class="faq-page-header-search">
+                                <div class="search">
+                                    <div class="row">
+                                        <div class="col-md-6">
+
+                                            <fieldset class="form-group">
+
+                                                <select style="width:100%;height:38px;"class="form-control" onchange="loaduserreport()" id="loaduserreport">
+                                                    <option disabled selected hidden>Load a Report</option>
+                                                   
+                                                    <option value="defult">Save Current Template As</option>
+                                                    <optgroup label="Saved Templates" id="loaduserreportlist">
+
+    <?php
+    foreach ($user_reportsaved_list as $key => $value) {
+
+
+        echo '<option value="' . $key . '">' . $key . '</option>';
+    }
+    ?>
+                                                    </optgroup>
+                                                </select>
+                                            </fieldset>
+                                        </div>
+
+                                        <div class="col-md-6">
+
+                                            <form method="post" action="javascript:void(0);" onSubmit="user_report_savefilters()">    	
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <input style="height: 38px;" placeholder="Report Name" id="userreportname" type="text" class="form-control" required>
+                                                        <div class="input-group-btn">
+                                                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                Action
+                                                            </button>
+                                                            <div class="dropdown-menu dropdown-menu-right">
+                                                                <button type="submit"  name="saveuserreport"  class="dropdown-item"  ><i class="font-icon fa fa-save" aria-hidden="true"></i> Save</button>
+                                                                <a class="dropdown-item" onclick="removeeuserreport()"><i class="font-icon fa fa-remove" aria-hidden="true"></i>Delete</a>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>		
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--.faq-page-header-search-->
+
+
+
+                        </section><!--.faq-page-->
+                        <h5 class="m-t-lg with-border">Filters</h5>
+                        <div id="builder"></div>
+                        <h5 class="m-t-lg with-border">Show Columns</h5>
+                        <div class="form-group row">
+
+                            <div class="col-sm-12" >
+                                <select class="select2"  data-placeholder="Select Columns" title="Select Columns" id="userreportcolumns" data-allow-clear="true" data-toggle="tooltip" multiple="multiple">
+                                    <optgroup label="User Details" id="usercontactfields"></optgroup>
+                                    <optgroup label="Tasks" id="usertaskfields"></optgroup>
+                                </select>
+
+                            </div>
+                        </div>
+                        <h5 class="m-t-lg with-border">Sort by</h5>
+                        <div class="form-group row">
+
+                            <div class="col-sm-6" >
+                                <select class="select2"  data-placeholder="Select Columns"  id="userbycolumnsname" data-allow-clear="true" >
+                                    <optgroup label="User Details" id="usercontactfieldssortby"></optgroup>
+                                    <optgroup label="Tasks" id="usertaskfieldssortby"></optgroup>
+                                </select>
+
+                            </div>
+                            <div class="col-sm-6" >
+                                <select class="select2"  id="sortingtype" data-allow-clear="true">
+
+                                    <option value='asc'>Ascending</option>
+                                    <option value='desc' selected="selected">Descending</option>
+
+                                </select>
+
+                            </div>
+                        </div>
+                        <h5 class="m-t-lg with-border"></h5>
+                        <div class="form-group row">
+
+                            <div class="col-sm-6" style="text-align: left;">
+                                <button class="btn btn-danger btn-lg  resetuserfilters">Reset</button>&nbsp;&nbsp;
+                                <button class="btn btn-lg mycustomwidth btn-success drawdatatable">Run Report</button>
+
+                            </div>
+                            <div class="col-sm-6"></div>
+                        </div>
+                        
+                          
+                        
+
+                    </div>
+					
                 </div><!--.tab-content-->
             </section><!--.tabs-section-->
         </div>
@@ -442,7 +599,18 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     <?php
     include 'cm_footer.php';
     ?>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report_result.js?v=2.29"></script>
+	<script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-select.js?v=2.19"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootbox.js?v=2.19"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-slider.min.js?v=2.19"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/selectize.min.js?v=2.19"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jQuery.extendext.min.js?v=2.19"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/sql-parser.js?v=2.19"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/doT.js?v=2.19"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/interact.js?v=2.19"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/query-builder.js?v=2.19"></script>
+	
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report_result.js?v=2.33"></script>
+	<script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report.js?v=2.30"></script>
 
     <?php
 }else{

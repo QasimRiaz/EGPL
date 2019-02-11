@@ -11,7 +11,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
     $content_ID = $_POST['getallPages'];
     $page_data = get_page($content_ID);
-
+    $site_url  = get_site_url();
 
 
     $content = $page_data->post_content;
@@ -46,7 +46,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
                 <h5 class="m-t-lg with-border"></h5>
 
-              <form method="post" action="/content-editor/" >
+              <form method="post" action="<?php echo $site_url;?>/content-editor/" >
                     
                    <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">Select <strong>*</strong></label>

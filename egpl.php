@@ -5,19 +5,33 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           2.20
+ * Version:           3.00
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
  * Network:           true
  * GitHub Plugin URI: https://github.com/QasimRiaz/EGPL
- * Requires WP:       4.0
- * Requires PHP:      5.3
+ * Requires WP:       5.0.3
+ * Requires PHP:      7.2
+ * Date 11/02/2019
  */
 
 //get all the plugin settings
 //get all the plugin settings
-if($_GET['contentManagerRequest'] == "getuseremailids") {        
+if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {        
+    require_once('../../../wp-load.php');
+    
+    $importfileurl = $_POST['uploadedsheeturl'];
+    $col_mapping_datarray = json_decode(stripslashes($_POST['mappingfielddata']), true);
+    $welcome_email_status = $_POST['welcomeemailstatus'];
+    $welcome_email_template_name = $_POST['seletwelcomeemailtemplate'];
+    
+    $responce_createdusers = createuserlist_after_mapping($importfileurl,$col_mapping_datarray,$welcome_email_status,$welcome_email_template_name);
+     echo json_encode($responce_createdusers);
+    die();
+   
+  
+}else if($_GET['contentManagerRequest'] == "getuseremailids") {        
     require_once('../../../wp-load.php');
     $fields = array( 'ID','user_email' );
     $args = array(
@@ -73,11 +87,11 @@ if($_GET['contentManagerRequest'] == "getuseremailids") {
      
      
       
-      
+        global $wpdb;
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);  
         $lastInsertId = contentmanagerlogging('Insert Map Dynamics User',"Admin Action","",$user_ID,$user_info->user_email,"pre_action_data");
-      
+        $site_prefix = $wpdb->get_blog_prefix();
         $userid = $_POST['userid'];
         $requestcount = $_POST['requestcount'];
         $userdata = get_userdata($userid);
@@ -87,15 +101,15 @@ if($_GET['contentManagerRequest'] == "getuseremailids") {
         
         
         
-        if(!empty($all_meta_for_user['exhibitor_map_dynamics_ID'][0])){
+        if(!empty($all_meta_for_user[$site_prefix.'exhibitor_map_dynamics_ID'][0])){
             
             $data_array=array(
-            'company'=>$all_meta_for_user['company_name'][0],
+            'company'=>$all_meta_for_user[$site_prefix.'company_name'][0],
             'email'=>$userdata->user_email,
-            'first_name'=>$userdata->first_name,
-            'last_name'=>$userdata->last_name,
-            'image'=>$all_meta_for_user['user_profile_url'][0],
-            'exhibitor_id'=>$all_meta_for_user['exhibitor_map_dynamics_ID'][0]  
+            'first_name'=>$all_meta_for_user[$site_prefix.'first_name'][0],
+            'last_name'=>$all_meta_for_user[$site_prefix.'last_name'][0],
+            'image'=>$all_meta_for_user[$site_prefix.'user_profile_url'][0],
+            'exhibitor_id'=>$all_meta_for_user[$site_prefix.'exhibitor_map_dynamics_ID'][0]  
             ) ;
             $result = update_exhibitor_map_dynamics($data_array);
             if($result->status == 'success'){
@@ -116,11 +130,11 @@ if($_GET['contentManagerRequest'] == "getuseremailids") {
         }else{
             
            $data_array=array(
-            'company'=>$all_meta_for_user['company_name'][0],
+            'company'=>$all_meta_for_user[$site_prefix.'company_name'][0],
             'email'=>$userdata->user_email,
-            'first_name'=>$userdata->first_name,
-            'last_name'=>$userdata->last_name,
-            'image'=>$all_meta_for_user['user_profile_url'][0],
+            'first_name'=>$all_meta_for_user[$site_prefix.'first_name'][0],
+            'last_name'=>$all_meta_for_user[$site_prefix.'last_name'][0],
+            'image'=>$all_meta_for_user[$site_prefix.'user_profile_url'][0],
             
           ) ;
            $result = insert_exhibitor_map_dynamics($data_array);
@@ -131,7 +145,7 @@ if($_GET['contentManagerRequest'] == "getuseremailids") {
              $data_array['result'] = '';
              $data_array['Exhibitor_ID'] = $result->results->Exhibitor_ID;
              
-             update_user_meta($userdata->ID, 'exhibitor_map_dynamics_ID', $result->results->Exhibitor_ID);
+             update_user_option($userdata->ID, 'exhibitor_map_dynamics_ID', $result->results->Exhibitor_ID);
          
             }else{
                 
@@ -150,7 +164,7 @@ if($_GET['contentManagerRequest'] == "getuseremailids") {
         
     }catch (Exception $e) {
        
-        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+      contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
     }
@@ -192,53 +206,97 @@ if($_GET['contentManagerRequest'] == "getuseremailids") {
     
     
     try{
-    
+    $t=time();
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);  
     $lastInsertId = contentmanagerlogging('New Admin User',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
       
-    $username = str_replace("+","",$_POST['username']);;
+    $username = str_replace("+","",$_POST['username']);
+    
     $email = $_POST['email'];
     $role =$_POST['sponsorlevel'];
+    $welcomeemailtemplatename = $_POST['welcomeemailtempname'];
     $loggin_data=$_POST;
     
     
     unset($_POST['username']);
     unset($_POST['email']);
     unset($_POST['sponsorlevel']);
+    unset($_POST['welcomeemailtempname']);
     
   //  print_r($_POST);
   
-
+    $welcomeemail_status = $_POST['welcomeemailstatus'];
     $user_id = username_exists($username);
     
     $message['username'] = $username;
-    
+    $meta_array=$_POST;
    
     if (!$user_id and email_exists($email) == false) {
         
        $random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
-       $user_id = register_new_user( $username, $email );//wp_create_user($username, $random_password, $email);
+       $user_id = myregisterrequest_new_user($username, $email);//register_new_user( $username, $email );//wp_create_user($username, $random_password, $email);
+    
+       
+       
     if ( ! is_wp_error( $user_id ) ) {
        $result=$user_id;
        $loggin_data['created_id']=$result;
        $message['user_id'] = $user_id;
        $message['msg'] = 'User created';
        $message['userrole'] = $role;
-       $meta_array=$_POST;
        
+       add_user_to_blog(1, $user_id, $role);
        add_new_sponsor_metafields($user_id,$meta_array,$role);
      
             $useremail='';
-            custome_email_send($user_id,$useremail);
-       }else{
            
-           $message['msg'] = $user_id->errors['invalid_username'][0];
+            if($welcomeemail_status == 'send'){
+                    $useremail='';
+                    custome_email_send($user_id,$useremail,$welcomeemailtemplatename);
+                    $t=time();
+                    update_user_option($user_id, 'convo_welcomeemail_datetime', $t*1000);
+            }  
+            
+       }else{
+		  
+           $userregister_responce = (array)$user_id;
+		  
+		   if(empty($userregister_responce['errors']['invalid_username'][0])){
+			   
+			   $message['msg'] = $userregister_responce['errors']['invalid_email'][0];
+		   }else{
+			   
+			   $message['msg'] = $userregister_responce['errors']['invalid_username'][0];
+		   }
+           //$user_id->errors['invalid_username'][0];
        } 
        
     } else {
         
-        $message['msg'] = 'User already exists';
+        $blogid = get_current_blog_id() ;
+        if (add_user_to_blog($blogid, $user_id, $role)) {
+                
+                switch_to_blog($blogid);
+                add_new_sponsor_metafields($user_id,$meta_array,$role);
+                add_user_to_blog(1, $user_id, $role);
+                
+                
+                
+                custome_email_send($user_id,$email);
+                 if($welcomeemail_status == 'send'){
+                    $useremail='';
+                    custome_email_send($user_id,$email,$welcomeemailtemplatename);
+                    $t=time();
+                    update_user_option($user_id, 'convo_welcomeemail_datetime', $t*1000);
+                }  
+                
+                
+               
+                $message['msg'] = 'User added to this blog.';
+            } else {
+                $message['msg'] = 'Failed to add user ' . $user_id . ' as ' . $role . ' to blog ' . $blogid . '.';
+            }
         
     }
     
@@ -259,8 +317,8 @@ if($_GET['contentManagerRequest'] == "getuseremailids") {
     
     require_once('../../../wp-load.php');
     
-    $test = 'custome_task_manager_data';
-    $result = get_option($test);
+    //$test = 'custome_task_manager_data';
+    //$result = get_option($test);
     
     
     $additional_fields_settings_key = 'EGPL_Settings_Additionalfield';
@@ -268,6 +326,7 @@ if($_GET['contentManagerRequest'] == "getuseremailids") {
     
     $keys_string[]= 'first_name';
     $keys_string[]= 'last_name';
+    $keys_string[]= 'role';
     $keys_string[]= 'date';
     $keys_string[]= 'time';
     $keys_string[]= 'user_pass';
@@ -275,26 +334,28 @@ if($_GET['contentManagerRequest'] == "getuseremailids") {
     $keys_string[]= 'site_title';
     $keys_string[]= 'create_password_url';
     $keys_string[]= 'user_login';
+    $keys_string[]= 'company_name';
     foreach ($additional_fields as $key=>$value){  
-        
+        if($additional_fields[$key]['type'] !='html'){
          $keys_string[] = $additional_fields[$key]['key'];
+        }
         
     }
    
     
     $bodytext_id = 'welcomebodytext';
-    if(!empty($result['custom_meta'])){
-    foreach($result['custom_meta'] as $key=>$value){
-      
-      if (preg_match('/task/',$key)){
-          
-      }else{
-     
-        $keys_string[]= $key; 
-      }
-      
-    }
-   }
+//    if(!empty($result['custom_meta'])){
+//    foreach($result['custom_meta'] as $key=>$value){
+//      
+//      if (preg_match('/task/',$key)){
+//          
+//      }else{
+//     
+//        $keys_string[]= $key; 
+//      }
+//      
+//    }
+//   }
     
  // echo '<pre>';
  // print_r( $result['sort_order'] );
@@ -316,7 +377,7 @@ if($_GET['contentManagerRequest'] == "getuseremailids") {
     
     foreach ( $users as $user ) {
         $file_url = get_user_meta($user->user_id, $zip_folder_name);
-        $user_company_name = get_user_meta($user->user_id, 'company_name',true);
+        $user_company_name = get_user_option('company_name',$user->user_id);
         
         if(!empty($file_url[0]['file'])){
             
@@ -354,14 +415,28 @@ if($_GET['contentManagerRequest'] == "getuseremailids") {
     require_once('../../../wp-load.php');
     
     $resource_id=$_POST['idresource'];
+   
     $resource_title = $_POST['resourcetitle'];
-    $current_item = array(
-      'ID'           => $resource_id,
-      'post_title'   => $resource_title
+    $replacefileurl=$_FILES['replacefile'];
+    
+        
+       $current_item = array(
+        'ID'           => $resource_id,
+        'post_title'   => $resource_title
      
-    );
+    ); 
+        
     $error = "ok";
-    $post_id = wp_update_post( $current_item, true );						  
+    $post_id = wp_update_post( $current_item, true );
+    if(!empty($replacefileurl)){
+        
+      
+      $newupdatedfileurl = resource_file_upload($replacefileurl);
+     
+      $result = update_post_meta($post_id, 'excerpt', $newupdatedfileurl);  
+        
+    }
+    
     if (is_wp_error($post_id)) {
 	$errors = $post_id->get_error_messages();
 	foreach ($errors as $error) {
@@ -483,11 +558,11 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
     
     if(!empty($password)){ wp_set_password( $password, $userid );}
     
-       update_user_meta($userid, 'user_profile_url', $picprofileurl);
+       update_user_option($userid, 'user_profile_url', $picprofileurl);
        
        $mapapikey = $oldvalues['ContentManager']['mapapikey'];
        $mapsecretkey = $oldvalues['ContentManager']['mapsecretkey'];
-       $userexhibitor_id = get_user_meta( $userid, 'exhibitor_map_dynamics_ID', true ); 
+       $userexhibitor_id = get_user_option('exhibitor_map_dynamics_ID',  $userid); 
        if(!empty($mapapikey) && !empty($mapsecretkey)){
           
         $request_for_sync_map_dynamics = contentmanagerlogging('Sync to map dynamics update',"Admin Action",serialize($data_array),$user_ID,$user_info->user_email,"pre_action_data");
@@ -523,14 +598,14 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
         
         if($result->status == 'success'){
             
-             update_user_meta($userid, 'exhibitor_map_dynamics_ID', $result->results->Exhibitor_ID);
+             update_user_option($userid, 'exhibitor_map_dynamics_ID', $result->results->Exhibitor_ID);
          
-             $mapdynamicsstatus = 'This update has also been synced to floorplan';
+             $mapdynamicsstatus = '';
             
         }else{
             
             $sync_map_dynamics_message = $result->status_details;
-            $mapdynamicsstatus = 'However, this update could not be synced to floorplan';
+            $mapdynamicsstatus = '';
         }
         
         
@@ -555,44 +630,38 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
 }else if ($_GET['contentManagerRequest'] == 'add_new_sponsor_metafields') {
     require_once('../../../wp-load.php');
     
-    
-   
-    
-    
     try{
     
-    $user_ID = get_current_user_id();
-    $user_info = get_userdata($user_ID);  
-    $lastInsertId = contentmanagerlogging('New User',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID);  
+        $lastInsertId = contentmanagerlogging('New User',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
       
-    $username = str_replace("+","",$_POST['username']);;
-    $email = $_POST['email'];
-    $role =$_POST['sponsorlevel'];
-    $welcomeemailtemplatename = $_POST['welcomeemailtempname'];
-    $loggin_data=$_POST;
+        $username = str_replace("+","",$_POST['username']);
+        $email = $_POST['email'];
+        $role =$_POST['sponsorlevel'];
+        $welcomeemailtemplatename = $_POST['welcomeemailtempname'];
+        $loggin_data=$_POST;
     
+        unset($_POST['username']);
+        unset($_POST['email']);
+        unset($_POST['sponsorlevel']);
+        unset($_POST['welcomeemailtempname']);
     
-    unset($_POST['username']);
-    unset($_POST['email']);
-    unset($_POST['sponsorlevel']);
-    unset($_POST['welcomeemailtempname']);
-    
-  //  print_r($_POST);
-    $welcomeemail_status = $_POST['welcomeemailstatus'];
-
-    $user_id = username_exists($username);
-    
-    $message['username'] = $username;
-    $profilepic=$_FILES['profilepic'];
-    $picprofileurl = resource_file_upload($profilepic);
+        //  print_r($_POST);
+        
+        $welcomeemail_status = $_POST['welcomeemailstatus'];
+        $user_id = username_exists($username);
+        $message['username'] = $username;
+        $profilepic=$_FILES['profilepic'];
+        $picprofileurl = resource_file_upload($profilepic);
   
     
-    $oldvalues = get_option( 'ContenteManager_Settings' );
+        $oldvalues = get_option( 'ContenteManager_Settings' );
    
     if (!$user_id and email_exists($email) == false) {
         
        $random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
-       $user_id = register_new_user( $username, $email );//wp_create_user($username, $random_password, $email);
+       $user_id = myregisterrequest_new_user($username, $email) ;//register_new_user( $username, $email );//wp_create_user($username, $random_password, $email);
        if ( ! is_wp_error( $user_id ) ) {
        
        $result=$user_id;
@@ -601,11 +670,11 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
        $message['msg'] = 'User created';
        $message['userrole'] = $role;
        $meta_array=$_POST;
-       update_user_meta($user_id, 'user_profile_url', $picprofileurl);
+       update_user_option($user_id, 'user_profile_url', $picprofileurl);
        
        $mapapikey = $oldvalues['ContentManager']['mapapikey'];
        $mapsecretkey = $oldvalues['ContentManager']['mapsecretkey'];
-       
+        add_user_to_blog(1, $user_id, $role);
        if(!empty($mapapikey) && !empty($mapsecretkey)){
           
           $data_array=array(
@@ -621,22 +690,17 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
         $result = insert_exhibitor_map_dynamics($data_array) ;
         contentmanagerlogging_file_upload ($request_for_sync_map_dynamics,serialize($result));
        
-        
-        
         if($result->status == 'success'){
             
-             update_user_meta($user_id, 'exhibitor_map_dynamics_ID', $result->results->Exhibitor_ID);
-         
-             $mapdynamicsstatus = 'This update has also been synced to floorplan';
+             update_user_option($user_id, 'exhibitor_map_dynamics_ID', $result->results->Exhibitor_ID);
+             $mapdynamicsstatus = '';
             
         }else{
             
             $sync_map_dynamics_message = $result->status_details;
-            $mapdynamicsstatus = 'However, this update could not be synced to floorplan';
+            $mapdynamicsstatus = '';
         }
         
-        
-       
        }else{
            
            $mapdynamicsstatus = '';
@@ -648,17 +712,99 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
             $useremail='';
             custome_email_send($user_id,$useremail,$welcomeemailtemplatename);
             $t=time();
-            update_user_meta($user_id, 'convo_welcomeemail_datetime', $t*1000);
+            update_user_option($user_id, 'convo_welcomeemail_datetime', $t*1000);
        }      
     }else{
-       
         
-      $message['msg'] = $user_id->errors['invalid_username'][0];
+        $userregister_responce = (array)$user_id;
+		  
+		   if(empty($userregister_responce['errors']['invalid_username'][0])){
+			   
+			   $message['msg'] = $userregister_responce['errors']['invalid_email'][0];
+		   }else{
+			   
+			   $message['msg'] = $userregister_responce['errors']['invalid_username'][0];
+		   }
+        
     } 
     } else {
         
-        $message['msg'] = 'User already exists';
         
+        $random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
+        $currentblogid = get_current_blog_id() ;
+        $user_blogs = get_blogs_of_user( $user_id );
+        $user_status_for_this_site = 'not_exist';
+        foreach ($user_blogs as $blog_id) { 
+               
+               if($blog_id->userblog_id == $currentblogid ){
+                   
+                   $user_status_for_this_site = 'alreadyexist';
+                   break;
+               }
+               
+        }
+    if($user_status_for_this_site == 'alreadyexist'){
+        
+        $message['msg'] =  'User already exists for this site.';
+        
+    }else{    
+           
+        if (add_user_to_blog($blogid, $user_id, $role)) {
+                 add_user_to_blog(1, $user_id, $role);
+                $message['user_id'] = $user_id;
+                $message['msg'] = 'User created';
+                $message['userrole'] = $role;
+                $meta_array=$_POST;
+                update_user_option($user_id, 'user_profile_url', $picprofileurl);
+                $mapapikey = $oldvalues['ContentManager']['mapapikey'];
+                $mapsecretkey = $oldvalues['ContentManager']['mapsecretkey'];
+                if(!empty($mapapikey) && !empty($mapsecretkey)){
+          
+                        $data_array=array(
+                          'company'=>$meta_array['company_name'],
+                          'email'=>$email,
+                          'first_name'=>$meta_array['first_name'],
+                          'last_name'=>$meta_array['last_name'],
+                          'image'=>$picprofileurl
+
+                        ) ;
+          
+                    $request_for_sync_map_dynamics = contentmanagerlogging('Sync to map dynamics',"Admin Action",serialize($data_array),$user_ID,$user_info->user_email,"pre_action_data");
+                    $result = insert_exhibitor_map_dynamics($data_array) ;
+                    contentmanagerlogging_file_upload ($request_for_sync_map_dynamics,serialize($result));
+       
+                    if($result->status == 'success'){
+
+                         update_user_option($user_id, 'exhibitor_map_dynamics_ID', $result->results->Exhibitor_ID);
+                         $mapdynamicsstatus = '';
+
+                    }else{
+
+                        $sync_map_dynamics_message = $result->status_details;
+                        $mapdynamicsstatus = '';
+                    }
+        
+                }else{
+
+                    $mapdynamicsstatus = '';
+
+                }
+                
+                add_new_sponsor_metafields($user_id,$meta_array,$role);
+                if($welcomeemail_status == 'send'){
+                    $useremail='';
+                    custome_email_send($user_id,$email,$welcomeemailtemplatename);
+                    $t=time();
+                    update_user_option($user_id, 'convo_welcomeemail_datetime', $t*1000);
+                }      
+                
+                $message['msg'] =  'User added to this blog.';
+            
+            } else {
+                
+                $message['msg'] = 'Failed to add user ' . $user_id . ' as ' . $role . ' to blog ' . $blogid . '.';
+            }
+        }
     }
    
     $loggin_data['msg']=$message['msg'];
@@ -735,6 +881,8 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
     }else{
       
       $adminstielogourl = resource_file_upload($adminsitelogo);
+     
+      
       $_POST['adminsitelogourl'] = $adminstielogourl;
       
     }
@@ -775,10 +923,14 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
    
 try { 
     
-  
+    global $wpdb;
+    $site_prefix = $wpdb->get_blog_prefix();
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $mandrill = $oldvalues['ContentManager']['mandrill'];
     $mandrill = new Mandrill($mandrill);
+    
+   
+    
     $sendcustomewelcomeemail = $_POST['selectedtemplateemailname'];
     
     
@@ -797,15 +949,26 @@ try {
     $field_key_string = getInbetweenStrings('{', '}', $body);
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $formemail = $oldvalues['ContentManager']['formemail'];
+    $fromname = stripslashes ($sponsor_info[$sendcustomewelcomeemail]['fromname']);
    
+    
+    
     if(empty($formemail)){
         
-        $formemail = 'noreply@convospark.com';
+        $formemail = 'noreply@expo-genie.com';
         
     }
    $bcc =  $sponsor_info[$sendcustomewelcomeemail]['BCC'];
- 
-   $fromname = $_POST['fromname'];
+   //$cc =  $sponsor_info[$sendcustomewelcomeemail]['CC'];
+   //$cc_array = explode(',',$cc);
+   $bcc_array = $bcc;
+   
+   
+   
+   
+   
+   
+  // $fromname = $_POST['fromname'];
   
 //print_r($attendeefields_data);;
     
@@ -816,7 +979,7 @@ try {
     $admin_email= get_option('admin_email');
     $data=  date("Y-m-d");
     $time=  date('H:i:s');
-    
+    $sitetitle = get_bloginfo( 'name' );
     if(empty($fromname)){
         $fromname = get_bloginfo( 'name' );
     }
@@ -830,7 +993,8 @@ try {
     $goble_data_array =array(
         array('name'=>'date','content'=>$data),
         array('name'=>'time','content'=>$time),
-        array('name'=>'site_url','content'=>$site_url)
+        array('name'=>'site_url','content'=>$site_url),
+        array('name'=>'site_title','content'=>$sitetitle)
         );
     
    // foreach($emailaddress_array as $email=>$to){
@@ -848,13 +1012,19 @@ try {
           $result_email_index = multidimensional_search($Onerowvalue, array('colkey' => 'Email')); // 1 
             $userdata = get_user_by_email($Onerowvalue[$result_email_index]['colvalue']);
             $t=time();
-            update_user_meta($userdata->ID, 'convo_welcomeemail_datetime', $t*1000);
+            update_user_option($userdata->ID, 'convo_welcomeemail_datetime', $t*1000);
             
-          foreach($Onerowvalue as $key=>$value){    
+            
+            
+          foreach($Onerowvalue as $key=>$value){
+              
+              
+              
+             
             
              foreach($field_key_string as $index=>$keyvalue){
                   
-                      if($keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'site_url' || $keyvalue == 'user_pass'|| $keyvalue == 'user_login'){
+                      if($keyvalue == 'role' || $keyvalue == 'site_title' || $keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'site_url' || $keyvalue == 'user_pass'|| $keyvalue == 'user_login'){
                       
                        
                       if($keyvalue == 'user_pass'){
@@ -868,11 +1038,38 @@ try {
                       }else if($keyvalue == 'user_login'){
                           
                           $data_field_array[] = array('name'=>$keyvalue,'content'=>$userdata->user_login);  
+                      }else if($keyvalue == 'role'){
+                          
+                          $user_id = $userdata->ID;
+                          $getcurrentuserdata = get_userdata( $user_id );
+                          $blog_id = get_current_blog_id();
+                          $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+                          $get_all_roles = get_option($get_all_roles_array);
+                          foreach ($get_all_roles as $key => $name) {
+                              
+                              if(implode(', ', $getcurrentuserdata->roles) == $key){
+                                  
+                                  $currentuserRole = $name['name'];
+                                  
+                                  
+                              }
+                              
+                              
+                              
+                          }
+                          
+                          
+                          $data_field_array[] = array('name'=>$keyvalue,'content'=>$currentuserRole); 
                       }
                       
                       
+                      
                    }else{
-                    if($keyvalue == $value['colkey']){
+                       
+                       
+                       
+                    if($site_prefix.$keyvalue == $value['colkey']){
+                        
                        if (!empty($value['colvalue'])) {
                            
                            $result = multidimensional_search($colsdatatype, array('colkey' => $keyvalue)); // 1 
@@ -883,12 +1080,12 @@ try {
                           $data_field_array[] = array('name'=>$keyvalue,'content'=>$date_value);
                           
                         } else{
-                             if ($value['colkey'] == $keyvalue) {
+                             if ($value['colkey'] == $site_prefix.$keyvalue) {
                                 $data_field_array[] = array('name'=>$keyvalue,'content'=>$value['colvalue']);  
                              }
                         }
                        }else{
-                           if ($value['colkey'] == $keyvalue) {
+                           if ($value['colkey'] == $site_prefix.$keyvalue) {
                                 $data_field_array[] = array('name'=>$keyvalue,'content'=>''); 
                            }
                        }
@@ -924,30 +1121,100 @@ try {
        
        
        //$result = send_email($to,$subject,$body_message);
-
-    
+        
+//        if(sizeof($bcc_array) > 1){
+//       
+//            foreach ($bcc_array as $key => $value) {
+//                $to_message_array[] = array('email' => $value, 'name' => '', 'type' => 'bcc');
+//            }
+//        }else{
+//       
+//            if(!empty($bcc_array)){
+//
+//                $to_message_array[]=array('email'=>$bcc_array[0],'name'=>'','type'=>'bcc');
+//            }
+//        }
+//        if(sizeof($cc_array) > 1){
+//       
+//            foreach ($cc_array as $key => $value) {
+//                $to_message_array[] = array('email' => $value, 'name' => '', 'type' => 'cc');
+//            }
+//        }else{
+//       
+//            if(!empty($cc_array)){
+//
+//                $to_message_array[]=array('email'=>$cc_array[0],'name'=>'','type'=>'cc');
+//            }
+//        }
+        
+        
+        
+        
+        $mainheaderbackground = $oldvalues['ContentManager']['mainheader'];
+        $mainheaderlogo = $oldvalues['ContentManager']['mainheaderlogo'];
+        $logourl = '';
+        
+        if(!empty($mainheaderlogo)){
+            
+            $logourl = '<img style="margin-top: 16px;" src="'.$mainheaderlogo.'" alt="" width="250" />';
+        
+        }else if(!empty($mainheaderbackground)){
+            
+            $logourl = '<img style="margin-top: 16px;" src="'.$mainheaderbackground.'" alt="" height="100" />';
+        
+            
+        }
+        
+        $html_body_message = '<table width="600" cellspacing="0" cellpadding="0" align="center" bgcolor="#ffffff">
+<tbody>
+<tr>
+<td align="left">
+<div style="border: solid 1px #d9d9d9;">
+<table id="header" style="line-height: 1.6;" border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+<tbody>
+<tr>
+<td style="text-align: center;">'.$logourl.'</td>
+</tr>
+</tbody>
+</table>
+<table id="content" style="padding-right: 30px;padding-left: 30px;" border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+<tbody>
+<tr>
+<td style="border-top: solid 1px #d9d9d9;" colspan="2">
+<div style="padding: 15px 0;">
+'.$body.'
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>'; 
   
    
-  // echo '<pre>';
- //  print_r($bcc);exit;
+   $get_currentsiteURl = get_site_url();
    $message = array(
         
-        'html' => $body,
+        'html' => $html_body_message,
         'text' => '',
         'subject' => $subject,
         'from_email' => $formemail,
         'from_name' => $fromname,
         'to' => $to_message_array,
         'headers' => array('Reply-To' => $sponsor_info[$sendcustomewelcomeemail]['replaytoemailadd']),
-        
+        'bcc_address'=>$bcc_array,
         'track_opens' => true,
         'track_clicks' => true,
-        'bcc_address' => $bcc,
+       
         'merge' => true,
         'merge_language' => 'mailchimp',
         'global_merge_vars' => $goble_data_array,
-        'merge_vars' => $user_data_array
-        
+        'merge_vars' => $user_data_array,
+        "tags" => [$get_currentsiteURl],
         
     );
    
@@ -959,6 +1226,8 @@ try {
     $ip_pool = 'Main Pool';
    // $send_at = 'example send_at';
     $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at);
+    
+   
     contentmanagerlogging_file_upload($lastInsertId,serialize($result));
     echo json_encode('successfully send');
    
@@ -1003,11 +1272,17 @@ try {
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $formemail = $oldvalues['ContentManager']['formemail'];
     if(empty($formemail)){
-        $formemail = 'noreply@convospark.com';
+        $formemail = 'noreply@expo-genie.com';
         
     }
+    
    $bcc = $_POST['BCC'];
- 
+   $cc  = $_POST['CC'];
+  
+   
+   
+   
+   $replytoEmail = $_POST['RTO'];
    $fromname = $_POST['fromname'];
   
 //print_r($attendeefields_data);;
@@ -1092,15 +1367,60 @@ try {
         }
        
       
-       
+   $bcc_array = $bcc;
+   //$cc_array = explode(',',$cc);
+   
+   
+   
+//   if(sizeof($bcc_array) > 1){
+//       
+//       foreach($bcc_array as $key=>$value){
+//           
+//           
+//        $to_message_array[]=array('email'=>$value,'name'=>'','type'=>'bcc');
+//           
+//           
+//           
+//       }
+//       
+//       
+//       
+//   }else{
+//       
+//       if(!empty($bcc_array)){
+//           
+//           $to_message_array[]=array('email'=>$bcc_array[0],'name'=>'','type'=>'bcc');
+//       }
+//   }
+//   if(sizeof($cc_array) > 1){
+//       
+//       foreach($cc_array as $key=>$value){
+//           
+//           
+//           
+//         $to_message_array[]=array('email'=>$value,'name'=>'','type'=>'cc');
+//           
+//           
+//       }
+//       
+//       
+//       
+//   }else{
+//     if(!empty($cc_array)){
+//          
+//           $to_message_array[]=array('email'=>$cc_array[0],'name'=>'','type'=>'cc');
+//       }  
+//   }
+   
        
        //$result = send_email($to,$subject,$body_message);
 
     
   
    
-  // echo '<pre>';
+  
  //  print_r($bcc);exit;
+   $get_currentsiteURl = get_site_url();
    $message = array(
         
         'html' => $body,
@@ -1109,16 +1429,15 @@ try {
         'from_email' => $formemail,
         'from_name' => $fromname,
         'to' => $to_message_array,
-        'headers' => array('Reply-To' => $formemail),
-        
+        'headers' => array('Reply-To' => $replytoEmail),
+        'bcc_address'=>$bcc_array,
         'track_opens' => true,
         'track_clicks' => true,
-        'bcc_address' => $bcc,
         'merge' => true,
         'merge_language' => 'mailchimp',
         'global_merge_vars' => $goble_data_array,
-        'merge_vars' => $user_data_array
-        
+        'merge_vars' => $user_data_array,
+         "tags" => [$get_currentsiteURl]
         
     );
    
@@ -1151,12 +1470,12 @@ try {
     
     try{
         
-         
+          global $wpdb;  
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
     $lastInsertId = contentmanagerlogging('Admin Test Email',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
-       
-    
+    $site_prefix = $wpdb->get_blog_prefix();
+     
         
     $subject =$_POST['emailSubject'];
     $body=stripslashes ($_POST['emailBody']);
@@ -1181,7 +1500,7 @@ try {
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $formemail = $oldvalues['ContentManager']['formemail'];
     if(empty($formemail)){
-        $formemail='noreply@convospark.com';
+        $formemail='noreply@expo-genie.com';
     }
        
       $body_message =    $body ;
@@ -1190,8 +1509,10 @@ try {
       $data=  date("Y-m-d");
       $time=  date('H:i:s');
       $user = get_user_by( 'email', $user_info->user_email );
-      $firstname=$user->first_name;
-      $lastname=$user->last_name;
+      $all_meta_for_user = get_user_meta($user->ID);
+      
+      $firstname=$all_meta_for_user[$site_prefix.'first_name'][0];
+      $lastname=$all_meta_for_user[$site_prefix.'last_name'][0];
       $headers = 'From: '.$site_title.' <'.$formemail.'>' . "\r\n";
        $body_message = str_replace('[user_email]', $user_email, $body_message);
        $body_message = str_replace('[first_name]', $firstname, $body_message);
@@ -1261,19 +1582,20 @@ try {
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $formemail = $oldvalues['ContentManager']['formemail'];
     if(empty($formemail)){
-        $formemail = 'noreply@convospark.com';
+        $formemail = 'noreply@expo-genie.com';
         
     }
    
-       
+      
       $body_message =    $body ;
       $subject_body =$subject;
       $site_url = get_option('siteurl' );
       $data=  date("Y-m-d");
       $time=  date('H:i:s');
       $user = get_user_by( 'email', $user_info->user_email );
-      $firstname=$user->first_name;
-      $lastname=$user->last_name;
+      $all_meta_for_user = get_user_meta($user_info->ID);
+      $firstname=$all_meta_for_user[$site_prefix.'first_name'][0];
+      $lastname=$all_meta_for_user[$site_prefix.'last_name'][0];
       $headers = 'From: '.$welcomeemailfromname.' <'.$formemail.'>' . "\r\n";
       $headers .= 'Reply-To: '.$replaytoemailadd;
       
@@ -1294,9 +1616,52 @@ try {
       $subject_body = str_replace('[time]', $time, $subject_body);
       $subject_body = str_replace('[site_url]', $site_url, $subject_body);
        
+       $mainheaderbackground = $oldvalues['ContentManager']['mainheader'];
+        $mainheaderlogo = $oldvalues['ContentManager']['mainheaderlogo'];
+        $logourl = '';
+        
+        if(!empty($mainheaderlogo)){
+            
+            $logourl = '<img style="margin-top: 16px;" src="'.$mainheaderlogo.'" alt="" width="250" />';
+        
+        }else if(!empty($mainheaderbackground)){
+            
+            $logourl = '<img style="margin-top: 16px;" src="'.$mainheaderbackground.'" alt="" height="100" />';
+        
+            
+        }
+        
+        $html_body_message = '<table width="600" cellspacing="0" cellpadding="0" align="center" bgcolor="#ffffff">
+<tbody>
+<tr>
+<td align="left">
+<div style="border: solid 1px #d9d9d9;">
+<table id="header" style="line-height: 1.6;" border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+<tbody>
+<tr>
+<td style="text-align: center;">'.$logourl.'</td>
+</tr>
+</tbody>
+</table>
+<table id="content" style="padding-right: 30px;padding-left: 30px;"  border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+<tbody>
+<tr>
+<td style="border-top: solid 1px #d9d9d9;" colspan="2">
+<div style="padding: 15px 0;">
+'.$body_message.'
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>'; 
        
-       
-       $result = send_email($user_info->user_email,$subject_body,$body_message,$headers);
+       $result = send_email($user_info->user_email,$subject_body,$html_body_message,$headers);
 
     
    
@@ -1335,6 +1700,8 @@ try {
     $template_data['emailboday'] = $get_email_template_date[$report_name]['emailboday'];
     $template_data['BCC'] = $get_email_template_date[$report_name]['BCC'];
     $template_data['fromname'] = $get_email_template_date[$report_name]['fromname'];
+    //$template_data['CC'] = $get_email_template_date[$report_name]['CC'];
+    $template_data['RTO'] = $get_email_template_date[$report_name]['RTO'];
    
      
     echo   json_encode($template_data);
@@ -1456,15 +1823,27 @@ try {
     
     require_once('../../../wp-load.php');
     
+    $blog_id =get_current_blog_id();
+    //switch_to_blog($blog_id);
+    
     try{
+    
+   
     $newrolename =$_POST['rolename'];
     
      $user_ID = get_current_user_id();
      $user_info = get_userdata($user_ID);
      $lastInsertId = contentmanagerlogging('Add New Role',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
      $role_key=strtolower($newrolename);
-     $get_all_roles_array = 'wp_user_roles';
      $remove_space_role_kye=str_replace(" ","_",$role_key);
+     
+     
+     if (is_multisite()) {
+                $blog_id = get_current_blog_id();
+                $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+            }else{
+                $get_all_roles_array = 'wp_user_roles';
+            }
      $get_all_roles = get_option($get_all_roles_array);
      $result_update = 'newvalue';
      foreach ($get_all_roles as $key => $item) {
@@ -1480,12 +1859,19 @@ try {
      
     
      if($result_update == 'newvalue'){
-        $result = add_role( $remove_space_role_kye, ucfirst($newrolename), array( 'read' => true,'unfiltered_upload'=>true,'upload_files'=>true ) );
-        if ( null !== $result) {
+        //$result = add_role( $remove_space_role_kye, ucfirst($newrolename), array( 'read' => true,'unfiltered_upload'=>true,'upload_files'=>true ) );
+         $get_all_roles[$remove_space_role_kye]['name'] =  ucfirst($newrolename);
+         $get_all_roles[$remove_space_role_kye]['capabilities']['unfiltered_upload'] =  1;//ucfirst($newrolename);
+         $get_all_roles[$remove_space_role_kye]['capabilities']['upload_files'] =  1;//ucfirst($newrolename);
+         $get_all_roles[$remove_space_role_kye]['capabilities']['level_0'] =  1;
+         $get_all_roles[$remove_space_role_kye]['capabilities']['read'] =  1;
+          
+         update_option ($get_all_roles_array, $get_all_roles); 
+        
             $msg['msg'] = '<strong>'.ucfirst($newrolename).'</strong> New Level created';
             $msg['status'] = 'success';
             $msg['title'] = 'Success';
-        }
+       
      }else {
         
         $msg['msg'] = '<strong>'.ucfirst($newrolename).'</strong> Level already exists.';
@@ -1493,7 +1879,7 @@ try {
         $msg['title'] = 'Warning';
         
        }
-     echo   json_encode($msg);
+    echo   json_encode($msg);
     contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
     
     }catch (Exception $e) {
@@ -1501,6 +1887,7 @@ try {
          contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
          return $e;
  }
+ 
     die(); 
 
 }else if ($_GET['contentManagerRequest'] == 'createlevelclone') {
@@ -1514,25 +1901,49 @@ try {
      $user_ID = get_current_user_id();
      $user_info = get_userdata($user_ID);
      $lastInsertId = contentmanagerlogging('Create new Clone',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
+     if (is_multisite()) {
+                $blog_id = get_current_blog_id();
+                $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+            }else{
+                $get_all_roles_array = 'wp_user_roles';
+            }
+     $get_all_roles = get_option($get_all_roles_array);
+     
+     
      
      $new_role_key=strtolower($newrolename);
      $new_remove_space_role_kye=str_replace(" ","_",$new_role_key);
      $result = add_role($new_remove_space_role_kye, ucfirst($newrolename), array( 'read' => true, ) );
-     
+    // $get_all_roles[$new_remove_space_role_kye]['name'] =  ucfirst($newrolename);
+    // $result  =    update_option ($get_all_roles_array, $get_all_roles);
      
      
      
      
      if (!empty($result)) {
         $msg['msg'] = 'New Level created';
-        $test = 'custome_task_manager_data';
-        $assign_new_role = get_option($test);
+        
+        
+        $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+        );
+        $assign_new_role = get_posts( $args );
+        
+        
+       
      
-           foreach($assign_new_role['profile_fields'] as $profile_field_name => $profile_field_settings) {
+           foreach($assign_new_role as $taskIndex => $tasksObject) {
                
-               
-                   if(in_array($clonelevelkey,$assign_new_role['profile_fields'][$profile_field_name]['roles'])){
-                        array_push($assign_new_role['profile_fields'][$profile_field_name]['roles'],$new_remove_space_role_kye);
+                   $tasksID = $tasksObject->ID;
+                   $value_roles = get_post_meta( $tasksID, 'roles' , false);
+                   if(in_array($clonelevelkey,$value_roles[0])){
+                        array_push($value_roles[0],$new_remove_space_role_kye);
+                        update_post_meta( $tasksID, 'roles' , $value_roles[0]);
                    }
              
                
@@ -1540,7 +1951,7 @@ try {
             //echo $key;
             
        
-      $taskarray_update = update_option($test, $assign_new_role);
+     // $taskarray_update = update_option($test, $assign_new_role);
      }
       else {
         
@@ -1567,11 +1978,20 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
      $user_ID = get_current_user_id();
      $user_info = get_userdata($user_ID);
      $lastInsertId = contentmanagerlogging('Remove Level',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
+     if (is_multisite()) {
+                $blog_id = get_current_blog_id();
+                $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+            }else{
+                $get_all_roles_array = 'wp_user_roles';
+            }
+     $get_all_roles = get_option($get_all_roles_array);
+     echo $remove_role_name;
+     unset($get_all_roles[$remove_role_name]);
+     update_option ($get_all_roles_array, $get_all_roles); 
      
+     //$result = remove_role($remove_role_name);
      
-     $result = remove_role($remove_role_name);
-     
-        $msg['msg'] = 'Level Removed Successfuly.';
+    $msg['msg'] = 'Level Removed Successfuly.';
      
      echo   json_encode($msg);
     contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
@@ -1586,8 +2006,18 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
 }else if ($_GET['contentManagerRequest'] == 'adminsettings') {
     
     require_once('../../../wp-load.php');
-
-    updateadmin_frontend_settings($_POST);
+    
+    $filedataurl = $_POST['oldheaderbannerurl'];
+    $headerlogourl = $_POST['oldheaderlogourl'];
+    if(empty($_POST['oldheaderbannerurl'])){
+        
+        $filedata =  $_FILES['uploadedfile'];
+        $filedataurl = resource_file_upload($filedata);
+        
+    }
+    
+    
+    updateadmin_frontend_settings($_POST,$filedataurl);
 
 }else if ($_GET['contentManagerRequest'] == 'bulkimportuser') {
 
@@ -1601,23 +2031,24 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
    
     $file=$_FILES['file'];
     
-    $welcomeemailstatus=$_POST['welcomeemailstatus'];
-    $selectwelcomeemailtempname=$_POST['seletwelcomeemailtemplate'];
+    
     
     add_filter( 'upload_dir', 'wpse_183245_upload_dir' );
     $resourceurl = bulk_import_user_file($file);
+    
     $loggin_data['fileurl']=$resourceurl;
     remove_filter( 'upload_dir', 'wpse_183245_upload_dir' );
    
-  
+   // echo '<pre>';
+  //  print_r($loggin_data);exit;
     
     
     $responce="";
     if(!empty($resourceurl)){
-    // echo $resourceurl;
+    
       $filename_import = basename($resourceurl);      
-      $responce  =  bulkimport_userfile($filename_import,$welcomeemailstatus,$selectwelcomeemailtempname);
-        
+      $responce  =  bulkimport_mappingdata($filename_import);
+       
     }else{
        
          $responce = 'faild'; 
@@ -1644,6 +2075,10 @@ function updateadminemailtemplate($data_array,$email_template_name){
     
       try{
           
+          
+         
+          $email_template_name = preg_replace("/[^a-zA-Z0-9-\s]+/", "", html_entity_decode($email_template_name, ENT_QUOTES));
+          
           $user_ID = get_current_user_id();
           $user_info = get_userdata($user_ID);
     
@@ -1659,6 +2094,8 @@ function updateadminemailtemplate($data_array,$email_template_name){
       $sponsor_info[$email_template_name]['emailsubject'] = $data_array['emailsubject'];
       $sponsor_info[$email_template_name]['emailboday'] = stripslashes($data_array['emailboday']);
       $sponsor_info[$email_template_name]['BCC'] = $data_array['BCC'];
+     // $sponsor_info[$email_template_name]['CC'] = $data_array['CC'];
+      $sponsor_info[$email_template_name]['RTO'] = $data_array['RTO'];
       $sponsor_info[$email_template_name]['fromname'] = $data_array['fromname'];
    
       update_option($settitng_key, $sponsor_info);
@@ -1705,55 +2142,67 @@ function roleassignnewtasks($request){
         $user_info = get_userdata($user_ID);  
         $lastInsertId = contentmanagerlogging('Role Assigned New Tasks',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
         $role_name = $request['rolename'];
-        $test = 'custome_task_manager_data';
-        $result_old = get_option($test);
+       // $test = 'custome_task_manager_data';
+       // $result_old = get_option($test);
+        $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+        );
+        $assign_new_role = get_posts( $args );
+        
         
         $tasksdatalist=json_decode(stripslashes($request['roleassigntaskdatalist']));
         $removetasklist = json_decode(stripslashes($request['removetasklist'])); 
         if(!empty($tasksdatalist)) {
         foreach($tasksdatalist as $key){
-           foreach($result_old['profile_fields'] as $profile_field_name => $profile_field_settings) {
-               
+          
+               foreach($assign_new_role as $taskIndex => $tasksObject) {
+                   
+               $tasksID = $tasksObject->ID;
+               $profile_field_name = get_post_meta( $tasksID, 'key' , false);
+               $value_roles = get_post_meta( $tasksID, 'roles' , false);
                if($key == $profile_field_name){
-                   if(!in_array($role_name,$result_old['profile_fields'][$key]['roles'])){
-                        array_push($result_old['profile_fields'][$key]['roles'],$role_name);
+                   if(!in_array($role_name,$value_roles[0])){
+                        array_push($value_roles[0],$role_name);
                    }
                }
-               
+               update_post_meta( $tasksID, 'roles' , $value_roles[0]);
            } 
             //echo $key;
             
         }
         }
+        
        if(!empty($removetasklist)) {
         foreach($removetasklist as $key){
-           foreach($result_old['profile_fields'] as $profile_field_name => $profile_field_settings) {
-               
+           foreach($assign_new_role as $taskIndex => $tasksObject) {
+               $tasksID = $tasksObject->ID;
+               $value_roles = get_post_meta( $tasksID, 'roles' , false);
+               $profile_field_name = get_post_meta( $tasksID, 'key' , false);
                if($key == $profile_field_name){
-                   foreach (array_keys($result_old['profile_fields'][$key]['roles'], $role_name) as $key1) {
-                    unset($result_old['profile_fields'][$key]['roles'][$key1]);
+                   foreach (array_keys($value_roles[0], $role_name) as $key1) {
+                    unset($value_roles[0][$key1]);
                   } 
                }
+               update_post_meta( $tasksID, 'roles' , $value_roles[0]);
                
            } 
             //echo $key;
             
         }
        }
-       //echo '<pre>';
-        //print_r($result_old['profile_fields']);exit;
-        
-        
-        $user_info = get_userdata($user_ID);
-        $restults = update_option($test, $result_old);
-        
-        contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
+       
+        contentmanagerlogging_file_upload ($lastInsertId,$result);
         
        
          
     }catch (Exception $e) {
        
-        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+        contentmanagerlogging_file_upload ($lastInsertId,$e);
    
       return $e;
     }
@@ -1762,6 +2211,7 @@ function roleassignnewtasks($request){
     
     
 }
+
 function editrolename($request){
     
      try{
@@ -1775,7 +2225,12 @@ function editrolename($request){
         $levelnamenew = $request['rolenewname'];
         $levelkey = $request['rolekey'];
         
-        $get_all_roles_array = 'wp_user_roles';
+        if (is_multisite()) {
+                $blog_id = get_current_blog_id();
+                $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+            }else{
+                $get_all_roles_array = 'wp_user_roles';
+            }
         $get_all_roles = get_option($get_all_roles_array);
         $result_update = 'newvalue';
         foreach ($get_all_roles as $key => $item) {
@@ -1930,14 +2385,15 @@ function remove_sponsor_metas($user_id){
     
 
    
-    $path =  dirname(__FILE__);
+   $path =  dirname(__FILE__);
    $hom_path = str_replace("/wp-content/plugins/EGPL","",$path);
    
     
-    if(!function_exists('wp_delete_user')) {
+   if(!function_exists('wpmu_delete_user')) {
           
-    include($hom_path."/wp-admin/includes/user.php");
-    
+        include($hom_path."/wp-admin/includes/ms.php");
+        require_once($hom_path.'/wp-admin/includes/user.php');
+	
     }
   
     try{
@@ -1947,8 +2403,29 @@ function remove_sponsor_metas($user_id){
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
     $lastInsertId = contentmanagerlogging('Delete User',"Admin Action",serialize($all_meta_for_user),$user_ID,$user_info->user_email,"pre_action_data");
+    
+    $user_blogs = get_blogs_of_user( $user_id );
+    $blog_id = get_current_blog_id();
+    
+   
+    
+    
+    if(count($user_blogs) > 2){
+        
       
-    $responce = wp_delete_user($user_id);
+        
+        remove_user_from_blog($user_id, $blog_id);
+        $msg = "This user removes from this blog successfully";
+        
+    }else{
+        
+        
+       $responce = wpmu_delete_user($user_id);
+       $msg = "";
+    }
+    
+    
+    echo $msg;
     contentmanagerlogging_file_upload ($lastInsertId,serialize($responce));
     //print_r($responce);
     }catch (Exception $e) {
@@ -1969,16 +2446,18 @@ function remove_sponsor_metas($user_id){
 function add_new_sponsor_metafields($user_id,$meta_array,$role){
     
     
-    
     foreach ($meta_array as $key =>$value){
         
-        update_user_meta($user_id, $key, $value);
+        update_user_option($user_id, $key, $value);
     }
+    
     $leavel[strtolower($role)] = 1;
-  
-   $result = update_user_meta($user_id, 'wp_capabilities',  $leavel);
+    $blog_id =get_current_blog_id();
    
-   return $result;
+    
+    $result = update_user_option($user_id, 'capabilities',  $leavel);
+   
+    return $result;
 }
 
 // start create resourse file upload
@@ -2261,8 +2740,8 @@ function getReportsdatanew($report_name,$usertimezone){
    
             
    }
-    $test = 'custome_task_manager_data';
-    $result_task_array_list = get_option($test);
+    //$test = 'custome_task_manager_data';
+    //$result_task_array_list = get_option($test);
     $settitng_key = 'ContenteManager_Settings';
     $sponsor_info = get_option($settitng_key);
     $sponsor_name = $sponsor_info['ContentManager']['sponsor_name'];
@@ -2289,7 +2768,12 @@ function getReportsdatanew($report_name,$usertimezone){
    
 
     $additional_settings = get_option( 'EGPL_Settings_Additionalfield' );
-     $get_all_roles_array = 'wp_user_roles';
+     if (is_multisite()) {
+                $blog_id = get_current_blog_id();
+                $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+            }else{
+                $get_all_roles_array = 'wp_user_roles';
+            }
      $get_all_roles = get_option($get_all_roles_array);
     
     $k = 14;
@@ -2558,7 +3042,7 @@ function getReportsdatanew($report_name,$usertimezone){
         $result_user_id = $wpdb->get_results($query);
         $allMetaForAllUsers = array();
         $myNewArray = array();
-      
+        $site_prefix = $wpdb->get_blog_prefix();
         $zee = 0;
         $new = 0;
 
@@ -2601,10 +3085,10 @@ function getReportsdatanew($report_name,$usertimezone){
         } else {
             $timestamp = "";
         }
-      if (!empty($user_data->convo_welcomeemail_datetime)) {
+      if (!empty($all_meta_for_user[$site_prefix.'convo_welcomeemail_datetime'][0])) {
 
        
-            $last_send_welcome_email = date('d-M-Y H:i:s', $user_data->convo_welcomeemail_datetime/1000);
+            $last_send_welcome_email = date('d-M-Y H:i:s', $all_meta_for_user[$site_prefix.'convo_welcomeemail_datetime'][0]/1000);
            
             if($usertimezone > 0){
                 $last_send_welcome_date_time = (new DateTime($last_send_welcome_email))->sub(new DateInterval('PT'.abs($usertimezone).'H'))->format('d-M-Y H:i:s');
@@ -2619,7 +3103,7 @@ function getReportsdatanew($report_name,$usertimezone){
         } else {
             $last_send_welcome_timestamp = "";
         }
-       $company_name = $all_meta_for_user['company_name'][0];
+       $company_name = $all_meta_for_user[$site_prefix.'company_name'][0];
        $myNewArray['action_edit_delete'] = '<p style="width:83px !important;"><a href="/edit-user/?sponsorid='.$aid->user_id.'" target="_blank" title="Edit User Profile"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-pencil-square-o" style="color:#262626;"></i></span></a><a style="margin-left: 10px;" target="_blank" href="/edit-sponsor-task/?sponsorid='.$aid->user_id.'" title="User Tasks"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-th-list" style="color:#262626;"></i></span></a><a onclick="view_profile(this)" id="'.$unique_id.'" name="viewprofile"  style="cursor: pointer;color:red;margin-left: 10px;" title="View Profile" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-eye" style="color:#262626;"></i></a><a onclick="delete_sponsor_meta(this)" id="'.$aid->user_id.'" name="delete-sponsor"  style="cursor: pointer;color:red;margin-left: 10px;" title="Remove User" ><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-times-circle" style="color:#262626;"></i></a></p>';
 
         $unique_id++;
@@ -2629,22 +3113,22 @@ function getReportsdatanew($report_name,$usertimezone){
         $myNewArray['Role'] = $get_all_roles[$user_data->roles[0]]['name'];
         $myNewArray['last_login'] = $timestamp;
      
-        $myNewArray['first_name'] = $user_data->first_name;
-        $myNewArray['last_name'] = $user_data->last_name;
+        $myNewArray['first_name'] = $all_meta_for_user[$site_prefix.'first_name'][0];//$user_data->first_name;
+        $myNewArray['last_name'] = $all_meta_for_user[$site_prefix.'last_name'][0];//$user_data->last_name;
         $myNewArray['user_name'] = $user_data->display_name;
         $myNewArray['Email'] = $user_data->user_email;
         $myNewArray['convo_welcomeemail_datetime'] =  $last_send_welcome_timestamp;
-        $myNewArray['exhibitor_map_dynamics_ID'] = $all_meta_for_user['exhibitor_map_dynamics_ID'][0];
-        $myNewArray['user_profile_url'] = $all_meta_for_user['user_profile_url'][0];
+        $myNewArray['exhibitor_map_dynamics_ID'] = $all_meta_for_user[$site_prefix.'exhibitor_map_dynamics_ID'][0];
+        $myNewArray['user_profile_url'] = $all_meta_for_user[$site_prefix.'user_profile_url'][0];
         $myNewArray['wp_user_id'] = $aid->user_id;
-        $myNewArray['selfsignupstatus'] = $all_meta_for_user['selfsignupstatus'][0];
+        $myNewArray['selfsignupstatus'] = $all_meta_for_user[$site_prefix.'selfsignupstatus'][0];
         
        
         if(!empty($additional_settings)){
        
             foreach ($additional_settings as $key=>$valuename){
-            
-             $myNewArray[$additional_settings[$key]['key']] = $all_meta_for_user[$additional_settings[$key]['key']][0];
+                $addition_field = $additional_settings[$key]['key'];
+             $myNewArray[$additional_settings[$key]['key']] = $all_meta_for_user[$site_prefix.$addition_field][0];
              
             }
         }
@@ -2988,7 +3472,7 @@ function getReportsdatanew($report_name,$usertimezone){
 
 add_action('wp_enqueue_scripts', 'add_contentmanager_js');
 function add_contentmanager_js(){
-      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'2.1.0', true);
+      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'2.1.9', true);
     
      wp_enqueue_script( 'jquery.alerts', plugins_url() . '/EGPL/js/jquery.alerts.js', array(), '1.1.0', true );
      wp_enqueue_script( 'boot-date-picker', plugins_url() . '/EGPL/js/bootstrap-datepicker.js', array(), '1.2.0', true );
@@ -3004,7 +3488,11 @@ function add_contentmanager_js(){
     // wp_enqueue_script('bulk-email', plugins_url('/js/bulk-email.js', __FILE__), array('jquery'));
      wp_enqueue_script('sweetalert', plugins_url('/EGPL/cmtemplate/js/lib/bootstrap-sweetalert/sweetalert.min.js'), array('jquery'));
      wp_enqueue_script('password_strength_cal', plugins_url('/js/passwordstrength.js', __FILE__), array('jquery'));
-     wp_enqueue_script('selfsignupjs', plugins_url('/js/selfsignupjs.js', __FILE__), array('jquery'));
+     
+     wp_enqueue_script( 'selfsignupjs', plugins_url('/EGPL/js/selfsignupjs.js'), array(), '1.2.9', true );
+     wp_enqueue_script( 'jquery-confirm', plugins_url('/EGPL/js/jquery-confirm.js'), array(), '1.2.7', true );
+      
+     wp_enqueue_script('select2', plugins_url('/cmtemplate/js/lib/select2/select2.full.js', __FILE__), array('jquery'));
       //wp_enqueue_script('rolejs', plugins_url('/js/role.js', __FILE__), array('jquery'));
      
    
@@ -3018,312 +3506,197 @@ function my_contentmanager_style() {
     wp_enqueue_style('my-datepicker', plugins_url().'/EGPL/css/datepicker.css');
     wp_enqueue_style('jquery.dataTables', plugins_url().'/EGPL/css/jquery.dataTables.css');
     wp_enqueue_style('shCore', plugins_url().'/EGPL/css/shCore.css');
+
+    wp_enqueue_style('jquery-confirm-css', plugins_url() .'/EGPL/css/jquery-confirm.css',array(), '1.2', 'all');
    
   
     wp_enqueue_style('my-datatable-tools', plugins_url().'/EGPL/css/dataTables.tableTools.css');
    // wp_enqueue_style('cleditor-css', plugins_url() .'/EGPL/css/jquery.cleditor.css');
    // wp_enqueue_style('contentmanager-css', plugins_url() .'/EGPL/css/forntend.css');
-    wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '1.1', 'all');
+    wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '1.4', 'all');
     wp_enqueue_style('my-admin-theme', plugins_url('css/normalize.css', __FILE__));
   
    
 }
+
 function my_plugin_activate() {
     
+    global $wpdb;
+    include 'defult-content.php';
     
-    $get_all_roles_array = 'wp_user_roles';
-    $get_all_roles = get_option($get_all_roles_array);
-    if(!empty($get_all_roles)){
-        foreach ($get_all_roles as $key => $item) {
-        
-        if($item['name'] !='Administrator'){
-            
-           if(!array_key_exists('unfiltered_upload',$get_all_roles[$key]['capabilities'])){
-            $get_all_roles[$key]['capabilities']['unfiltered_upload'] = 1;
-            $get_all_roles[$key]['capabilities']['upload_files'] = 1;
-           }
-          
-           if($key == 'subscriber'){
-               
-               $get_all_roles[$key]['name'] = 'Unassigned';
-               
-           }
-            
-        }
-        
-    }
-        update_option( $get_all_roles_array, $get_all_roles ); 
-   }
-    
-   $test_task = 'custome_task_manager_data';
-   $manage_bulk_task= get_option($test_task);
-   if(empty($manage_bulk_task['profile_fields'])){
-       
-       $defulttask['task_company_logo_png_sfggpydf']['value']='';
-       $defulttask['task_company_logo_png_sfggpydf']['unique']='no';
-       $defulttask['task_company_logo_png_sfggpydf']['class']='';
-       $defulttask['task_company_logo_png_sfggpydf']['after']='';
-       $defulttask['task_company_logo_png_sfggpydf']['required']='no';
-       $defulttask['task_company_logo_png_sfggpydf']['allow_tags']='yes';
-       $defulttask['task_company_logo_png_sfggpydf']['add_to_profile']='yes';
-       $defulttask['task_company_logo_png_sfggpydf']['allow_multi']='no';
-       $defulttask['task_company_logo_png_sfggpydf']['size']='';
-       $defulttask['task_company_logo_png_sfggpydf']['label']='Company Logo (PNG File)';
-       $defulttask['task_company_logo_png_sfggpydf']['type']='color';
-       $defulttask['task_company_logo_png_sfggpydf']['lin_url']='';
-       $defulttask['task_company_logo_png_sfggpydf']['attrs']='04-Feb-2017';
-       $defulttask['task_company_logo_png_sfggpydf']['taskattrs']='';
-       $defulttask['task_company_logo_png_sfggpydf']['roles'][0] =  'all';
-       $defulttask['task_company_logo_png_sfggpydf']['descrpition']='Upload Company Logo (PNG File, 200 x 200 px)';
-       $defulttask['task_company_logo_png_sfggpydf']['usersids']='';
-       $manage_bulk_task['profile_fields']  = $defulttask; 
-       update_option( $test_task, $manage_bulk_task ); 
-       
-   }
-   
-   
-  $user_additional_field[0]['name']= 'Prefix';
-  $user_additional_field[0]['key']= 'prefix';
-   
-  $user_additional_field[1]['name']= 'Address 1';
-  $user_additional_field[1]['key']= 'address_line_1';
-  
-  $user_additional_field[2]['name']= 'Address 2';
-  $user_additional_field[2]['key']= 'address_line_2';
-  
-  $user_additional_field[3]['name']= 'City';
-  $user_additional_field[3]['key']= 'usercity';
-  
-  $user_additional_field[4]['name']= 'State';
-  $user_additional_field[4]['key']= 'userstate';
-  
-  $user_additional_field[5]['name']= 'Zipcode';
-  $user_additional_field[5]['key']= 'userzipcode';
-  
-  $user_additional_field[6]['name']= 'Country';
-  $user_additional_field[6]['key']= 'usercountry';
-  
-  $user_additional_field[7]['name']= 'Phone 1';
-  $user_additional_field[7]['key']= 'user_phone_1';
-  
-  $user_additional_field[8]['name']= 'Phone 2';
-  $user_additional_field[8]['key']= 'user_phone_2';
-  
-  $user_additional_field[9]['name']= 'Registration Codes';
-  $user_additional_field[9]['key']= 'reg_codes';
-   
-  $user_additional_field[10]['name']= 'Notes';
-  $user_additional_field[10]['key']= 'usernotes';
-  
-  
-  update_option( 'EGPL_Settings_Additionalfield', $user_additional_field);
- 
+                
+// check if it is a multisite network
 
-  $create_pages_list[0]['title'] = 'New User';
-  $create_pages_list[0]['name'] = 'create-user';
-  $create_pages_list[0]['temp'] = 'temp/addsponsor-template.php';
-  
-  $create_pages_list[1]['title'] = 'Create Resources';
-  $create_pages_list[1]['name'] = 'create-resource';
-  $create_pages_list[1]['temp'] = 'temp/create-resource-template.php';
-  
- 
-  
-  
-  $create_pages_list[2]['title'] = 'User Report';
-  $create_pages_list[2]['name'] = 'user-report';
-  $create_pages_list[2]['temp'] = 'temp/new_user_report_template.php';
-  
-  
-   $create_pages_list[3]['title'] = 'Edit User';
-  $create_pages_list[3]['name'] = 'edit-user';
-  $create_pages_list[3]['temp'] = 'temp/edit_sponsor-template.php' ;
-  
-  
-   $create_pages_list[4]['title'] = 'Edit User Task';
-  $create_pages_list[4]['name'] = 'edit-task';
-  $create_pages_list[4]['temp'] = 'temp/editponsor-task-update-template.php';
-  
-  $create_pages_list[5]['title'] = 'All Resources';
-  $create_pages_list[5]['name'] = 'all-resources';
-  $create_pages_list[5]['temp'] = 'temp/view_resource-template.php';
-  
-  $create_pages_list[6]['title'] = 'Create New Task';
-  $create_pages_list[6]['name'] = 'create-task';
-  $create_pages_list[6]['temp'] = 'temp/createponsor-task-template.php';
-  
-  $create_pages_list[7]['title'] = 'Admin Change Password';
-  $create_pages_list[7]['name'] = 'admin-change-password';
-  $create_pages_list[7]['temp'] = 'temp/change_password_template.php';
-  
-  
-    
-  $create_pages_list[8]['title'] = 'Welcome Email Content';
-  $create_pages_list[8]['name'] = 'welcome-email';
-  $create_pages_list[8]['temp'] = 'temp/welcome_email_template.php';
-  
-    
-  $create_pages_list[9]['title'] = 'Manage users Level';
-  $create_pages_list[9]['name'] = 'add-new-level';
-  $create_pages_list[9]['temp'] = 'temp/create-role-template.php';
-  
-  $create_pages_list[10]['title'] = 'Add Content Manager';
-  $create_pages_list[10]['name'] = 'add-content-manager-user';
-  $create_pages_list[10]['temp'] = 'temp/addcontentmanager-template.php';
-  
-  $create_pages_list[11]['title'] = 'Content Editor';
-  $create_pages_list[11]['name'] = 'content-editor';
-  $create_pages_list[11]['temp'] = 'temp/edit_content_page.php';
-  
-  $create_pages_list[12]['title'] = 'Dashboard';
-  $create_pages_list[12]['name'] = 'dashboard';
-  $create_pages_list[12]['temp'] = 'temp/admin_dashboard.php';
-  
-  $create_pages_list[13]['title'] = 'Bulk Download';
-  $create_pages_list[13]['name'] = 'bulk-download-files';
-  $create_pages_list[13]['temp'] = 'temp/bulk_download_task_files_template.php';
-  
-  $create_pages_list[14]['title'] = 'User Change Password';
-  $create_pages_list[14]['name'] = 'change-password';
-  $create_pages_list[14]['temp'] = 'temp/user_change_password_template.php';
-  
-  $create_pages_list[15]['title'] = 'Admin Settings';
-  $create_pages_list[15]['name'] = 'admin-settings';
-  $create_pages_list[15]['temp'] = 'temp/settings-template.php';
-  
-  
-  $create_pages_list[16]['title'] = 'Tasks';
-  $create_pages_list[16]['name'] = 'tasks';
-  $create_pages_list[16]['temp'] = 'temp/sponsor-task-update-template.php';
-  
-  $create_pages_list[17]['title'] = 'Bulk Import Users';
-  $create_pages_list[17]['name'] = 'bulk-import-user';
-  $create_pages_list[17]['temp'] = 'temp/bulkuser_import.php';
-  
-  $create_pages_list[18]['title'] = 'Sync to Floorplan';
-  $create_pages_list[18]['name'] = 'sync-to-floorplan';
-  $create_pages_list[18]['temp'] = 'temp/sync_to_floorplan.php';
-  
-  $create_pages_list[19]['title'] = 'Bulk Edit Task';
-  $create_pages_list[19]['name'] = 'bulk-edit-task';
-  $create_pages_list[19]['temp'] = 'temp/bulk_edit_task.php';
-  
-  $create_pages_list[20]['title'] = 'Role Assignment';
-  $create_pages_list[20]['name'] = 'role-assignment';
-  $create_pages_list[20]['temp'] = 'temp/managerole_assignment.php';
- 
-  $create_pages_list[21]['title'] = 'Order Reporting';
-  $create_pages_list[21]['name'] = 'order-reporting';
-  $create_pages_list[21]['temp'] = 'temp/product-order-reporting-template.php';
-  
-  
-  $create_pages_list[22]['title'] = 'Manage Products';
-  $create_pages_list[22]['name'] = 'manage-products';
-  $create_pages_list[22]['temp'] = 'temp/view_products_manage_all_template.php';
-  
-  $create_pages_list[23]['title'] = 'Add Edit Product';
-  $create_pages_list[23]['name'] = 'add-new-product';
-  $create_pages_list[23]['temp'] = 'temp/add_new_product_template.php';
-  
-  
-  $create_pages_list[24]['title'] = 'Review Registrations';
-  $create_pages_list[24]['name'] = 'review-registration';
-  $create_pages_list[24]['temp'] = 'temp/selfsign_review_profiles.php';
-  
-  $create_pages_list[25]['title'] = 'Registrations';
-  $create_pages_list[25]['name'] = 'registrations';
-  $create_pages_list[25]['temp'] = 'temp/selfsignup_addsponsor_template.php';
-  
-  $create_pages_list[26]['title'] = 'User Report Result';
-  $create_pages_list[26]['name'] = 'user-report-result';
-  $create_pages_list[26]['temp'] = 'temp/users_result_report_template.php';
-  
 
-  
-  
-  foreach($create_pages_list as $key=>$value){
-      
-     
-      $page_path= $create_pages_list[$key]['name'];
-      $page = get_page_by_path($page_path);
-       if(!$page){
-        
-        $my_post = array(
-            'post_title' => wp_strip_all_tags($create_pages_list[$key]['title']),
-            
-            'post_status' => 'publish',
-            'post_author' => get_current_user_id(),
-            'post_type' => 'page',
-            'post_name'=>$page_path
+//$blog_id = get_current_blog_id();
+
+// check if the plugin has been activated on the network or on a single site
+// get ids of all sites
+
+           $blog_list = get_blog_list( 0, 'all' );
            
-        );
+   
+            foreach ($blog_list as $blog_id) {
+                if($blog_id['blog_id'] != 1){
+                    
+                    
+                    
+                            switch_to_blog($blog_id['blog_id']);
+
+            $labels = array(
+                'name'                =>  'ExpoGenie Log',
+                'singular_name'       =>  'ExpoGenie Log',
+                'add_new'             =>  'Add New',
+                'add_new_item'        =>  'Add New Log',
+                'edit_item'           =>  'Edit Log',
+                'new_item'            =>  'New Log', 
+                'all_items'           =>  'All Logs',
+                'view_item'           =>  'View Log',
+                'search_items'        =>  'Search Log',
+                'not_found'           =>  'No Log found',
+                'not_found_in_trash'  =>  'No Log found in Trash',
+                'menu_name'           =>  'Log',
+              );
+
+              $supports = array( 'title', 'editor' );
+
+              $slug = get_theme_mod( 'event_permalink' );
+              $slug = ( empty( $slug ) ) ? 'event' : $slug;
+
+              $args = array(
+                'labels'              => $labels,
+                'public'              => true,
+                'publicly_queryable'  => true,
+                'show_ui'             => true,
+                'show_in_menu'        => true,
+                'query_var'           => true,
+                'rewrite'             => array( 'slug' => $slug ),
+                'capability_type'     => 'post',
+                'has_archive'         => true,
+                'hierarchical'        => false,
+                'menu_position'       => null,
+                'supports'            => $supports,
+              );
+
+              register_post_type( 'expo_genie_log', $args );
+                
+                
+                // create tables for each site
+                $get_all_roles_array = 'wp_'.$blog_id['blog_id'].'_user_roles';
+                $get_all_roles = get_option($get_all_roles_array);
+                if (!empty($get_all_roles)) {
+                    foreach ($get_all_roles as $key => $item) {
+
+                        if ($item['name'] != 'Administrator') {
+
+                            if (!array_key_exists('unfiltered_upload', $get_all_roles[$key]['capabilities'])) {
+                                $get_all_roles[$key]['capabilities']['unfiltered_upload'] = 1;
+                                $get_all_roles[$key]['capabilities']['upload_files'] = 1;
+                            }
+                        }
+                       
+                    }
+                    $get_all_roles['subscriber']['name'] = 'Unassigned';
+                    $get_all_roles['contentmanager']['name'] = 'Content Manager';
+                    update_option($get_all_roles_array, $get_all_roles);
+                }
+                 
+           
+             
+                    
+                  $oldvalues = get_option( 'ContenteManager_Settings' );
+                  if($object_data['customfieldstatus'] == 'checked'){
+       
+                        include 'defult-content.php';
+                        $result = update_option('EGPL_Settings_Additionalfield', $user_additional_field);
+       
+       
+                   }else{
+
+                        include 'defult-content.php';
+                        $result = update_option('EGPL_Settings_Additionalfield', $user_additional_field_default);
+
+                    }
+             
+          
+
+                
+               
+                $term = term_exists('Content Manager Editor', 'category');
+                if ($term !== 0 && $term !== null) {
+                    $cat_id_get = $term['term_id'];
+                }else{
+                    
+                    $cat_id_get = wp_insert_category(
+                    array(
+                    'cat_name' 				=> 'Content Manager Editor',
+		    'category_description'	=> '',
+		    'category_nicename' 		=> 'content-manager-editor',
+		    'taxonomy' 				=> 'category'
+                    )
+                );
+                
+                
+                    
+                }
+                
+
+                foreach ($create_pages_list as $key => $value) {
+
+
+                    $page_path = $create_pages_list[$key]['name'];
+                    $page = get_page_by_path($page_path);
+                    if (!$page) {
+                        if($create_pages_list[$key]['catname'] == true){
+                            $cat_name = array($cat_id_get);//'content-manager-editor';
+                        }else{
+                            
+                             $cat_name = '' ; //'content-manager-editor';
+                        }
+                        
+                        $my_post = array(
+                            'post_title' => wp_strip_all_tags($create_pages_list[$key]['title']),
+                            'post_status' => 'publish',
+                            'post_author' => get_current_user_id(),
+                            'post_content'=> wp_strip_all_tags($all_pages_defult_content[$create_pages_list[$key]['name']]),
+                            'post_category' => $cat_name ,//'content-manager-editor',
+                            'post_type' => 'page',
+                            'post_name' => $page_path
+                        );
 
 // Insert the post into the database
-       $returnpage_ID = wp_insert_post($my_post);
-       update_post_meta( $returnpage_ID, '_wp_page_template', $create_pages_list[$key]['temp'] );
-      
+                        $returnpage_ID = wp_insert_post($my_post);
+                        update_post_meta($returnpage_ID, '_wp_page_template', $create_pages_list[$key]['temp']);
+                    }
+                }
+
+               
+                global $wpdb;
+
+                $charset_collate = $wpdb->get_charset_collate();
+
+                $sql = "CREATE TABLE contentmanager_" . $blog_id['blog_id'] . "_log (
+                        id bigint(20) NOT NULL AUTO_INCREMENT,
+                        action_name varchar(60) NOT NULL,
+                        action_type varchar(60) NOT NULL,
+                        pre_action_data longtext NOT NULL,
+                        user_email varchar(60) NOT NULL,
+                        user_id varchar(60) NOT NULL,
+                        result longtext NOT NULL,
+                        action_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        PRIMARY KEY (id)
+                        ) ENGINE=MyISAM;";
+
+                require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+                dbDelta($sql);
+                restore_current_blog();
+            }
+        }
         
-    } 
-      
-  }
+        
+    
 
-    //$settings_array['ContentManager']['sponsor_name']='User';
-    //$settings_array['ContentManager']['attendyTypeKey']='Role';
-    if (get_option('ContenteManager_Settings')) {
-       $oldvalues = get_option( 'ContenteManager_Settings' );
-    }
     
-    
-    $task_input_type[0]['lable'] = 'None';
-    $task_input_type[0]['type'] = 'none';
-    $task_input_type[1]['lable'] = 'Text';
-    $task_input_type[1]['type'] = 'text';
-    $task_input_type[2]['lable'] = 'Display Link';
-    $task_input_type[2]['type'] = 'link';
-    $task_input_type[3]['lable'] = 'Date';
-    $task_input_type[3]['type'] = 'date';
-    $task_input_type[4]['lable'] = 'URL';
-    $task_input_type[4]['type'] = 'url';
-    $task_input_type[5]['lable'] = 'Email';
-    $task_input_type[5]['type'] = 'email';
-    $task_input_type[6]['lable'] = 'Drop Down';
-    $task_input_type[6]['type'] = 'select-2';
-    $task_input_type[7]['lable'] = 'Number';
-    $task_input_type[7]['type'] = 'number';
-    $task_input_type[8]['lable'] = 'File Upload';
-    $task_input_type[8]['type'] = 'color';
-    $task_input_type[9]['lable'] = 'Text Area';
-    $task_input_type[9]['type'] = 'textarea';
-    $task_input_type[10]['lable'] = 'Display Coming soon';
-    $task_input_type[10]['type'] = 'comingsoon';
-    
-    
-    
-    $oldvalues['ContentManager']['taskmanager']['input_type']=$task_input_type;
-    update_option( 'ContenteManager_Settings', $oldvalues);
-    
-   
-$table_name ="contentmanager_logging";
-
-                     
-                     global $wpdb;
-
-$charset_collate = $wpdb->get_charset_collate();
-
-$sql = "CREATE TABLE contentmanager_log (
- id bigint(20) NOT NULL AUTO_INCREMENT,
- action_name varchar(60) NOT NULL,
- action_type varchar(60) NOT NULL,
- pre_action_data longtext NOT NULL,
- user_email varchar(60) NOT NULL,
- user_id varchar(60) NOT NULL,
- result longtext NOT NULL,
- action_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
- PRIMARY KEY (id)
-) ENGINE=MyISAM;";
-
-require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-dbDelta( $sql );
   
     
   
@@ -3335,7 +3708,7 @@ add_action( 'init', 'add_contentmanager_settings' );
 
 function add_contentmanager_settings() {
     
-    wp_register_script('adminjs', plugins_url('js/admin-cmanager.js?v=2.25', __FILE__), array('jquery'));
+    wp_register_script('adminjs', plugins_url('js/admin-cmanager.js?v=2.34', __FILE__), array('jquery'));
     wp_enqueue_script('adminjs');
     //$settings_array['ContentManager']['sponsor-name']='Exhibitor';
     //update_option( 'ContenteManager_Settings', $settings_array);
@@ -3383,6 +3756,7 @@ function updatecmanagersettings($object_data){
     $wooconsumerkey = $object_data['wooconsumerkey'];
     $selfsignstatus = $object_data['selfsignstatus'];
     $userreportcontent =   $object_data['userreportcontent']; 
+    $expogeniefloorplan = $object_data['expogeniefloorplan']; 
     
     $addresspoints = $object_data['addresspoints'];
     
@@ -3415,11 +3789,38 @@ function updatecmanagersettings($object_data){
     $oldvalues['ContentManager']['mapapikey']=$mapapikey;
     $oldvalues['ContentManager']['mapsecretkey']=$mapsecretkey;
     $oldvalues['ContentManager']['userreportcontent']=stripslashes($userreportcontent);
+   
+    
+    $oldvalues['ContentManager']['defaultboothprice']=$object_data['defaultboothprice'];
+    $oldvalues['ContentManager']['cventaccountname']=$object_data['cventaccountname'];
+    $oldvalues['ContentManager']['cventusername']=$object_data['cventusername'];;
+    $oldvalues['ContentManager']['cventapipassword']=$object_data['cventapipassword'];;
+    $oldvalues['ContentManager']['customfieldstatus']=$object_data['customfieldstatus'];
+    
+    $oldvalues['ContentManager']['boothpurchasestatus']=$object_data['boothpurchasestatus'];
+    $oldvalues['ContentManager']['redirectcatname']=$object_data['redirectcatname'];
+   
+    
+    
+    
+   if($object_data['customfieldstatus'] == 'checked'){
+       
+        include 'defult-content.php';
+        $result = update_option('EGPL_Settings_Additionalfield', $user_additional_field);
+       
+       
+   }else{
+      
+       include 'defult-content.php';
+       $result = update_option('EGPL_Settings_Additionalfield', $user_additional_field_default);
+       
+   }
     
     
     $oldvalues['ContentManager']['wooseceretkey']=$wooseceretkey;
     $oldvalues['ContentManager']['wooconsumerkey']=$wooconsumerkey;
     $oldvalues['ContentManager']['selfsignstatus']=$selfsignstatus;
+    $oldvalues['ContentManager']['expogeniefloorplan']=$expogeniefloorplan;
     
     $result=update_option('ContenteManager_Settings', $oldvalues);
     
@@ -3433,36 +3834,25 @@ function updatecmanagersettings($object_data){
     die();
 }
 
-function updateadmin_frontend_settings($object_data){
+function updateadmin_frontend_settings($object_data,$filedataurl){
     
    try{
     
     $user_ID = get_current_user_id();
-    $user_info = get_userdata($user_ID);     
+    $user_info = get_userdata($user_ID); 
+    $object_data['headerbannerimage'] = $filedataurl;
+   
+    
     $lastInsertId = contentmanagerlogging('Update Contentmanager Settings Front End',"Admin Action",serialize($object_data),$user_ID,$user_info->user_email,"pre_action_data");
       
     
     $eventdate = $object_data['eventdate'];
-    $lockTWMcomplete = $object_data['lockTWMcomplete'];
-    $lockTWMduedate = $object_data['lockTWMduedate'];
-    
-    
-   // $formemail = $object_data['formemail'];
-   // $mandrill = $object_data['mandrill'];
-  //  $infocontent = $object_data['infocontent'];
-  //  $addresspoints = $object_data['addresspoints'];
-    
     $oldvalues = get_option( 'ContenteManager_Settings' );
     
     $oldvalues['ContentManager']['eventdate']=$eventdate;
-    $oldvalues['ContentManager']['lockTWMcomplete']=$lockTWMcomplete;
-    $oldvalues['ContentManager']['lockTWMduedate']=$lockTWMduedate;
-    
-   // $oldvalues['ContentManager']['formemail']=$formemail;
-   // $oldvalues['ContentManager']['mandrill']=$mandrill;
-  //  $oldvalues['ContentManager']['infocontent']=$infocontent;
-  //  $oldvalues['ContentManager']['addresspoints']=$addresspoints;
-    
+    $oldvalues['ContentManager']['mainheader']=$filedataurl;
+    $oldvalues['ContentManager']['mainheaderlogo']='';
+     
     $result=update_option('ContenteManager_Settings', $oldvalues);
     
     contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
@@ -3490,8 +3880,18 @@ function excludes_sponsor_meta(){
      $wooconsumerkey    =   $oldvalues['ContentManager']['wooconsumerkey'];
      $wooseceretkey     =   $oldvalues['ContentManager']['wooseceretkey'];
      $selfsignstatus    =   $oldvalues['ContentManager']['selfsignstatus'];
-     $userreportcontent =   stripslashes($oldvalues['ContentManager']['userreportcontent']);
      
+     $cventaccountname     =   $oldvalues['ContentManager']['cventaccountname'];
+     $cventusername        =   $oldvalues['ContentManager']['cventusername'];
+     $cventapipassword     =   $oldvalues['ContentManager']['cventapipassword'];
+     $customfieldstatus    =   $oldvalues['ContentManager']['customfieldstatus'];
+     
+     $defaultboothprice    =   $oldvalues['ContentManager']['defaultboothprice'];
+     $boothpurchasestatus   =   $oldvalues['ContentManager']['boothpurchasestatus'];
+     $redirectcatname   =   $oldvalues['ContentManager']['redirectcatname'];
+     
+     $userreportcontent =   stripslashes($oldvalues['ContentManager']['userreportcontent']);
+     $expogeniefloorplan    =   $oldvalues['ContentManager']['expogeniefloorplan'];
       
      //echo'<pre>';
     // print_r($oldvalues);
@@ -3509,7 +3909,7 @@ function excludes_sponsor_meta(){
      $header = '<p id="successmsg" style="display:none;background-color: #00F732;padding: 11px;margin-top: 20px;width: 300px;font-size: 18px;"></p><h4></h4>';
      $bodayContent.=$header;
      
-     $maincontent='<table style="">
+     $maincontent.='<table style="">
       
        <tr>
        <td><h4>Exclude Meta Fields For Create Sponsor Screen</h4></td>
@@ -3550,6 +3950,16 @@ function excludes_sponsor_meta(){
         <tr><td><h4>Self-signup Settings</h4></td>
         <td><input type="text" name="selfsignstatus"  id="selfsignstatus" value='.$selfsignstatus.'></td>
         </tr>
+         <tr><td><h4>Redirect Active Shop Catgory Name</h4></td>
+
+        <td>
+        <input type="text" title="hint:boothpurchase" name="redirectcatname"  id="redirectcatname" value='.$redirectcatname.'>
+        </td>
+       </tr>
+
+        <tr><td><h4>ExpoGenie Floor Plan</h4></td>
+        <td><input type="text" name="expogeniefloorplan"  id="expogeniefloorplan" value='.$expogeniefloorplan.'></td>
+        </tr>
         <tr><td><h4>Map Dynamics API Key</h4></td>
  
         <td><input type="text" name="mapapikey"  id="mapapikey" value='.$mapapikey.'></td>
@@ -3572,6 +3982,53 @@ function excludes_sponsor_meta(){
         <input type="text" name="wooseceretkey"  id="wooseceretkey" value='.$wooseceretkey.'>
         </td>
        </tr>
+       
+
+       <tr><td><h4>Auto Booth Assignment</h4></td>
+ 
+        <td><input type="text" name="boothpurchasestatus"  id="boothpurchasestatus" value='.$boothpurchasestatus.'></td>
+       </tr>
+       
+       <tr><td><h4>Default Booth Price</h4></td>
+ 
+        <td><input type="text" name="defaultboothprice"  id="defaultboothprice" value='.$defaultboothprice.'></td>
+       </tr>
+       
+       <tr><td><h4>Cvent Account Name</h4></td>
+ 
+        <td><input type="text" name="cventaccountname"  id="cventaccountname" value='.$cventaccountname.'></td>
+       </tr>
+       
+        <tr><td><h4>Cvent Username</h4></td>
+
+        <td>
+        <input type="text" name="cventusername"  id="cventusername" value='.$cventusername.'>
+        </td>
+       </tr>
+       <tr><td><h4>Cvent Api Password</h4></td>
+ 
+        <td><input type="text" name="cventapipassword"  id="cventapipassword" value='.$cventapipassword.'></td>
+       </tr>
+        <tr><td><h4>Additional Custome Field Status</h4></td>
+
+        <td>';
+        if($customfieldstatus == 'checked'){
+            
+            $maincontent.='<input type="text"  id="customfieldstatus" name="vehicle" value="enabled">';
+            
+        }else{
+            
+            $maincontent.='<input type="text"  id="customfieldstatus" name="vehicle" value="disabled">'; 
+            
+        } 
+        
+        
+
+        $maincontent.='</td>
+       </tr>
+
+
+
        <tr><td><h4>User Report bottom content</h4></td>
  
         <td><textarea style="width:300px;height:100px" id="userreportcontent" >'.$userreportcontent.'</textarea></td>
@@ -3661,7 +4118,7 @@ class PageTemplater {
                         'temp/create-resource-template.php'     => 'Create resource',
                         'temp/sponsor-reports-template.php'     => 'Sponsor Reports',
                         'temp/edit_sponsor-template.php'     => 'Edit Sponsor', 
-                        'temp/edit_sponsor-task-template.php'     => 'Edit Sponsor Task',
+                        'temp/edit_sponsor_task_template.php'     => 'Edit Sponsor Task',
                         'temp/view_resource-template.php'     => 'Resource list view',
                         'temp/createponsor-task-template.php'     => 'Create Sponsor Task',
                         'temp/editponsor-task-update-template.php' =>  'Edit Sponsor Task Update',
@@ -3681,14 +4138,23 @@ class PageTemplater {
                          'temp/bulk_edit_task_list.php'=>'Bulk Edit Task List view',
                          'temp/managerole_assignment.php'=>'Role Assignment',
                          'temp/product-order-reporting-table-template.php'=>'Order Report',
-                        'temp/new_user_report_template.php'=>'User Report',
-                        'temp/view_products_manage_all_template.php'=>'Manage Product',
-                        'temp/add_new_product_template.php'=>'Add New Product',
-                        'temp/users_result_report_template.php'=>'User Report Result',
-                        'temp/selfsignup_addsponsor_template.php'=>'User Self Signup',
-                        'temp/selfsign_review_profiles.php'=>'User Self Signup Report',
-                        'temp/landing-page.php'=>'Landing Page',
-                        
+                         'temp/new_user_report_template.php'=>'User Report',
+                         'temp/view_products_manage_all_template.php'=>'Manage Product',
+                         'temp/add_new_product_template.php'=>'Add New Product',
+                         'temp/users_result_report_template.php'=>'User Report Result',
+                         'temp/selfsignup_addsponsor_template.php'=>'User Self Signup',
+                         'temp/selfsign_review_profiles.php'=>'User Self Signup Report',
+                         'temp/landing-page.php'=>'Landing Page',
+                         'temp/admin_landing_page_multisite_template.php'=>'Multi site Landing Page',
+                         'temp/egpl_default_page_template.php'=>'EGPL Default Template',
+                         'temp/egpl_login.php'=>'Users Login',
+                         'temp/egpl_resources_template.php'=>'Resources',
+                         'temp/updateusersprefix.php'=>'Update User Meta',
+                         'temp/syncuserscvent.php'=>'Cvent Sync Users',
+                         'temp/product-order-reporting-booth-template.php'=>'Manage Exhibitor Booths',
+                         'temp/bulk_edit_product.php'=>'Manage Bulk Products',
+                         'temp/scriptrunner.php'=>'Moved Tasks Option to post'
+                       
                         
                      
                    
@@ -3780,9 +4246,9 @@ add_action( 'plugins_loaded', array( 'PageTemplater', 'get_instance' ) );
 function showuserfield_func($atts) {
     $fieldname = $atts['field'];
     $postid = get_current_user_id();
-    $value = get_user_meta($postid, $fieldname);
+    $value = get_user_option($fieldname,$postid);
    
-    return $value[0];
+    return $value;
    
 }
 
@@ -3790,17 +4256,19 @@ add_shortcode('showuserfield', 'showuserfield_func');
 
 // [sponsor_roles]
 function sponsor_roles_fun() {
-    global $wp_roles;
-    global $current_user, $wpdb;
-    $role='';
-    if ( is_user_logged_in() ) {
-    $all_roles = $wp_roles->roles;
-    $editable_roles = apply_filters('editable_roles', $all_roles);
+    $role = '';
+    if (is_user_logged_in()) { 
     
-    $role = $wpdb->prefix . 'capabilities';
-    $current_user->role = array_keys($current_user->$role);
-    $role = $editable_roles[$current_user->role[0]]['name'];
-    }
+        global $wp_roles;
+        global $current_user, $wpdb;
+        $all_roles = $wp_roles->roles;
+        $editable_roles = apply_filters('editable_roles', $all_roles);
+        $role = $wpdb->prefix . 'capabilities';
+        $current_user->role = array_keys($current_user->$role);
+        $role = $editable_roles[$current_user->role[0]]['name'];
+       }
+    
+    
     return $role;
 }
 
@@ -3809,16 +4277,41 @@ add_shortcode('sponsor_roles', 'sponsor_roles_fun');
 
 function mycustomelogin($user_login, $user) {
     
-    
-   
     global $wpdb;
-   
-   $postid = $user->ID;
+    $postid = $user->ID;
+    $blog_id = get_current_blog_id();
+    
+    if (is_multisite()) {
+    
+    
+    $user_blogs = get_blogs_of_user( $postid );
+    
+    if (array_key_exists($blog_id,$user_blogs)){
+        
+        // echo '<pre>';
+        // print_r($user_blogs);exit;
+         
+    }else{
+        
+        
+        //wp_logout();
+        wp_redirect( '/warning' );
+        exit();
+        
+    }
+    }
     $t=time();
     $result = update_user_meta($postid , 'wp_user_login_date_time',  $t);
-   
-    $query = "INSERT INTO contentmanager_log (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
-$wpdb->query($wpdb->prepare($query, "Login", "User Action",serialize($user),$user->ID,$user->user_email,$result));
+    
+    if(get_current_blog_id() == 1){
+        $tablename = 'contentmanager_log';
+    }else{
+    
+        $tablename = 'contentmanager_'.$blog_id.'_log';
+    } 
+    
+    $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
+    $wpdb->query($wpdb->prepare($query, "Login", "User Action",serialize($user),$user->ID,$user->user_email,$result));
 
 }
 add_action('wp_login', 'mycustomelogin', 10, 2);
@@ -3836,8 +4329,15 @@ if ( is_user_logged_in() ) :
     $postid = get_current_user_id();
     $t=time();
     $result = update_user_meta($postid , 'wp_user_login_date_time',  $t);
-   
-    $query = "INSERT INTO contentmanager_log (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
+    $blog_id =get_current_blog_id();
+    if(get_current_blog_id() == 1){
+        $tablename = 'contentmanager_log';
+    }else{
+    
+        $tablename = 'contentmanager_'.$blog_id.'_log';
+    }
+    
+    $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
 $wpdb->query($wpdb->prepare($query, "Login", "User Action",serialize($current_user),$postid,$current_user->user_email,$result));
 
 
@@ -3846,20 +4346,24 @@ $wpdb->query($wpdb->prepare($query, "Login", "User Action",serialize($current_us
 
 add_action( 'authenticate', 'my_front_end_login_fail',10,2);  // hook failed login
 
-function my_front_end_login_fail($error,$user, $pass ) {
+function my_front_end_login_fail($error,$user) {
      // where did the post submission come from?
  
    $message['error'] = $error;
    $message['username'] = $user;
-   $message['pass'] = $pass;
-// if there's a valid referrer, and it's not the default log-in screen
- 
-      // echo '<pre>';
-      // print_r($message);exit;
+   //$message['pass'] = $pass;
+   $blog_id =get_current_blog_id();
+   if(get_current_blog_id() == 1){
+        $tablename = 'contentmanager_log';
+    }else{
+    
+        $tablename = 'contentmanager_'.$blog_id.'_log';
+    }
+$_SERVER['currentuser'] = $user;
  
     global $wpdb;
-    $query = "INSERT INTO contentmanager_log (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
-    $wpdb->query($wpdb->prepare($query, "Login Failed", "User Action",serialize($message),'','',''));
+    $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
+    $wpdb->query($wpdb->prepare($query, "Login Failed", "User Action",serialize($message),'',$_SERVER['currentuser'],''));
 
 
 }
@@ -3868,65 +4372,98 @@ function my_front_end_login_fail($error,$user, $pass ) {
 function afterlogoutredirect() {
     // your code
   
-     wp_redirect( home_url() );
+     wp_redirect( home_url('/') );
      exit();
 }
 add_action('wp_logout', 'afterlogoutredirect');
 
 // [customelogout ]
-function customelogout(  ) {
-      global $wpdb;
+function customelogout() {
+       
+
+    global $wpdb;
+    global $switched;
+    
     $current_user = wp_get_current_user();
     $postid = get_current_user_id();
-    $result="1";
-     $query = "INSERT INTO contentmanager_log (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
-$wpdb->query($wpdb->prepare($query, "Logout", "User Action",serialize($current_user),$postid,$current_user->user_email,$result));
+    $blog_id =get_current_blog_id();
     
+   if(get_current_blog_id() == 1){
+        $tablename = 'contentmanager_log';
+    }else{
+    
+        $tablename = 'contentmanager_'.$blog_id.'_log';
+    }
+    $_SERVER['currentuser'] = $current_user->user_email;
+    $result="1";
+     $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
+$wpdb->query($wpdb->prepare($query, "Logout", "User Action",serialize($current_user),$postid,$_SERVER,$result));
+    
+    //switch_to_blog(1);
     wp_logout();
+    //restore_current_blog();
+    //switch_to_blog($blog_id);
+   // wp_logout();
+   // restore_current_blog();
+    exit;
+   
 }
 add_shortcode( 'customelogout', 'customelogout' );
 
 function contentmanagerlogging($acction_name,$action_type,$pre_action_data,$user_id,$email,$result){
 
     
-require_once('../../../wp-load.php');
-    
-global $wpdb;
-    
 
-$query = "INSERT INTO contentmanager_log (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
-$wpdb->query($wpdb->prepare($query, $acction_name, $action_type,$pre_action_data,$user_id,$email,$result));
-$lastInsertId = $wpdb->insert_id;
-return $lastInsertId;
+
+// Create post object
+$activitylog = array(
+  'post_title'    => wp_strip_all_tags( $acction_name ),
+  'post_content'  => "",
+  'post_status'   => 'publish',
+  'post_author'   => $user_id,
+  'post_type'=>'expo_genie_log'
+);
+ 
+
+ $logID = wp_insert_post( $activitylog );
+ $_SERVER['currentuseremail'] = $email;
+ update_post_meta( $logID, 'actiontype', $action_type );
+ update_post_meta( $logID, 'preactiondata', $pre_action_data );
+ update_post_meta( $logID, 'currentuserinfo', $_SERVER );
+ update_post_meta( $logID, 'email', $email );
+ update_post_meta( $logID, 'ip', $_SERVER['REMOTE_ADDR'] );
+ update_post_meta( $logID, 'browseragent', $_SERVER['HTTP_USER_AGENT'] );
+ update_post_meta( $logID, 'result', $result );
+ 
+ return $logID;
+ 
 }
 function contentmanagerlogging_file_upload($lastInsertId,$result){
 
     
-require_once('../../../wp-load.php');
-    
-global $wpdb;
- $wpdb->update( 
-    'contentmanager_log', 
-    array( 
-        'result' => $result  // string
-       
-    ), 
-    array( 'id' => $lastInsertId )
-);
 
-//$query = "UPDATE `contentmanager_log` SET `result`=".$result." WHERE 'id'=".$lastInsertId;
-//echo $query; exit;
-//$wpdb->query($wpdb->prepare($query, $acction_name, $action_type,$pre_action_data,$user_id,$email,$result));
+    update_post_meta( $lastInsertId, 'result', $result );
+
 
 
 }
 
-
-
-
-
 function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename=''){
-        global $wpdb, $wp_hasher;
+    
+//    require_once('../../../wp-load.php');
+    require_once 'Mandrill.php';
+    
+    
+ try {
+
+    global $wpdb, $wp_hasher;
+    $site_prefix = $wpdb->get_blog_prefix();
+    $oldvalues = get_option( 'ContenteManager_Settings' );
+    $mandrill = $oldvalues['ContentManager']['mandrill'];
+    $mandrill = new Mandrill($mandrill);
+    
+    
+    
         $user = get_userdata($user_id);
         
         if(empty($userlogin)){
@@ -3945,9 +4482,8 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
             
         }
         
-        
-        $plaintext_pass=wp_generate_password( 8, false, false );
-        wp_set_password( $plaintext_pass, $user_id );
+        //$plaintext_pass=wp_generate_password( 8, false, false );
+        //wp_set_password( $plaintext_pass, $user_id );
         
         $settitng_key='AR_Contentmanager_Email_Template_welcome';
         $sponsor_info = get_option($settitng_key);
@@ -3958,83 +4494,289 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
         $oldvalues = get_option( 'ContenteManager_Settings' );
         $formemail = $oldvalues['ContentManager']['formemail'];
         if(empty($formemail)){
-            $formemail = 'noreply@convospark.com';
+            $formemail = 'noreply@expo-genie.com';
         
+        }
+        
+       
+      
+        $formemail = $oldvalues['ContentManager']['formemail'];
+        $fromname = stripslashes ($sponsor_info[$welcomeemailtemplatename]['fromname']);
+        if(empty($formemail)){
+
+            $formemail = 'noreply@expo-genie.com';
+
         }
         
         $subject = $sponsor_info[$welcomeemailtemplatename]['welcomesubject'];
 	$bcc =  $sponsor_info[$welcomeemailtemplatename]['BCC'];
-	$headers []= 'From: '.$sponsor_info[$welcomeemailtemplatename]['fromname'].' <'.$formemail.'>' . "\r\n";
-        $headers []= 'Reply-To: '.$sponsor_info[$welcomeemailtemplatename]['replaytoemailadd'];
-        $headers []= 'Bcc:'.$bcc;
+       // $cc =  $sponsor_info[$welcomeemailtemplatename]['CC'];
+	$formname = $sponsor_info[$welcomeemailtemplatename]['fromname'];
+        $replaytoemailadd = $sponsor_info[$welcomeemailtemplatename]['replaytoemailadd'];
+        $bcc_array = $bcc;
+      //  $cc_array = explode(',',$cc);
         
-        $key = wp_generate_password( 20, false );
+       
 
-	/** This action is documented in wp-login.php */
-	do_action( 'retrieve_password_key', $user->user_login, $key );
+    $subject = $sponsor_info[$welcomeemailtemplatename]['welcomesubject'];
+    $body=stripslashes ($sponsor_info[$welcomeemailtemplatename]['welcomeboday']);
+   
+    $user_ID = get_current_user_id();
+    $user_info = get_userdata($user_ID);
+    
+    $field_key_string = getInbetweenStrings('{', '}', $body);
+   
+  
+    $site_url = get_option('siteurl' );
 
-	// Now insert the key, hashed, into the DB.
-	if ( empty( $wp_hasher ) ) {
-		require_once ABSPATH . WPINC . '/class-phpass.php';
-		$wp_hasher = new PasswordHash( 8, true );
-	}
-	$hashed = time() . ':' . $wp_hasher->HashPassword( $key );
-	$wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user->user_login ) );
-        $create_rest_password_link .= '<' . network_site_url("wp-login.php?action=rp&key=$key&login=" . rawurlencode($user->user_login), 'login') . ">\r\n\r\n";
-        
-        
-        $message=$sponsor_info[$welcomeemailtemplatename]['welcomeboday'];
-         
-         $subject_body = $subject ; 
-         $body_message =stripslashes ($message) ;
-         
-         $field_key_string = getInbetweenStrings('{', '}', $body_message);
-          foreach($field_key_string as $index=>$keyvalue){
-             
-             if($keyvalue == 'user_login' ||$keyvalue == 'date' || $keyvalue == 'issues_passes' || $keyvalue == 'create_password_url' || $keyvalue == 'time'|| $keyvalue == 'user_pass'|| $keyvalue == 'site_url'|| $keyvalue == 'site_title'){
-                 
-             }else{
-                 
-                 $get_meta_value = get_user_meta_merger_field_value($user_id,$keyvalue);
-                 $body_message = str_replace('{'.$keyvalue.'}', $get_meta_value, $body_message);
-                 $subject_body = str_replace('{'.$keyvalue.'}', $get_meta_value, $subject_body);
+    $login_url = get_option('siteurl' );
+    $admin_email= get_option('admin_email');
+    $data=  date("Y-m-d");
+    $time=  date('H:i:s');
+    $sitetitle = get_bloginfo( 'name' );
+    if(empty($fromname)){
+        $fromname = get_bloginfo( 'name' );
+    }
+   // $body = str_replace('[site_url]', $site_url, $body);
+   // $body = str_replace('[login_url]', $site_url, $body);
+   // $body = str_replace('[admin_email]', $admin_email, $body);
+    $subject = str_replace('{', '*|', $subject);
+    $subject = str_replace('}', '|*', $subject);
+    $body = str_replace('{', '*|', $body);
+    $body = str_replace('}', '|*', $body);
+    
+    
+
+    $goble_data_array =array(
+        array('name'=>'date','content'=>$data),
+        array('name'=>'time','content'=>$time),
+        array('name'=>'site_url','content'=>$site_url),
+        array('name'=>'site_title','content'=>$sitetitle)
+        );
+
+  
+
+       
+       $data_field_array= array();
+       $t=time();
+       update_user_option($user_id, 'convo_welcomeemail_datetime', $t*1000);
+       foreach($field_key_string as $index=>$keyvalue){
+
+                      if($keyvalue == 'role' || $keyvalue == 'site_title' || $keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'site_url' || $keyvalue == 'user_pass'|| $keyvalue == 'user_login'){
+
+
+                      if($keyvalue == 'user_pass'){
+
+
+                            
+                            $plaintext_pass=wp_generate_password( 8, false, false );
+                            wp_set_password( $plaintext_pass, $user_id );
+                            $data_field_array[] = array('name'=>$keyvalue,'content'=>$plaintext_pass);
+
+                      }else if($keyvalue == 'user_login'){
+
+                          $data_field_array[] = array('name'=>$keyvalue,'content'=>$user->user_login);
+                      }else if($keyvalue == 'role'){
+
+                         
+                          $getcurrentuserdata = get_userdata( $user_id );
+                          $blog_id = get_current_blog_id();
+                          $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+                          $get_all_roles = get_option($get_all_roles_array);
+                          foreach ($get_all_roles as $key => $name) {
+
+                              if(implode(', ', $getcurrentuserdata->roles) == $key){
+
+                                  $currentuserRole = $name['name'];
+
+
+                              }
+
+
+
+                          }
+
+
+                          $data_field_array[] = array('name'=>$keyvalue,'content'=>$currentuserRole);
+                      }
+
+
+
+                   }else{
+
+
+                       $get_meta_value = get_user_meta_merger_field_value($user_id,$keyvalue);
+                    if(!empty($get_meta_value)){
+
+                     
+                             
+                       $data_field_array[] = array('name'=>$keyvalue,'content'=>$get_meta_value);
+                             
+                        
+                       
+                   }else{
+                       
+                       $data_field_array[] = array('name'=>$keyvalue,'content'=>'');
+                   }
+
+
+
+
+                  }
+
+
+
              }
-             
-         }
+       $to_message_array[]=array('email'=>$user_email,'name'=>$first_name,'type'=>'to');
+           $user_data_array[] =array(
+                'rcpt'=>$user_email,
+                'vars'=>$data_field_array
+           );
+
+       
+
+
+       //$result = send_email($to,$subject,$body_message);
+
+//        if(sizeof($bcc_array) > 1){
+//
+//            foreach ($bcc_array as $key => $value) {
+//                $to_message_array[] = array('email' => $value, 'name' => '', 'type' => 'bcc');
+//                $user_data_array[] =array(
+//                'rcpt'=>$value,
+//                'vars'=>$data_field_array
+//                );
+//            }
+//        }else{
+//
+//            if(!empty($bcc_array)){
+//
+//                $to_message_array[]=array('email'=>$bcc_array[0],'name'=>'','type'=>'bcc');
+//                $user_data_array[] =array(
+//                'rcpt'=>$bcc_array[0],
+//                'vars'=>$data_field_array
+//                );
+//            }
+//        }
+//        if(sizeof($cc_array) > 1){
+//
+//            foreach ($cc_array as $key => $value) {
+//                $to_message_array[] = array('email' => $value, 'name' => '', 'type' => 'cc');
+//                $user_data_array[] =array(
+//                'rcpt'=>$value,
+//                'vars'=>$data_field_array
+//                );
+//            }
+//        }else{
+//
+//            if(!empty($cc_array)){
+//
+//                $to_message_array[]=array('email'=>$cc_array[0],'name'=>'','type'=>'cc');
+//                $user_data_array[] =array(
+//                'rcpt'=>$cc_array[0],
+//                'vars'=>$data_field_array
+//                );
+//            }
+//        }
+
+
+
+        
+        $mainheaderbackground = $oldvalues['ContentManager']['mainheader'];
+        $mainheaderlogo = $oldvalues['ContentManager']['mainheaderlogo'];
+        
+       
+        
+        $logourl = '';
+
+        if(!empty($mainheaderlogo)){
+
+            $logourl = '<img style="margin-top: 16px;" src="'.$mainheaderlogo.'" alt="" width="250" />';
+
+        }else if(!empty($mainheaderbackground)){
+
+            $logourl = '<img style="margin-top: 16px;" src="'.$mainheaderbackground.'" alt="" height="100" />';
+
+
+        }
+
+        $html_body_message = '<table width="600" cellspacing="0" cellpadding="0" align="center" bgcolor="#ffffff">
+<tbody>
+<tr>
+<td align="left">
+<div style="border: solid 1px #d9d9d9;">
+<table id="header" style="line-height: 1.6;" border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+<tbody>
+<tr>
+<td style="text-align: center;">'.$logourl.'</td>
+</tr>
+</tbody>
+</table>
+<table id="content" style="padding-right: 30px;padding-left: 30px;" border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+<tbody>
+<tr>
+<td style="border-top: solid 1px #d9d9d9;" colspan="2">
+<div style="padding: 15px 0;">
+'.$body.'
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>';
+
+
+       
+        
+   $get_currentsiteURl = get_site_url();
+   $message = array(
+
+        'html' => $html_body_message,
+        'text' => '',
+        'subject' => $subject,
+        'from_email' => $formemail,
+        'from_name' => $fromname,
+        'to' => $to_message_array,
+        'headers' => array('Reply-To' => $replaytoemailadd),
+        'bcc_address'=>$bcc_array,
+        'track_opens' => true,
+        'track_clicks' => true,
          
-            $body_message = str_replace('{issues_passes}', $pass_code_array_list, $body_message);
-       //  $body_message = str_replace('{user_email]', $user_email, $body_message);
-         $body_message = str_replace('{user_login}', $user_login, $body_message);
-        // $body_message = str_replace('[first_name]', $user->first_name,$body_message );
-        // $body_message = str_replace('[last_name]', $user->last_name,$body_message );
-        // $body_message = str_replace('[agency]', $account_name,$body_message );
-         $body_message = str_replace('{user_pass}', $plaintext_pass, $body_message);
-         $body_message = str_replace('{date}', $data, $body_message);
-         $body_message = str_replace('{time}', $time, $body_message);
-         $body_message = str_replace('{site_url}', $site_url, $body_message);
-         $body_message = str_replace('{site_title}', $site_title, $body_message);
-         $body_message = str_replace('{create_password_url}', $create_rest_password_link, $body_message);
-         //$body_message = str_replace('[total_amount]', '$'.$get_amount.'.00', $body_message);
-         //$body_message = str_replace('[total_num_reg_in_group]', $total_number_in_group, $body_message);
-         //$body_message = str_replace('[event_name]', $event_name, $body_message);
-         //$body_message = str_replace('[reference_num]', $reference_num, $body_message);
-         
-         
-        // $subject_body = str_replace('[user_email]', $user_email, $subject_body);
-         $subject_body = str_replace('{user_login}', $user_login, $subject_body);
-        // $subject_body = str_replace('[first_name]', $user->first_name,$subject_body );
-        // $subject_body = str_replace('[last_name]', $user->last_name,$subject_body );
-         $subject_body = str_replace('{user_pass}', $plaintext_pass, $subject_body);
-         $subject_body = str_replace('{date}', $data, $subject_body);
-         $subject_body = str_replace('{time}', $time, $subject_body);
-         $subject_body = str_replace('{site_url}', $site_url, $subject_body);
-         $subject_body = str_replace('{site_title}', $site_title, $subject_body);
-          
-         
-         add_filter( 'wp_mail_content_type', 'set_html_content_type_utf8' );
-         wp_mail($user_email, $subject_body, $body_message,$headers);
-         remove_filter( 'wp_mail_content_type', 'set_html_content_type_utf8' );
-      
+        'merge' => true,
+        'merge_language' => 'mailchimp',
+        'global_merge_vars' => $goble_data_array,
+        'merge_vars' => $user_data_array,
+        "tags" => [$get_currentsiteURl]
+
+    );
+
+    // exit;
+
+    $lastInsertId = contentmanagerlogging('Welcome Email',"Admin Action",serialize($message),$user_id,$user_info->user_email,"pre_action_data");
+
+    $async = false;
+    $ip_pool = 'Main Pool';
+   // $send_at = 'example send_at';
+    $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at);
+    contentmanagerlogging_file_upload($lastInsertId,serialize($result));
+   
+
+
+}catch(Mandrill_Error $e) {
+    // Mandrill errors are thrown as exceptions
+    $error_msg = 'A mandrill error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
+    // A mandrill error occurred: Mandrill_Unknown_Subaccount - No subaccount exists with the id 'customer-123'
+
+
+    contentmanagerlogging_file_upload($lastInsertId,$error_msg);
+     echo   $e->getMessage();
+    //throw $e;
+}
     
 }
 
@@ -4042,8 +4784,6 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
 function set_html_content_type_utf8() {
 return 'test/html';
 }
-
-
 
 function getInbetweenStrings($start, $end, $str){
     $matches = array();
@@ -4055,7 +4795,7 @@ function getInbetweenStrings($start, $end, $str){
 function get_user_meta_merger_field_value($userid,$key){
     
     
-      $value = get_user_meta($userid, $key, true);
+      $value = get_user_option($key, $userid);
       
       return $value;
     
@@ -4070,11 +4810,28 @@ function get_user_meta_merger_field_value($userid,$key){
 function gettaskduesoon(){
  
    
-    $test = 'custome_task_manager_data';
-    $result = get_option($test);
+    $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+        );
+        $assign_new_role = get_posts( $args );
+        
    
-    foreach($result['profile_fields'] as $key=>$value){
-        if (strpos($key, "task") !== false) { 
+    
+        
+    foreach($assign_new_role as $taskIndex => $tasksObject) {
+        
+        $tasksID = $tasksObject->ID;
+        $keyvalue = get_post_meta( $tasksID, 'key' , false);
+        $label = get_post_meta( $tasksID, 'label' , false);
+        $attrs = get_post_meta( $tasksID, 'attrs' , false);
+        $value['label'] = $label[0];
+        $value['attrs'] = $attrs[0];
+        if (strpos($keyvalue[0], "task") !== false) { 
          if (strpos($value['label'], 'Status') !== false || strpos($value['label'], 'Date-Time') !== false) {
             
         }else{
@@ -4083,6 +4840,7 @@ function gettaskduesoon(){
         
         } 
      }
+    
     
  $html_task_due_soon ="";
  $flat =array_reduce($arrDates, 'array_merge', array());
@@ -4128,15 +4886,6 @@ function cmp2($a, $b) {
 // [contentmanagersettings key='infocontent']
 function settings_key_data($atts) {
     
- 
-  
-   
-  //  echo '<pre>';
- //   print_r($page_data);exit;
-        
-  
-   // print_r($responce);exit;
-    
     $fieldname = $atts['key'];
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $key_data_return=$oldvalues['ContentManager'][$fieldname];
@@ -4147,8 +4896,7 @@ function settings_key_data($atts) {
 
 add_shortcode('contentmanagersettings', 'settings_key_data');
 
-
-function bulkimport_userfile($fileurl,$welcomeemailstatus,$selectwelcomeemailtempname){
+function bulkimport_mappingdata($fileurl){
     
    
    
@@ -4156,7 +4904,8 @@ function bulkimport_userfile($fileurl,$welcomeemailstatus,$selectwelcomeemailtem
     
     $tempname = 'import/'.$fileurl;
  
-
+            
+    
             $objReader = PHPExcel_IOFactory::createReader('Excel2007');
             $objReader->setReadDataOnly(true);
 
@@ -4167,41 +4916,94 @@ function bulkimport_userfile($fileurl,$welcomeemailstatus,$selectwelcomeemailtem
             $highestColumn = $objWorksheet->getHighestColumn();
 
             $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+            
+            if($highestRow == 1 ){
+                
+                $createdusercount = 0;
+                $errorcount = 1;
+                $data_column_array['data']='your sheet is empty.';
+        
+        
+            }else{
+               
+                for ($colname = 0; $colname <= $highestColumnIndex; $colname++) {
+                
+              
+                    $data_column_array[$colname]['colindex'] =  $colname ;
+                    $data_column_array[$colname]['colname'] = $objWorksheet->getCellByColumnAndRow($colname, 1)->getValue();
+                
+                  
+                }
+                
+                $data_column_array['uploadedfileurl'] = $tempname;
+                $data_column_array['totalnumberofrows'] = $highestRow;
+                
+            }
+           
+            return $data_column_array;
+          
+            
+        
+}
 
-            $col_name_email = $objWorksheet->getCellByColumnAndRow(0, 1)->getValue();
-            $col_name_firstname = $objWorksheet->getCellByColumnAndRow(1, 1)->getValue();
-            $col_name_lastname = $objWorksheet->getCellByColumnAndRow(2, 1)->getValue();
-            $col_name_role = $objWorksheet->getCellByColumnAndRow(3, 1)->getValue();
-            $col_name_company_name= $objWorksheet->getCellByColumnAndRow(4, 1)->getValue();
+
+function createuserlist_after_mapping($fileurl,$colmapping_list,$welcomeemailstatus,$selectwelcomeemailtempname){
+    
+   
+   
+ require_once 'third_party/PHPExcel.php';
+    
+            $tempname = $fileurl;
+            $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+            $objReader->setReadDataOnly(true);
+            $objPHPExcel = $objReader->load($tempname);
+            $objWorksheet = $objPHPExcel->getActiveSheet();
+            $highestRow = $objWorksheet->getHighestRow();
+            $highestColumn = $objWorksheet->getHighestColumn();
+            $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
             
-          //  exit;
             
-            
-  if($col_name_email == 'Email' && $col_name_firstname == 'First Name' && $col_name_lastname == 'Last Name' && $col_name_role == 'User Level' && $col_name_company_name == 'Company Name'  ){
+  
        
     //echo $welcomeemailstatus;exit;
-    
-    if($highestRow == 1 ){
-        $createdusercount = 0;
-        $errorcount = 1;
-        $message['data']='your sheet is empty.';
-        
-        
-    }else{
-        
-    
     $createdusercount=0;
     $errorcount = 0;
+    
     for ($row = 2; $row <= $highestRow; ++$row) {
      
         $data_field_array= array();
         
-        $email = $objWorksheet->getCellByColumnAndRow(0, $row)->getValue();
-        $firstname = $objWorksheet->getCellByColumnAndRow(1, $row)->getValue();
-        $lastname = $objWorksheet->getCellByColumnAndRow(2, $row)->getValue();
-        $role = $objWorksheet->getCellByColumnAndRow(3, $row)->getValue();
-        $company_name = $objWorksheet->getCellByColumnAndRow(4, $row)->getValue();
+        
+        foreach ($colmapping_list as $colmappingKey=>$colmappingdata){
+         
+            if($colmappingdata['fieldname'] == 'email' ){
+                
+                $email = $objWorksheet->getCellByColumnAndRow($colmappingdata['fieldvalue'], $row)->getValue();
+                
+            }else if($colmappingdata['fieldname'] == 'fname' ){
+                
+                $firstname = $objWorksheet->getCellByColumnAndRow($colmappingdata['fieldvalue'], $row)->getValue();
+                
+            }else if($colmappingdata['fieldname'] == 'lanme' ){
+                
+                $lastname = $objWorksheet->getCellByColumnAndRow($colmappingdata['fieldvalue'], $row)->getValue();
+                
+            }else if($colmappingdata['fieldname'] == 'userlevel' ){
+                
+                $role = $objWorksheet->getCellByColumnAndRow($colmappingdata['fieldvalue'], $row)->getValue();
+                
+            }else if($colmappingdata['fieldname'] == 'companyname' ){
+                
+                $company_name = $objWorksheet->getCellByColumnAndRow($colmappingdata['fieldvalue'], $row)->getValue();
+            }
+            
+        }
+        
         $username =$email;
+        
+        
+        
+        
         $status = checkimportrowstatus($username,$email,$firstname,$lastname,$role,$company_name);
         
         
@@ -4231,14 +5033,38 @@ function bulkimport_userfile($fileurl,$welcomeemailstatus,$selectwelcomeemailtem
             $user_pass=$statusresponce['userpass'];
             
             
-          if($message['data'][$row]['status'] == 'User created successfully.' ){
+          if($message['data'][$row]['status'] == 'User created successfully.' || $message['data'][$row]['status'] == 'User added to this site Successfully.'){
+              
               $createdusercount++;
+            
+              
+              
+           foreach ($colmapping_list as $colmappingKey=>$colmappingdata){
+               
+               if($colmappingdata['fieldname'] != 'email' && $colmappingdata['fieldname'] != 'fname' && $colmappingdata['fieldname'] != 'lname' && $colmappingdata['fieldname'] != 'userlevel' && $colmappingdata['fieldname'] != 'companyname' ){
+                   
+                   
+                   if(!empty($colmappingdata['fieldvalue'])){
+                       
+                       
+                     $getrow_value = $objWorksheet->getCellByColumnAndRow($colmappingdata['fieldvalue'], $row)->getValue();
+                     
+                     update_user_option($statusresponce['created_id'], $colmappingdata['fieldname'], $getrow_value);
+                     $data_field_array[] = array('name'=>$colmappingdata['fieldname'],'content'=>$getrow_value);
+                     
+                   }
+                  
+                   
+                   
+               }
+            }
               
             $data_field_array[] = array('name'=>'email','content'=>$email);
             $data_field_array[] = array('name'=>'user_login','content'=>$username);
             $data_field_array[] = array('name'=>'user_pass','content'=>$user_pass);
             $data_field_array[] = array('name'=>'first_name','content'=>$firstname);
             $data_field_array[] = array('name'=>'last_name','content'=>$lastname);
+            $data_field_array[] = array('name'=>'role','content'=>$role);
             $to_message_array[]=array('email'=>$email,'name'=>$firstname,'type'=>'to');
             $user_data_array[] =array(
                 'rcpt'=>$email,
@@ -4246,8 +5072,11 @@ function bulkimport_userfile($fileurl,$welcomeemailstatus,$selectwelcomeemailtem
             );
           
             }else{
-				$errorcount++;
-			}
+		
+                $errorcount++;
+		
+                
+            }
             
         }else{
             
@@ -4258,12 +5087,16 @@ function bulkimport_userfile($fileurl,$welcomeemailstatus,$selectwelcomeemailtem
         
      
     }
-  }
   
-   if($welcomeemailstatus == 'send'){ 
+  
+if($welcomeemailstatus == 'send'){ 
         
-       $welcomeemail_status = send_bulk_import_welcome_email($to_message_array,$user_data_array,$selectwelcomeemailtempname); 
-   
+      // echo $selectwelcomeemailtempname;
+      
+       
+       $welcomeemail_status = send_bulk_import_welcome_email($to_message_array,$user_data_array,$selectwelcomeemailtempname,$otherfields_array); 
+      // echo $welcomeemail_status;exit;
+       
    }else{
        
        $welcomeemail_status="Do not send welcome email's."; 
@@ -4274,11 +5107,9 @@ function bulkimport_userfile($fileurl,$welcomeemailstatus,$selectwelcomeemailtem
    $message['result']=$welcomeemail_status;
   
    
-   }else{
+  
        
-     $message =   'faild';
-       
-   } 
+    
   
    
    return $message;
@@ -4286,9 +5117,6 @@ function bulkimport_userfile($fileurl,$welcomeemailstatus,$selectwelcomeemailtem
 
 
 function wpse_183245_upload_dir( $dirs ) {
-    //echo '<pre>';
-   // print_r($dirs);exit;
-    
     
     $dirs['subdir'] = '/import';
     $dirs['path'] = dirname(__FILE__).'/import';
@@ -4302,26 +5130,45 @@ function importbulkuseradd($username,$email,$firstname,$lastname,$role,$company_
     
     require_once('../../../wp-load.php');
     
-    $user_id = username_exists($username);
-   
+    if (is_multisite()) {
+                $blog_id = get_current_blog_id();
+                $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+            }else{
+                $get_all_roles_array = 'wp_user_roles';
+            }
+              $get_all_roles = get_option($get_all_roles_array);
+              foreach ($get_all_roles as $key => $item) {
+                 if($role == $item['name']){
+                     $role = $key;
+                     
+                 }
+              }
     
-   
+    
+    $user_id = username_exists($username);
         if (!$user_id and email_exists($email) == false) {
         
             $random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
-            $user_id = register_new_user( $username, $email );//wp_create_user($username, $random_password, $email);
+            $user_id = myregisterrequest_new_user($username, $email);//register_new_user( $username, $email );//wp_create_user($username, $random_password, $email);
+            
             $type = gettype($user_id);
           
            // echo $type;exit;
-            if($type == 'object'){
+        if($type == 'object'){
+            
              if(empty($user_id->errors['invalid_username'][0])){
+                 
                 $status['msg'] = $user_id->errors['invalid_email'][0];
+             
              }else{
-                 $status['msg'] = $user_id->errors['invalid_username'][0];  
+                 
+                $status['msg'] = $user_id->errors['invalid_username'][0];  
+             
              }
               
                 
                 $status['created_id'] = '';
+        
                 
             }else{
              
@@ -4331,27 +5178,22 @@ function importbulkuseradd($username,$email,$firstname,$lastname,$role,$company_
               $meta_array['first_name']=$firstname;
               $meta_array['last_name']=$lastname;
               $meta_array['company_name']=$company_name;
-              
+              add_user_to_blog(1, $user_id, $role);
+               
               if($welcomeemailstatus == 'send'){
                 
                   $t=time();
                   $meta_array['convo_welcomeemail_datetime']=$t*1000;
-                  
+                  $plaintext_pass=wp_generate_password( 8, false, false );
+                  wp_set_password( $plaintext_pass, $user_id );
+                  $status['userpass'] = $plaintext_pass;
               
               }
               
-              $get_all_roles_array = 'wp_user_roles';
-              $get_all_roles = get_option($get_all_roles_array);
-              foreach ($get_all_roles as $key => $item) {
-                 if($role == $item['name']){
-                     $role = $key;
-                     
-                 }
-              }
+            
               add_new_sponsor_metafields($user_id,$meta_array,$role);
-              $plaintext_pass=wp_generate_password( 8, false, false );
-              wp_set_password( $plaintext_pass, $user_id );
-              $status['userpass'] = $plaintext_pass;
+              
+              
               
               
             }
@@ -4359,11 +5201,56 @@ function importbulkuseradd($username,$email,$firstname,$lastname,$role,$company_
             
             
         } else {
+             
+            $currentblogid = get_current_blog_id();
+            $user_blogs = get_blogs_of_user( $user_id );
+            $user_status_for_this_site = 'not_exist';
+            foreach ($user_blogs as $blog_id) { 
+               
+               if($blog_id->userblog_id == $currentblogid ){
+                   
+                   $user_status_for_this_site = 'alreadyexist';
+                   break;
+               }
+               
+            }
+            if($user_status_for_this_site == 'alreadyexist'){
         
-           $status['msg'] = 'A user with this email already exists. User not created.';
-           $status['created_id'] ='';
+               $status['msg'] = 'A user with this email already exists. User not created.';
+               $status['created_id'] ='';
         
-       }
+            }else{
+                
+               $currentblogid = get_current_blog_id();
+               switch_to_blog($currentblogid); 
+               
+              
+               
+               $status['created_id'] = $user_id;
+               $status['msg'] = 'User added to this site Successfully.';
+               $meta_array['first_name']=$firstname;
+               $meta_array['last_name']=$lastname;
+               $meta_array['company_name']=$company_name;
+               
+               
+               if($welcomeemailstatus == 'send'){
+                
+                  $t=time();
+                  $meta_array['convo_welcomeemail_datetime']=$t*1000;
+                  $plaintext_pass=wp_generate_password( 8, false, false );
+                  wp_set_password( $plaintext_pass, $user_id );
+                  $status['userpass'] = $plaintext_pass;
+              
+              }
+              
+              add_user_to_blog($currentblogid, $user_id, $role);
+              add_new_sponsor_metafields($user_id,$meta_array,$role);
+             
+             
+              
+            }    
+            
+      }
        
        
        
@@ -4375,12 +5262,11 @@ function checkimportrowstatus($username,$email,$firstname,$lastname,$role,$compa
     global $wp_roles;
      
     $all_roles = $wp_roles->get_names();
-    
-  
+   
     
     
     if(!empty($username)&&!empty($email)&&!empty($firstname)&&!empty($lastname)&&!empty($role)&&!empty($company_name)){
-        $role = ucfirst($role);
+        $role = ucwords($role);
         if (in_array($role, $all_roles)) {
             $status = 'clear';
            
@@ -4398,18 +5284,16 @@ function checkimportrowstatus($username,$email,$firstname,$lastname,$role,$compa
     return $status; 
 }
 
-function send_bulk_import_welcome_email($to_message_array,$user_data_array,$selectwelcomeemailtempname){
-    
-    
-    
-  
+function send_bulk_import_welcome_email($to_message_array,$user_data_array,$selectwelcomeemailtempname,$otherfields_array){
     
     require_once('../../../wp-load.php');
     require_once 'Mandrill.php';
     global $wpdb, $wp_hasher;
     
+   
     
     
+   
     if(!empty($to_message_array)||!empty($user_data_array)){
 try { 
     
@@ -4422,11 +5306,6 @@ try {
     $settitng_key='AR_Contentmanager_Email_Template_welcome';
     $sponsor_info = get_option($settitng_key);
         
-		
-      
-        
-      
-       
     $subject = $sponsor_info[$selectwelcomeemailtempname]['welcomesubject'];
     $body=stripslashes ($sponsor_info[$selectwelcomeemailtempname]['welcomeboday']);
     
@@ -4438,10 +5317,13 @@ try {
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $formemail = $oldvalues['ContentManager']['formemail'];
     if(empty($formemail)){
-        $formemail = 'noreply@convospark.com';
+        $formemail = 'noreply@expo-genie.com';
         
     }
     $bcc = $sponsor_info[$selectwelcomeemailtempname]['BCC'];
+    //$cc = $sponsor_info[$selectwelcomeemailtempname]['CC'];
+    $bcc_array = $bcc;
+    //$cc_array = explode(',',$cc);
    
    
     $site_url = get_option('siteurl' );
@@ -4454,19 +5336,9 @@ try {
         $fromname = get_bloginfo( 'name' );
     }
      $field_key_string = getInbetweenStrings('{', '}', $body);
-          foreach($field_key_string as $index=>$keyvalue){
-             
-             if($keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'user_login' ||$keyvalue == 'user_pass' || $keyvalue == 'first_name' || $keyvalue == 'last_name'|| $keyvalue == 'site_url'){
-                 
-             }else{
-                 
-                 $get_meta_value = get_user_meta_merger_field_value($user_id,$keyvalue);
-                 $body = str_replace('{'.$keyvalue.'}', '', $body);
-               
-             }
-             
-         }
-         
+    
+          
+   
     $subject = str_replace('{', '*|', $subject);
     $subject = str_replace('}', '|*', $subject);
     $body = str_replace('{', '*|', $body);
@@ -4475,33 +5347,99 @@ try {
     $goble_data_array =array(
         array('name'=>'date','content'=>$data),
         array('name'=>'time','content'=>$time),
-        array('name'=>'site_url','content'=>$site_url)
+        array('name'=>'site_url','content'=>$site_url),
+        array('name'=>'site_title','content'=>$fromname)
         );
+   
+        $mainheaderbackground = $oldvalues['ContentManager']['mainheader'];
+        $mainheaderlogo = $oldvalues['ContentManager']['mainheaderlogo'];
+        $logourl = '';
+        
+        if(!empty($mainheaderlogo)){
+            
+            $logourl = '<img style="margin-top: 16px;" src="'.$mainheaderlogo.'" alt="" width="250" />';
+        
+        }else if(!empty($mainheaderbackground)){
+            
+            $logourl = '<img style="margin-top: 16px;" src="'.$mainheaderbackground.'" alt="" height="100" />';
+        
+            
+        }
+        
+        $html_body_message = '<table width="600" cellspacing="0" cellpadding="0" align="center" bgcolor="#ffffff">
+            <tbody>
+            <tr>
+            <td align="left">
+            <div style="border: solid 1px #d9d9d9;">
+            <table id="header" style="line-height: 1.6;" border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+            <tbody>
+            <tr>
+            <td style="text-align: center;">'.$logourl.'</td>
+            </tr>
+            </tbody>
+            </table>
+            <table id="content" style="padding-right: 30px;padding-left: 30px;" border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+            <tbody>
+            <tr>
+            <td style="border-top: solid 1px #d9d9d9;" colspan="2">
+            <div style="padding: 15px 0;">
+            '.$body.'
+            </div>
+            </td>
+            </tr>
+            </tbody>
+            </table>
+            </div>
+            </td>
+            </tr>
+            </tbody>
+            </table>
+            <p>&nbsp;</p>'; 
     
- 
-       
-       $body_message =    $body ;
-    
-
-      
+   $body_message =    $body ;
+//   if(sizeof($bcc_array) > 1){
+//       
+//            foreach ($bcc_array as $key => $value) {
+//                $to_message_array[] = array('email' => $value, 'name' => '', 'type' => 'bcc');
+//            }
+//        }else{
+//       
+//            if(!empty($bcc_array)){
+//
+//                $to_message_array[]=array('email'=>$bcc_array[0],'name'=>'','type'=>'bcc');
+//            }
+//        }
+//   if(sizeof($cc_array) > 1){
+//       
+//            foreach ($cc_array as $key => $value) {
+//                $to_message_array[] = array('email' => $value, 'name' => '', 'type' => 'cc');
+//            }
+//        }else{
+//       
+//            if(!empty($cc_array)){
+//
+//                $to_message_array[]=array('email'=>$cc_array[0],'name'=>'','type'=>'cc');
+//            }
+//        }
+   $get_currentsiteURl = get_site_url();
    $message = array(
         
-        'html' => $body,
+        'html' => $html_body_message,
         'text' => '',
         'subject' => $subject,
         'from_email' => $formemail,
         'from_name' => $formname,
         'to' => $to_message_array,
         'headers' => array('Reply-To' => $replay_to),
-        
+        'bcc_address'=>$bcc_array,
         'track_opens' => true,
         'track_clicks' => true,
-        'bcc_address' => $bcc,
+        
         'merge' => true,
         'merge_language' => 'mailchimp',
         'global_merge_vars' => $goble_data_array,
-        'merge_vars' => $user_data_array
-        
+        'merge_vars' => $user_data_array,
+         "tags" => [$get_currentsiteURl]
         
     );
    
@@ -4511,13 +5449,11 @@ try {
      
     $async = false;
     $ip_pool = 'Main Pool';
-  // YYYY-MM-DD HH:MM:SS
+   
     $send_at = '';
     $result['send_at_date'] =  '';
     $result['result_send_mail'] = $mandrill->messages->send($message, $async, $ip_pool, $send_at);
     
-    //echo '<pre>';
-   //print_r($result);exit;
     contentmanagerlogging_file_upload($lastInsertId,serialize($result));
     return $result;
     
@@ -4594,10 +5530,6 @@ function displayname_func( $atts ){
 add_shortcode( 'user_name', 'displayname_func' );
 
 
-
-
-
-
 function specialtext_shortcode( $atts, $content = null ) {
     
     global $current_user, $wpdb;
@@ -4649,10 +5581,9 @@ function auth_with_map_dynamics($request_call){
         
     }
     
-   return $output;
+    return $output;
     
 }
-
 
 
 function insert_exhibitor_map_dynamics($data_array){
@@ -4746,7 +5677,7 @@ function changeuseremailaddress($request){
                 $result_update = $wpdb->query($sql);
                 //echo '<pre>';
                 //print_r($result_update);exit;
-                update_user_meta($userid, 'nickname', $newemail);
+                update_user_option($userid, 'nickname', $newemail);
                 //echo $result_update;
                 //echo  "UPDATE ".$tablename." SET user_login=".$newemail.",user_email=".$newemail." WHERE ID=".$userid."";
                 $result_status['msg'] = 'update';
@@ -4793,7 +5724,7 @@ function checkwelcomealreadysend($request){
         foreach($emailaddress_array as $key=>$emailaddress){
             
             $user = get_user_by( 'email', $emailaddress );
-            $welcome_email_date = get_user_meta($user->ID, 'convo_welcomeemail_datetime', true);
+            $welcome_email_date = get_user_option('convo_welcomeemail_datetime', $user->ID);
             if(!empty($welcome_email_date)){
                 
                 $last_send_welcome_email= date('d-M-Y H:i:s', $welcome_email_date/1000);
@@ -4855,17 +5786,27 @@ function exp_autocomplete_all_orders($order_id) {
         
         //$order = new WC_Order($order_id);
         $order = wc_get_order($order_id);
+        
+     
+        
+        
+        
         $payment_method = get_post_meta($order->id, '_payment_method', true);
         if($payment_method == 'cheque'){
            
                   foreach ($order->get_items() as $item_id => $item_obj) {
                     
+                      
+                      
+                    
                     $porduct_ids_array[] = wc_get_order_item_meta($item_id, '_product_id', true);
                  }
            
            
-           
-            exp_updateuser_role_onmpospurches($order,$porduct_ids_array);
+         
+            //exp_updateuser_role_onmpospurches($order,$porduct_ids_array);
+            exp_updateuser_role_onmpospurches($order->id,$porduct_ids_array);
+            
             $order->update_status('completed');
         }
 }
@@ -4875,17 +5816,35 @@ function exp_autocomplete_paid_orders($order_status, $order_id) {
         if (!$order_id)
                 return;
         $order = wc_get_order($order_id);
+        
+       
+        
         $payment_method = get_post_meta($order->id, '_payment_method', true);
         
         
             if (count($order->get_items()) > 0) {
                 foreach ($order->get_items() as $item_id => $item_obj) {
-                   
-                        $porduct_ids_array[] = wc_get_order_item_meta($item_id, '_product_id', true);
+                        
+                       
+                        $result_check = wc_get_order_item_meta($item_id, '_bundled_by', true);
+                        if(empty($result_check)){
+                            
+                            $porduct_ids_array[] = wc_get_order_item_meta($item_id, '_product_id', true);
+                            
+                        }
+                        
+                        
                    
                 }
             }
-            exp_updateuser_role_onmpospurches($order,$porduct_ids_array);
+            
+             
+         
+            exp_updateuser_role_onmpospurches($order->id,$porduct_ids_array);
+        
+            
+            
+          
             if ($order_status == 'processing' && ($order->status == 'on-hold' || $order->status == 'pending' || $order->status == 'failed')) {
                 return 'completed';
             }
@@ -4896,11 +5855,35 @@ function exp_autocomplete_paid_orders($order_status, $order_id) {
 
 
 function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
-    
-        global $current_user;
+        
+       
+           
+        if(is_array($order)){
+            
+            $order_ID = $order->id;
+            
+        }else{
+            
+            $order_ID = $order;
+        }
+ 
+        $current_user = wp_get_current_user();
        // $lastInsertId = contentmanagerlogging('Purches MPOs',"User Action",serialize($order),''.$current_user->id,$current_user->user_email,"pre_action_data");
         require_once( 'temp/lib/woocommerce-api.php' );
-        $url = 'https://'.$_SERVER['SERVER_NAME'];
+        
+        $args = array(
+            'posts_per_page'   => -1,
+            'orderby'          => 'date',
+            'order'            => 'DESC',
+            'post_type'        => 'egpl_custome_tasks',
+            'post_status'      => 'draft',
+	
+        );
+        $taskkeyContent = get_posts( $args );
+        
+        
+        
+        $url = get_site_url();//'https://'.$_SERVER['SERVER_NAME'];
         $options = array(
             'debug' => true,
             'return_as_array' => false,
@@ -4910,22 +5893,205 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
         );
         
         $woocommerce_rest_api_keys = get_option( 'ContenteManager_Settings' );
+        
+        $boothpurchaseenablestatus = $woocommerce_rest_api_keys['ContentManager']['boothpurchasestatus'];
         $wooconsumerkey = $woocommerce_rest_api_keys['ContentManager']['wooconsumerkey'];
         $wooseceretkey = $woocommerce_rest_api_keys['ContentManager']['wooseceretkey'];
         $woocommerce = new WC_API_Client( $url, $wooconsumerkey, $wooseceretkey, $options );
+        
+        
+        
         
         if (count($porduct_ids_array) > 0) {
                 foreach ($porduct_ids_array as $item=>$ids) {
                    
                     
                     $getproduct_detail = $woocommerce->products->get( $ids );
-                    $assign_role[] = $getproduct_detail->product->tax_class;
                     
-                  
+                    $productID =  $ids;
+                   
+                    
+                    
+                    
+                    
+                    if($getproduct_detail->product->categories[0] == 'Booths'){
+                        
+                        
+                        $id = wp_insert_post(array('post_title'=>'Booth Purchase Review_'.$order_ID, 'post_type'=>'booth_review', 'post_content'=>''));
+                        
+                       
+                        
+                      
+                        update_post_meta( $id, 'porductID', $ids );
+                        update_post_meta( $id, 'orderID', $order_ID );
+                        update_post_meta( $id, 'OrderUserID', $current_user->ID);
+                       
+                        
+                        
+                        if(!empty($boothpurchaseenablestatus) && $boothpurchaseenablestatus == "enabled"){
+                            
+                          
+                          
+                           $OrderUserID = $current_user->ID;
+                           $foolrplanID = $woocommerce_rest_api_keys['ContentManager']['floorplanactiveid'];
+                           $boothTypesLegend = json_decode(get_post_meta($foolrplanID, 'legendlabels', true )); 
+                           
+                          
+                           
+                           $FloorplanXml = get_post_meta( $foolrplanID, 'floorplan_xml', true );
+                           
+                         
+                            
+                           $FloorplanXml = str_replace('"n<','<',$FloorplanXml);
+                           $FloorplanXml= str_replace('>n"','>',$FloorplanXml);
+                          
+                           
+                           $xml=simplexml_load_string($FloorplanXml) or die("Error: Cannot create object");
+                           $currentIndex = 0;
+                           
+                         
+                           
+                           foreach ($xml->root->MyNode as $cellIndex=>$CellValue){
+            
+                                
+                                $cellboothlabelvalue = $CellValue->attributes();
+                                $getCellStylevalue = $xml->root->MyNode[$currentIndex]->mxCell->attributes();
+                               
+                                if($cellboothlabelvalue['boothproductid'] == $productID){
+
+                                 
+                                    $att = "boothOwner";
+                                    $styleatt = 'style';
+                                    $xml->root->MyNode[$currentIndex]->attributes()->$att = $OrderUserID;
+
+                                    $getCellStyle = $getCellStylevalue['style'];
+
+                                    $getCellStyle = str_replace($oldfillcolortext,'fillColor='.$NewfillColor,$getCellStyle);
+                                    $xml->root->MyNode[$currentIndex]->mxCell->attributes()->$styleatt = $getCellStyle;
+                                    
+                                  
+                                    
+                                    if(isset($cellboothlabelvalue['legendlabels']) && !empty($cellboothlabelvalue['legendlabels'])){
+
+
+                                        $getlabelID = $cellboothlabelvalue['pricetegid'];
+
+                                        foreach ($boothTypesLegend as $boothlabelIndex=>$boothlabelValue){
+                                            if($boothlabelValue->ID ==  $getlabelID){
+
+                                                $createdproductPrice = $boothlabelValue->colorcode;
+                                                if($createdproductPrice != "none"){
+
+                                                    $NewfillColor = $createdproductPrice;
+
+                                                }else{
+                                                    $getCellStyleArray = explode(';',$getCellStyle);
+                                                    foreach ($getCellStyleArray as $styleIndex=>$styleValue){
+
+
+                                                        if($styleValue != 'DefaultStyle1'){
+
+                                                            $styledeepCheck = explode('=',$styleValue);
+
+                                                            if($styledeepCheck[0] == 'occ'){
+
+                                                                $NewfillColor = $styledeepCheck[1];
+
+                                                            }else if($styledeepCheck[0] == 'fillColor'){
+
+                                                                $oldfillcolortext = $styleValue;
+                                                            }
+
+
+                                                        }
+
+
+                                                    }
+
+                                                }
+
+
+                                            }
+                                        }
+                                    
+                                    }else{
+
+                                            $getCellStyleArray = explode(';',$getCellStyle);
+                                            foreach ($getCellStyleArray as $styleIndex=>$styleValue){
+
+
+                                                if($styleValue != 'DefaultStyle1'){
+
+                                                    $styledeepCheck = explode('=',$styleValue);
+
+                                                    if($styledeepCheck[0] == 'occ'){
+
+                                                        $NewfillColor = $styledeepCheck[1];
+
+                                                    }else if($styledeepCheck[0] == 'fillColor'){
+
+                                                        $oldfillcolortext = $styleValue;
+                                                    }
+
+
+                                                }
+
+
+                                            }
+                                    }
+
+
+                                   $getCellStyle = str_replace($oldfillcolortext,'fillColor='.$NewfillColor,$getCellStyle);
+                                   $xml->root->MyNode[$currentIndex]->mxCell->attributes()->$styleatt = $getCellStyle;
+
+                                }
+                                $currentIndex++;
+    
+                            }
+        
+                                $getresultforupdat = str_replace('<?xml version="1.0"?>',"",$xml->asXML());
+                                update_post_meta( $foolrplanID, 'floorplan_xml', json_encode($getresultforupdat));
+                                update_post_meta( $id, 'boothStatus', 'Completed' );
+                            
+                        }else{
+                            
+                                update_post_meta( $id, 'boothStatus', 'Pending' );
+                           
+                        }
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    }
+                    if(!empty($getproduct_detail->product->tax_class)){
+                        
+                         $seletedroleValue = $getproduct_detail->product->tax_class;
+                         $assign_role[] = $seletedroleValue;
+                        
+                    }
+                    $selectedTaskListData = get_post_meta( $ids);
+                    $selectedTaskList = unserialize($selectedTaskListData['seletedtaskKeys'][0]);
+                    
+                    if(!empty($selectedTaskList['selectedtasks'])){
+                        
+                        
+                        
+                      
+                        $latestProductsValue = $selectedTaskList;
+                       
+                    
+                        
+                    }
                 }
             }
             
-            $user_info = get_userdata($current_user->id);
+            
+           
+            
+                $user_info = get_userdata($current_user->id);
             
                 if($user_info->roles[0] !='administrator' && $user_info->roles[0] !='contentmanager'){
                     foreach ($assign_role as $key=>$rolename){
@@ -4937,8 +6103,36 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
                        } 
                         
                     }
-                   
                 }
+                  if(!empty($latestProductsValue['selectedtasks'])){  
+                   foreach ($latestProductsValue['selectedtasks'] as $taskindex=>$taskKey){
+                       
+                       
+                       $value_usersids = get_post_meta( $taskKey, 'usersids' , false);
+                       
+                       
+                       
+                       
+                       if(!empty($value_usersids[0])){
+                           
+                           array_push($value_usersids[0], $current_user->id);
+                           update_post_meta( $taskKey, 'usersids' , $value_usersids[0]);
+                           
+                       }else{
+                           
+                           $newindex[]=$current_user->id;
+                            update_post_meta( $taskKey, 'usersids' , $newindex);
+                           
+                       }
+                       
+                       
+                   }
+                   
+                  }
+                  
+                   
+                   
+               
            
             
             $responce['paymentmethod'] = $payment_method;
@@ -4979,21 +6173,68 @@ function registrtionlink_func( $atts ) {
 }
 add_shortcode( 'registrtionlink', 'registrtionlink_func' );
 
+function myregisterrequest_new_user($username, $email){
+    
+    
+      $username = sanitize_user($username);
+      $user_id = register_new_user( $username, $email );
+      return $user_id;
+    
+    
+}
+
 
 add_action( 'wp_footer','checkloginuserstatus_fun' );
 function checkloginuserstatus_fun() {
+    
+    
+     $site_url  = get_site_url();
+     $oldvalues = get_option( 'ContenteManager_Settings' );
+     $mainheader = $oldvalues['ContentManager']['mainheader'];
+     $mainheaderlogo = $oldvalues['ContentManager']['mainheaderlogo'];
+     $redirectname = $oldvalues['ContentManager']['redirectcatname'];
+     $redirectURL = "";
+     
+     if($redirectname == 'boothpurchase'){
+         
+         $redirectURL = $site_url.'/floor-plan/';
+         
+     }else{
+         
+         $redirectURL = $site_url.'/product-category/packages/';
+     }
+    
+     if(!empty($mainheader)){
+         
+             
+           $headerbanner =  "url('".$mainheader."')";
+           
+           echo '<script type="text/javascript"> jQuery(".fusion-header").css("background-image","'.$headerbanner.'"); </script>';
+           
+         
+         
+    }
+    
+    $current_user = wp_get_current_user();
+    $roles = $current_user->roles;
+    
+    $newvalue = time();
+    $custome_login_time_site = update_user_option( $current_user->ID, 'custom_login_time_as_site',$newvalue );
+    
+    
+    
     if ( class_exists( 'WooCommerce' ) ) {	
         if (is_user_logged_in()) {
 
-                    if (current_user_can('subscriber')) {
+                    if ($roles[0] == 'subscriber') {
 
                         $actual_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
-                            if (strpos($actual_link, 'task-list/') !== false || strpos($actual_link, 'home/') !== false || strpos($actual_link, 'floor-plan/') !== false || strpos($actual_link, 'resources/') !== false || strpos($actual_link, 'registration-codes/') !== false) {
+                            if (strpos($actual_link, 'task-list/') !== false || strpos($actual_link, 'home/') !== false  || strpos($actual_link, 'resources/') !== false || strpos($actual_link, 'registration-codes/') !== false) {
                             
                                
                             
-                                 echo '<script type="text/javascript">swal({title: "Warning", type: "warning", html:true,showConfirmButton:false,text: "<p>You don\'t have a level assigned. You will need to purchase a package. Please go to the shop by clicking the button below.</p><p style=\'margin-top:18px\'><a href=\'/product-category/packages/\' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Shop</a></p>"});</script>';
+                                 echo '<script type="text/javascript">swal({title: "Welcome!", type: "success", html:true,showConfirmButton:false,text: "<p>This will serve as your portal for managing all of your pre-show logistics. Before gaining access, you\'ll need to first select and purchase a package.</p><p style=\'margin-top:18px\'><a href='.$redirectURL.' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Next</a></p>"});</script>';
                                 
                             }
                     }
@@ -5002,5 +6243,12 @@ function checkloginuserstatus_fun() {
 }
 
 
+// ShortCode For Display View Floor Plan Button
 
-
+function viewfloorplanbutton( $atts ){
+	  
+      
+      return '<button id="floorplanpopup" onclick="openpopup()" class="button fusion-button fusion-button-default button-square fusion-button-xlarge button-xlarge button-flat  fusion-mobile-button continue-center">View Floor Plan</button>';
+      
+}
+add_shortcode( 'viewfloorplanbutton', 'viewfloorplanbutton' );

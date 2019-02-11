@@ -2,17 +2,16 @@
 // Template Name: Bulk Edit Task 
 if (current_user_can('administrator') || current_user_can('contentmanager')) {
     
-    
     $user_reportsaved_list = get_option('ContenteManager_usersreport_settings');
     $get_email_template='AR_Contentmanager_Email_Template';
     $email_template_data = get_option($get_email_template);
     $content = "";
     $editor_id_bulk = 'bodytext';
-    $oldvalues = get_option( 'ContenteManager_Settings' );
+    $oldvalues = get_option('ContenteManager_Settings');
     $formemail = $oldvalues['ContentManager']['formemail'];
     $base_url = get_site_url();
+    
     ?>
-
     <?php include 'cm_header.php'; ?>
     <!--    user-reporting jQuery Querybuilder css-->
     <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap-select.min.css?v=2.19">
@@ -24,7 +23,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
     <?php
 
-include 'cm_left_menu_bar.php';
+    include 'cm_left_menu_bar.php';
 
     ?>
    
@@ -92,7 +91,7 @@ include 'cm_left_menu_bar.php';
 
                                                 <select style="width:100%;height:38px;"class="form-control" onchange="loaduserreport()" id="loaduserreport">
                                                     <option disabled selected hidden>Load a Report</option>
-                                                    <option value="defult"></option>
+                                                   
                                                     <option value="defult">Save Current Template As</option>
                                                     <optgroup label="Saved Templates" id="loaduserreportlist">
 
@@ -163,8 +162,8 @@ include 'cm_left_menu_bar.php';
                             <div class="col-sm-6" >
                                 <select class="select2"  id="sortingtype" data-allow-clear="true">
 
-                                    <option value='asc' selected="selected">Ascending</option>
-                                    <option value='desc' >Descending</option>
+                                    <option value='asc'>Ascending</option>
+                                    <option value='desc' selected="selected">Descending</option>
 
                                 </select>
 

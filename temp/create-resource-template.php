@@ -4,7 +4,7 @@
        
         include 'cm_header.php';
     include 'cm_left_menu_bar.php';
-      
+       $site_url  = get_site_url();
       
                 ?>
 
@@ -48,15 +48,16 @@
                                     </div>
                    </div>
                       <h5 class="m-t-lg with-border"></h5>
-                  <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label"></label>
-                                    <div class="col-sm-6">
-                                           
-                                             <button type="submit"    class="btn btn-lg mycustomwidth btn-success" value="Update">Create</button>
-                                           
-                                        
-                                    </div>
-                                </div>
+                 
+                      <div class="form-group row">
+
+                            <div class="col-sm-6" style="text-align: left;">
+                                <a href="<?php echo $site_url;?>/all-resources/" class="btn btn-danger btn-lg">Back</a>&nbsp;&nbsp;
+                                <button type="submit" class="btn btn-lg mycustomwidth btn-success">Create</button>
+
+                            </div>
+                            <div class="col-sm-6"></div>
+                        </div>
               </form>
      </div>
    </div>

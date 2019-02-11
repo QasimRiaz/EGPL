@@ -1,12 +1,16 @@
-
-
-
 jQuery(document).ready(function() {
   
     jQuery( ".sf-sub-indicator" ).addClass( "icon-play" ); 
     
     
-});
+     var table = jQuery('#resourceslist').DataTable( );
+     
+    jQuery('#MainPopupIframe').load(function () {
+        console.log('load the iframe')
+        //the console won't show anything even if the iframe is loaded.
+    })
+     
+  });
 
 jQuery( document ).ready(function() {
     
@@ -20,7 +24,7 @@ jQuery( document ).ready(function() {
         jQuery('#chars_'+textareaid).text(remininglength);
     
        
-})
+});
 });
 jQuery("input").change(function(event) {
        var id = jQuery(this).attr('id');
@@ -45,12 +49,6 @@ jQuery("input").change(function(event) {
 
 jQuery('textarea').keyup(function() {
 
-  
-  
- 
-    
- 
-   
   var maxLength = jQuery(this).attr('maxlength');
   var textareaid= jQuery(this).attr('id');
   var length = jQuery(this).val().length;
@@ -126,7 +124,7 @@ function calltoinsertorupdateuser(){
     
      
     var userids =  [];
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var syncurl = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=insertmapdynamicsuser';
     var statustable ="";
     statustable +='<table id="syncuserstatustable" class="display" cellspacing="0" width="100%"><thead><tr><th>Email</th><th>Company Name</th><th>Status</th><th>Result</th><th>Floor plan Exhibitor ID</th></tr></thead><tbody id="syncuserdata">';
@@ -172,12 +170,14 @@ function calltoinsertorupdateuser(){
                                     statustable +='<td>' +finalresult.Exhibitor_ID+ '</td></tr>';
                                 
                                     }else{
+                                        
 			            statustable +='<td >' + finalresult.status + '</td>';
                                     statustable +='<td class="notcreateduser">' + finalresult.result + '</td>';
                                     statustable +='<td></td></tr>';
-                                }
+                                
+                }
                               
-                                 jQuery('#prog')
+                 jQuery('#prog')
                                     .progressbar('option', 'value', countersize)
                                     .children('.ui-progressbar-value')
                                     .html('')
@@ -220,10 +220,40 @@ function calltoinsertorupdateuser(){
 var resuorcemsg;
 var  resuorcestatus;
 var settingArray;
+var embedhelplightbox;
 
-
+function iframeLoaded(){
+    
+    
+    jQuery("#loadingicon").hide();
+    jQuery("#helpvidep").show();
+    
+    
+}
+function embadhelpvidoe(){
+    
+    
+    var url = currentsiteurl+'/';
+    var parseURL = this.location.pathname.split('/');
+    console.log(parseURL);
+    embedhelplightbox = jQuery.confirm({
+            title: '',
+            content:'<p id="loadingicon" style="text-align:center;"><img width="50" src="'+currentsiteurl+'/wp-content/plugins/EGPL/js/loading.gif"></p><p id="helpvidep" style="text-align: center;display:none;"><iframe onload="iframeLoaded()" height="600" src="https://help.expo-genie.com/'+parseURL[2]+'" width="100%"  frameborder="0" allowfullscreen="allowfullscreen"><span data-mce-type="bookmark" style="display: inline-block; width: 0px; overflow: hidden; line-height: 0;" class="mce_SELRES_start">?</span></iframe></p>',
+            confirmButton:false,
+            cancelButton:false,
+            animation: 'rotateY',
+            columnClass: 'jconfirm-box-container-special',
+            closeIcon: true
+         });
+    
+    
+    
+    
+    
+    
+}
 function add_new_sponsor(){
-   var url = window.location.protocol + "//" + window.location.host + "/";
+   var url = currentsiteurl+'/';
   
   var email =  jQuery("#Semail").val();
   var profilepic = jQuery('#profilepic')[0].files[0]; 
@@ -296,6 +326,28 @@ function add_new_sponsor(){
                     
 
 
+                }else if(message.msg == 'User already exists for this site.'){
+                        jQuery("form")[0].reset();
+                        swal({
+					title: "Info",
+					text: 'User already exists for this site.',
+					type: "info",
+                                        html:true,
+					confirmButtonClass: "btn-info",
+					confirmButtonText: "Ok"
+				});
+                                
+                }else if(message.msg == 'User added to this blog.'){
+                        jQuery("form")[0].reset();
+                        swal({
+					title: "Success",
+					text: 'User added to this site Successfully</br>'+message.mapdynamicsstatus,
+					type: "success",
+                                        html:true,
+					confirmButtonClass: "btn-success",
+					confirmButtonText: "Ok"
+				});
+                                
                 }else{
                     
                           
@@ -333,15 +385,33 @@ function add_new_sponsor(){
   }
 }
 function add_new_admin_user(){
-   var url = window.location.protocol + "//" + window.location.host + "/";
-  
-  var email =  jQuery("#Semail").val();
- var username =  jQuery("#Semail").val();
-  var sponsorlevel = jQuery("#Srole option:selected").val();
-
-  var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=addnewadminuser';
-  var data = new FormData();
+    
+    
+   var url = currentsiteurl+'/';
+   var email =  jQuery("#Semail").val();
+   var username =  jQuery("#Semail").val();
+   var sponsorlevel = jQuery("#Srole option:selected").val();
+   var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=addnewadminuser';
+   var data = new FormData();
+   
+   if (jQuery('#checknewuser').is(":checked")){
+       
+        
+         var loadwelcomeemailtemplate = jQuery( "#selectedwelcomeemailtemp option:selected" ).val();
+         
+         data.append('welcomeemailstatus', 'send');
+         data.append('welcomeemailtempname', loadwelcomeemailtemplate);
+       
+    }else{
+        
+        data.append('welcomeemailstatus', 'notsend');
+         
+       
+   }
+   
+   
    jQuery("body").css("cursor", "progress");
+   
   if(email !=""  ){
       
        data.append('username', username);
@@ -383,6 +453,17 @@ function add_new_admin_user(){
                     
 
 
+                }else if(message.msg == 'User added to this blog.'){
+                        jQuery("form")[0].reset();
+                        swal({
+					title: "Success",
+					text: 'User added to this site Successfully.',
+					type: "success",
+                                        html:true,
+					confirmButtonClass: "btn-success",
+					confirmButtonText: "Ok"
+				});
+                                
                 }else{
                     
                           
@@ -392,6 +473,7 @@ function add_new_admin_user(){
                      swal({
 					title: "Error",
 					text: message.msg,
+                                        html:true,
 					type: "error",
 					confirmButtonClass: "btn-danger",
 					confirmButtonText: "Ok"
@@ -418,7 +500,7 @@ function add_new_admin_user(){
   }
 }
 function update_sponsor(){
-   var url = window.location.protocol + "//" + window.location.host + "/";
+   var url = currentsiteurl+'/';
   
  var profilepic ="";
   var profilepicurl="";
@@ -507,7 +589,7 @@ function delete_sponsor_meta(elem){
 
                                                 swal({
 							title: "Are you sure?",
-							text: 'You want to permanently delete this user.',
+							text: 'Do you want to remove this user ?',
 							type: "warning",
 							showCancelButton: true,
 							confirmButtonClass: "btn-danger",
@@ -522,15 +604,8 @@ function delete_sponsor_meta(elem){
                                                      
 							if (isConfirm) {
                                                              var Sname = conform_remove_sponsor(idsponsor);
-								swal({
-									title: "Deleted!",
-									text: "User deleted Successfully",
-									type: "success",
-									confirmButtonClass: "btn-success"
-								},function() {
-                                                                    location.reload();
-                                                                 }
-                                                            );
+                                                             swal.close();
+                                                             
 							} else {
 								swal({
 									title: "Cancelled",
@@ -589,7 +664,7 @@ function delete_resource(elem){
 function conform_remove_resource(idsponsor){
     
      jQuery("body").css({'cursor':'wait'});
-     var url = window.location.protocol + "//" + window.location.host + "/";
+     var url = currentsiteurl+'/';
      
      var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=remove_post_resource';
      var data = new FormData();
@@ -623,7 +698,7 @@ function conform_remove_sponsor(idsponsor){
     
     //  console.log(idsponsor);
      
-     var url = window.location.protocol + "//" + window.location.host + "/";
+     var url = currentsiteurl+'/';
      
      var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=remove_sponsor_metas';
      var data = new FormData();
@@ -641,9 +716,31 @@ function conform_remove_sponsor(idsponsor){
              
                  //location.reload();
                  var sName = settingArray.ContentManager['sponsor_name'];
+                 var msg;
+                 var title;
+                 if(data == 'This user removes from this blog successfully'){
+                                                                 
+                    msg ="The selected user has been removed from this site. This user may still be present in other sites of your network.";
+                    title ="Removed";
+                                                             
+                }else{
+                                                                 
+                    msg ="User deleted Successfully";
+                    title ="Deleted";
+                                                             
+                }
+            swal({
+                title: title,
+                text: msg,
+                type: "success",
+                confirmButtonClass: "btn-success"
+            }, function () {
+                location.reload();
+            }
+            );
                  
-                 return sName;
-               
+                 
+                
                 
             },error: function (xhr, ajaxOptions, thrownError) {
                      swal({
@@ -661,7 +758,7 @@ function conform_remove_sponsor(idsponsor){
 function create_new_resource(){
     
      jQuery("body").css({'cursor':'wait'});
-     var url = window.location.protocol + "//" + window.location.host + "/";
+     var url = currentsiteurl+'/';
      var title = jQuery('#Stitle').val(); 
      
      var file = jQuery('#Sfile')[0].files[0]; 
@@ -729,7 +826,7 @@ function show_button(){
 function resource_file_upload(){
     
     
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
   
     var file = jQuery('#Sfile')[0].files[0]; 
     
@@ -801,7 +898,7 @@ function getUrlParameter(sParam)
     }
 }  
 jQuery(document).ready(function(){
-     var url = window.location.protocol + "//" + window.location.host + "/";
+     var url = currentsiteurl+'/';
      var data = new FormData();
      var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=plugin_settings';
      jQuery.ajax({
@@ -826,7 +923,7 @@ jQuery(document).ready(function(){
      var reportName = jQuery("#reportname").val();
   console.log(reportName);
          jQuery("body").css({'cursor':'wait'});
-     var url = window.location.protocol + "//" + window.location.host + "/";
+     var url = currentsiteurl+'/';
      var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=update_admin_report';
      var data = new FormData();
      
@@ -901,10 +998,10 @@ jQuery(document).ready(function(){
     
 }
 
-function bulk_import_user(){
+function old_bulk_import_user(){
     
      jQuery("body").css({'cursor':'wait'});
-     var url = window.location.protocol + "//" + window.location.host + "/";
+     var url = currentsiteurl+'/';
      var data = new FormData();
      
      var file = jQuery('#Sfile')[0].files[0]; 
@@ -944,7 +1041,7 @@ function bulk_import_user(){
                 jQuery("form")[0].reset();
                
                 jQuery( "#bulkimportstatus" ).hide();
-                 jQuery( "#bulkimport" ).show();
+                jQuery( "#bulkimport" ).show();
                  
                 jQuery('body').css('cursor', 'default');
                  
@@ -1026,15 +1123,123 @@ function bulk_import_user(){
 				});
       }
         });
+        
     
 }
+
+function bulk_import_user(){
+    
+     jQuery("body").css({'cursor':'wait'});
+     var url = currentsiteurl+'/';
+     var data = new FormData();
+     
+     var file = jQuery('#Sfile')[0].files[0]; 
+    
+     
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=bulkimportuser';
+    
+     var datatable ='';
+     var optionsarray ="";
+     data.append('file', file);
+   
+     
+     
+     jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                
+               
+                jQuery("form")[0].reset();
+               
+                jQuery( "#bulkimportstatus" ).hide();
+                jQuery( "#bulkimport" ).show();
+                 
+                jQuery('body').css('cursor', 'default');
+                 
+                  var message = jQuery.parseJSON(data);
+                 
+                 
+                  if(message == 'faild'){
+                      jQuery( "#importuserstatusdiv" ).hide();
+                      swal({
+                        title: "Error!",
+                        text: 'Sorry, this file type is not permitted for security reasons.',
+                        type: "error",
+                        confirmButtonClass: "btn-danger"
+                    });
+                  }else{
+                      
+                    if(message.data == 'your sheet is empty.'){
+                      jQuery( "#importuserstatusdiv" ).hide();
+                      swal({
+                        title: "Error!",
+                        text: 'Sorry, your sheet is empty.',
+                        type: "error",
+                        confirmButtonClass: "btn-danger"
+                    });
+                    }else{
+                        numberofrows
+                       // jQuery("#uploadimportfile").hide();
+                        jQuery( "#Sfile" ).attr('disabled','disabled');
+                        jQuery( "#uploadstatus" ).attr('disabled','disabled');
+                        jQuery("#mapuserdatacol").show();
+                        jQuery("#numberofrows").empty();
+                        jQuery("#numberofrows").append(message.totalnumberofrows);
+                        
+                        jQuery.each(message, function(i, item) {
+                            
+                            if(i == "uploadedfileurl" && i!="totalnumberofrows"){
+                                
+                                jQuery("#excelsheeturl").val(item);
+                                
+                                
+                            }else{
+                                
+                              
+                            if(i!="totalnumberofrows" && item.colname != null && item.colname != ""){
+                                 //jQuery(".select2").select2('data', {id: item.colindex, text: item.colname});  
+                                 optionsarray +='<option value="'+item.colindex+'" >'+item.colname+'</option>';
+                                 
+                                 
+                              }
+                               
+                                
+                                
+                            }
+                            
+                            
+                            
+                            
+                        });
+                    jQuery('.mappingdropdown').append(optionsarray);
+                  }
+                }
+            },error: function (xhr, ajaxOptions, thrownError) {
+                     swal({
+					title: "Error",
+					text: "There was an error during the requested operation. Please try again.",
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				});
+      }
+        });
+        
+    
+}
+
 function edit_resource(elem){
     var idresource = jQuery(elem).attr("id");
-    var resourcetitle = jQuery("#example #"+idresource+'U').text();
+    var resourcetitle = jQuery("#resourceslist #"+idresource+'U').text();
     console.log(idresource);
       jQuery.confirm({
             title: 'Edit Resource',
-            content: '<div id="titlestatus"></div>Resource Title :  <input style="padding: 9px;border: #080808 solid 1px; width: 50%; height: 35px; border-radius: 7px;" type="text" id="resourcetitle" value="'+resourcetitle+'">',
+            content: '<div id="titlestatus"></div><p>Resource Title   <input style="float: right;border-radius: 3px;padding: 9px;border: #dee8ed solid 1px ; width: 80%; height: 35px;" type="text" id="resourcetitle" value="'+resourcetitle+'"></p><p>Replace File  <input  type="file" style="width: 80%;float: right;" class="form-control" name="replaceresourcefile" id="replaceresourcefile" required=""></p>',
             confirmButtonClass: 'mycustomwidth specialbuttoncolor',
            
             confirmButton:'Update',
@@ -1063,15 +1268,19 @@ function edit_resource(elem){
 }
 
 function conform_edit_resource(idresource){
+    
     console.log(idresource);
     var resourcetitle = jQuery("#resourcetitle").val();
-    var url = window.location.protocol + "//" + window.location.host + "/"; 
+    var replacefile = jQuery('#replaceresourcefile')[0].files[0]; 
+    var url = currentsiteurl+'/'; 
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=updatresource';
     var data = new FormData();
     jQuery("body").css({'cursor':'wait'});
     
+     data.append('replacefile', replacefile);
      data.append('idresource', idresource);
      data.append('resourcetitle', resourcetitle);
+     
      jQuery.ajax({
             url: urlnew,
             data: data,
@@ -1085,7 +1294,7 @@ function conform_edit_resource(idresource){
                 if(reportData == 'ok'){
                     swal({
 					title: "Success",
-					text: "Resource Title Updated Successfully",
+					text: "Resource Updated Successfully",
 					type: "success",
 					confirmButtonClass: "btn-success",
 					confirmButtonText: "Close"
@@ -1134,7 +1343,7 @@ function showprofilefieldupload(){
         
 function sync_bulk_users(){
     
-    var url = window.location.protocol + "//" + window.location.host + "/"; 
+    var url = currentsiteurl+'/'; 
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=GetMapdynamicsApiKeys';
     var syncurl = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=insertmapdynamicsuser';
     var data = new FormData();
@@ -1146,7 +1355,7 @@ function sync_bulk_users(){
                 
 
                 var useridstml = "";
-                useridstml += '<form id="myform" action="/sync-to-floorplan/" method="post">';
+                useridstml += '<form id="myform" action="'+url+'/sync-to-floorplan/" method="post">';
 
                 for (var i = 0; i < checkedRows.length; i++) {
                      jQuery.each(checkedRows[i], function(i, item) {
@@ -1167,6 +1376,47 @@ function sync_bulk_users(){
                 document.getElementById('myform').submit();
                 
 }
+
+ function changeuseremailaddressalert(){
+    
+    
+	swal({
+							title: "Are you sure?",
+							text: 'This change will apply to all event portals where the select user is enabled.',
+							type: "warning",
+							showCancelButton: true,
+							confirmButtonClass: "btn-danger",
+							confirmButtonText: "Continue",
+							cancelButtonText: "Cancel",
+							closeOnConfirm: false,
+							closeOnCancel: false
+						},
+						function(isConfirm) {
+                                                    
+                                                    
+                                                     
+							if (isConfirm) {
+                                                             changeuseremailaddress();
+                                                             swal.close();
+                                                             
+							} else {
+								swal({
+									title: "Cancelled",
+									text: "",
+									type: "error",
+									confirmButtonClass: "btn-danger"
+								});
+							}
+						});
+	
+	
+	
+    
+    
+}
+
+
+
 function changeuseremailaddress(){
     
     
@@ -1174,7 +1424,7 @@ function changeuseremailaddress(){
     var oldemailaddress = jQuery('#Semail').val();
    
    
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=changeuseremailaddress';
     var data = new FormData();
     var hiddentemplatelist = jQuery("#hiddenlistemaillist").html();
@@ -1286,7 +1536,7 @@ function returnback(){
                    
                         //location.reload();
                         //window.location.replace("/add-new-level/");
-                        document.location.href = '/add-new-level'
+                        document.location.href =  currentsiteurl+'/add-new-level';
                    
                 } else {
                     swal({
@@ -1315,7 +1565,7 @@ function approvethisuser(elem){
     var idsponsor = jQuery(elem).attr("id");
     jQuery.confirm({
         title: '<p style="text-align:center;" >Are you sure?</p>',
-        content: '<p><h3 style="text-align:center;">Do you want to approve this user? This will send them a welcome email.</h3></p><p style="text-align:center;">Here you can assign a level to this user.</p><p style="text-align:center;"><strong>Assign Level :  </strong> <select id="selectassignlevel" style="width: 200px;border: 1px #0c0c0c solid;border-radius: 3px;height: 36px;">'+jQuery("#assignuserroles").html()+'</select></p>',
+        content: '<p><h3 style="text-align:center;">Do you want to approve this user? This will send them a welcome email.</h3></p><p style="text-align:center;">Here you can assign a level to this user. IMPORTANT: If you leave as "Unassigned", this user will be prompted to purchase a package before gaining full access to ExpoGenie.</p><p style="text-align:center;"><strong>Assign Level :  </strong> <select id="selectassignlevel" style="width: 200px;border: 1px #0c0c0c solid;border-radius: 3px;height: 36px;">'+jQuery("#assignuserroles").html()+'</select></p>',
         confirmButton: 'Yes, approve it!',
         cancelButton: 'No, cancel please!',
        
@@ -1369,7 +1619,7 @@ function conform_approvethis_user(idsponsor,userassignrole){
     
     //  console.log(idsponsor);
      jQuery(".confirm").attr('disabled','disabled');
-     var url = window.location.protocol + "//" + window.location.host + "/";
+     var url = currentsiteurl+'/';
      
      var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=approve_selfsign_user';
      var data = new FormData();
@@ -1459,7 +1709,7 @@ function conform_declinethis_user(idsponsor){
     
     //  console.log(idsponsor);
      
-     var url = window.location.protocol + "//" + window.location.host + "/";
+     var url = currentsiteurl+'/';
      
      var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=decline_selfsign_user';
      var data = new FormData();
@@ -1482,6 +1732,212 @@ function conform_declinethis_user(idsponsor){
 					confirmButtonText: "Ok"
 				});
       }
+        });
+    
+}
+function checkemailaddressalreadyexist(){
+    
+    var currentemail =  jQuery('#Semail').val();
+    var hiddentemplatelist = jQuery("#hiddenlistemaillist").html();
+    var hiddenrolelist = jQuery("#hiddenlistusersrole").html();
+    
+    if(currentemail != ''){
+         jQuery("body").css({'cursor':'wait'});
+        var url = currentsiteurl+'/';
+        var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=checkuseralreadyexist';
+        var updateurl =  url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=updateuserforthissite';
+        var data = new FormData();
+        data.append('currentemail', currentemail);
+        jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                 jQuery("body").css({'cursor':'default'});  
+                console.log(data)
+                if(data.trim() == 'This email address doesnt exist'){
+                    
+                    swal({
+                        title: "Info",
+			text: "No user with the given email address exists. Please proceed with creating a new user.",
+			type: "info",
+			confirmButtonClass: "btn-info",
+			confirmButtonText: "Ok"
+                     });
+                    
+                }else if(data.trim() == 'User already exists for this site.'){
+                    
+                    swal({
+                        title: "Info",
+			text: "User already exists for this site.",
+			type: "info",
+			confirmButtonClass: "btn-info",
+			confirmButtonText: "Ok"
+                     });
+                    
+                }else{
+                    
+                    
+                    jQuery.confirm({
+                        
+                        title: 'Email Status',
+                        content: '<div id="titlestatus" ></div><div ><p></p><input value="'+currentemail+'" style="margin-bottom: 10px;padding: 9px;border: #d6e2e8 solid 1px; width: 100%; height: 35px; border-radius: 3px;" type="text" id="newemailaddress" readonly><p style="margin: 5px 0px;">A user account with this email address already exists and attached to a different event. Would you like to add this user to the current event?</p></div>',
+                        confirmButtonClass: 'mycustomwidth specialbuttoncolor',
+                        confirmButton: 'Fetch details',
+                        cancelButton: 'Cancel',
+                        animation: 'rotateY',
+                        closeIcon: true,
+                        confirm: function () {
+                            
+                            
+                            var dataArray = jQuery.parseJSON(data);
+                            
+                            jQuery('#Sfname').val(dataArray.first_name);
+                            jQuery('#Slname').val(dataArray.last_name);
+                            jQuery('#company_name').val(dataArray.company_name);
+                            jQuery('.preuploadrolename').val(dataArray.role_name);
+                            
+                            
+                            
+                            
+                            
+                            
+                        }
+                    });
+               }
+             },error: function (xhr, ajaxOptions, thrownError) {
+                     swal({
+                        title: "Error",
+			text: "There was an error during the requested operation. Please try again.",
+			type: "error",
+			confirmButtonClass: "btn-danger",
+			confirmButtonText: "Ok"
+                     });
+            }
+        });
+    }
+}
+
+function getimportmapping_data(){
+    
+    
+    jQuery("body").css({'cursor':'wait'});
+    var mappingArray = [];
+    var indexArray = 0;
+    var datatable ='';
+    var data = new FormData();
+    if (jQuery('#check-1').is(":checked")){
+       
+         var seletwelcomeemailtemplate= jQuery( "#selectedwelcomeemailtemp option:selected" ).val();
+         data.append('welcomeemailstatus', 'send');
+         data.append('seletwelcomeemailtemplate', seletwelcomeemailtemplate);
+    }else{
+        
+       data.append('welcomeemailstatus', 'notsend'); 
+         
+       
+   }
+   jQuery( ".mappingdropdown" ).each(function( index ) {
+       var fieldname  =  jQuery( this ).attr('name');
+      
+        mappingArray.push({fieldname:fieldname,fieldvalue:jQuery("select[name="+fieldname+"] option:selected").val(),fieldtextname:jQuery("select[name="+fieldname+"] option:selected").html()});   
+     
+       
+       
+       
+    });
+    data.append('mappingfielddata',   JSON.stringify(mappingArray));
+    var excelsheeturl = jQuery("#excelsheeturl").val();
+    data.append('uploadedsheeturl', excelsheeturl);
+   
+    var url = currentsiteurl+'/';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=bulkimportmappingcreaterequest';
+    jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function (data) {
+              jQuery('body').css('cursor', 'default');
+                jQuery("form")[0].reset();
+               
+                jQuery( "#mapuserdatacol" ).hide();
+                jQuery( "#bulkimport" ).show();
+                 
+                jQuery('body').css('cursor', 'default');
+                 
+                  var message = jQuery.parseJSON(data);
+                 
+                 
+                  if(message == 'faild'){
+                      jQuery( "#importuserstatusdiv" ).hide();
+                      swal({
+                        title: "Error!",
+                        text: 'Sorry, this file type is not permitted for security reasons.',
+                        type: "error",
+                        confirmButtonClass: "btn-danger"
+                    });
+                  }else{
+                      
+                    
+                    
+                   
+                    if(message.data == 'your sheet is empty.'){
+                      jQuery( "#importuserstatusdiv" ).hide();
+                      swal({
+                        title: "Error!",
+                        text: 'Sorry, your sheet is empty.',
+                        type: "error",
+                        confirmButtonClass: "btn-danger"
+                    });
+                    }else{
+                        
+                        
+                    jQuery( "#importuserstatus" ).empty();  
+                    jQuery( "#uploadimportfile" ).hide();
+                    jQuery( "#bulkimport" ).hide();
+                    jQuery( "#bulkimportstatus" ).show();
+                   
+                    datatable +='<table id="importuserstatus" class="display" cellspacing="0" width="100%"><thead><tr><th>Email</th><th>Company Name</th><th>Status</th><th>Created User ID</th></tr></thead><tbody id="importuserdata">'
+                    jQuery.each(message.data, function(index, value) {
+
+                        datatable += '<tr><td>' + value.email + '</td><td>'+ value.companyname + '</td>';
+						if(value.created_id != ""){
+							datatable +='<td>' + value.status + '</td>';
+						}else{
+							datatable +='<td class="notcreateduser">' + value.status + '</td>'
+						}
+						
+						datatable +='<td>' + value.created_id + '</td></tr>';
+
+                    });
+                      datatable += '</tbody> </table>';
+                    jQuery( "#importuserstatusdiv" ).append(datatable );
+                    jQuery( "#createdusers" ).append(message.createdcount );
+                    jQuery( "#userserrors" ).append(message.errorcount );
+                    jQuery( "#importuserstatusdiv" ).show( );
+                    jQuery('#importuserstatus').DataTable({
+					pageLength: 25,
+                    dom: 'Bfrtlip',
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            title: 'Download import results',
+                            text:'Download import results'
+                        }
+
+                    ]
+                });
+                  }
+                }
+                
+                
+            }
         });
     
 }

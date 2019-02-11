@@ -6,7 +6,7 @@ function updatecontentsettings() {
    jQuery("body").css("cursor", "progress");
    
    var data = new FormData();
-   var url = window.location.protocol + "//" + window.location.host + "/";
+   var url = window.location.protocol + "//" + window.location.host + "/"+window.location.pathname.split( '/' )[1]+"/";
 
 
    
@@ -25,6 +25,25 @@ function updatecontentsettings() {
    var selfsignstatus = jQuery("#selfsignstatus").val();
    var addresspoints = jQuery("#addresspoints").val();
    var userreportcontent = jQuery("#userreportcontent").val();
+   var expogeniefloorplan = jQuery("#expogeniefloorplan").val();
+   var defaultboothprice = jQuery("#defaultboothprice").val();
+   var boothpurchasestatus = jQuery("#boothpurchasestatus").val();
+   var redirectcatname = jQuery("#redirectcatname").val();
+   
+   var cventaccountname = jQuery("#cventaccountname").val();
+   var cventusername = jQuery("#cventusername").val();
+   var cventapipassword = jQuery("#cventapipassword").val();
+   var customfieldstatus = "";
+    if (jQuery("#customfieldstatus").val() == "enabled"){ 
+        
+         customfieldstatus = 'checked';
+         
+    }else{
+        
+         customfieldstatus = 'unchecked';
+    }
+   
+   
    var uploadlogourl = jQuery("#uploadlogourl").attr("src");
    if(uploadlogourl == ''){
        
@@ -53,6 +72,18 @@ function updatecontentsettings() {
        data.append('wooconsumerkey', wooconsumerkey);
        data.append('selfsignstatus', selfsignstatus);
        data.append('userreportcontent', userreportcontent);
+       data.append('expogeniefloorplan', expogeniefloorplan);
+       data.append('defaultboothprice', defaultboothprice);
+       data.append('boothpurchasestatus', boothpurchasestatus);
+       data.append('redirectcatname', redirectcatname);
+       
+       
+       data.append('cventaccountname', cventaccountname);
+       data.append('cventusername', cventusername);
+       data.append('cventapipassword', cventapipassword);
+       data.append('customfieldstatus', customfieldstatus);
+     
+     
 
        jQuery.ajax({
             url: urlnew,
@@ -70,7 +101,7 @@ function updatecontentsettings() {
                     setTimeout(function() {
                         jQuery( "#successmsg" ).empty();
                         jQuery( "#successmsg" ).hide();
-                        location.reload();
+                        //location.reload();
                         }, 2000);
                         
 

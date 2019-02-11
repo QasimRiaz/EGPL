@@ -3,14 +3,14 @@
    if (current_user_can('administrator') || current_user_can('contentmanager') ) {
        
   
- 
+       $site_url  = get_site_url();
        
        
        include 'cm_header.php';
        include 'cm_left_menu_bar.php';
        ?>
       <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
+      
 <div id="example2" style="display:none;"></div> 
 <div class="page-content">
 	    <div class="container-fluid">

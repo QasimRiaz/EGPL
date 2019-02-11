@@ -1,4 +1,17 @@
    jQuery(document).ready(function() {
+       
+       
+       var getcontainerwidth =  jQuery( "#previewheaderdiv" ).width() / 5.5 ;
+       jQuery("#previewheaderdiv").css("height",getcontainerwidth);
+        jQuery("#previewlogo").css("height",getcontainerwidth);  
+
+    jQuery("#headerbanner").change(function(){
+        getFilePathheaderbanner(this);
+    });
+    jQuery("#headerlogo").change(function(){
+        getFilePathheaderlogo(this);
+    });
+       
    jQuery('#assignnewtask').on( 'click', function () {
           
           
@@ -44,7 +57,7 @@ function add_new_role_contentmanager(){
      var rolename =jQuery('#rolename').val();
      jQuery("body").css({'cursor':'wait'});
      var specialcharacterstatuslevelname=false;
-     var url = window.location.protocol + "//" + window.location.host + "/";
+     var url = currentsiteurl+'/';
      var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=addnewrole';
      var data = new FormData();
      data.append('rolename', rolename);
@@ -165,7 +178,7 @@ function delete_role_name(elem){
 function delete_role_name_conform(namerole){
     var rolename =namerole;
      jQuery("body").css({'cursor':'wait'});
-     var url = window.location.protocol + "//" + window.location.host + "/";
+     var url = currentsiteurl+'/';
      var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=removerole';
      var data = new FormData();
      data.append('rolename', rolename);
@@ -202,27 +215,26 @@ function update_admin_settings(){
     
     // var formemail = jQuery('#formemailaddress').val();
      var eventdate = jQuery('#eventdate').val();
-   
-    
-     jQuery("body").css({'cursor':'wait'});
-     var url = window.location.protocol + "//" + window.location.host + "/";
-     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=adminsettings';
      var data = new FormData();
-     var lockTWMcomplete;
-     var lockTWMduedate;
-     if(jQuery('#check-toggle-1').is(':checked')){
-         lockTWMcomplete = 'checked';
-     }else{
-         lockTWMcomplete = 'unchecked';
+     var oldheaderbannerurl = jQuery('#headerbannerurl').val();
+    
+     
+     
+    if(oldheaderbannerurl ==""){
+         
+          var uploadedfile = jQuery('#headerbanner')[0].files[0]; 
+          data.append('uploadedfile', uploadedfile);
      }
-     if(jQuery('#check-toggle-2').is(':checked')){
-         lockTWMduedate = 'checked';
-     }else{
-         lockTWMduedate = 'unchecked';
-     }
+   
+   
+     
+     jQuery("body").css({'cursor':'wait'});
+     var url = currentsiteurl+'/';
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=adminsettings';
+     
+     data.append('oldheaderbannerurl', oldheaderbannerurl);
      data.append('eventdate', eventdate);
-     data.append('lockTWMcomplete', lockTWMcomplete);
-     data.append('lockTWMduedate', lockTWMduedate);
+     
     // data.append('formemail', formemail);
    
      
@@ -241,7 +253,10 @@ function update_admin_settings(){
 					type: "success",
 					confirmButtonClass: "btn-success",
 					confirmButtonText: "Ok"
-				});
+				},function() {
+                                      location.reload();
+                                 }
+                                        );
                 
                 
             },error: function (xhr, ajaxOptions, thrownError) {
@@ -276,7 +291,7 @@ function update_admin_settings(){
       });
       
       
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=roleassignnewtasks';
     var data = new FormData();
     
@@ -366,7 +381,7 @@ function editrolename(e){
    
     var rolekey = jQuery(e).attr('id');
     var oldrolename = jQuery(e).attr('name');
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=editrolekey';
     var data = new FormData();
     
@@ -434,7 +449,7 @@ function createroleclone(e){
     var rolekey = jQuery(e).attr('id');
     var oldrolename = jQuery(e).attr('name');
     
-    var url = window.location.protocol + "//" + window.location.host + "/";
+   var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=createlevelclone';
     var data = new FormData();
     
@@ -503,3 +518,64 @@ function createroleclone(e){
     
     
 }
+
+
+function removeheaderimage(){
+    
+    jQuery(".privewdiv").hide();
+    jQuery('#imageviewver').remove();
+    jQuery('#headerbanner').show();
+    jQuery('#headerbannerurl').val("");
+    jQuery('.removebutton').empty("");
+    jQuery('#headerlogourl').val("");
+    jQuery("#previewheaderdiv").css("background-image","");
+    jQuery("#previewlogo").attr("src", '');
+    
+}
+
+function getFilePathheaderbanner(input){
+    
+    if (input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+                 jQuery(".privewdiv").show();
+                 jQuery('#headerbannerurl').val("");
+                 var getcontainerwidth =  jQuery( "#previewheaderdiv" ).width() / 5.5 ;
+                 console.log(getcontainerwidth);
+                 jQuery("#previewheaderdiv").css("height",getcontainerwidth);
+                 jQuery("#previewheaderdiv").css("background-image",'url(' +  e.target.result +' )');
+                 //
+//jQuery("#previewheaderdiv").css("background-repeat","no-repeat");
+                 //jQuery("#previewheaderdiv").css("background-size","contain");
+                 
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    
+}
+function getFilePathheaderlogo(input){
+    
+    
+     if (input.files[0]) {
+            var reader = new FileReader();
+            
+             
+            reader.onload = function (e) {
+                jQuery(".privewdiv").show();
+                jQuery('#headerlogourl').val("");
+                var getcontainerwidth =  jQuery( "#previewheaderdiv" ).width() / 5.5 ;
+                jQuery("#previewlogo").attr("src", e.target.result);
+                jQuery("#previewlogo").css("height",getcontainerwidth);
+                console.log(input.files[0].width + " " + input.files[0].height);
+         
+            }
+            
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+     
+     }
+     
+   

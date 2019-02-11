@@ -8,24 +8,49 @@
      $sponsor_id = get_current_user_id(); 
      $roles = wp_get_current_user()->roles;
      $check= array_key_exists("contentmanager",$roles);
-     $test = 'custome_task_manager_data';
-     $result = get_option($test);
+     
+     
+     
+     
+     $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'ASC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+    );
+    $result = get_posts( $args );
+    
+   
+   
+   
+    
+   
+     
      $settitng_key = 'ContenteManager_Settings';
      $sponsor_info = get_option($settitng_key);
      $sponsor_name = $sponsor_info['ContentManager']['sponsor-name'];
-      $lockTWMcomplete = $sponsor_info['ContentManager']['lockTWMcomplete'];
-      $lockTWMduedate = $sponsor_info['ContentManager']['lockTWMduedate'];
-      $current_user = get_userdata( $sponsor_id );
-      $user_IDD = $sponsor_id;
-      $base_url = "http://" . $_SERVER['SERVER_NAME'];
+     $lockTWMcomplete = $sponsor_info['ContentManager']['lockTWMcomplete'];
+     $lockTWMduedate = $sponsor_info['ContentManager']['lockTWMduedate'];
+     $current_user = get_userdata( $sponsor_id );
+     $user_IDD = $sponsor_id;
+     $base_url = "http://" . $_SERVER['SERVER_NAME'];
      // echo '<pre>';
     // print_r($result );exit;
                        
       global $wp_roles;
-     
+      $site_url  = get_site_url();
       $all_roles = $wp_roles->get_names();
      ?>
-                
+          <script>
+        
+            
+        
+        currentsiteurl = '<?php echo $site_url;?>';
+        
+        
+    </script>       
 <div id="content" class="full-width">
 
         <div id="sponsor-status"></div>
@@ -53,8 +78,71 @@
            <?php
            
          
-           foreach ($result['profile_fields'] as $profile_field_name => $profile_field_settings){
+           foreach ($result as $taskIndex => $taskObject){
                     
+               
+                                    $tasksID=$taskObject->ID;
+                                    $profile_field_settings = [];
+                                    $value_value = get_post_meta( $tasksID, 'value' , false);
+                                    $value_unique = get_post_meta( $tasksID, 'unique' , false);
+                                    $value_class = get_post_meta( $tasksID, 'class' , false);
+                                    $value_after = get_post_meta( $tasksID, 'after', false);
+                                    $value_required = get_post_meta( $tasksID, 'required' , false);
+                                    $value_allow_tags = get_post_meta( $tasksID, 'allow_tags' , false);
+                                    $value_add_to_profile = get_post_meta( $tasksID, 'add_to_profile' , false);
+                                    $value_allow_multi = get_post_meta( $tasksID, 'allow_multi', false);
+                                    $value_label = get_post_meta( $tasksID, 'label' , false);
+                                    $value_type = get_post_meta( $tasksID, 'type' , false);
+                                    $value_lin_url = get_post_meta( $tasksID, 'link_url' , false);
+                                    $value_linkname = get_post_meta( $tasksID, 'linkname', false);
+                                    $value_attr = get_post_meta( $tasksID, 'duedate', false);
+                                    
+                                   
+                                    
+                                    
+                                    $value_taskattrs = get_post_meta( $tasksID, 'taskattrs', false);
+                                    $value_taskMWC = get_post_meta( $tasksID, 'taskMWC' , false);
+                                    $value_taskMWDDP = get_post_meta( $tasksID, 'taskMWDDP' , false);
+                                    $value_roles = get_post_meta( $tasksID, 'roles' , false);
+                                    $value_usersids = get_post_meta( $tasksID, 'usersids' , false);
+                                    $value_descrpition = get_post_meta( $tasksID, 'descrpition', false);
+                                    $value_key = get_post_meta( $tasksID, 'key', false);
+                                    $profile_field_name  = $value_key[0];
+                                    $profile_field_settings['value'] = $value_value[0];
+                                    $profile_field_settings['unique'] = $value_unique[0];
+                                    $profile_field_settings['class'] =$value_class[0];
+                                    $profile_field_settings['after'] =$value_after[0];
+                                    $profile_field_settings['required'] =$value_required[0];
+                                    $profile_field_settings['allow_tags'] =$value_allow_tags[0];
+                                    $profile_field_settings['add_to_profile'] =$value_add_to_profile[0];
+                                    $profile_field_settings['allow_multi'] =$value_allow_multi[0];
+                                    $profile_field_settings['label'] =$value_label[0];
+                                    $profile_field_settings['type'] =$value_type[0];
+                                    $profile_field_settings['lin_url'] =$value_lin_url[0];
+                                    $profile_field_settings['linkname'] =$value_linkname[0];
+                                    $profile_field_settings['attrs'] =$value_attr[0];
+                                    $profile_field_settings['taskattrs'] =$value_taskattrs[0];
+                                    $profile_field_settings['taskMWC'] =$value_taskMWC[0];
+                                    $profile_field_settings['taskMWDDP'] =$value_taskMWDDP[0];
+                                    $profile_field_settings['roles'] =$value_roles[0];
+                                    $profile_field_settings['usersids'] =$value_usersids[0];
+                                    $profile_field_settings['descrpition'] =$value_descrpition[0];
+                                    
+                                  
+                                    
+                                    
+                                    if($profile_field_settings['type'] == "select-2"){
+                                        
+                                            $getarraysValue = get_post_meta( $tasksID, 'options', false);
+                                            
+                                            if(!empty($getarraysValue[0])){
+
+                                                
+                                                 $profile_field_settings['options'] =$getarraysValue[0];
+                                                 
+                                             }
+                                   }
+               
                
                
                
@@ -225,11 +313,11 @@
                            //$field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
                                $action_col .= $multiple . $size . $form_tag . '>' . "\n";
                            foreach ($profile_field_settings['options'] as $option => $option_settings):
-                               if (!empty($option_settings['label'])):
-                                   $action_col .= '<option value="' . stripslashes($option_settings['value']) . '"';
-                                   if ((!is_array($value) && $option_settings['value'] == $value) || (is_array($value) && in_array($option_settings['value'], $value)) || (($mode == 'register' || $mode == 'adduser') && ($option_settings['state'] == 'checked')))
+                               if (!empty($option_settings->label)):
+                                   $action_col .= '<option value="' . htmlspecialchars(stripslashes($option_settings->value)) . '"';
+                                   if ((!is_array($value) && $option_settings->value == $value) || (is_array($value) && in_array($option_settings->value, $value)) || (($mode == 'register' || $mode == 'adduser') && ($option_settings->state == 'checked')))
                                        $action_col .= ' selected="selected"';
-                                   $action_col .= '>' . stripslashes($option_settings['label']) . '</option>';
+                                   $action_col .= '>' . stripslashes($option_settings->label) . '</option>';
         
                                endif;
                            endforeach;

@@ -12,6 +12,7 @@ if(!empty($_GET['filename'])){
     
 $file_name = str_replace('"', '', $_GET['filename']);
 $zip_folder_name=$_GET['zipname'];
+$cname=$_GET['cname'];
 //echo '<pre>';
 //print_r($files);
 
@@ -33,7 +34,7 @@ $zip->open($tmp_file, ZipArchive::CREATE);
    
     $download_file = file_get_contents($file_name);
     #add it to the zip
-    $zip->addFromString(basename($file_name),$download_file);
+    $zip->addFromString($cname.'_'.basename($file_name),$download_file);
 
 # close zip
 $zip->close();

@@ -16,11 +16,11 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
     ?>
     <!--    order-reporting jQuery Querybuilder css-->
-    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap-select.min.css?v=2.17">
-    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/awesome-bootstrap-checkbox.css?v=2.17">
-    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap-slider.min.css?v=2.17">
-    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/selectize.bootstrap3.css?v=2.17">
-    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/query-builder.default.css?v=2.17">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap-select.min.css?v=2.18">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/awesome-bootstrap-checkbox.css?v=2.18">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap-slider.min.css?v=2.18">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/selectize.bootstrap3.css?v=2.18">
+    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/query-builder.default.css?v=2.18">
     
 
 
@@ -72,7 +72,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     <a class="nav-link" href="#tabs-1-tab-2" role="tab" data-toggle="tab">
                                         <span class="nav-link-in">
                                             <i class="fa fa-filter"></i>
-                                            Define Report
+                                            Customize Report
                                         </span>
                                     </a>
                                 </li>
@@ -95,7 +95,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 									
                                                                     <select style="width:100%;height:38px;"class="form-control" onchange="loadorderreport('')" id="loadorderreport">
                                                                             <option disabled selected hidden>Load a Report</option>
-                                                                            <option value="defult"></option>
+                                                                           
                                                                             <option value="defult">Save Current Template As</option>
                                                                             <optgroup label="Saved Templates" id="loadorderreportlist">
 
@@ -200,7 +200,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
                                                     <select style="width:100%;height:38px;" class="form-control" onchange="customeloadorderreport()" id="customeloadorderreport">
                                                         <option disabled selected hidden>Load a Report</option>
-                                                        <option value="defult"></option>
+                                                        <option value="" selected="selected">All Orders</option>
                                                              <?php
                                                                                 foreach ($order_reportsaved_list as $key => $value) {
                                                                                       if(isset($_GET['orderreport'])){
@@ -218,6 +218,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                                                    
                                                                                 }
                                                                 ?>
+                                                       
                                                     </select>
                                                 </fieldset>
                                             </div>
@@ -328,16 +329,18 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
      if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
     ?>
     
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-select.js?v=2.17"></script>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootbox.js?v=2.17"></script>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-slider.min.js?v=2.17"></script>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/selectize.min.js?v=2.17"></script>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jQuery.extendext.min.js?v=2.17"></script>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/sql-parser.js?v=2.17"></script>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/doT.js?v=2.17"></script>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/interact.js?v=2.17"></script>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/query-builder.js?v=2.17"></script>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/product-order-report.js?v=2.20"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-select.js?v=2.18"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootbox.js?v=2.18"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-slider.min.js?v=2.18"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/selectize.min.js?v=2.18"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jQuery.extendext.min.js?v=2.18"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/sql-parser.js?v=2.18"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/doT.js?v=2.18"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/interact.js?v=2.18"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/query-builder.js?v=2.18"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/product-order-report.js?v=2.23"></script>
+    
+    
    <?php
      }
 } else {

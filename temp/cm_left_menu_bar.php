@@ -6,7 +6,18 @@ get_currentuserinfo();
 $oldvalues = get_option( 'ContenteManager_Settings' );
 
 $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
+$expogeniefloorplanstatus = $oldvalues['ContentManager']['expogeniefloorplan'];
+$autoreviewstatus = $oldvalues['ContentManager']['boothpurchasestatus'];
 
+
+
+$site_url  = get_site_url();
+$blog_title = get_bloginfo( 'name' );
+$user_id = get_current_user_id();
+
+$user_blogs = get_blogs_of_user( $user_id );
+
+$blog_id2 = get_current_blog_id();
 
 
 ?>
@@ -55,34 +66,84 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
 	                <div class="mobile-menu-right-overlay"></div>
 	                <div class="site-header-collapsed">
 	                    <div class="site-header-collapsed-in">
-                               
+                              
                                 <div class="dropdown" style="margin-top: 10px;">
                                     <button class="btn btn-rounded dropdown-toggle" id="dd-header-add" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Admin
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dd-header-add">
-                                        <a class="dropdown-item" href="/add-content-manager-user/">
+                                        <a class="dropdown-item" href="<?php echo $site_url; ?>/add-content-manager-user/">
                                             <i class="font-icon fa fa-user-md"></i>
                                             <span class="lbl">Add New Admin</span>
                                         </a>
-                                        <a class="dropdown-item" href="/admin-settings/">
+                                        <a class="dropdown-item" href="<?php echo $site_url; ?>/admin-settings/">
                                             <i class="font-icon fa fa-gears"></i>
                                             <span class="lbl">Settings</span>
                                         </a>
-                                        <a class="dropdown-item" href="/change-password/">
+                                        <a class="dropdown-item" href="<?php echo $site_url; ?>/sync-to-floorplan/">
+                                            <i class="font-icon fa fa-refresh"></i>
+                                            <span class="lbl">Sync to ConvoMaps</span>
+                                        </a>
+                                        <a class="dropdown-item" href="<?php echo $site_url; ?>/change-password/">
                                             <i class="font-icon fa fa-lock"></i>
                                             <span class="lbl">Change Password</span>
                                         </a>
-                                        <a class="dropdown-item" href="/logout/">
+                                        <div class="dropdown-divider"></div>
+                                        
+                                        <a class="dropdown-item" href="<?php echo $site_url; ?>/logout/">
                                             <i class="font-icon fa fa-sign-out"></i>
                                             <span class="lbl">LogOut</span>
                                         </a>
                                         
                                     </div>
                                 </div>
+                                 <div class="dropdown" style="margin-top: 10px;margin-right: 2%;">
+                                    <button  class="btn btn-rounded dropdown-toggle" id="dd-header-add" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Sites
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dd-header-add">
+                                        
+                                        <div class="dropdown-header">Switch Site</div>
+                                        
+                                        <?php 
+                                        
+                                        
+                                       
+                                        
+                                        foreach ($user_blogs as $blog_id) { 
+                                            
+                                            $sitename = $blog_id->blogname;
+                                             if($blog_id->userblog_id != 1){
+                                                 
+                                               echo '<a class="dropdown-item" href="'.$blog_id->siteurl.'/dashboard/"><i class="font-icon fa fa-globe"></i><span class="lbl">'.$sitename.'</span></a>';
                                 
+                                               
+                                             }
+                                        }
+                                        ?> 
+                                        
+                                        
+                                       
+                                    </div>
+                                </div>
+                                
+    
+    
+   
+    
+                                <div class="dropdown" style="margin-top: 10px;margin-right: 2%;">
+                                    <button  class="btn btn-rounded " id="btn-help" onclick="embadhelpvidoe()" type="button" style="width: 150px;height: 30px;padding: 0 12px; font-size: .8125rem;line-height: 28px;">
+                                        <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;Help 
+                                    </button>
+                                    
+                                </div>
 	                        <div class="help-dropdown">
-	                           <h2 style="color:#000;margin-top: 5px;" id="sitename"></h2>
+                                    <h6 style="color:#000;margin-top: 17px;font-weight: bolder;" >
+                                        
+                                        
+                                        <a style="color:#000;" href="<?php echo $site_url; ?>" target="_blank"><?php echo $blog_title;?></a>
+                                        
+                                    </h6>
 	                           
 	                        </div><!--.help-dropdown-->
 	                     
@@ -109,7 +170,7 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
                 
                 
             <li class="mythemestyle">
-	            <a href="/dashboard/">
+	            <a href="<?php echo $site_url; ?>/dashboard/">
 	               
                         <i style="color:#004598 !important;" class="font-icon fa fa-dashboard"></i>
 	                <span class="lbl">Dashboard</span>
@@ -122,14 +183,14 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
 	            </span>
 	            <ul class="mynav">
 	                <li class="mythemestyle">
-                             <a href="/user-report-result/">
+                             <a href="<?php echo $site_url; ?>/user-report-result/">
                                <span class="glyphicon glyphicon-th"></span>
 	                       <span class="lbl menumargine">User Report</span>
                             </a>
                             
                         </li>
 	            <li class="mythemestyle">
-	                <a href="/order-report/">
+	                <a href="<?php echo $site_url; ?>/order-report/">
 	                   <i class="font-icon fa fa-shopping-cart"></i>
 	                    <span class="lbl menumargine">Orders Report</span>
 	                </a>
@@ -145,30 +206,25 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
 	            <ul class="mynav">
 	               
 	            <li class="mythemestyle">
-                           <a href="/create-user/">
+                           <a href="<?php echo $site_url; ?>/create-user/">
                                <i class="font-icon fa fa-user-plus"></i>
-	                    <span class="lbl menumargine">New User</span>
+	                    <span class="lbl menumargine">Add New User</span>
                             </a>
                             
                    </li>
                      
                        
                          <li class="mythemestyle">
-                            <a href="/bulk-import-user/">
+                            <a href="<?php echo $site_url; ?>/bulk-import-user/">
 	                   <i class="font-icon fa fa-upload"></i>
 	                    <span class="lbl menumargine">Bulk Import Users</span>
 	                </a>
                         </li>
-                            <li class="mythemestyle">
-	                <a href="/sync-to-floorplan/">
-	                  <i class="font-icon fa fa-refresh"></i>
-	                    <span class="lbl menumargine">Sync To Floorplan</span>
-	                </a>
-	            </li> 
+                           
                      <li class="mythemestyle">
-	                <a href="/review-registration/">
+	                <a href="<?php echo $site_url; ?>/review-registration/">
 	                  <i class="font-icon fa fa-eye"></i>
-	                    <span class="lbl menumargine">Review Registrations</span>
+	                    <span class="lbl menumargine">Review Applicants</span>
 	                </a>
 	            </li> 
                     
@@ -182,39 +238,43 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
 	            </span>
                     <ul class="mynav">
                        <li class="mythemestyle"> 
-	                <a href="/welcome-email/">
+	                <a href="<?php echo $site_url; ?>/welcome-email/">
 	                   <i class="font-icon fa fa-envelope"></i>
 	                    <span class="lbl menumargine">Welcome Email</span>
 	                </a>
 	            </li>
 	            <li class="mythemestyle">
-	                <a href="/content-editor/">
+	                <a href="<?php echo $site_url; ?>/content-editor/">
 	                   <i class="font-icon fa fa-pencil"></i>
 	                    <span class="lbl menumargine">Content Editor</span>
 	                </a>
-	            </li> 
+	            </li>
+<!--                    <a href="<?php //echo $site_url; ?>/admin-settings/">
+	                  <i class="font-icon fa fa-gears"></i>
+	                    <span class="lbl menumargine">Header Image</span>
+	                </a>-->
                     </ul>
                 </li>
                 <li class="mythemestyle with-sub">
 	            <span>
 	                 <i style="color:#004598 !important;" class="font-icon fa fa-plus-square"></i>
-	                <span class="lbl">Tasks</span>
+	                <span class="lbl">Levels & Tasks</span>
 	            </span>
                     <ul class="mynav">
                         <li class="mythemestyle"> 
-	                <a href="/bulk-edit-task/">
+	                <a href="<?php echo $site_url; ?>/bulk-edit-task/">
 	                   <i class="font-icon fa fa-tasks"></i>
 	                    <span class="lbl menumargine">Manage Tasks</span>
 	                </a>
 	            </li>
 	           <li class="mythemestyle">
-	                <a href="/add-new-level/">
+	                <a href="<?php echo $site_url; ?>/add-new-level/">
 	                  <i class="font-icon fa fa-bars"></i>
 	                    <span class="lbl menumargine">Manage Levels</span>
 	                </a>
 	           </li>
                    <li class="mythemestyle">
-                            <a href="/bulk-download-files/">
+                            <a href="<?php echo $site_url; ?>/bulk-download-files/">
                                 <i class="font-icon fa fa-download"></i>
                                 <span class="lbl menumargine">Bulk Download</span>
                             </a>
@@ -230,31 +290,75 @@ $logo_imag = $oldvalues['ContentManager']['adminsitelogo'];
                     <ul class="mynav">
                        
 	            <li class="mythemestyle"> 
-	                <a href="/all-resources/">
+	                <a href="<?php echo $site_url; ?>/all-resources/">
 	                   <i class="font-icon fa fa-files-o"></i>
 	                    <span class="lbl menumargine">Manage Resources</span>
 	                </a>
 	            </li> 
                     </ul>
                 </li>
-                   <li class="mythemestyle with-sub">
+                <li class="mythemestyle with-sub">
 	            <span>
 	                  <i style="color:#004598 !important;" class="font-icon fa fa-plus-square"></i>
 	                <span class="lbl">Shop</span>
 	            </span>
                     <ul class="mynav">
                        <li class="mythemestyle">
-	                <a href="/manage-products/">
+	                <a href="<?php echo $site_url; ?>/manage-products/">
 	                  <i class="font-icon fa fa-bars"></i>
-	                    <span class="lbl menumargine">Manage Products</span>
+	                    <span class="lbl menumargine">Manage Shop</span>
 	                </a>
                         </li>
-                       
-	            
+                        <li class="mythemestyle">
+	                <a href="<?php echo $site_url; ?>/manage-bulk-products/?productCatName=booths">
+	                  <i class="font-icon fa fa-product-hunt"></i>
+	                    <span class="lbl menumargine">Manage Booth Products</span>
+	                </a>
+                        </li>
                     </ul>
                 </li>
+             <?php if($expogeniefloorplanstatus == 'enable'){?>
+                 <li class="mythemestyle with-sub">
+	            <span>
+	                  <i style="color:#004598 !important;" class="font-icon fa fa-plus-square"></i>
+	                <span class="lbl">Floor Plan</span>
+	            </span>
+                    <ul class="mynav">
+                       
+                       <li class="mythemestyle">
+                           <a href="<?php echo $site_url; ?>/floor-plan-editor/" target="_blank">
+                                <i class="font-icon fa fa-map-o"></i>
+                                <span class="lbl menumargine">Floor Plan Editor </span><i style="color:black;left:163px;"class="fa fa-window-restore" aria-hidden="true"></i>
+                           </a>
+                      </li>
+	              <li class="mythemestyle">
+                           <a href="<?php echo $site_url; ?>/floor-plan-2/" target="_blank">
+                                <i class="font-icon fa fa-map"></i>
+                                <span class="lbl menumargine">Floor Plan Viewer </span>
+                           
+                            </a>
+                      </li>
+                     <?php if($autoreviewstatus != 'enabled'){?>  
+                     
+                      <li class="mythemestyle">
+                           <a href="<?php echo $site_url; ?>/manage-exhibitor-booths/" >
+                                <i class="font-icon fa fa-cart-arrow-down"></i>
+                                <span class="lbl menumargine">Review Booth Purchases </span>
+                           
+                            </a>
+                      </li>
+                      <?php } ?>  
+                    </ul>
+                </li>
+             <?php } ?>  
                
  </ul>
 
-	  
-	</nav><!--.side-menu-->
+</nav><!--.side-menu-->
+
+
+<?php 
+
+
+
+switch_to_blog( $blog_id2 );?>

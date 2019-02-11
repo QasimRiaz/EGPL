@@ -4,7 +4,8 @@
  var listview;
  var newfieldtask =0;
  var loadinglightbox;
-  var taskuseremaillist = [];
+ var taskuseremaillist = [];
+ var deletedtaskslist = [];
 jQuery(document).ready(function() {
   
    t = jQuery('.bulkedittask').DataTable( {
@@ -102,17 +103,17 @@ jQuery(window).load(function() {
                 that.search(' ').draw();
             
         });
-         var uniquecode  = randomString(5, 'a#');
+         var uniquecode  = randomString(5, 'a#')+"_addnewtasks";
          var tasktypedata = jQuery('.addnewtaskdata-type').html();
          var taskroledata = jQuery('.addnewtaskdata-role').html();
          var taskuseriddata = jQuery('.addnewtaskdata-userid').html();
         
-        var col1 = '<div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"><i class="hi-icon fa fa-clone saveeverything" id="'+uniquecode+'" title="Create a clone" onclick="clonebulk_task(this)" style="color:#262626;cursor: pointer;" data-toggle="tooltip" aria-hidden="true"></i> <i data-toggle="tooltip" title="Advanced" name="'+uniquecode+'" onclick="bulktasksettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i><i data-toggle="tooltip" style=" cursor: pointer;margin-left: 10px;" onclick="removebulk_task(this)" title="Remove this task" class="hi-icon fusion-li-icon fa fa-times-circle " style="color:#262626;"></i></div>';
+        var col1 = '<div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"><i class="hi-icon fa fa-clone saveeverything" id="'+uniquecode+'" title="Create a clone" onclick="clonebulk_task(this)" style="color:#262626;cursor: pointer;" data-toggle="tooltip" aria-hidden="true"></i> <i data-toggle="tooltip" title="Advanced" name="'+uniquecode+'" onclick="bulktasksettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i><i name="'+uniquecode+'" data-toggle="tooltip" style=" cursor: pointer;margin-left: 10px;" onclick="removebulk_task(this)" title="Remove this task" class="hi-icon fusion-li-icon fa fa-times-circle " style="color:#262626;"></i></div>';
         var col2 = '<input data-toggle="tooltip" placeholder="Title" title="Title" id="row-'+uniquecode+'-title" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control" name="tasklabel" >  <input type="hidden" id="row-'+uniquecode+'-key" value=""><input type="hidden" id="row-'+uniquecode+'-attribute"  value="" > <input type="hidden" id="row-'+uniquecode+'-taskMWC"  value="" ><input type="hidden" id="row-'+uniquecode+'-taskMWDDP"  value="" > ';
         var col3 = '<div class="topmarrginebulkedit"><select  data-toggle="tooltip" title="Select Type" class="select2 bulktasktypedrop" id="bulktasktype_'+uniquecode+'" data-placeholder="Select Type" data-allow-clear="true">'+tasktypedata+'</select></div><div class="bulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" ><input type="text"  class="form-control" name="linkurl" placeholder="Link URL" title="Link URL"id="row-'+uniquecode+'-linkurl" ><br><input type="text"  class="form-control" name="linkname" placeholder="Link Name" title="Link Name" id="row-'+uniquecode+'-linkname"></div><div class="dbulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" > <input type="text"  class="form-control" name="dropdownvalues" placeholder="Comma separated list of values" title="Comma separated list of values"  id="row-'+uniquecode+'-dropdownvlaues" ></div>';
         var col4 = '<input  data-toggle="tooltip" title="Due Date" placeholder="Due Date" id="row-'+uniquecode+'-duedate" style="padding-left: 13px;margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control datepicker" name="datepicker" >';
         var col5 = '<div class="addscrol topmarrginebulkedit"><select data-toggle="tooltip" class="select2" id="row-'+uniquecode+'-levels" data-placeholder="Select Levels" title="Select Levels" data-allow-clear="true"  multiple="multiple">'+taskroledata+'</select><br><select data-placeholder="Select Users" title="Select Users" id="row-'+uniquecode+'-userid" data-allow-clear="true"  class="select2" multiple="multiple">'+taskuseriddata+'</select> <br></div>';
-        var col6 = '<br><div class="addscrol"><div id="row-'+uniquecode+'-descrpition" class="edittaskdiscrpition_'+uniquecode+'"></div><p ><i class="font-icon fa fa-edit" id="taskdiscrpition_'+uniquecode+'" title="Edit your task description"style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Description</span></p></div></div>';
+        var col6 = '<br><div class="addscrol"><div id="row-'+uniquecode+'-descrpition" class="edittaskdiscrpition_'+uniquecode+'"></div><p ><i class="font-icon fa fa-edit" id="taskdiscrpition_'+uniquecode+'" title="Edit your task specifications"style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Specifications</span></p></div></div>';
                   
        t.row.add( [
             col1,
@@ -177,7 +178,7 @@ jQuery(window).load(function() {
             '<input placeholder="Task Due Date" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control datepicker" name="datepicker" value="">',
             '<input placeholder="Task Attributes" style="margin-top: 10px;margin-bottom: 10px;" name="attribure" class="form-control" id="attribure">',
             '<div class="topmarrginebulkedit"><select class="select2 special'+newfieldtask+'" data-placeholder="Select Levels" data-allow-clear="true"  multiple="multiple"><option>All</option><option>Admin</option><option>Content Manager</option><option>Gold</option><option>Sliver</option> </select><br><select data-placeholder="Select Users" data-allow-clear="true"  class="select2 special'+newfieldtask+'" multiple="multiple"><option>testuser1@gmail.com</option><option>testuser2@gmail.com</option><option>testuser4@gmail.com</option><option>testuser5@gmail.com</option> <option>testuser3@gmail.com</option></select> <br></div>',
-            '<div class=""><br><p>Upload Task Decrpition</p><p ><i title="Edit your task description" class="font-icon fa fa-edit" style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton()"></i></p></div>'
+            '<div class=""><br><p>Upload Task Decrpition</p><p ><i title="Edit your task specifications" class="font-icon fa fa-edit" style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton()"></i></p></div>'
         ] ).draw().nodes().to$().addClass("bulkaddnewtask");
         
         
@@ -197,8 +198,8 @@ jQuery(window).load(function() {
  jQuery(document).ready(function() {
     
     
-    var url = window.location.protocol + "//" + window.location.host + "/";
-    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getuseremailids';
+    var url = currentsiteurl+'/';
+     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getuseremailids';
     var data = new FormData();
     jQuery.ajax({
             url: urlnew,
@@ -217,36 +218,7 @@ jQuery(window).load(function() {
        var $myneweventSelect = jQuery(".js-example-events");
 
 
-$myneweventSelect.on("select2:open", function (e) { 
-    jQuery("body").css({'cursor':'wait'});
-    var selectedemailsids = [];
-    var id = jQuery(this).attr('id');
-    var lastdata = jQuery(this).select2('data');
-    jQuery.each(lastdata, function (optionkey, optionkeyvalue) {
 
-        selectedemailsids.push(optionkeyvalue.text);
-
-    });
-    
-    //jQuery(this).find('option').not(':selected').remove();
-    
-    jQuery.each(taskuseremaillist, function (key, value) {
-
-        var newState = new Option(value.text, value.id, false, false);
-
-        if (selectedemailsids.length > 0) {
-            if (jQuery.inArray(value.text, selectedemailsids) == -1) {
-
-                jQuery('#' + id).append(newState);
-            }
-
-        } else {
-
-            jQuery('#' + id).append(newState);
-        }
-    });
-    jQuery("body").css({'cursor':'default'});
-});
    });           
     
             
@@ -326,7 +298,7 @@ function bulktask_descripiton(e){
       
         var updatedescripiton = jQuery.confirm({
             
-        title: 'Task Description',
+        title: 'Task Specifications',
         content: '<textarea name="taskdescrpition" class="taskdescrpition"  >'+descrpition+'</textarea>',
         confirmButton: 'Update',
         cancelButton: 'Close',
@@ -393,7 +365,7 @@ function clonebulk_task(e){
             
         } );
         
-        var uniquecode  = randomString(5, 'a#');
+        var uniquecode  = randomString(5, 'a#')+"_addnewtasks";
         var currentclickid = jQuery(e).attr('id');
         var clonetask = jQuery('#'+currentclickid).parent('p').parent('td').parent('tr').addClass('clontrposition');
       
@@ -468,7 +440,7 @@ function clonebulk_task(e){
    }                                  
                                     
  function removebulk_task(e){
-     
+     var productID = jQuery(e).attr("name");
       swal({
             title: "Are you sure?",
             text: 'Click confirm to delete this Task. Deleting a task will delete the data already submitted by users.',
@@ -486,6 +458,9 @@ function clonebulk_task(e){
            
             if (isConfirm) {
                  t.row( jQuery(e).parents('tr') ).remove().draw();
+                 
+                 deletedtaskslist.push(productID);
+                 
                 swal({
                     title: "Deleted!",
                     text: "Task removed. It will be deleted when you save changes.",
@@ -574,6 +549,7 @@ function saveallbulktask(){
     var taskdataupdate = {};
     var requeststatus = 'stop';
     var errormsg= "";
+    var titlemsg = "";
     var specialcharacterstatus = false;
     if(t.rows().data()['length'] == 0 ){
         var requeststatus = 'update';
@@ -636,6 +612,7 @@ function saveallbulktask(){
         singletaskarray['roles'] = jQuery( '#row-'+taskid+'-levels' ).val();
         singletaskarray['usersids'] = jQuery( '#row-'+taskid+'-userid' ).val();
         singletaskarray['descrpition'] = jQuery( '#row-'+taskid+'-descrpition' ).html();
+        singletaskarray['key'] = uniqueKey;
         
         
           //task action array 
@@ -658,14 +635,15 @@ function saveallbulktask(){
            
        }
      
-      taskdataupdate[uniqueKey]=singletaskarray
+      taskdataupdate[taskid]=singletaskarray;
   }else{
          
          
          jQuery('#'+taskid).parent('div').parent('td').parent('tr').addClass('emptyfielderror');
        
          requeststatus = 'stop';
-         errormsg = 'Invalid characters used in task title(s). Please remove and try again.';
+         errormsg = "Uh-oh, looks like you're using special characters (i.e. '&', ',', etc) that Task titles don't support. Please remove any special characters from the title and try again.";
+         titlemsg = 'Unsupported Characters';
          return false;
      }
      
@@ -675,6 +653,7 @@ function saveallbulktask(){
          jQuery('#'+taskid).parent('div').parent('td').parent('tr').addClass('emptyfielderror');
        
          requeststatus = 'stop';
+         titlemsg = 'Error';
          errormsg = 'Some required fields are empty.';
          return false;
      }
@@ -686,11 +665,12 @@ function saveallbulktask(){
    
     
  if(requeststatus == 'update'){ 
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/taskmanager.php?createnewtask=savebulktask';
     var data = new FormData();
      console.log(taskdataupdate);
     data.append('bulktaskdata',   JSON.stringify(taskdataupdate));
+    data.append('deletedtaskslist',   JSON.stringify(deletedtaskslist));
     
     jQuery.ajax({
             url: urlnew,
@@ -710,8 +690,8 @@ function saveallbulktask(){
                 },
         function(isConfirm) {
             jQuery("body").css({'cursor':'wait'});
-            
-             document.location.href = '/dashboard'
+            location.reload();
+            // document.location.href = currentsiteurl+'/dashboard'
         });
                 
                 
@@ -728,9 +708,9 @@ function saveallbulktask(){
     }else{
         jQuery('body').css('cursor', 'default');
         swal({
-            title: "Error",
-	    text: errormsg,
-            type: "error",
+            title:titlemsg,
+	    text:errormsg,
+            type:"warning",
 	    confirmButtonClass: "btn-danger",
 	    confirmButtonText: "Ok"
 	}

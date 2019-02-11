@@ -1,7 +1,10 @@
 <?php // Template Name: Landing 
 
 if ( is_user_logged_in() ) {
-	 wp_redirect( '/home/'); exit;
+        
+   
+    
+	 wp_redirect( get_site_url().'/home/'); exit;
          
 } else {
 

@@ -78,7 +78,7 @@ function reportload(reportname){
  console.log(usertimezone);
  jQuery("body").css({'cursor':'wait'});
  var data = new FormData();
- var url = window.location.protocol + "//" + window.location.host + "/";
+ var url = currentsiteurl+'/';
         
        var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getReportsdatanew';
         data.append('reportName', reportname);
@@ -422,7 +422,7 @@ function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
     //Initialize file format you want csv or xls
     var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
     
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/exportdatefiledownload.php';
   //  jQuery( "body" ).append( '<a href="'+'" title="Get some foo!" id="foo">Show me some foo</a>' );
   //  jQuery.post( urlnew );
@@ -562,7 +562,7 @@ function get_all_files() {
 
         
     var data = new FormData();
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=get_all_file_urls';
     data.append('colvalue', colvalue);
     
@@ -709,7 +709,7 @@ function removeTemplateReport(saveReportName){
 
 
     var data = new FormData();
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=remove_save_report_template';
     data.append('savereportname', saveReportName);
     

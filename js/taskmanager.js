@@ -21,7 +21,7 @@ function create_sponsor_task() {
 
 
     jQuery("body").css("cursor", "progress");
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var key = jQuery('#newtaskkey').val();
     
     var preappend = key.replace(/\s+/g, '_');
@@ -132,7 +132,7 @@ function create_sponsor_task_data() {
     data.append('linkurl', linkUrl);
     data.append('linkname', linkName);
     data.append('addational_attr', taskAddationalAttr);
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/taskmanager.php?createnewtask=create_new_task';
 
 
@@ -240,7 +240,7 @@ function sponsor_task_update() {
     data.append('linkurl', linkUrl);
     data.append('linkname', linkName);
     data.append('addational_attr', taskAddationalAttr);
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/taskmanager.php?createnewtask=create_new_task';
 
 
@@ -334,7 +334,7 @@ function get_edit_sponsor_task_date() {
 
 
     jQuery("body").css("cursor", "progress");
-    var url = window.location.protocol + "//" + window.location.host + "/";
+    var url = currentsiteurl+'/';
     var key = jQuery('#updateTaskKey option:selected').val();
    
     jQuery("#slectedKeyValue").val(key);
@@ -486,7 +486,7 @@ function removeTask(){
 function conformRemoveSponsorTask(){
    jQuery("body").css("cursor", "progress");
    var uniqueKey = jQuery("#updateTaskKey option:selected").val();
-   var url = window.location.protocol + "//" + window.location.host + "/";
+   var url = currentsiteurl+'/';
    var urlnew = url + 'wp-content/plugins/EGPL/taskmanager.php?createnewtask=removeTaskData';
    var data = new FormData();
    data.append('uniqueKey', uniqueKey);
