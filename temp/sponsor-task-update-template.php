@@ -50,7 +50,17 @@
         currentsiteurl = '<?php echo $site_url;?>';
         
         
-    </script>       
+    </script>  
+ <style>
+        .content{
+            
+            
+            font-size: 18px !important;
+            color:#fff !important;
+            padding:0px !important;
+        }
+        
+    </style>   
 <div id="content" class="full-width">
 
         <div id="sponsor-status"></div>
