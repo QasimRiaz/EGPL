@@ -117,7 +117,7 @@
                             
                             
                         }
-                        update_post_meta( $tasksID, 'options', $taskObject['options'] );
+                        update_post_meta( $tasksID, 'options', $options );
                     }else{
                         update_post_meta( $tasksID, 'options', "" );
                     }
