@@ -90,10 +90,41 @@
                     update_post_meta( $tasksID, 'taskMWC', $taskObject['taskMWC'] );
                     update_post_meta( $tasksID, 'taskMWDDP', $taskObject['taskMWDDP'] );
                     update_post_meta( $tasksID, 'roles', $taskObject['roles'] );
-                    update_post_meta( $tasksID, 'usersids', $taskObject['usersids'] );
+                    update_post_meta( $tasksID, 'SystemTask', 0 );
+                    
+                    if(!empty($taskObject['usersids'])){
+                        
+                        
+                        foreach ($taskObject['usersids'] as $userkey=>$userIndex){
+                            
+                             $newuserarray[]=$userIndex;
+                            
+                            
+                        }
+                        
+                        
+                        update_post_meta( $tasksID, 'usersids', $newuserarray );
+                    }else{
+                        update_post_meta( $tasksID, 'usersids', "" );
+                    }
+                    
+                    if(!empty($taskObject['options'])){
+                         foreach ($taskObject['options'] as $userkeyoptions=>$userIndexoptions){
+                            
+                             $options[]['label']=$userIndexoptions;
+                             $options[]['value']=$userIndexoptions;
+                             $options[]['state']=$userIndexoptions;
+                            
+                            
+                        }
+                        update_post_meta( $tasksID, 'options', $taskObject['options'] );
+                    }else{
+                        update_post_meta( $tasksID, 'options', "" );
+                    }
+                    
                     update_post_meta( $tasksID, 'descrpition', $taskObject['descrpition'] );
-                    update_post_meta( $tasksID, 'key', $taskObject['key'] );
-                    update_post_meta( $tasksID, 'options', $taskObject['options'] );
+                    update_post_meta( $tasksID, 'key', $taskKey );
+                    
                     
                     
                    $counter++;
