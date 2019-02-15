@@ -3,16 +3,17 @@
 
 /**
  * Plugin Name:       EGPL
- * Plugin URI:        https://github.com/QasimRiaz/MultisiteEGPL
+ * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           1.00
+ * Version:           3.09
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
  * Network:           true
- * GitHub Plugin URI: https://github.com/QasimRiaz/MultisiteEGPL
- * Requires WP:       4.0
- * Requires PHP:      5.3
+ * GitHub Plugin URI: https://github.com/QasimRiaz/EGPL
+ * Requires WP:       5.0.3
+ * Requires PHP:      7.2
+ * Date 11/02/2019
  */
 
 //get all the plugin settings
@@ -156,14 +157,14 @@ if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {
         
       $data_array['requestcount'] =  $requestcount;
       
-      contentmanagerlogging_file_upload ($lastInsertId,$result); 
+      contentmanagerlogging_file_upload ($lastInsertId,serialize($result)); 
       echo json_encode($data_array);
       die();
         
         
     }catch (Exception $e) {
        
-        contentmanagerlogging_file_upload ($lastInsertId,$e);
+      contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
     }
@@ -193,7 +194,7 @@ if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {
         
     }catch (Exception $e) {
        
-        contentmanagerlogging_file_upload ($lastInsertId,$e);
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
     }
@@ -208,7 +209,7 @@ if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {
     $t=time();
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);  
-    $lastInsertId = contentmanagerlogging('New Admin User',"Admin Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('New Admin User',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
       
     $username = str_replace("+","",$_POST['username']);
     
@@ -301,11 +302,11 @@ if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {
     
     $loggin_data['msg']=$message['msg'];
     
-    contentmanagerlogging_file_upload ($lastInsertId,$loggin_data);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($loggin_data));
     echo json_encode($message);
     }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -316,8 +317,8 @@ if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {
     
     require_once('../../../wp-load.php');
     
-    $test = 'custome_task_manager_data';
-    $result = get_option($test);
+    //$test = 'custome_task_manager_data';
+    //$result = get_option($test);
     
     
     $additional_fields_settings_key = 'EGPL_Settings_Additionalfield';
@@ -343,18 +344,18 @@ if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {
    
     
     $bodytext_id = 'welcomebodytext';
-    if(!empty($result['custom_meta'])){
-    foreach($result['custom_meta'] as $key=>$value){
-      
-      if (preg_match('/task/',$key)){
-          
-      }else{
-     
-        $keys_string[]= $key; 
-      }
-      
-    }
-   }
+//    if(!empty($result['custom_meta'])){
+//    foreach($result['custom_meta'] as $key=>$value){
+//      
+//      if (preg_match('/task/',$key)){
+//          
+//      }else{
+//     
+//        $keys_string[]= $key; 
+//      }
+//      
+//    }
+//   }
     
  // echo '<pre>';
  // print_r( $result['sort_order'] );
@@ -505,12 +506,12 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
      
      $user_ID = get_current_user_id();
      $user_info = get_userdata($user_ID);
-     $lastInsertId = contentmanagerlogging('Delete Resource',"Admin Action",$large_image_url,$postid,$user_info->user_email,"pre_action_data");
+     $lastInsertId = contentmanagerlogging('Delete Resource',"Admin Action",serialize($large_image_url),$postid,$user_info->user_email,"pre_action_data");
      $result = remove_post_resource($post_id);
-     contentmanagerlogging_file_upload ($lastInsertId,$result);
+     contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
     }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -531,7 +532,7 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
        
      $user_ID = get_current_user_id();
      $user_info = get_userdata($user_ID); 
-     $lastInsertId = contentmanagerlogging('Admin Edits User',"User Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+     $lastInsertId = contentmanagerlogging('Admin Edits User',"User Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
        
     $userid=$_POST['sponsorid'];
     $password=$_POST['password'];
@@ -564,7 +565,7 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
        $userexhibitor_id = get_user_option('exhibitor_map_dynamics_ID',  $userid); 
        if(!empty($mapapikey) && !empty($mapsecretkey)){
           
-        $request_for_sync_map_dynamics = contentmanagerlogging('Sync to map dynamics update',"Admin Action",$data_array,$user_ID,$user_info->user_email,"pre_action_data");
+        $request_for_sync_map_dynamics = contentmanagerlogging('Sync to map dynamics update',"Admin Action",serialize($data_array),$user_ID,$user_info->user_email,"pre_action_data");
         
         if(!empty($userexhibitor_id)){
             $data_array=array(
@@ -591,7 +592,7 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
             $result = insert_exhibitor_map_dynamics($data_array) ;
             
         }
-        contentmanagerlogging_file_upload ($request_for_sync_map_dynamics,$result);
+        contentmanagerlogging_file_upload ($request_for_sync_map_dynamics,serialize($result));
        
         
         
@@ -616,11 +617,11 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
        }
        $result =  add_new_sponsor_metafields($userid,$meta_array,$role);
        $message['mapdynamicsstatus'] = $mapdynamicsstatus;
-       contentmanagerlogging_file_upload ($lastInsertId,$result);
+       contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
        echo json_encode($message);
    }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -633,7 +634,7 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
     
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);  
-        $lastInsertId = contentmanagerlogging('New User',"Admin Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+        $lastInsertId = contentmanagerlogging('New User',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
       
         $username = str_replace("+","",$_POST['username']);
         $email = $_POST['email'];
@@ -685,9 +686,9 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
               
           ) ;
           
-        $request_for_sync_map_dynamics = contentmanagerlogging('Sync to map dynamics',"Admin Action",$data_array,$user_ID,$user_info->user_email,"pre_action_data");
+        $request_for_sync_map_dynamics = contentmanagerlogging('Sync to map dynamics',"Admin Action",serialize($data_array),$user_ID,$user_info->user_email,"pre_action_data");
         $result = insert_exhibitor_map_dynamics($data_array) ;
-        contentmanagerlogging_file_upload ($request_for_sync_map_dynamics,$result);
+        contentmanagerlogging_file_upload ($request_for_sync_map_dynamics,serialize($result));
        
         if($result->status == 'success'){
             
@@ -768,9 +769,9 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
 
                         ) ;
           
-                    $request_for_sync_map_dynamics = contentmanagerlogging('Sync to map dynamics',"Admin Action",$data_array,$user_ID,$user_info->user_email,"pre_action_data");
+                    $request_for_sync_map_dynamics = contentmanagerlogging('Sync to map dynamics',"Admin Action",serialize($data_array),$user_ID,$user_info->user_email,"pre_action_data");
                     $result = insert_exhibitor_map_dynamics($data_array) ;
-                    contentmanagerlogging_file_upload ($request_for_sync_map_dynamics,$result);
+                    contentmanagerlogging_file_upload ($request_for_sync_map_dynamics,serialize($result));
        
                     if($result->status == 'success'){
 
@@ -808,11 +809,11 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
    
     $loggin_data['msg']=$message['msg'];
     $message['mapdynamicsstatus'] = $mapdynamicsstatus;
-    contentmanagerlogging_file_upload ($lastInsertId,$loggin_data);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($loggin_data));
     echo json_encode($message);
     }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -826,7 +827,7 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
       
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
-    $lastInsertId = contentmanagerlogging('New Resource',"Admin Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('New Resource',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
       
     $title=$_POST['title'];
     $file=$_FILES['file'];
@@ -840,11 +841,11 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
      $result = resource_new_post($title,$resourceurl);
     }
     echo   json_encode($resourceurl);
-    contentmanagerlogging('New Resource',"Admin Action",$loggin_data,$user_ID,$user_info->user_email,$result);
-    contentmanagerlogging_file_upload ($lastInsertId,$loggin_data);   
+    contentmanagerlogging('New Resource',"Admin Action",serialize($loggin_data),$user_ID,$user_info->user_email,$result);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($loggin_data));   
   }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -855,17 +856,17 @@ if ($_GET['contentManagerRequest'] == 'changepassword') {
       
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
-    $lastInsertId = contentmanagerlogging('Load Report',"Admin Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Load Report',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
     $report_name=$_POST['reportName'];
     $usertimezone=intval($_POST['usertimezone']);
     getReportsdatanew($report_name,$usertimezone); 
     $result='Report Loaded';
     
-    contentmanagerlogging_file_upload ($lastInsertId,$result);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
     
     }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -1219,7 +1220,7 @@ try {
    
     // exit;
        
-    $lastInsertId = contentmanagerlogging('Welcome Email',"Admin Action",$message,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Welcome Email',"Admin Action",serialize($message),$user_ID,$user_info->user_email,"pre_action_data");
      
     $async = false;
     $ip_pool = 'Main Pool';
@@ -1227,7 +1228,7 @@ try {
     $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at);
     
    
-    contentmanagerlogging_file_upload($lastInsertId,$result);
+    contentmanagerlogging_file_upload($lastInsertId,serialize($result));
     echo json_encode('successfully send');
    
     
@@ -1442,13 +1443,13 @@ try {
    
     // exit;
        
-    $lastInsertId = contentmanagerlogging('Bulk Email',"Admin Action",$message,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Bulk Email',"Admin Action",serialize($message),$user_ID,$user_info->user_email,"pre_action_data");
      
     $async = false;
     $ip_pool = 'Main Pool';
    // $send_at = 'example send_at';
     $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at);
-    contentmanagerlogging_file_upload($lastInsertId,$result);
+    contentmanagerlogging_file_upload($lastInsertId,serialize($result));
     echo 'successfully send';
    
     
@@ -1472,7 +1473,7 @@ try {
           global $wpdb;  
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
-    $lastInsertId = contentmanagerlogging('Admin Test Email',"Admin Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Admin Test Email',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
     $site_prefix = $wpdb->get_blog_prefix();
      
         
@@ -1536,12 +1537,12 @@ try {
 
     
    
-     //contentmanagerlogging('Admin Test Email',"Admin Action",$_POST),$user_ID,$user_info->user_email,$result);
-      contentmanagerlogging_file_upload ($lastInsertId,$result);
+     //contentmanagerlogging('Admin Test Email',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,$result);
+      contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
     }
     catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -1560,7 +1561,7 @@ try {
     
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
-   $lastInsertId = contentmanagerlogging('Admin Test Email Welcome',"Admin Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+   $lastInsertId = contentmanagerlogging('Admin Test Email Welcome',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
       
     
     
@@ -1664,11 +1665,11 @@ try {
 
     
    
-      contentmanagerlogging_file_upload ($lastInsertId,$result);
+      contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
     }
     catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -1715,7 +1716,7 @@ try {
     try{
        $user_ID = get_current_user_id();
           $user_info = get_userdata($user_ID); 
-       $lastInsertId = contentmanagerlogging('Remove Email Template',"Admin Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+       $lastInsertId = contentmanagerlogging('Remove Email Template',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
        
     $report_name =$_POST['emailtemplatename'];
     $settitng_key='AR_Contentmanager_Email_Template';
@@ -1739,10 +1740,10 @@ try {
     echo   json_encode($lis);
     $update_list['new_update_list_after_remove']=$lis;
     
-    contentmanagerlogging_file_upload ($lastInsertId,$update_list);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($update_list));
     }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -1756,7 +1757,7 @@ try {
    try{ 
        $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
-       $lastInsertId = contentmanagerlogging('Welcome Email Template',"Admin Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+       $lastInsertId = contentmanagerlogging('Welcome Email Template',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
        
     $welcome_subject =$_POST['welcomeemailSubject'];
     $welcome_body =$_POST['welcomeemailBody'];
@@ -1777,11 +1778,11 @@ try {
      //contentmanagerlogging('Welcome Email Template',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,$result);
     
     $result= update_option($settitng_key, $sponsor_info);
-    contentmanagerlogging_file_upload ($lastInsertId,$result);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
     
    } catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -1798,7 +1799,7 @@ try {
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
       
-     $lastInsertId = contentmanagerlogging('Remove Report Template',"Admin Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+     $lastInsertId = contentmanagerlogging('Remove Report Template',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
        
     unset($report_data[$savereport_name]);
     
@@ -1808,11 +1809,11 @@ try {
     echo   json_encode($get_new_report_data);
 
    // $result['new_report_data']=$get_new_report_data;
-    contentmanagerlogging_file_upload ($lastInsertId,$get_new_report_data);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($get_new_report_data));
     
     }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -1832,7 +1833,7 @@ try {
     
      $user_ID = get_current_user_id();
      $user_info = get_userdata($user_ID);
-     $lastInsertId = contentmanagerlogging('Add New Role',"Admin Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+     $lastInsertId = contentmanagerlogging('Add New Role',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
      $role_key=strtolower($newrolename);
      $remove_space_role_kye=str_replace(" ","_",$role_key);
      
@@ -1879,11 +1880,11 @@ try {
         
        }
     echo   json_encode($msg);
-    contentmanagerlogging_file_upload ($lastInsertId,$result);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
     
     }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
          return $e;
  }
  
@@ -1899,7 +1900,7 @@ try {
     
      $user_ID = get_current_user_id();
      $user_info = get_userdata($user_ID);
-     $lastInsertId = contentmanagerlogging('Create new Clone',"Admin Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+     $lastInsertId = contentmanagerlogging('Create new Clone',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
      if (is_multisite()) {
                 $blog_id = get_current_blog_id();
                 $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
@@ -1921,14 +1922,28 @@ try {
      
      if (!empty($result)) {
         $msg['msg'] = 'New Level created';
-        $test = 'custome_task_manager_data';
-        $assign_new_role = get_option($test);
+        
+        
+        $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+        );
+        $assign_new_role = get_posts( $args );
+        
+        
+       
      
-           foreach($assign_new_role['profile_fields'] as $profile_field_name => $profile_field_settings) {
+           foreach($assign_new_role as $taskIndex => $tasksObject) {
                
-               
-                   if(in_array($clonelevelkey,$assign_new_role['profile_fields'][$profile_field_name]['roles'])){
-                        array_push($assign_new_role['profile_fields'][$profile_field_name]['roles'],$new_remove_space_role_kye);
+                   $tasksID = $tasksObject->ID;
+                   $value_roles = get_post_meta( $tasksID, 'roles' , false);
+                   if(in_array($clonelevelkey,$value_roles[0])){
+                        array_push($value_roles[0],$new_remove_space_role_kye);
+                        update_post_meta( $tasksID, 'roles' , $value_roles[0]);
                    }
              
                
@@ -1936,18 +1951,18 @@ try {
             //echo $key;
             
        
-      $taskarray_update = update_option($test, $assign_new_role);
+     // $taskarray_update = update_option($test, $assign_new_role);
      }
       else {
         
         $msg['msg'] = ucfirst($newrolename).' Level already exists.';
        }
      echo   json_encode($msg);
-    contentmanagerlogging_file_upload ($lastInsertId,$result);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
     
     }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
          return $e;
  }
     die(); 
@@ -1962,7 +1977,7 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
      $remove_role_name =$_POST['rolename'];
      $user_ID = get_current_user_id();
      $user_info = get_userdata($user_ID);
-     $lastInsertId = contentmanagerlogging('Remove Level',"Admin Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+     $lastInsertId = contentmanagerlogging('Remove Level',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
      if (is_multisite()) {
                 $blog_id = get_current_blog_id();
                 $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
@@ -1979,11 +1994,11 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
     $msg['msg'] = 'Level Removed Successfuly.';
      
      echo   json_encode($msg);
-    contentmanagerlogging_file_upload ($lastInsertId,$result);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
     
     }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
          return $e;
  }
     die(); 
@@ -2011,7 +2026,7 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
       
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
-    $lastInsertId = contentmanagerlogging('Bulk Import User',"Admin Action",$_POST,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Bulk Import User',"Admin Action",serialize($_POST),$user_ID,$user_info->user_email,"pre_action_data");
       
    
     $file=$_FILES['file'];
@@ -2043,12 +2058,12 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
     echo   json_encode($responce);
     
     
-    contentmanagerlogging('Bulk Import User',"Admin Action",$loggin_data,$user_ID,$user_info->user_email,$result);
-    contentmanagerlogging_file_upload ($lastInsertId,$loggin_data);
+    contentmanagerlogging('Bulk Import User',"Admin Action",serialize($loggin_data),$user_ID,$user_info->user_email,$result);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($loggin_data));
     
   }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -2069,7 +2084,7 @@ function updateadminemailtemplate($data_array,$email_template_name){
     
     $data_submit['data_array']=$data_array;
     $data_submit['template_name']=$email_template_name;
-    $lastInsertId = contentmanagerlogging('Updated Report Template',"Admin Action",$data_submit,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Updated Report Template',"Admin Action",serialize($data_submit),$user_ID,$user_info->user_email,"pre_action_data");
        
       $settitng_key='AR_Contentmanager_Email_Template';
       $sponsor_info = get_option($settitng_key);
@@ -2102,11 +2117,11 @@ function updateadminemailtemplate($data_array,$email_template_name){
       
     echo   json_encode($lis);
     $updated_list['updated_list']=$lis;
-      contentmanagerlogging_file_upload ($lastInsertId,$updated_list);
+      contentmanagerlogging_file_upload ($lastInsertId,serialize($updated_list));
     //  print_r($report_info);
 } catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -2127,48 +2142,60 @@ function roleassignnewtasks($request){
         $user_info = get_userdata($user_ID);  
         $lastInsertId = contentmanagerlogging('Role Assigned New Tasks',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
         $role_name = $request['rolename'];
-        $test = 'custome_task_manager_data';
-        $result_old = get_option($test);
+       // $test = 'custome_task_manager_data';
+       // $result_old = get_option($test);
+        $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+        );
+        $assign_new_role = get_posts( $args );
+        
         
         $tasksdatalist=json_decode(stripslashes($request['roleassigntaskdatalist']));
         $removetasklist = json_decode(stripslashes($request['removetasklist'])); 
         if(!empty($tasksdatalist)) {
         foreach($tasksdatalist as $key){
-           foreach($result_old['profile_fields'] as $profile_field_name => $profile_field_settings) {
-               
+          
+               foreach($assign_new_role as $taskIndex => $tasksObject) {
+                   
+               $tasksID = $tasksObject->ID;
+               $profile_field_name = get_post_meta( $tasksID, 'key' , false);
+               $value_roles = get_post_meta( $tasksID, 'roles' , false);
                if($key == $profile_field_name){
-                   if(!in_array($role_name,$result_old['profile_fields'][$key]['roles'])){
-                        array_push($result_old['profile_fields'][$key]['roles'],$role_name);
+                   if(!in_array($role_name,$value_roles[0])){
+                        array_push($value_roles[0],$role_name);
                    }
                }
-               
+               update_post_meta( $tasksID, 'roles' , $value_roles[0]);
            } 
             //echo $key;
             
         }
         }
+        
        if(!empty($removetasklist)) {
         foreach($removetasklist as $key){
-           foreach($result_old['profile_fields'] as $profile_field_name => $profile_field_settings) {
-               
+           foreach($assign_new_role as $taskIndex => $tasksObject) {
+               $tasksID = $tasksObject->ID;
+               $value_roles = get_post_meta( $tasksID, 'roles' , false);
+               $profile_field_name = get_post_meta( $tasksID, 'key' , false);
                if($key == $profile_field_name){
-                   foreach (array_keys($result_old['profile_fields'][$key]['roles'], $role_name) as $key1) {
-                    unset($result_old['profile_fields'][$key]['roles'][$key1]);
+                   foreach (array_keys($value_roles[0], $role_name) as $key1) {
+                    unset($value_roles[0][$key1]);
                   } 
                }
+               update_post_meta( $tasksID, 'roles' , $value_roles[0]);
                
            } 
             //echo $key;
             
         }
        }
-       //echo '<pre>';
-        //print_r($result_old['profile_fields']);exit;
-        
-        
-        $user_info = get_userdata($user_ID);
-        $restults = update_option($test, $result_old);
-        
+       
         contentmanagerlogging_file_upload ($lastInsertId,$result);
         
        
@@ -2184,6 +2211,7 @@ function roleassignnewtasks($request){
     
     
 }
+
 function editrolename($request){
     
      try{
@@ -2192,7 +2220,7 @@ function editrolename($request){
          
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);  
-        $lastInsertId = contentmanagerlogging('Edit Level Name',"Admin Action",$request,''.$user_ID,$user_info->user_email,"pre_action_data");
+        $lastInsertId = contentmanagerlogging('Edit Level Name',"Admin Action",serialize($request),''.$user_ID,$user_info->user_email,"pre_action_data");
        
         $levelnamenew = $request['rolenewname'];
         $levelkey = $request['rolekey'];
@@ -2221,13 +2249,13 @@ function editrolename($request){
             $result_status['msg']= 'already exists';
         }
         
-        contentmanagerlogging_file_upload ($lastInsertId,$result_status);
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($result_status));
         
        echo json_encode($result_status);
          
     }catch (Exception $e) {
        
-        contentmanagerlogging_file_upload ($lastInsertId,$e);
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
     }
@@ -2244,14 +2272,14 @@ function setpasswordcustome($password){
       try{
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
-    $lastInsertId = contentmanagerlogging('Change Passowrd',"User Action",$password,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Change Passowrd',"User Action",serialize($password),$user_ID,$user_info->user_email,"pre_action_data");
        
     $result = wp_set_password( $password, $user_ID );
-    contentmanagerlogging_file_upload ($lastInsertId,$result);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
     
       }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -2285,7 +2313,7 @@ function updateadminreport($data_array,$report_name){
     $new_data_array['report_filter_value']=$data_array;
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
-    $lastInsertId = contentmanagerlogging('Save Filter Report',"Admin Action",$new_data_array,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Save Filter Report',"Admin Action",serialize($new_data_array),$user_ID,$user_info->user_email,"pre_action_data");
       
       $settitng_key='AR_Contentmanager_Reports_Filter';
       $sponsor_info = get_option($settitng_key);
@@ -2312,11 +2340,11 @@ function updateadminreport($data_array,$report_name){
       
     echo   json_encode($lis);
     $new_list['new_updated_list']=$lis;
-    contentmanagerlogging_file_upload ($lastInsertId,$new_list);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($new_list));
     
       }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -2374,7 +2402,7 @@ function remove_sponsor_metas($user_id){
     $all_meta_for_user['user_info'] = get_userdata( $user_id );
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);
-    $lastInsertId = contentmanagerlogging('Delete User',"Admin Action",$all_meta_for_user,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Delete User',"Admin Action",serialize($all_meta_for_user),$user_ID,$user_info->user_email,"pre_action_data");
     
     $user_blogs = get_blogs_of_user( $user_id );
     $blog_id = get_current_blog_id();
@@ -2398,11 +2426,11 @@ function remove_sponsor_metas($user_id){
     
     
     echo $msg;
-    contentmanagerlogging_file_upload ($lastInsertId,$responce);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($responce));
     //print_r($responce);
     }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
        die();
@@ -2712,8 +2740,8 @@ function getReportsdatanew($report_name,$usertimezone){
    
             
    }
-    $test = 'custome_task_manager_data';
-    $result_task_array_list = get_option($test);
+    //$test = 'custome_task_manager_data';
+    //$result_task_array_list = get_option($test);
     $settitng_key = 'ContenteManager_Settings';
     $sponsor_info = get_option($settitng_key);
     $sponsor_name = $sponsor_info['ContentManager']['sponsor_name'];
@@ -3409,7 +3437,7 @@ function getReportsdatanew($report_name,$usertimezone){
    
    }else{
     
-       contentmanagerlogging('Load Report Data',"Admin Action",$aid->user_id,$user_ID,$user_info->user_email,$aid->user_id );
+       contentmanagerlogging('Load Report Data',"Admin Action",serialize($aid->user_id),$user_ID,$user_info->user_email,$aid->user_id );
      
  }    
 }
@@ -3479,13 +3507,13 @@ function my_contentmanager_style() {
     wp_enqueue_style('jquery.dataTables', plugins_url().'/EGPL/css/jquery.dataTables.css');
     wp_enqueue_style('shCore', plugins_url().'/EGPL/css/shCore.css');
 
-   // wp_enqueue_style('jquery-confirm-css', plugins_url() .'/EGPL/css/jquery-confirm.css',array(), '1.1', 'all');
+   // wp_enqueue_style('jquery-confirm-css', plugins_url() .'/EGPL/css/jquery-confirm.css',array(), '1.2', 'all');
    
   
     wp_enqueue_style('my-datatable-tools', plugins_url().'/EGPL/css/dataTables.tableTools.css');
    // wp_enqueue_style('cleditor-css', plugins_url() .'/EGPL/css/jquery.cleditor.css');
    // wp_enqueue_style('contentmanager-css', plugins_url() .'/EGPL/css/forntend.css');
-    wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '1.1', 'all');
+    wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '1.4', 'all');
     wp_enqueue_style('my-admin-theme', plugins_url('css/normalize.css', __FILE__));
   
    
@@ -3510,7 +3538,50 @@ function my_plugin_activate() {
    
             foreach ($blog_list as $blog_id) {
                 if($blog_id['blog_id'] != 1){
-                switch_to_blog($blog_id['blog_id']);
+                    
+                    
+                    
+                            switch_to_blog($blog_id['blog_id']);
+
+            $labels = array(
+                'name'                =>  'ExpoGenie Log',
+                'singular_name'       =>  'ExpoGenie Log',
+                'add_new'             =>  'Add New',
+                'add_new_item'        =>  'Add New Log',
+                'edit_item'           =>  'Edit Log',
+                'new_item'            =>  'New Log', 
+                'all_items'           =>  'All Logs',
+                'view_item'           =>  'View Log',
+                'search_items'        =>  'Search Log',
+                'not_found'           =>  'No Log found',
+                'not_found_in_trash'  =>  'No Log found in Trash',
+                'menu_name'           =>  'Log',
+              );
+
+              $supports = array( 'title', 'editor' );
+
+              $slug = get_theme_mod( 'event_permalink' );
+              $slug = ( empty( $slug ) ) ? 'event' : $slug;
+
+              $args = array(
+                'labels'              => $labels,
+                'public'              => true,
+                'publicly_queryable'  => true,
+                'show_ui'             => true,
+                'show_in_menu'        => true,
+                'query_var'           => true,
+                'rewrite'             => array( 'slug' => $slug ),
+                'capability_type'     => 'post',
+                'has_archive'         => true,
+                'hierarchical'        => false,
+                'menu_position'       => null,
+                'supports'            => $supports,
+              );
+
+           $getError =    register_post_type( 'expo_genie_log', $args );
+                
+        
+                
                 // create tables for each site
                 $get_all_roles_array = 'wp_'.$blog_id['blog_id'].'_user_roles';
                 $get_all_roles = get_option($get_all_roles_array);
@@ -3534,8 +3605,19 @@ function my_plugin_activate() {
            
              
                     
-                      $result = update_option('EGPL_Settings_Additionalfield', $user_additional_field);
-                  
+                  $oldvalues = get_option( 'ContenteManager_Settings' );
+                  if($object_data['customfieldstatus'] == 'checked'){
+       
+                        include 'defult-content.php';
+                        $result = update_option('EGPL_Settings_Additionalfield', $user_additional_field);
+       
+       
+                   }else{
+
+                        include 'defult-content.php';
+                        $result = update_option('EGPL_Settings_Additionalfield', $user_additional_field_default);
+
+                    }
              
           
 
@@ -3627,7 +3709,7 @@ add_action( 'init', 'add_contentmanager_settings' );
 
 function add_contentmanager_settings() {
     
-    wp_register_script('adminjs', plugins_url('js/admin-cmanager.js?v=2.33', __FILE__), array('jquery'));
+    wp_register_script('adminjs', plugins_url('js/admin-cmanager.js?v=2.34', __FILE__), array('jquery'));
     wp_enqueue_script('adminjs');
     //$settings_array['ContentManager']['sponsor-name']='Exhibitor';
     //update_option( 'ContenteManager_Settings', $settings_array);
@@ -3656,7 +3738,7 @@ function updatecmanagersettings($object_data){
     
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);     
-    $lastInsertId = contentmanagerlogging('Update Contentmanager Settings',"Admin Action",$object_data,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Update Contentmanager Settings',"Admin Action",serialize($object_data),$user_ID,$user_info->user_email,"pre_action_data");
     
     
    
@@ -3717,7 +3799,8 @@ function updatecmanagersettings($object_data){
     $oldvalues['ContentManager']['customfieldstatus']=$object_data['customfieldstatus'];
     
     $oldvalues['ContentManager']['boothpurchasestatus']=$object_data['boothpurchasestatus'];
-    
+    $oldvalues['ContentManager']['redirectcatname']=$object_data['redirectcatname'];
+   
     
     
     
@@ -3742,10 +3825,10 @@ function updatecmanagersettings($object_data){
     
     $result=update_option('ContenteManager_Settings', $oldvalues);
     
-    contentmanagerlogging_file_upload ($lastInsertId,$result);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
    }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -3761,7 +3844,7 @@ function updateadmin_frontend_settings($object_data,$filedataurl){
     $object_data['headerbannerimage'] = $filedataurl;
    
     
-    $lastInsertId = contentmanagerlogging('Update Contentmanager Settings Front End',"Admin Action",$object_data,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Update Contentmanager Settings Front End',"Admin Action",serialize($object_data),$user_ID,$user_info->user_email,"pre_action_data");
       
     
     $eventdate = $object_data['eventdate'];
@@ -3773,10 +3856,10 @@ function updateadmin_frontend_settings($object_data,$filedataurl){
      
     $result=update_option('ContenteManager_Settings', $oldvalues);
     
-    contentmanagerlogging_file_upload ($lastInsertId,$result);
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
    }catch (Exception $e) {
        
-         contentmanagerlogging_file_upload ($lastInsertId,$e);
+         contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
  }
@@ -3806,6 +3889,7 @@ function excludes_sponsor_meta(){
      
      $defaultboothprice    =   $oldvalues['ContentManager']['defaultboothprice'];
      $boothpurchasestatus   =   $oldvalues['ContentManager']['boothpurchasestatus'];
+     $redirectcatname   =   $oldvalues['ContentManager']['redirectcatname'];
      
      $userreportcontent =   stripslashes($oldvalues['ContentManager']['userreportcontent']);
      $expogeniefloorplan    =   $oldvalues['ContentManager']['expogeniefloorplan'];
@@ -3867,6 +3951,13 @@ function excludes_sponsor_meta(){
         <tr><td><h4>Self-signup Settings</h4></td>
         <td><input type="text" name="selfsignstatus"  id="selfsignstatus" value='.$selfsignstatus.'></td>
         </tr>
+         <tr><td><h4>Redirect Active Shop Catgory Name</h4></td>
+
+        <td>
+        <input type="text" title="hint:boothpurchase" name="redirectcatname"  id="redirectcatname" value='.$redirectcatname.'>
+        </td>
+       </tr>
+
         <tr><td><h4>ExpoGenie Floor Plan</h4></td>
         <td><input type="text" name="expogeniefloorplan"  id="expogeniefloorplan" value='.$expogeniefloorplan.'></td>
         </tr>
@@ -3924,14 +4015,14 @@ function excludes_sponsor_meta(){
         <td>';
         if($customfieldstatus == 'checked'){
             
-            $maincontent.='<input type="checkbox"  id="customfieldstatus" name="vehicle" value="customfieldon" checked> Additioanl Custom Fields Enabled<br>';
+            $maincontent.='<input type="text"  id="customfieldstatus" name="vehicle" value="enabled">';
             
         }else{
             
-            $maincontent.='<input type="checkbox"  id="customfieldstatus" name="vehicle" value="customfieldon" > Additioanl Custom Fields Enabled<br>';
-             
+            $maincontent.='<input type="text"  id="customfieldstatus" name="vehicle" value="disabled">'; 
             
         } 
+        
         
 
         $maincontent.='</td>
@@ -4062,7 +4153,8 @@ class PageTemplater {
                          'temp/updateusersprefix.php'=>'Update User Meta',
                          'temp/syncuserscvent.php'=>'Cvent Sync Users',
                          'temp/product-order-reporting-booth-template.php'=>'Manage Exhibitor Booths',
-                         'temp/bulk_edit_product.php'=>'Manage Bulk Products'
+                         'temp/bulk_edit_product.php'=>'Manage Bulk Products',
+                         'temp/scriptrunner.php'=>'Moved Tasks Option to post'
                        
                         
                      
@@ -4219,8 +4311,24 @@ function mycustomelogin($user_login, $user) {
         $tablename = 'contentmanager_'.$blog_id.'_log';
     } 
     
-    $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
-    $wpdb->query($wpdb->prepare($query, "Login", "User Action",$user,$user->ID,$user->user_email,$result));
+   // $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
+  //  $wpdb->query($wpdb->prepare($query, "Login", "User Action",serialize($user),$user->ID,$user->user_email,$result));
+    $activitylog = array(
+        'post_title'    => wp_strip_all_tags( 'Login' ),
+        'post_content'  => "",
+        'post_status'   => 'publish',
+        'post_author'   => $user->ID,
+        'post_type'=>'expo_genie_log'
+    );
+    $logID = wp_insert_post( $activitylog );
+    $_SERVER['currentuseremail'] = $email;
+    update_post_meta( $logID, 'actiontype', 'User Action' );
+    update_post_meta( $logID, 'preactiondata', $user );
+    update_post_meta( $logID, 'currentuserinfo', $_SERVER );
+    update_post_meta( $logID, 'email', $user->user_email );
+    update_post_meta( $logID, 'ip', $_SERVER['REMOTE_ADDR'] );
+    update_post_meta( $logID, 'browseragent', $_SERVER['HTTP_USER_AGENT'] );
+    update_post_meta( $logID, 'result', $result );
 
 }
 add_action('wp_login', 'mycustomelogin', 10, 2);
@@ -4246,25 +4354,24 @@ if ( is_user_logged_in() ) :
         $tablename = 'contentmanager_'.$blog_id.'_log';
     }
     
-    
- $activitylog = array(
-  'post_title'    => wp_strip_all_tags( "Login" ),
-  'post_content'  => "",
-  'post_status'   => 'publish',
-  'post_author'   => $postid,
-  'post_type'=>'expo_genie_log'
-);
- 
-
- $logID = wp_insert_post( $activitylog );
- $_SERVER['currentuseremail'] = $email;
- update_post_meta( $logID, 'action-type-name', "User Action" );
- update_post_meta( $logID, 'pre-action-data', $current_user->user_email );
- update_post_meta( $logID, 'current-user-info', $_SERVER );
- update_post_meta( $logID, 'currentuseremail', $current_user->user_email );
- update_post_meta( $logID, 'ip-address', $_SERVER['REMOTE_ADDR'] );
- update_post_meta( $logID, 'browser-agent', $_SERVER['HTTP_USER_AGENT'] );
- update_post_meta( $logID, 'final-result', $result );
+   // $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
+//$wpdb->query($wpdb->prepare($query, "Login", "User Action",serialize($current_user),$postid,$current_user->user_email,$result));
+  $activitylog = array(
+        'post_title'    => wp_strip_all_tags( 'Login' ),
+        'post_content'  => "",
+        'post_status'   => 'publish',
+        'post_author'   => $postid,
+        'post_type'=>'expo_genie_log'
+    );
+    $logID = wp_insert_post( $activitylog );
+    $_SERVER['currentuseremail'] = $email;
+    update_post_meta( $logID, 'actiontype', 'User Action' );
+    update_post_meta( $logID, 'preactiondata', $current_user );
+    update_post_meta( $logID, 'currentuserinfo', $_SERVER );
+    update_post_meta( $logID, 'email', $current_user->user_email );
+    update_post_meta( $logID, 'ip', $_SERVER['REMOTE_ADDR'] );
+    update_post_meta( $logID, 'browseragent', $_SERVER['HTTP_USER_AGENT'] );
+    update_post_meta( $logID, 'result', $result );
 
     endif;
 }
@@ -4286,25 +4393,25 @@ function my_front_end_login_fail($error,$user) {
     }
 $_SERVER['currentuser'] = $user;
  
-
+    global $wpdb;
+   // $query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
+   // $wpdb->query($wpdb->prepare($query, "Login Failed", "User Action",serialize($message),'',$_SERVER['currentuser'],''));
      $activitylog = array(
-  'post_title'    => wp_strip_all_tags( "Login Failed" ),
-  'post_content'  => "",
-  'post_status'   => 'publish',
-  'post_author'   => '1',
-  'post_type'=>'expo_genie_log'
-);
- 
-
- $logID = wp_insert_post( $activitylog );
- $_SERVER['currentuseremail'] = $email;
- update_post_meta( $logID, 'action-type-name', "User Action" );
- update_post_meta( $logID, 'pre-action-data', $message );
- update_post_meta( $logID, 'current-user-info', $_SERVER );
- update_post_meta( $logID, 'currentuseremail', $current_user->user_email );
- update_post_meta( $logID, 'ip-address', $_SERVER['REMOTE_ADDR'] );
- update_post_meta( $logID, 'browser-agent', $_SERVER['HTTP_USER_AGENT'] );
- update_post_meta( $logID, 'final-result', $result );
+        'post_title'    => wp_strip_all_tags( 'Login Failed' ),
+        'post_content'  => "",
+        'post_status'   => 'publish',
+        'post_author'   => 1,
+        'post_type'=>'expo_genie_log'
+    );
+    $logID = wp_insert_post( $activitylog );
+    $_SERVER['currentuseremail'] = $email;
+    update_post_meta( $logID, 'actiontype', 'User Action' );
+    update_post_meta( $logID, 'preactiondata', $message );
+    update_post_meta( $logID, 'currentuserinfo', $_SERVER );
+    update_post_meta( $logID, 'email', $user );
+    update_post_meta( $logID, 'ip', $_SERVER['REMOTE_ADDR'] );
+    update_post_meta( $logID, 'browseragent', $_SERVER['HTTP_USER_AGENT'] );
+    update_post_meta( $logID, 'result', '' );
 
 }
 
@@ -4336,28 +4443,26 @@ function customelogout() {
     }
     $_SERVER['currentuser'] = $current_user->user_email;
     $result="1";
-  
-
-     $activitylog = array(
-  'post_title'    => wp_strip_all_tags( "Logout" ),
-  'post_content'  => "",
-  'post_status'   => 'publish',
-  'post_author'   => $postid,
-  'post_type'=>'expo_genie_log'
-);
- 
-
- $logID = wp_insert_post( $activitylog );
- $_SERVER['currentuseremail'] = $email;
- update_post_meta( $logID, 'action-type-name', "User Action" );
- update_post_meta( $logID, 'pre-action-data', $current_user );
- update_post_meta( $logID, 'current-user-info', $_SERVER );
- update_post_meta( $logID, 'currentuseremail', $current_user->user_email );
- update_post_meta( $logID, 'ip-address', $_SERVER['REMOTE_ADDR'] );
- update_post_meta( $logID, 'browser-agent', $_SERVER['HTTP_USER_AGENT'] );
- update_post_meta( $logID, 'final-result', $result );
-
-
+    
+    $activitylog = array(
+        'post_title'    => wp_strip_all_tags( 'Logout' ),
+        'post_content'  => "",
+        'post_status'   => 'publish',
+        'post_author'   => $postid,
+        'post_type'=>'expo_genie_log'
+    );
+    $logID = wp_insert_post( $activitylog );
+    $_SERVER['currentuseremail'] = $email;
+    update_post_meta( $logID, 'actiontype', 'User Action' );
+    update_post_meta( $logID, 'preactiondata', $current_user );
+    update_post_meta( $logID, 'currentuserinfo', $_SERVER );
+    update_post_meta( $logID, 'email', $current_user->user_email );
+    update_post_meta( $logID, 'ip', $_SERVER['REMOTE_ADDR'] );
+    update_post_meta( $logID, 'browseragent', $_SERVER['HTTP_USER_AGENT'] );
+    update_post_meta( $logID, 'result', $result );
+    //$query = "INSERT INTO ".$tablename." (action_name, action_type,pre_action_data,user_id,user_email,result) VALUES (%s,%s,%s,%s,%s,%s)";
+    //$wpdb->query($wpdb->prepare($query, "Logout", "User Action",serialize($current_user),$postid,$_SERVER,$result));
+    
     //switch_to_blog(1);
     wp_logout();
     //restore_current_blog();
@@ -4372,6 +4477,8 @@ add_shortcode( 'customelogout', 'customelogout' );
 function contentmanagerlogging($acction_name,$action_type,$pre_action_data,$user_id,$email,$result){
 
     
+
+
 // Create post object
 $activitylog = array(
   'post_title'    => wp_strip_all_tags( $acction_name ),
@@ -4384,25 +4491,23 @@ $activitylog = array(
 
  $logID = wp_insert_post( $activitylog );
  $_SERVER['currentuseremail'] = $email;
-
-
- update_post_meta( $logID, 'action-type-name', $action_type );
- update_post_meta( $logID, 'pre-action-data', $pre_action_data );
- update_post_meta( $logID, 'current-user-info', $_SERVER );
- update_post_meta( $logID, 'currentuseremail', $email );
- update_post_meta( $logID, 'ip-address', $_SERVER['REMOTE_ADDR'] );
- update_post_meta( $logID, 'browser-agent', $_SERVER['HTTP_USER_AGENT'] );
- update_post_meta( $logID, 'final-result', $result );
- update_post_meta( $logID, 'request-data-and-time',  date("Y-m-d H:i:s") );
-
+ update_post_meta( $logID, 'actiontype', $action_type );
+ update_post_meta( $logID, 'preactiondata', $pre_action_data );
+ update_post_meta( $logID, 'currentuserinfo', $_SERVER );
+ update_post_meta( $logID, 'email', $email );
+ update_post_meta( $logID, 'ip', $_SERVER['REMOTE_ADDR'] );
+ update_post_meta( $logID, 'browseragent', $_SERVER['HTTP_USER_AGENT'] );
+ update_post_meta( $logID, 'result', $result );
+ 
  return $logID;
  
 }
 function contentmanagerlogging_file_upload($lastInsertId,$result){
 
     
- update_post_meta( $lastInsertId, 'final-result', $result );
-  update_post_meta( $logID, 'update-request-data-and-time',  date("Y-m-d H:i:s") );
+
+    update_post_meta( $lastInsertId, 'result', $result );
+
 
 
 }
@@ -4716,13 +4821,13 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
 
     // exit;
 
-    $lastInsertId = contentmanagerlogging('Welcome Email',"Admin Action",$message,$user_id,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Welcome Email',"Admin Action",serialize($message),$user_id,$user_info->user_email,"pre_action_data");
 
     $async = false;
     $ip_pool = 'Main Pool';
    // $send_at = 'example send_at';
     $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at);
-    contentmanagerlogging_file_upload($lastInsertId,$result);
+    contentmanagerlogging_file_upload($lastInsertId,serialize($result));
    
 
 
@@ -4769,11 +4874,28 @@ function get_user_meta_merger_field_value($userid,$key){
 function gettaskduesoon(){
  
    
-    $test = 'custome_task_manager_data';
-    $result = get_option($test);
+    $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+        );
+        $assign_new_role = get_posts( $args );
+        
    
-    foreach($result['profile_fields'] as $key=>$value){
-        if (strpos($key, "task") !== false) { 
+    
+        
+    foreach($assign_new_role as $taskIndex => $tasksObject) {
+        
+        $tasksID = $tasksObject->ID;
+        $keyvalue = get_post_meta( $tasksID, 'key' , false);
+        $label = get_post_meta( $tasksID, 'label' , false);
+        $attrs = get_post_meta( $tasksID, 'attrs' , false);
+        $value['label'] = $label[0];
+        $value['attrs'] = $attrs[0];
+        if (strpos($keyvalue[0], "task") !== false) { 
          if (strpos($value['label'], 'Status') !== false || strpos($value['label'], 'Date-Time') !== false) {
             
         }else{
@@ -4782,6 +4904,7 @@ function gettaskduesoon(){
         
         } 
      }
+    
     
  $html_task_due_soon ="";
  $flat =array_reduce($arrDates, 'array_merge', array());
@@ -5386,7 +5509,7 @@ try {
    
     // exit;
   
-    $lastInsertId = contentmanagerlogging('Import Welcome Email',"Admin Action",$message,$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Import Welcome Email',"Admin Action",serialize($message),$user_ID,$user_info->user_email,"pre_action_data");
      
     $async = false;
     $ip_pool = 'Main Pool';
@@ -5395,7 +5518,7 @@ try {
     $result['send_at_date'] =  '';
     $result['result_send_mail'] = $mandrill->messages->send($message, $async, $ip_pool, $send_at);
     
-    contentmanagerlogging_file_upload($lastInsertId,$result);
+    contentmanagerlogging_file_upload($lastInsertId,serialize($result));
     return $result;
     
    
@@ -5597,7 +5720,7 @@ function changeuseremailaddress($request){
          
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);  
-        $lastInsertId = contentmanagerlogging('Edit user email',"Admin Action",$request,''.$user_ID,$user_info->user_email,"pre_action_data");
+        $lastInsertId = contentmanagerlogging('Edit user email',"Admin Action",serialize($request),''.$user_ID,$user_info->user_email,"pre_action_data");
         $newemail = $request['newemailaddress'];
         $welcome_email_status = $request['welcomememailstatus'];
         $welcome_selected_email_template = $request['selectedtemplateemailname'];
@@ -5634,13 +5757,13 @@ function changeuseremailaddress($request){
             $result_status['msg'] = 'Email address is invalid. Please try again and enter a valid email.';
         }
         
-        contentmanagerlogging_file_upload ($lastInsertId,$result_status);
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($result_status));
         
        echo json_encode($result_status);
          
     }catch (Exception $e) {
        
-        contentmanagerlogging_file_upload ($lastInsertId,$e);
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
     }
@@ -5659,7 +5782,7 @@ function checkwelcomealreadysend($request){
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);
         
-        $lastInsertId = contentmanagerlogging('Check Welcome Email Send',"Admin Action",$request,''.$user_ID,$user_info->user_email,"pre_action_data");
+        $lastInsertId = contentmanagerlogging('Check Welcome Email Send',"Admin Action",serialize($request),''.$user_ID,$user_info->user_email,"pre_action_data");
         $emailaddress_array=explode(",", $request['emailAddress']);
         $usertimezone=intval($request['usertimezone']);
         foreach($emailaddress_array as $key=>$emailaddress){
@@ -5679,13 +5802,13 @@ function checkwelcomealreadysend($request){
             }
             
         }
-        contentmanagerlogging_file_upload ($lastInsertId,$responce);
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($responce));
         
        echo json_encode($responce);
          
     }catch (Exception $e) {
        
-        contentmanagerlogging_file_upload ($lastInsertId,$e);
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
    
       return $e;
     }
@@ -5706,10 +5829,10 @@ if (is_admin()) { // note the use of is_admin() to double check that this is hap
         $config = array(
             'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
             'proper_folder_name' => 'EGPL', // this is the name of the folder your plugin lives in
-            'api_url' => 'https://api.github.com/repos/QasimRiaz/MultisiteEGPL', // the GitHub API url of your GitHub repo
-            'raw_url' => 'https://raw.github.com/QasimRiaz/MultisiteEGPL/master', // the GitHub raw url of your GitHub repo
-            'github_url' => 'https://github.com/QasimRiaz/MultisiteEGPL', // the GitHub url of your GitHub repo
-            'zip_url' => 'https://github.com/QasimRiaz/MultisiteEGPL/zipball/master', // the zip url of the GitHub repo
+            'api_url' => 'https://api.github.com/repos/QasimRiaz/EGPL', // the GitHub API url of your GitHub repo
+            'raw_url' => 'https://raw.github.com/QasimRiaz/EGPL/master', // the GitHub raw url of your GitHub repo
+            'github_url' => 'https://github.com/QasimRiaz/EGPL', // the GitHub url of your GitHub repo
+            'zip_url' => 'https://github.com/QasimRiaz/EGPL/zipball/master', // the zip url of the GitHub repo
             'sslverify' => true, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
             'requires' => '3.0', // which version of WordPress does your plugin require?
             'tested' => '3.3', // which version of WordPress is your plugin tested up to?
@@ -5781,7 +5904,7 @@ function exp_autocomplete_paid_orders($order_status, $order_id) {
             
              
          
-      
+            exp_updateuser_role_onmpospurches($order->id,$porduct_ids_array);
         
             
             
@@ -5809,11 +5932,18 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
         }
  
         $current_user = wp_get_current_user();
-       // $lastInsertId = contentmanagerlogging('Purches MPOs',"User Action",$order),''.$current_user->id,$current_user->user_email,"pre_action_data");
+       // $lastInsertId = contentmanagerlogging('Purches MPOs',"User Action",serialize($order),''.$current_user->id,$current_user->user_email,"pre_action_data");
         require_once( 'temp/lib/woocommerce-api.php' );
         
-        $test = 'custome_task_manager_data';
-        $taskkeyContent = get_option($test);
+        $args = array(
+            'posts_per_page'   => -1,
+            'orderby'          => 'date',
+            'order'            => 'DESC',
+            'post_type'        => 'egpl_custome_tasks',
+            'post_status'      => 'draft',
+	
+        );
+        $taskkeyContent = get_posts( $args );
         
         
         
@@ -6022,7 +6152,7 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
                 }
             }
             
-    
+            
            
             
                 $user_info = get_userdata($current_user->id);
@@ -6037,28 +6167,36 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
                        } 
                         
                     }
+                }
                   if(!empty($latestProductsValue['selectedtasks'])){  
                    foreach ($latestProductsValue['selectedtasks'] as $taskindex=>$taskKey){
                        
-                       if(!empty($taskkeyContent['profile_fields'][$taskKey]['usersids'])){
+                       
+                       $value_usersids = get_post_meta( $taskKey, 'usersids' , false);
+                       
+                       
+                       
+                       
+                       if(!empty($value_usersids[0])){
                            
-                           array_push($taskkeyContent['profile_fields'][$taskKey]['usersids'], $current_user->id);
+                           array_push($value_usersids[0], $current_user->id);
+                           update_post_meta( $taskKey, 'usersids' , $value_usersids[0]);
                            
                        }else{
                            
                            $newindex[]=$current_user->id;
-                           $taskkeyContent['profile_fields'][$taskKey]['usersids'] = $newindex;
+                            update_post_meta( $taskKey, 'usersids' , $newindex);
                            
                        }
                        
                        
                    }
-                   update_option($test, $taskkeyContent);  
+                   
                   }
                   
                    
                    
-                }
+               
            
             
             $responce['paymentmethod'] = $payment_method;
@@ -6114,11 +6252,21 @@ add_action( 'wp_footer','checkloginuserstatus_fun' );
 function checkloginuserstatus_fun() {
     
     
-  
+     $site_url  = get_site_url();
      $oldvalues = get_option( 'ContenteManager_Settings' );
      $mainheader = $oldvalues['ContentManager']['mainheader'];
      $mainheaderlogo = $oldvalues['ContentManager']['mainheaderlogo'];
+     $redirectname = $oldvalues['ContentManager']['redirectcatname'];
+     $redirectURL = "";
      
+     if($redirectname == 'boothpurchase'){
+         
+         $redirectURL = $site_url.'/floor-plan/';
+         
+     }else{
+         
+         $redirectURL = $site_url.'/product-category/packages/';
+     }
     
      if(!empty($mainheader)){
          
@@ -6138,7 +6286,7 @@ function checkloginuserstatus_fun() {
     $custome_login_time_site = update_user_option( $current_user->ID, 'custom_login_time_as_site',$newvalue );
     
     
-    $site_url  = get_site_url();
+    
     if ( class_exists( 'WooCommerce' ) ) {	
         if (is_user_logged_in()) {
 
@@ -6146,11 +6294,11 @@ function checkloginuserstatus_fun() {
 
                         $actual_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
-                            if (strpos($actual_link, 'task-list/') !== false || strpos($actual_link, 'home/') !== false || strpos($actual_link, 'floor-plan/') !== false || strpos($actual_link, 'resources/') !== false || strpos($actual_link, 'registration-codes/') !== false) {
+                            if (strpos($actual_link, 'task-list/') !== false || strpos($actual_link, 'home/') !== false  || strpos($actual_link, 'resources/') !== false || strpos($actual_link, 'registration-codes/') !== false) {
                             
                                
                             
-                                 echo '<script type="text/javascript">swal({title: "Welcome!", type: "success", html:true,showConfirmButton:false,text: "<p>This will serve as your portal for managing all of your pre-show logistics. Before gaining access, you\'ll need to first select and purchase a package.</p><p style=\'margin-top:18px\'><a href='.$site_url.'/product-category/packages/\ class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Next</a></p>"});</script>';
+                                 echo '<script type="text/javascript">swal({title: "Welcome!", type: "success", html:true,showConfirmButton:false,text: "<p>This will serve as your portal for managing all of your pre-show logistics. Before gaining access, you\'ll need to first select and purchase a package.</p><p style=\'margin-top:18px\'><a href='.$redirectURL.' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Next</a></p>"});</script>';
                                 
                             }
                     }
@@ -6168,18 +6316,49 @@ function viewfloorplanbutton( $atts ){
       
 }
 add_shortcode( 'viewfloorplanbutton', 'viewfloorplanbutton' );
-
-
-add_filter('expo_genie_log_posts_columns', 'bs_event_table_head');
+add_filter('manage_expo_genie_log_posts_columns', 'bs_event_table_head');
 function bs_event_table_head( $defaults ) {
     
     
     
     
     
-    $defaults['action-type-name']  = 'Event Date';
-    $defaults['currentuseremail']    = 'Ticket Status';
-    $defaults['ip-address']   = 'Venue';
-    $defaults['browser-agent'] = 'Added By';
+    $defaults['action-type-name']  = 'Action Type';
+    $defaults['currentuseremail']    = 'User Email';
+    $defaults['ip-address']   = 'IP Address';
+    $defaults['browser-agent'] = 'Browser Agent';
+    $defaults['request-data-and-time'] = 'Date & Time';
     return $defaults;
 }
+
+add_action( 'manage_expo_genie_log_posts_custom_column', 'bs_event_table_content', 10, 2 );
+
+function bs_event_table_content( $column_name, $post_id ) {
+    if ($column_name == 'actiontype') {
+    $event_date = get_post_meta( $post_id, 'actiontype', true );
+      echo   $event_date ;
+    }
+    if ($column_name == 'preactiondata') {
+    $event_date = print_r(get_post_meta( $post_id, 'preactiondata', true ));
+      echo   $event_date ;
+    }
+    if ($column_name == 'email') {
+    $event_date = get_post_meta( $post_id, 'email', true );
+      echo   $event_date ;
+    }
+    if ($column_name == 'ip') {
+    $event_date = get_post_meta( $post_id, 'ip', true );
+      echo   $event_date ;
+    }
+    if ($column_name == 'browseragent') {
+    $event_date = get_post_meta( $post_id, 'browseragent', true );
+      echo   $event_date ;
+    }
+    if ($column_name == 'result') {
+    $event_date = print_r(get_post_meta( $post_id, 'result', true ));
+      echo   $event_date ;
+    }
+    
+
+}
+
