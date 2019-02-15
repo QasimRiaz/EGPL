@@ -472,8 +472,16 @@
                 $create_pages_list[52]['temp']  = 'temp/edit_sponsor_task_template.php';
                 $create_pages_list[52]['catname']  = false;
               
-                
-                
+                $create_pages_list[53]['title'] = 'Tasks Moved Page';
+                $create_pages_list[53]['name']  = 'tasks-moved-page';
+                $create_pages_list[53]['temp']  = 'temp/syncuserscvent.php';
+                $create_pages_list[53]['catname']  = false;
+              
+                $create_pages_list[54]['title'] = 'Manage Bulk Products';
+                $create_pages_list[54]['name']  = 'manage-bulk-products';
+                $create_pages_list[54]['temp']  = 'temp/bulk_edit_product.php';
+                $create_pages_list[54]['catname']  = false;
+              
                 
 
                 $all_pages_defult_content['create-user']='';

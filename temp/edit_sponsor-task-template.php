@@ -12,7 +12,7 @@
         //  print_r( $meta_for_user );
           
       }
-      
+        $base_url  = get_site_url();
       $test = 'custome_task_manager_data';
       $result = get_option($test);
       $settitng_key = 'ContenteManager_Settings';
@@ -29,7 +29,7 @@
      
       
                 ?>
-                
+        <link href="<?php echo $base_url;?>/wp-content/plugins/EGPL/js/jquery-confirm.css" rel="stylesheet">         
        <div id="content" class="full-width">
 
                     <div id="sponsor-status"></div>

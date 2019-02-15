@@ -49,11 +49,11 @@
                             if($blog_id->userblog_id != 1){
                             if($roles[0] == 'contentmanager' || $roles[0] == 'administrator' ){
                                 
-                                 echo '<tr><td>'.$sitename.'</td><td><a target="_blank" href="'.$blog_id->siteurl.'/" class="btn btn-info" >Visit Site</a><a href="'.$blog_id->siteurl.'/dashboard" style="margin-left: 9%;"  target="_blank" class="btn btn-info" >Admin Dashboard</a></td></tr>';
+                                 echo '<tr><td>'.$sitename.'</td><td style="width:40%;"><a target="_blank" href="'.$blog_id->siteurl.'/" class="btn btn-info" >Visit Site</a><a href="'.$blog_id->siteurl.'/dashboard" style="margin-left: 9%;"  target="_blank" class="btn btn-info" >Admin Dashboard</a></td></tr>';
                                 
                             }else{
                                
-                                 echo '<tr><td>'.$sitename.'</td><td><a  target="_blank" href="'.$blog_id->siteurl.'/" class="btn btn-info" >Visit Site</a></td></tr>';
+                                 echo '<tr><td>'.$sitename.'</td><td style="width:40%;"><a  target="_blank" href="'.$blog_id->siteurl.'/" class="btn btn-info" >Visit Site</a></td></tr>';
                                  
                             }
                             }

@@ -21,7 +21,7 @@
 	
     );
     $result = get_posts( $args );
-    
+     $base_url  = get_site_url();
    
    
    
@@ -50,7 +50,8 @@
         currentsiteurl = '<?php echo $site_url;?>';
         
         
-    </script>   
+    </script> 
+     <link href="<?php echo $base_url;?>/wp-content/plugins/EGPL/js/jquery-confirm.css" rel="stylesheet">
     <style>
         .content{
             

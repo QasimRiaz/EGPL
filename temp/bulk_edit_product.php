@@ -98,7 +98,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
            
             <div class="box-typical box-typical-padding">
                 <p>
-                    You can create new or edit all existing products here.
+                    You can edit all existing booth products here.
                 </p>
                
                 <h5 class="m-t-lg with-border"></h5>
