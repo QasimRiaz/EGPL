@@ -48,7 +48,7 @@
       
         <script src='/wp-content/plugins/EGPL/js/randomColor.js?v=2.95'></script>
         <script src='/wp-content/plugins/EGPL/js/jquery.ajax-progress.js?v=2.95'></script>
-         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=2.17"></script>
+         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=2.18"></script>
          <script type="text/javascript" src="/wp-content/plugins/EGPL/js/moment.min.js?v=2.95"></script>
          
 	 <?php

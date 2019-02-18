@@ -1732,7 +1732,7 @@ function selfsign_registration_emails($user_id,$send_email_type){
         
         $sponsor_info['selfsign_registration_request_email']['selfsignfromname'] = $site_title;
         $sponsor_info['selfsign_registration_request_email']['selfsignsubject'] = 'Registration Application Received for '.$site_title;
-        $sponsor_info['selfsign_registration_request_email']['selfsignboday'] = '<p>Hi '.$all_meta_for_user[$site_prefix.'first_name'][0].'  '.$all_meta_for_user[$site_prefix.'last_name'][0].',</p><p>Thank you for submitting your application. We are currently reviewing your submission. You will receive an email with login credentials to the <strong>'.$site_title.'</strong> portal once the review is complete.</p><p>Thank You!</p>';
+        $sponsor_info['selfsign_registration_request_email']['selfsignboday'] = '<p>Hi '.$all_meta_for_user[$site_prefix.'first_name'][0].'  '.$all_meta_for_user[$site_prefix.'last_name'][0].',</p><p>Thank you for submitting your reservation form for the <strong>'.$site_title.'</strong>. We are currently reviewing your form. You will receive an email with login credentials to the <strong>'.$site_title.'</strong> portal once the review is complete.</p><p>Thank You!</p>';
 
         $sponsor_info['selfsign_registration_declined_email']['declinedfromname'] = $site_title;
         $sponsor_info['selfsign_registration_declined_email']['declinedsubject'] = 'Registration Application Declined for '.$site_title;

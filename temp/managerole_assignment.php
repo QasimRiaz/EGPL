@@ -116,6 +116,8 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                 $value_key = get_post_meta( $tasksID, 'key', false);
                                                 $profile_field_name_key = $value_key[0];
                                                 $value_roles = get_post_meta( $tasksID, 'roles' , false);
+                                                
+                                                
                                                 $os = $value_roles[0];
 
                                                 if (in_array($Rolename, $os)) {

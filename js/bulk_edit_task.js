@@ -556,6 +556,43 @@ function saveallbulktask(){
     }else{
     
     jQuery( ".saveeverything" ).each(function( index ) {
+        
+        
+        
+         var taskid = jQuery( this ).attr('id');
+    var taskLabelcheck = jQuery( '#row-'+taskid+'-title' ).val();
+     
+     
+       var status = 'noduplicate';
+       jQuery( ".saveeverything" ).each(function( index2 ) {
+            
+            var taskid2 = jQuery( this ).attr('id');
+            var taskLabelcompare = jQuery( '#row-'+taskid2+'-title' ).val();
+             
+            if(taskid != taskid2){
+                
+               
+                if(taskLabelcheck == taskLabelcompare){
+                    
+                    console.log(taskLabelcompare +'=='+ taskLabelcheck);
+                    status = 'duplicate';
+                    return false;
+                }
+            }
+           
+       });
+       if(status == 'duplicate'){
+            console.log(status);
+            console.log(taskid);
+            jQuery('#'+taskid).parent('div').parent('td').parent('tr').addClass('emptyfielderror');
+       
+            requeststatus = 'stop';
+            errormsg = "Multiple tasks have the same title. Please give each task a unique title.";
+            titlemsg = 'Duplicate Task Title Detected';
+            return false;
+           
+           
+       }
       
      
         
@@ -565,6 +602,7 @@ function saveallbulktask(){
     var str = jQuery( '#row-'+taskid+'-title' ).val();
     if(jQuery.trim( str ).length !=0  && jQuery( '#bulktasktype_'+taskid ).val() !="" && jQuery( '#row-'+taskid+'-duedate' ).val() !="" && jQuery( '#row-'+taskid+'-levels' ).val()!=null){
         
+        if(jQuery( '#row-'+taskid+'-title' ).val() !='Company Name'){
         
         if(/^[ A-Za-z0-9_?()\-]*$/.test(str) == false) {
            specialcharacterstatus = true;
@@ -646,7 +684,19 @@ function saveallbulktask(){
          titlemsg = 'Unsupported Characters';
          return false;
      }
+   }else{
      
+        jQuery('#'+taskid).parent('div').parent('td').parent('tr').addClass('emptyfielderror');
+       
+         requeststatus = 'stop';
+         errormsg = "Multiple tasks have the same title. Please give each task a unique title.";
+         titlemsg = 'Duplicate Task Title';
+         return false;
+     
+     
+     
+     
+ }  
      }else{
          
          

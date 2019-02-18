@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.10
+ * Version:           3.09
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -2156,16 +2156,20 @@ function roleassignnewtasks($request){
         
         
         $tasksdatalist=json_decode(stripslashes($request['roleassigntaskdatalist']));
+        
+       
+        
+        
         $removetasklist = json_decode(stripslashes($request['removetasklist'])); 
         if(!empty($tasksdatalist)) {
-        foreach($tasksdatalist as $key){
+        foreach($tasksdatalist as $key=>$taskKey){
           
                foreach($assign_new_role as $taskIndex => $tasksObject) {
                    
                $tasksID = $tasksObject->ID;
                $profile_field_name = get_post_meta( $tasksID, 'key' , false);
                $value_roles = get_post_meta( $tasksID, 'roles' , false);
-               if($key == $profile_field_name){
+               if($taskKey == $tasksID){
                    if(!in_array($role_name,$value_roles[0])){
                         array_push($value_roles[0],$role_name);
                    }
@@ -2178,12 +2182,12 @@ function roleassignnewtasks($request){
         }
         
        if(!empty($removetasklist)) {
-        foreach($removetasklist as $key){
+        foreach($removetasklist as $key=>$taskKey){
            foreach($assign_new_role as $taskIndex => $tasksObject) {
                $tasksID = $tasksObject->ID;
                $value_roles = get_post_meta( $tasksID, 'roles' , false);
                $profile_field_name = get_post_meta( $tasksID, 'key' , false);
-               if($key == $profile_field_name){
+               if($taskKey == $tasksID){
                    foreach (array_keys($value_roles[0], $role_name) as $key1) {
                     unset($value_roles[0][$key1]);
                   } 
