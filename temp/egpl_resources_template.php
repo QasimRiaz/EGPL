@@ -26,7 +26,22 @@ $get_all_resources = get_posts( $args );
 
 
 ?>
+<div class="fusion-row">
+			<div class="fusion-column-wrapper">
+				<p>
+					<?php 
+					if (!(have_posts())) { ?>
+					<?php __("There are no posts", "Avada"); ?><?php } ?>   
+					<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+               		<?php the_content(); ?>
+           	 	    <?php endwhile; ?> 
+        	        <?php endif; ?>
+			   </p>
 
+			<div class="fusion-clearfix">
+			</div>
+		</div>
+                </div>
         <div id="content" class="fusion-portfolio fusion-portfolio-text fusion-portfolio-unboxed  fusion-portfolio-six" style="width: 100%;">
             <div id="post-59" class="fusion-portfolio-page-content post-59 page type-page status-publish hentry">
                 <div class="post-content">
@@ -35,7 +50,7 @@ $get_all_resources = get_posts( $args );
                             padding-left: px !important;
                             padding-right: px !important;
                         }</style>
-                        <div class="fusion-row">
+<!--                        <div class="fusion-row">
                             <div  style="text-align: center;margin-top:-42px;margin-bottom:31px;">
                                 <h1 >Forms</h1>
                             </div>
@@ -45,7 +60,7 @@ $get_all_resources = get_posts( $args );
                                 <i class="fa fa-folder-open" style="color:#32c3eb;"></i>
                             </span>
                         </div>
-                        </div>
+                        </div>-->
                     </div>
                 </div>
             </div>
