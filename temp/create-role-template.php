@@ -24,9 +24,19 @@
      
     
     
-    $list="";
-      $test = 'custome_task_manager_data';
-      $get_task_keys = get_option($test);
+      $list="";
+      $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+    );
+    $get_task_keys = get_posts( $args );
+      
+      //$test = 'custome_task_manager_data';
+     // $get_task_keys = get_option($test);
       
       
       
@@ -96,8 +106,17 @@
                                                     
                                                    
 
-        foreach ($get_task_keys['profile_fields'] as $profile_field_name => $profile_field_settings) {
-              
+        foreach ($get_task_keys as $tasksIDKey => $tasksObject) {
+             
+                                                
+                                    
+                                                $tasksID = $tasksObject->ID;
+                                                $value_label = get_post_meta( $tasksID, 'label' , false);
+                                                $value_key = get_post_meta( $tasksID, 'key', false);
+                                                $profile_field_name = $value_key[0];
+                                                $value_roles = get_post_meta( $tasksID, 'roles' , false);
+                                                $os = $value_roles[0];
+                                                
             if (strpos($profile_field_name, "task") !== false) {
                 
                 
@@ -106,7 +125,7 @@
                    
                }else{
                // echo $key;
-                   $os = $profile_field_settings['roles'];
+                   //$os = $profile_field_settings['roles'];
                    
                 if (in_array($key, $os) || in_array('all', $os)) {
                  // print_r(  $os );
