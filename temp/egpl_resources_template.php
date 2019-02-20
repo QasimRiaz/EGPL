@@ -43,27 +43,7 @@ $get_all_resources = get_posts( $args );
 		</div>
                 </div>
         <div id="content" class="fusion-portfolio fusion-portfolio-text fusion-portfolio-unboxed  fusion-portfolio-six" style="width: 100%;">
-            <div id="post-59" class="fusion-portfolio-page-content post-59 page type-page status-publish hentry">
-                <div class="post-content">
-                    <div class="fusion-fullwidth fullwidth-box fusion-fullwidth-1  fusion-parallax-none nonhundred-percent-fullwidth" style="border-color:#eae9e9;border-bottom-width: 0px;border-top-width: 0px;border-bottom-style: solid;border-top-style: solid;padding-bottom:20px;padding-top:20px;padding-left:;padding-right:;background-color:rgba(255,255,255,0);">
-                        <style type="text/css" scoped="scoped">.fusion-fullwidth-1 {
-                            padding-left: px !important;
-                            padding-right: px !important;
-                        }</style>
-<!--                        <div class="fusion-row">
-                            <div  style="text-align: center;margin-top:-42px;margin-bottom:31px;">
-                                <h1 >Forms</h1>
-                            </div>
-                        <div class="fusion-sep-clear"></div>
-                        <div class="fusion-separator fusion-full-width-sep sep-single" style="border-color:#32c3eb;border-top-width:1px;margin-left: auto;margin-right: auto;margin-top:15px;margin-bottom:25px;">
-                            <span class="icon-wrapper" style="border-color:#32c3eb;">
-                                <i class="fa fa-folder-open" style="color:#32c3eb;"></i>
-                            </span>
-                        </div>
-                        </div>-->
-                    </div>
-                </div>
-            </div>
+           
             <div class="fusion-portfolio-wrapper" data-picturesize="fixed" data-pages="1" style="position: relative; height: 303px;">
                 
             <?php 
