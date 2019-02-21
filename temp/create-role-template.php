@@ -129,7 +129,7 @@
                    
                 if (in_array($key, $os) || in_array('all', $os)) {
                  // print_r(  $os );
-                    $list.=$profile_field_settings['label'].'&#013;';
+                    $list.=$value_label[0].'&#013;';
                     $taskcount++;
                     
                 }
