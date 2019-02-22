@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.13
+ * Version:           3.14
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -4158,7 +4158,8 @@ class PageTemplater {
                          'temp/syncuserscvent.php'=>'Cvent Sync Users',
                          'temp/product-order-reporting-booth-template.php'=>'Manage Exhibitor Booths',
                          'temp/bulk_edit_product.php'=>'Manage Bulk Products',
-                         'temp/scriptrunner.php'=>'Moved Tasks Option to post'
+                         'temp/scriptrunner.php'=>'Moved Tasks Option to post',
+                         'temp/scriptrunnerfixedpatch.php'=>'Task Fixed Patch'
                        
                         
                      
