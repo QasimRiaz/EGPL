@@ -34,19 +34,41 @@ if ($_GET['dashboardRequest'] == 'getdashboarddailygraph') {
      //  print_r($get_all_roles);exit;
        
        
-        $test = 'custome_task_manager_data';
-        $result_task_array_list = get_option($test);
+       // $test = 'custome_task_manager_data';
+       // $result_task_array_list = get_option($test);
+        
+        $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+    );
+    $result_task_array_list = get_posts( $args );
+        
         $statscolcount = 0;
         $divheight = 645;
         $scroll = 'disable';
         
-        foreach ($result_task_array_list['profile_fields'] as $key => $value) {
+        foreach ($result_task_array_list as $taskindex => $taskValue) {
             
+            $tasksID = $taskValue->ID;
+            $key = get_post_meta( $tasksID, 'key', true);
+            $value_label = get_post_meta( $tasksID, 'label' , true);
+            $value_attrs = get_post_meta( $tasksID, 'duedate' , true);
+            $value_roles = get_post_meta( $tasksID, 'roles' , true);
+            $value_usersids = get_post_meta( $tasksID, 'usersids' , true);
+             
             if (strpos($key, "task") !== false) {
-                if (strpos($value['label'], 'Status') !== false || strpos($value['label'], 'Date-Time') !== false) {
+                if (strpos($value_label, 'Status') !== false || strpos($value_label, 'Date-Time') !== false) {
                     
                 } else {
-                    $arrDates[] = array($key => $value['attrs']);
+                    $arrDates[] = array($key => $value_attrs);
+                    $labelsArray[$key]['roles']=$value_roles;
+                    $labelsArray[$key]['usersids']=$value_usersids;
+                    $labelsArray[$key]['label']=$value_label;
+                    
                 }
             }
         }
@@ -63,8 +85,8 @@ if ($_GET['dashboardRequest'] == 'getdashboarddailygraph') {
             
              
             
-             $get_thistask_roles = $result_task_array_list['profile_fields'][$index]['roles'];
-             $totaltaskcount = count($result_task_array_list['profile_fields'][$index]['usersids']);
+             $get_thistask_roles = $labelsArray[$index]['roles'];
+             $totaltaskcount = count($labelsArray[$index]['usersids']);
              
              foreach ($get_thistask_roles as $index_key=>$rolename){
                  
@@ -107,7 +129,7 @@ if ($_GET['dashboardRequest'] == 'getdashboarddailygraph') {
                 
                 
                 
-                $task_columnsname_array[]= $result_task_array_list['profile_fields'][$index]['label'].' Status';
+                $task_columnsname_array[]= $labelsArray[$index]['label'].' Status';
                 
                 $task_pending_total_task_array['color'] = '#F5F5F5';
                 $task_pending_total_task_array['data'][] = $totaltaskcount - count($thistask_complete_total);
@@ -123,7 +145,7 @@ if ($_GET['dashboardRequest'] == 'getdashboarddailygraph') {
             $currenttime = strtotime(date('Y-m-d'));                                      //echo $index;
             //  echo $taskdate;
             if ($time >= $currenttime) {
-                $html_task_due_soon .= '<tr><td>' . $result_task_array_list['profile_fields'][$index]['label'] . '</td><td nowrap align="center"><span class="semibold">' . $taskdate . '</span></td></tr>';
+                $html_task_due_soon .= '<tr><td>' . $labelsArray[$index]['label'] . '</td><td nowrap align="center"><span class="semibold">' . $taskdate . '</span></td></tr>';
                 $duetaskcount++;
             }
         }
