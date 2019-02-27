@@ -5,30 +5,47 @@
     include 'cm_header.php';
     include 'cm_left_menu_bar.php';
     
-    $test = 'custome_task_manager_data';
-    $result = get_option($test);
+    //$test = 'custome_task_manager_data';
+    //$result = get_option($test);
+     $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+    );
+    $taskkeyContent = get_posts( $args );
+    
+    
+    
     //  echo '<pre>';
     // print_r($result);
     $idx = 5;
     $labelArray = null;
     $file_upload_list.='<select class="form-control" id="file_upload" ><option value="">Select a Download Field</option>';
 
-    foreach ($result['profile_fields'] as $profile_field_name => $profile_field_settings) {
+   foreach ($taskkeyContent as $taskindex => $taskValue) {
+       
+       $tasksID = $taskValue->ID;
+       $value_type = get_post_meta( $tasksID, 'type', true);
+       $value_label = get_post_meta( $tasksID, 'label', true);
+       $profile_field_name = get_post_meta( $tasksID, 'key', true);
 
-        if ($profile_field_settings['type'] == 'color') {
+        if ($value_type == 'color') {
 
-            $file_upload_list.='<option value="' . $profile_field_name . '">' . $profile_field_settings['label'] . '</option>';
+            $file_upload_list.='<option value="' . $profile_field_name . '">' . $value_label . '</option>';
         }
 
         if (strpos($profile_field_name, "status") !== false) {
 
 
-            if ($profile_field_settings['type'] == "select") {
-                $task_drop_down.='<option value="' . $profile_field_settings['label'] . '">' . $profile_field_settings['label'] . '</option>';
+            if ($value_type == "select") {
+                $task_drop_down.='<option value="' . $value_label . '">' . $value_label . '</option>';
             }
         }
 
-        $showhidefields.='<option   title="' . $profile_field_name . '"  class="my-toggle" value="' . $profile_field_name . '"  >' . $profile_field_settings['label'] . '</option>';
+        $showhidefields.='<option   title="' . $profile_field_name . '"  class="my-toggle" value="' . $profile_field_name . '"  >' . $value_label . '</option>';
         $idx++;
     }
     $file_upload_list.='</select>';
