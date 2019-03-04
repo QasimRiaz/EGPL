@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.16
+ * Version:           3.17
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -2152,7 +2152,7 @@ function roleassignnewtasks($request){
 	'post_status'      => 'draft',
 	
         );
-        $assign_new_role = get_posts( $args );
+        c = get_posts( $args );
         
         
         $tasksdatalist=json_decode(stripslashes($request['roleassigntaskdatalist']));

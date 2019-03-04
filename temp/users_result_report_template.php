@@ -22,8 +22,19 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     $welcomeemail_template_info_key='AR_Contentmanager_Email_Template_welcome';
     $welcomeemail_template_info = get_option($welcomeemail_template_info_key);
     
-    $test = 'custome_task_manager_data';
-    $result_task_array_list = get_option($test);
+   // $test = 'custome_task_manager_data';
+   // $result_task_array_list = get_option($test);
+    $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+        );
+    $result_task_array_list = get_posts( $args );
+    
+    
     $userreportcontent =   stripslashes($oldvalues['ContentManager']['userreportcontent']);
     
     
@@ -115,11 +126,14 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
             </select>
             <select id="hiddenfileuploadtasklist" style="display: none;">
                 
-                <?php   if(!empty($result_task_array_list)){foreach ($result_task_array_list['profile_fields'] as $profile_field_name => $profile_field_settings) { 
+                <?php   if(!empty($result_task_array_list)){foreach ($result_task_array_list as $taskindex => $taskValue) {
                                             
-                                            
-                                            if($profile_field_settings['type'] == 'color'){
-                                                 echo  '<option value="' . $profile_field_name . '" selected="selected">'.$profile_field_settings['label'].'</option>';
+                                            $tasksID = $taskValue->ID;
+                                            $value_key = get_post_meta( $tasksID, 'key', true);
+                                            $value_type = get_post_meta( $tasksID, 'type', true);
+                                            $value_label = get_post_meta( $tasksID, 'label', true);
+                                            if($value_type == 'color'){
+                                                 echo  '<option value="' . $value_key . '" selected="selected">'.$value_label.'</option>';
                                             }
                                           
                                          }
