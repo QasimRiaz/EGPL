@@ -75,7 +75,8 @@ jQuery(document).ready(function () {
                 
           // console.log(JSON.parse('[{"id":"last_login","unique":true,"type":"date","label":"Last login","operators":["is_empty","is_not_empty","equal","less","greater","between"],"validation":{"format":"DD-MMM-YYYY"},"plugin_config":{"format":"dd-M-yyyy","todayBtn":"linked","todayHighlight":true,"autoclose":true},"size":20}]'))
           // console.log(JSON.parse("[{'id': 'date','label': 'Datepicker','type': 'date','validation': {'format': 'YYYY/MM/DD'}, 'plugin': 'datepicker', plugin_config: {format: 'yyyy/mm/dd',todayBtn: 'linked',todayHighlight: true,autoclose: true}]"));
-           jQuery('#builder').queryBuilder(options);
+           console.log(options);
+            jQuery('#builder').queryBuilder(options);
             
             if(tech == 'edit'){
                 

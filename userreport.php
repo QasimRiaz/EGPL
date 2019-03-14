@@ -407,10 +407,11 @@ function getusersreport($data) {
             
             foreach ($additional_settings as $key=>$valuename){
                 
-                $columns_list_defult_user_report[$index_count]['title'] = $additional_settings[$key]['name'];
-                $columns_list_defult_user_report[$index_count]['type'] = 'string';
-                $columns_list_defult_user_report[$index_count]['key'] = $site_prefix.$additional_settings[$key]['key'];
-            
+                if($additional_settings[$key]['type']!="html"){
+                    $columns_list_defult_user_report[$index_count]['title'] = $additional_settings[$key]['name'];
+                    $columns_list_defult_user_report[$index_count]['type'] = 'string';
+                    $columns_list_defult_user_report[$index_count]['key'] = $site_prefix.$additional_settings[$key]['key'];
+                }
                 $index_count++;  
             
             }
@@ -571,8 +572,8 @@ function getusersreport($data) {
     
     
      foreach ($columns_headers as $rows=>$row){
-           
-             if ($row['title'] != 'Action' ) {
+          
+             if ($row['title'] != 'Action' && $row['type'] != "html" ) {
                  
                  
                 if ($row['title'] == 'User ID') {
@@ -1036,11 +1037,14 @@ function userreportresultdraw() {
         if(!empty($additional_settings)){
             
             foreach ($additional_settings as $key=>$valuename){
-                
-                $columns_list_defult_user_report[$index_count]['title'] = $additional_settings[$key]['name'];
-                $columns_list_defult_user_report[$index_count]['type'] = 'string';
-                $columns_list_defult_user_report[$index_count]['key'] = $site_prefix.$additional_settings[$key]['key'];
-            
+                if($additional_settings[$key]['type']!="html"){
+                    
+                    $columns_list_defult_user_report[$index_count]['title'] = $additional_settings[$key]['name'];
+                    $columns_list_defult_user_report[$index_count]['type'] = 'string';
+                    $columns_list_defult_user_report[$index_count]['key'] = $site_prefix.$additional_settings[$key]['key'];
+                  
+                    
+                }
                 $index_count++;  
             
             }
@@ -1291,9 +1295,10 @@ function userreportresultdraw() {
 
                     foreach ($additional_settings as $key => $valuename) {
                         
-                        
+                        if($additional_settings[$key]['type']!="html"){
                         $additionfield = $additional_settings[$key]['key'];
                         $column_row[$additional_settings[$key]['name']] = $all_meta_for_user[$site_prefix.$additionfield][0];
+                        }
                     }
                 }
             

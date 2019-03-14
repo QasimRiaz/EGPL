@@ -740,8 +740,8 @@ function saveallbulktask(){
                 },
         function(isConfirm) {
             jQuery("body").css({'cursor':'wait'});
-            location.reload();
-            // document.location.href = currentsiteurl+'/dashboard'
+            //location.reload();
+             document.location.href = currentsiteurl+'/dashboard'
         });
                 
                 
