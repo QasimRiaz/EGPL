@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.18
+ * Version:           3.19
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -947,6 +947,9 @@ try {
     $attendeefields_data=json_decode(stripslashes($_POST['attendeeallfields']), true);
     $colsdatatype=json_decode(stripslashes($_POST['datacollist']), true);
     $field_key_string = getInbetweenStrings('{', '}', $body);
+    // Danyal update content 
+    $field_key_subject = getInbetweenStrings('{', '}', $subject);
+    
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $formemail = $oldvalues['ContentManager']['formemail'];
     $fromname = stripslashes ($sponsor_info[$sendcustomewelcomeemail]['fromname']);
@@ -1018,8 +1021,84 @@ try {
             
           foreach($Onerowvalue as $key=>$value){
               
-              
-              
+             // Danyal update content 
+              foreach($field_key_subject as $index_subject=>$keyvalue_subject){
+                  
+                      if($keyvalue_subject == 'role' || $keyvalue_subject == 'site_title' || $keyvalue_subject == 'date' || $keyvalue_subject == 'time' || $keyvalue_subject == 'site_url' || $keyvalue_subject == 'user_pass'|| $keyvalue_subject == 'user_login'){
+                      
+                       
+                      if($keyvalue_subject == 'user_pass'){
+                          
+                            
+                            $user_id = $userdata->ID;
+                            $plaintext_pass=wp_generate_password( 8, false, false );
+                            wp_set_password( $plaintext_pass, $user_id );
+                            $data_field_array[] = array('name'=>$keyvalue_subject,'content'=>$plaintext_pass);  
+                          
+                      }else if($keyvalue_subject == 'user_login'){
+                          
+                          $data_field_array[] = array('name'=>$keyvalue_subject,'content'=>$userdata->user_login);  
+                      }else if($keyvalue_subject == 'role'){
+                          
+                          $user_id = $userdata->ID;
+                          $getcurrentuserdata = get_userdata( $user_id );
+                          $blog_id = get_current_blog_id();
+                          $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+                          $get_all_roles = get_option($get_all_roles_array);
+                          foreach ($get_all_roles as $key => $name) {
+                              
+                              if(implode(', ', $getcurrentuserdata->roles) == $key){
+                                  
+                                  $currentuserRole = $name['name'];
+                                  
+                                  
+                              }
+                              
+                              
+                              
+                          }
+                          
+                          
+                          $data_field_array[] = array('name'=>$keyvalue_subject,'content'=>$currentuserRole); 
+                      }
+                      
+                      
+                      
+                   }else{
+                       
+                       
+                       
+                    if($site_prefix.$keyvalue_subject == $value['colkey']){
+                        
+                       if (!empty($value['colvalue'])) {
+                           
+                           $result = multidimensional_search($colsdatatype, array('colkey' => $keyvalue_subject)); // 1 
+                        
+                        if($colsdatatype[$result]['type'] == 'date') {
+                            
+                          $date_value =   date('d-m-Y', intval($value['colvalue'])/1000);
+                          $data_field_array[] = array('name'=>$keyvalue_subject,'content'=>$date_value);
+                          
+                        } else{
+                             if ($value['colkey'] == $site_prefix.$keyvalue_subject) {
+                                $data_field_array[] = array('name'=>$keyvalue_subject,'content'=>$value['colvalue']);  
+                             }
+                        }
+                       }else{
+                           if ($value['colkey'] == $site_prefix.$keyvalue_subject) {
+                                $data_field_array[] = array('name'=>$keyvalue_subject,'content'=>''); 
+                           }
+                       }
+                   }
+                      
+                      
+                      
+                      
+                  }
+                 
+                 
+                 
+             }
              
             
              foreach($field_key_string as $index=>$keyvalue){
@@ -1269,6 +1348,9 @@ try {
    
     
     $field_key_string = getInbetweenStrings('{', '}', $body);
+    // Danyal update content 
+    
+    $field_key_string_subject = getInbetweenStrings('{', '}', $subject);
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $formemail = $oldvalues['ContentManager']['formemail'];
     if(empty($formemail)){
@@ -1348,6 +1430,46 @@ try {
                 }
             }
         }
+		
+		 // Danyal update content 
+		foreach($field_key_string_subject as $index_subject=>$keyvalue_subject){
+                    
+                
+                    
+                   if($keyvalue_subject == $value['colkey']){
+                        
+                     if ($keyvalue_subject == 'date' || $keyvalue_subject == 'time' || $keyvalue_subject == 'siteurl') {
+                  
+                        } else {
+
+                    if (!empty($value['colvalue'])) {
+
+                        $result = multidimensional_search($colsdatatype, array('colkey' => $keyvalue_subject)); // 1 
+                        
+                       
+                        if ($colsdatatype[$result]['type'] == 'date') {
+                            if ($value['colkey'] == $keyvalue_subject) {
+                                $date_value = date('d-m-Y', intval($value['colvalue']) / 1000);
+                                $data_field_array[] = array('name' => $keyvalue_subject, 'content' => $date_value);
+                            }
+                        } else {
+
+                            if ($value['colkey'] == $keyvalue_subject) {
+
+                                $data_field_array[] = array('name' => $keyvalue_subject, 'content' => $value['colvalue']);
+                            }
+                        }
+                    } else {
+                        $data_field_array[] = array('name' => $keyvalue_subject, 'content' => '');
+                    }
+                }
+            }
+        }
+          
+		
+		
+		
+		
               if ($value['colkey'] == 'Email') {
                         $email_address = $value['colvalue'];
                 } else if ($value['colkey'] == 'first_name') {
@@ -4629,6 +4751,76 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
        $data_field_array= array();
        $t=time();
        update_user_option($user_id, 'convo_welcomeemail_datetime', $t*1000);
+	   // Danyal update content 
+	   foreach($field_key_subject as $index_subject=>$keyvalue_subject){
+
+                      if($keyvalue_subject == 'role' || $keyvalue_subject == 'site_title' || $keyvalue_subject == 'date' || $keyvalue_subject == 'time' || $keyvalue_subject == 'site_url' || $keyvalue_subject == 'user_pass'|| $keyvalue_subject == 'user_login'){
+
+
+                      if($keyvalue_subject == 'user_pass'){
+
+
+                            
+                            $plaintext_pass=wp_generate_password( 8, false, false );
+                            wp_set_password( $plaintext_pass, $user_id );
+                            $data_field_array[] = array('name'=>$keyvalue_subject,'content'=>$plaintext_pass);
+
+                      }else if($keyvalue_subject == 'user_login'){
+
+                          $data_field_array[] = array('name'=>$keyvalue_subject,'content'=>$user->user_login);
+                      }else if($keyvalue_subject == 'role'){
+
+                         
+                          $getcurrentuserdata = get_userdata( $user_id );
+                          $blog_id = get_current_blog_id();
+                          $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+                          $get_all_roles = get_option($get_all_roles_array);
+                          foreach ($get_all_roles as $key => $name) {
+
+                              if(implode(', ', $getcurrentuserdata->roles) == $key){
+
+                                  $currentuserRole = $name['name'];
+
+
+                              }
+
+
+
+                          }
+
+
+                          $data_field_array[] = array('name'=>$keyvalue_subject,'content'=>$currentuserRole);
+                      }
+
+
+
+                   }else{
+
+
+                       $get_meta_value = get_user_meta_merger_field_value($user_id,$keyvalue_subject);
+                    if(!empty($get_meta_value)){
+
+                     
+                             
+                       $data_field_array[] = array('name'=>$keyvalue_subject,'content'=>$get_meta_value);
+                             
+                        
+                       
+                   }else{
+                       
+                       $data_field_array[] = array('name'=>$keyvalue_subject,'content'=>'');
+                   }
+
+
+
+
+                  }
+
+
+
+             }
+			 
+			 
        foreach($field_key_string as $index=>$keyvalue){
 
                       if($keyvalue == 'role' || $keyvalue == 'site_title' || $keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'site_url' || $keyvalue == 'user_pass'|| $keyvalue == 'user_login'){
@@ -5405,7 +5597,8 @@ try {
         $fromname = get_bloginfo( 'name' );
     }
      $field_key_string = getInbetweenStrings('{', '}', $body);
-    
+     // Danyal update content 
+     $field_key_subject = getInbetweenStrings('{', '}', $subject);
           
    
     $subject = str_replace('{', '*|', $subject);
