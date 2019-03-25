@@ -129,6 +129,9 @@ function calltoinsertorupdateuser(){
     var statustable ="";
     statustable +='<table id="syncuserstatustable" class="display" cellspacing="0" width="100%"><thead><tr><th>Email</th><th>Company Name</th><th>Status</th><th>Result</th><th>Floor plan Exhibitor ID</th></tr></thead><tbody id="syncuserdata">';
     var data = new FormData();
+    
+    
+    
     jQuery('#prog').progressbar({ value: 0 });
     jQuery("body").css({'cursor':'wait'});                
     jQuery('.useridarray').map(function() {

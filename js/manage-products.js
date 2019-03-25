@@ -235,6 +235,13 @@ function add_new_product(){
     
     if(productid !=""){
         var updateproductimage = jQuery('#updateproductimage')[0].files[0];
+        if(!updateproductimage){
+            if(jQuery('#productimage')[0]){
+            var updateproductimage = jQuery('#productimage')[0].files[0];
+        }
+        }
+        
+        
         data.append('productid', productid);
         data.append('productimageurl', productimageurl);
         data.append('updateproductimage', updateproductimage);
