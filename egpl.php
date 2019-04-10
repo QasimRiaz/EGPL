@@ -5,13 +5,13 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.19
+ * Version:           3.2.0
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
  * Network:           true
  * GitHub Plugin URI: https://github.com/QasimRiaz/EGPL
- * Requires WP:       5.0.3
+ * Requires WP:       5.1.1
  * Requires PHP:      7.2
  * Date 11/02/2019
  */
@@ -947,9 +947,7 @@ try {
     $attendeefields_data=json_decode(stripslashes($_POST['attendeeallfields']), true);
     $colsdatatype=json_decode(stripslashes($_POST['datacollist']), true);
     $field_key_string = getInbetweenStrings('{', '}', $body);
-    // Danyal update content 
     $field_key_subject = getInbetweenStrings('{', '}', $subject);
-    
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $formemail = $oldvalues['ContentManager']['formemail'];
     $fromname = stripslashes ($sponsor_info[$sendcustomewelcomeemail]['fromname']);
@@ -1021,8 +1019,11 @@ try {
             
           foreach($Onerowvalue as $key=>$value){
               
-             // Danyal update content 
-              foreach($field_key_subject as $index_subject=>$keyvalue_subject){
+              
+              
+             
+           
+             foreach($field_key_subject as $index_subject=>$keyvalue_subject){
                   
                       if($keyvalue_subject == 'role' || $keyvalue_subject == 'site_title' || $keyvalue_subject == 'date' || $keyvalue_subject == 'time' || $keyvalue_subject == 'site_url' || $keyvalue_subject == 'user_pass'|| $keyvalue_subject == 'user_login'){
                       
@@ -1099,9 +1100,7 @@ try {
                  
                  
              }
-             
-            
-             foreach($field_key_string as $index=>$keyvalue){
+            foreach($field_key_string as $index=>$keyvalue){
                   
                       if($keyvalue == 'role' || $keyvalue == 'site_title' || $keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'site_url' || $keyvalue == 'user_pass'|| $keyvalue == 'user_login'){
                       
@@ -1178,7 +1177,6 @@ try {
                  
                  
              }
-            
               if ($value['colkey'] == 'Email') {
                         $email_address = $value['colvalue'];
                 } else if ($value['colkey'] == 'first_name') {
@@ -1348,9 +1346,8 @@ try {
    
     
     $field_key_string = getInbetweenStrings('{', '}', $body);
-    // Danyal update content 
-    
     $field_key_string_subject = getInbetweenStrings('{', '}', $subject);
+    
     $oldvalues = get_option( 'ContenteManager_Settings' );
     $formemail = $oldvalues['ContentManager']['formemail'];
     if(empty($formemail)){
@@ -1430,9 +1427,7 @@ try {
                 }
             }
         }
-		
-		 // Danyal update content 
-		foreach($field_key_string_subject as $index_subject=>$keyvalue_subject){
+        foreach($field_key_string_subject as $index_subject=>$keyvalue_subject){
                     
                 
                     
@@ -1465,11 +1460,6 @@ try {
                 }
             }
         }
-          
-		
-		
-		
-		
               if ($value['colkey'] == 'Email') {
                         $email_address = $value['colvalue'];
                 } else if ($value['colkey'] == 'first_name') {
@@ -3598,7 +3588,7 @@ function getReportsdatanew($report_name,$usertimezone){
 
 add_action('wp_enqueue_scripts', 'add_contentmanager_js');
 function add_contentmanager_js(){
-      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'2.1.9', true);
+      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'2.2.0', true);
     
      wp_enqueue_script( 'jquery.alerts', plugins_url() . '/EGPL/js/jquery.alerts.js', array(), '1.1.0', true );
      wp_enqueue_script( 'boot-date-picker', plugins_url() . '/EGPL/js/bootstrap-datepicker.js', array(), '1.2.0', true );
@@ -4716,7 +4706,7 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
     $user_info = get_userdata($user_ID);
     
     $field_key_string = getInbetweenStrings('{', '}', $body);
-   
+    $field_key_subject = getInbetweenStrings('{', '}', $subject);
   
     $site_url = get_option('siteurl' );
 
@@ -4751,8 +4741,8 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
        $data_field_array= array();
        $t=time();
        update_user_option($user_id, 'convo_welcomeemail_datetime', $t*1000);
-	   // Danyal update content 
-	   foreach($field_key_subject as $index_subject=>$keyvalue_subject){
+       
+       foreach($field_key_subject as $index_subject=>$keyvalue_subject){
 
                       if($keyvalue_subject == 'role' || $keyvalue_subject == 'site_title' || $keyvalue_subject == 'date' || $keyvalue_subject == 'time' || $keyvalue_subject == 'site_url' || $keyvalue_subject == 'user_pass'|| $keyvalue_subject == 'user_login'){
 
@@ -4819,8 +4809,6 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
 
 
              }
-			 
-			 
        foreach($field_key_string as $index=>$keyvalue){
 
                       if($keyvalue == 'role' || $keyvalue == 'site_title' || $keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'site_url' || $keyvalue == 'user_pass'|| $keyvalue == 'user_login'){
@@ -5525,9 +5513,11 @@ function checkimportrowstatus($username,$email,$firstname,$lastname,$role,$compa
     $all_roles = $wp_roles->get_names();
    
     
+    $all_roles = array_map('strtolower', $all_roles);//edit new add 
     
     if(!empty($username)&&!empty($email)&&!empty($firstname)&&!empty($lastname)&&!empty($role)&&!empty($company_name)){
-        $role = ucwords($role);
+        //$role = ucwords($role);
+		$role =	strtolower($role);//edit
         if (in_array($role, $all_roles)) {
             $status = 'clear';
            
@@ -5597,7 +5587,6 @@ try {
         $fromname = get_bloginfo( 'name' );
     }
      $field_key_string = getInbetweenStrings('{', '}', $body);
-     // Danyal update content 
      $field_key_subject = getInbetweenStrings('{', '}', $subject);
           
    
@@ -6116,6 +6105,103 @@ function exp_autocomplete_paid_orders($order_status, $order_id) {
 
 
 
+add_action( 'woocommerce_checkout_process', 'reviewboothproducts', 10 );
+
+
+
+function reviewboothproducts($order){
+    
+    $items = WC()->cart->get_cart();
+     $contentmanager_settings = get_option( 'ContenteManager_Settings' );
+     $FloorpLanid = $contentmanager_settings['ContentManager']['floorplanactiveid'];
+    
+     $ViewerLockstatus = get_post_meta( $FloorpLanid, 'updateboothpurchasestatus', true );
+     
+     if($ViewerLockstatus == 'unlock'){
+    
+    
+    foreach ($items as $item => $values)
+    {
+        $_product = $values['data']->post;
+        $product_ID = $_product->ID;
+        $product_title = $_product->post_title;
+       
+        $get_BoothCellID = "";
+        $getBoothOwner = "none";
+        
+        $FloorplanXml = get_post_meta( $FloorpLanid, 'floorplan_xml', true );
+        $sellboothsjson = json_decode(get_post_meta( $FloorpLanid, 'sellboothsjson', true ));
+        
+        $FloorplanXml = str_replace('"n<','<',$FloorplanXml);
+        $FloorplanXml = str_replace('>n"','>',$FloorplanXml);
+        
+        $xml=simplexml_load_string($FloorplanXml) or die("Error: Cannot create object");
+       
+        
+        foreach($sellboothsjson as $boothIndex=>$boothObject){
+            
+            
+            if($boothObject->boothID == $product_ID){
+                
+                $get_BoothCellID = $boothObject->cellID;
+                
+                
+            }
+        }
+        
+      
+         
+        if(!empty($get_BoothCellID)){
+            $currentIndex=0;
+            foreach ($xml->root->MyNode as $cellIndex=>$CellValue){
+            
+            
+          
+       
+                    $new_product_id = "";
+                    $cellboothlabelvalue = $CellValue->attributes();
+                    $getCellStylevalue = $xml->root->MyNode[$currentIndex]->mxCell->attributes();
+                    $boothid = $cellboothlabelvalue['id'];
+                    
+                   
+                    
+                    if($boothid == $get_BoothCellID){
+                        
+                       
+                        $getBoothOwner = $cellboothlabelvalue['boothOwner'];
+                        break;
+                       
+                    }
+                    $currentIndex++;
+                    
+                    
+            }
+            
+            
+            
+        }
+        
+        
+        if($getBoothOwner != 'none' && $getBoothOwner != ''){
+            
+            
+            wc_add_notice( __( 'Booth number '.$product_title.' in your cart is no longer available for purchase. Please try another booth.' ), 'error' );
+            
+            
+        }
+       
+    }
+  }else{
+      
+      
+      wc_add_notice( __( 'The floorplan is currently locked by the Administrators so checkout is not possible. Please try again later.' ), 'error' );
+            
+      
+  }
+   
+    
+}
+
 function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
         
        
@@ -6173,10 +6259,11 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
                     $productID =  $ids;
                    
                     
+                  
                     
                     
                     
-                    if($getproduct_detail->product->categories[0] == 'Booths'){
+                    if($getproduct_detail->product->categories[0] != 'Package' && $getproduct_detail->product->categories[0] != 'Add-on'){
                         
                         
                         $id = wp_insert_post(array('post_title'=>'Booth Purchase Review_'.$order_ID, 'post_type'=>'booth_review', 'post_content'=>''));
@@ -6192,7 +6279,7 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
                         
                         if(!empty($boothpurchaseenablestatus) && $boothpurchaseenablestatus == "enabled"){
                             
-                          
+                         
                           
                            $OrderUserID = $current_user->ID;
                            $foolrplanID = $woocommerce_rest_api_keys['ContentManager']['floorplanactiveid'];
@@ -6214,7 +6301,7 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
                          
                            
                            foreach ($xml->root->MyNode as $cellIndex=>$CellValue){
-            
+                              
                                 
                                 $cellboothlabelvalue = $CellValue->attributes();
                                 $getCellStylevalue = $xml->root->MyNode[$currentIndex]->mxCell->attributes();
@@ -6310,7 +6397,7 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
                                 $currentIndex++;
     
                             }
-        
+                                
                                 $getresultforupdat = str_replace('<?xml version="1.0"?>',"",$xml->asXML());
                                 update_post_meta( $foolrplanID, 'floorplan_xml', json_encode($getresultforupdat));
                                 update_post_meta( $id, 'boothStatus', 'Completed' );
@@ -6328,12 +6415,17 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
                         
                         
                     }
-                    if(!empty($getproduct_detail->product->tax_class)){
+                    
+                    $get_productlevel = get_post_meta( $productID, 'productlevel', true );
+                    
+                    
+                    if(!empty($get_productlevel)){
                         
-                         $seletedroleValue = $getproduct_detail->product->tax_class;
+                         $seletedroleValue = $get_productlevel;
                          $assign_role[] = $seletedroleValue;
                         
                     }
+                    
                     $selectedTaskListData = get_post_meta( $ids);
                     $selectedTaskList = unserialize($selectedTaskListData['seletedtaskKeys'][0]);
                     

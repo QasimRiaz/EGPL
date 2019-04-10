@@ -130,6 +130,14 @@ function bulkproductgenrate($request){
         $objProduct->set_price($prodcutObject->prodcutprice); //Set the product's active price.
         $objProduct->set_regular_price($prodcutObject->prodcutprice); //Set the product's regular price.
         $objProduct->set_tax_class($prodcutObject->prodcutlevel); 
+        
+        if(!empty($prodcutObject->prodcutlevel)){
+            
+          
+                     $objProduct->update_meta_data('productlevel', $prodcutObject->prodcutlevel);
+            
+                }
+                
         $term_ids =[$prodcutObject->prodcutcatID];
         $objProduct->set_category_ids($term_ids); //Set the product categories.                   | array $term_ids List of terms IDs.
         $objProduct->set_tag_ids($term_ids); //Set the product tags.                              | array $term_ids List of terms IDs.
@@ -332,8 +340,15 @@ function autogenerateproducts(){
                 $objProduct->set_stock_status('instock'); //Set stock status.                               | string $status 'instock', 'outofstock' and 'onbackorder'
                 $objProduct->set_backorders('no'); //Set backorders.                                        | string $backorders Options: 'yes', 'no' or 'notify'.
                 $objProduct->set_sold_individually(FALSE);
-                $objProduct->set_tax_class($createdproductLevel); 
-             
+               // $objProduct->set_tax_class($createdproductLevel); 
+                
+                 if(!empty($roleassign)){
+            
+          
+                     $objProduct->update_meta_data('productlevel', $createdproductLevel);
+            
+                }
+                
                 //  $objProduct->set_menu_order($menu_order); 
 
                 $objProduct->set_reviews_allowed(TRUE); //Set if reviews is allowed.                        | bool
@@ -603,7 +618,7 @@ function loadorderreport() {
 
         $columns_list_order_report_postmeta[17]['title'] = 'Stripe Fee';
         $columns_list_order_report_postmeta[17]['type'] = 'num-fmt';
-        $columns_list_order_report_postmeta[17]['key'] = 'Stripe Fee';
+        $columns_list_order_report_postmeta[17]['key'] = '_stripe_fee';
 
         $columns_list_order_report_postmeta[18]['title'] = 'Net Revenue From Stripe';
         $columns_list_order_report_postmeta[18]['type'] = 'num-fmt';
@@ -649,7 +664,7 @@ function loadorderreport() {
             $header_array = get_object_vars($single_post);
             $post_meta = get_post_meta($header_array['ID']);
             
-            
+           
             
             
             $column_row;
@@ -850,7 +865,7 @@ function manageproducts() {
 
            
            
-         
+          if($single_product->categories[0] == "Packages" || $single_product->categories[0] == "Add-ons" ){
             
             
            $action_data = '<div style="width: 140px !important;"class = "hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"><i data-toggle="tooltip" class="hi-icon fa fa-clone saveeverything" id = "' . $single_product->id . '" onclick="createproductclone(this)" title="" data-original-title="Create a clone"></i><a href="'.$site_url.'/add-new-product/?productid='. $single_product->id .'"  ><i data-toggle = "tooltip" title = ""  id = "' . $single_product->id . '" class = "hi-icon fusion-li-icon fa fa-pencil-square fa-2x" data-original-title = "Edit Product"></i></a><i   id = "' . $single_product->id . '" data-toggle = "tooltip" title = "" onclick="deleteproduct(this)" class = "hi-icon fusion-li-icon fa fa-times-circle fa-2x" data-original-title = "Delete Product"></i><a href="'.$single_product->permalink.'" target="_blank" ><i onclick = "delete_product(this)" id = "' . $single_product->id . '" data-toggle = "tooltip" title = "" class = "hi-icon fusion-li-icon fa fa-eye fa-2x" data-original-title = "View Product" ></i></a></div>';
@@ -922,7 +937,7 @@ function manageproducts() {
 
 
             array_push($columns_rows_data, $column_row);
-        
+          }
         }
 
         $orderreport_all_col_rows_data['columns'] = $columns_headers;
@@ -986,32 +1001,7 @@ function addnewproducts($addnewproduct_data) {
             'timeout' => 30,
             'ssl_verify' => false,
         );
-        //$woocommerce_rest_api_keys = get_option( 'ContenteManager_Settings' );
-        //$wooconsumerkey = $woocommerce_rest_api_keys['ContentManager']['wooconsumerkey'];
-        //$wooseceretkey = $woocommerce_rest_api_keys['ContentManager']['wooseceretkey'];
-        //$woocommerce_object = new WC_API_Client( $url, $wooconsumerkey, $wooseceretkey, $options );
-       
-           /* $data = [
-                'title' => $addnewproduct_data['ptitle'],
-                'manage_stock' => true,
-                'regular_price' => $price,
-                'tax_class' =>$roleassign,
-                'managing_stock'=>true,
-                'stock_quantity' => $addnewproduct_data['pquanitity'],
-                'in_stock' => $instock,
-                'status' => $addnewproduct_data['pstatus'],
-                'name' => $productName,
-                'type' => 'simple',
-                'description' => $addnewproduct_data['pdescrpition'],
-                'short_description' => $addnewproduct_data['pshortdescrpition'],
-                'enable_html_description'=> true,
-                'enable_html_short_description'=> true,
-                'categories' => [$addnewproduct_data['pcategories']],
-                'images' => Array ( '0' => Array( 'src' => $productpicrul, 'title' => '21', 'position' => '0' ) )      
         
-               
-            ];*/
-          
             
         $objProduct = new WC_Product();
         
@@ -1034,7 +1024,6 @@ function addnewproducts($addnewproduct_data) {
         
         
         
-        
         $objProduct->set_status($addnewproduct_data['pstatus']); //Set product status.
         $objProduct->set_featured(TRUE); //Set if the product is featured.                          | bool
         $objProduct->set_catalog_visibility('visible'); //Set catalog visibility.                   | string $visibility Options: 'hidden', 'visible', 'search' and 'catalog'.
@@ -1046,7 +1035,15 @@ function addnewproducts($addnewproduct_data) {
         $objProduct->set_manage_stock(TRUE); //Set if product manage stock.                         | bool
         $objProduct->set_backorders('no'); //Set backorders.                                        | string $backorders Options: 'yes', 'no' or 'notify'.
         $objProduct->set_sold_individually(FALSE);
-        $objProduct->set_tax_class($roleassign); 
+        
+         if(!empty($roleassign)){
+            
+          
+                     $objProduct->update_meta_data('productlevel', $roleassign);
+            
+                }
+        
+       // $objProduct->set_tax_class($roleassign); 
         
         
         
@@ -1201,7 +1198,7 @@ function updateproducts($updateproducts_data) {
         $objProduct->set_price($price); //Set the product's active price.
         $objProduct->set_regular_price($price); //Set the product's regular price.
         
-        $objProduct->set_tax_class($roleassign); 
+      //  $objProduct->set_tax_class($roleassign); 
        
         
         
@@ -1211,7 +1208,16 @@ function updateproducts($updateproducts_data) {
         $objProduct->set_tag_ids($term_ids); //Set the product tags.                              | array $term_ids List of terms IDs.
         $objProduct->set_image_id($productpicrul); //Set main image ID.                                         | int|string $image_id Product image id.
         //Set gallery attachment ids.                       | array $image_ids List of image ids.
+        
+        if(!empty($roleassign)){
+            
+          
+                     $objProduct->update_meta_data('productlevel', $roleassign);
+            
+        }
         $new_product_id = $objProduct->save();
+        
+        
         if(!empty($selectedtaskArray)){
             update_post_meta( $new_product_id, 'seletedtaskKeys', $selectedtaskArray );
         }
@@ -1344,7 +1350,15 @@ function productclone($productcloneid) {
         $objProduct->set_stock_status($oldproduct->get_stock_status()); //Set stock status.                               | string $status 'instock', 'outofstock' and 'onbackorder'
         $objProduct->set_backorders('no'); //Set backorders.                                        | string $backorders Options: 'yes', 'no' or 'notify'.
         $objProduct->set_sold_individually(FALSE);
-        $objProduct->set_tax_class($oldproduct->get_tax_class()); 
+        $get_results = get_post_meta($postid, "productlevel",true);
+         if(!empty($get_results)){
+            
+          
+                     $objProduct->update_meta_data('productlevel', $get_results);
+            
+                }
+                
+       // $objProduct->set_tax_class($oldproduct->get_tax_class()); 
 
         
         

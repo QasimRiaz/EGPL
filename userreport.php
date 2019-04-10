@@ -396,9 +396,9 @@ function getusersreport($data) {
         $columns_list_defult_user_report[10]['type'] = 'string';
         $columns_list_defult_user_report[10]['key'] = $site_prefix.'user_profile_url';
         
-      //  $columns_list_defult_user_report[11]['title'] = 'Floorplan ID';
-     //   $columns_list_defult_user_report[11]['type'] = 'string';
-    //    $columns_list_defult_user_report[11]['key'] = $site_prefix.'exhibitor_map_dynamics_ID';
+        $columns_list_defult_user_report[11]['title'] = 'Booth Number';
+        $columns_list_defult_user_report[11]['type'] = 'string';
+        $columns_list_defult_user_report[11]['key'] = 'booth_number';
        
         
         
@@ -793,6 +793,7 @@ function get_userreport_detail($orderreportname) {
 function userreportresultdraw() {
    
     require_once('../../../wp-load.php');
+     require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/floorplan-manager.php';
     global $wpdb;
     try {
         if(isset($_POST['filterdata'])){
@@ -1027,10 +1028,9 @@ function userreportresultdraw() {
         $columns_list_defult_user_report[10]['type'] = 'string';
         $columns_list_defult_user_report[10]['key'] = $site_prefix.'user_profile_url';
         
-     //   $columns_list_defult_user_report[11]['title'] = 'Floorplan ID';
-     //   $columns_list_defult_user_report[11]['type'] = 'string';
-    //    $columns_list_defult_user_report[11]['key'] = $site_prefix.'exhibitor_map_dynamics_ID';
-    //   
+    $columns_list_defult_user_report[11]['title'] = 'Booth Number';
+        $columns_list_defult_user_report[11]['type'] = 'string';
+        $columns_list_defult_user_report[11]['key'] = 'booth_number';
         
         
         $index_count = 12;
@@ -1225,7 +1225,22 @@ function userreportresultdraw() {
        foreach ($authors as $aid) {
 
             $user_data = get_userdata($aid->ID);
+            $demo = new FloorPlanManager();
+            $AllBoothsList = $demo->getAllbooths();
             
+            
+            $thisBoothNumber ="";
+            foreach ($AllBoothsList as $boothIndex=>$boothValue ){
+                
+                if($boothValue['bootheOwnerID'] == $aid->ID){
+                    
+                    
+                    $thisBoothNumber = $boothValue['boothNumber'];
+                    
+                }
+                
+                
+            }
           // echo $user_data->roles[0].'</br>';
             $all_meta_for_user = get_user_meta($aid->ID);
             
@@ -1280,7 +1295,7 @@ function userreportresultdraw() {
                 $column_row['Email'] = $user_data->user_email;
                 $column_row['Welcome Email Sent On'] = $last_send_welcome_timestamp;
                 $column_row['Status'] = $all_meta_for_user[$site_prefix.'selfsignupstatus'][0];
-            //    $column_row['Floorplan ID'] = $all_meta_for_user[$site_prefix.'exhibitor_map_dynamics_ID'][0];
+            $column_row['Booth Number'] = $thisBoothNumber;//$all_meta_for_user[$site_prefix.'exhibitor_map_dynamics_ID'][0];
                 
 //                if(!empty($all_meta_for_user['user_profile_url'][0])){
 //                    
@@ -1295,10 +1310,9 @@ function userreportresultdraw() {
 
                     foreach ($additional_settings as $key => $valuename) {
                         
-                        if($additional_settings[$key]['type']!="html"){
+                        
                         $additionfield = $additional_settings[$key]['key'];
                         $column_row[$additional_settings[$key]['name']] = $all_meta_for_user[$site_prefix.$additionfield][0];
-                        }
                     }
                 }
             

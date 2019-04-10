@@ -109,7 +109,7 @@ jQuery(window).load(function() {
          var taskuseriddata = jQuery('.addnewtaskdata-userid').html();
         
         var col1 = '<div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"><i class="hi-icon fa fa-clone saveeverything" id="'+uniquecode+'" title="Create a clone" onclick="clonebulk_task(this)" style="color:#262626;cursor: pointer;" data-toggle="tooltip" aria-hidden="true"></i> <i data-toggle="tooltip" title="Advanced" name="'+uniquecode+'" onclick="bulktasksettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i><i name="'+uniquecode+'" data-toggle="tooltip" style=" cursor: pointer;margin-left: 10px;" onclick="removebulk_task(this)" title="Remove this task" class="hi-icon fusion-li-icon fa fa-times-circle " style="color:#262626;"></i></div>';
-        var col2 = '<input data-toggle="tooltip" placeholder="Title" title="Title" id="row-'+uniquecode+'-title" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control" name="tasklabel" >  <input type="hidden" id="row-'+uniquecode+'-key" value=""><input type="hidden" id="row-'+uniquecode+'-attribute"  value="" > <input type="hidden" id="row-'+uniquecode+'-taskMWC"  value="" ><input type="hidden" id="row-'+uniquecode+'-taskMWDDP"  value="" > ';
+        var col2 = '<input data-toggle="tooltip" placeholder="Title" title="Title" id="row-'+uniquecode+'-title" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control" name="tasklabel" >  <input type="hidden" id="row-'+uniquecode+'-key" value=""><input type="hidden" id="row-'+uniquecode+'-attribute"  value="" > <input type="hidden" id="row-'+uniquecode+'-taskMWC"  value="" ><input type="hidden" id="row-'+uniquecode+'-taskMWDDP"  value="" ><input type="hidden" id="row-'+uniquecode+'-taskCode"  value="" ><input type="hidden" id="row-'+uniquecode+'-SystemTask"  value="" > ';
         var col3 = '<div class="topmarrginebulkedit"><select  data-toggle="tooltip" title="Select Type" class="select2 bulktasktypedrop" id="bulktasktype_'+uniquecode+'" data-placeholder="Select Type" data-allow-clear="true">'+tasktypedata+'</select></div><div class="bulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" ><input type="text"  class="form-control" name="linkurl" placeholder="Link URL" title="Link URL"id="row-'+uniquecode+'-linkurl" ><br><input type="text"  class="form-control" name="linkname" placeholder="Link Name" title="Link Name" id="row-'+uniquecode+'-linkname"></div><div class="dbulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" > <input type="text"  class="form-control" name="dropdownvalues" placeholder="Comma separated list of values" title="Comma separated list of values"  id="row-'+uniquecode+'-dropdownvlaues" ></div>';
         var col4 = '<input  data-toggle="tooltip" title="Due Date" placeholder="Due Date" id="row-'+uniquecode+'-duedate" style="padding-left: 13px;margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control datepicker" name="datepicker" >';
         var col5 = '<div class="addscrol topmarrginebulkedit"><select data-toggle="tooltip" class="select2" id="row-'+uniquecode+'-levels" data-placeholder="Select Levels" title="Select Levels" data-allow-clear="true"  multiple="multiple">'+taskroledata+'</select><br><select data-placeholder="Select Users" title="Select Users" id="row-'+uniquecode+'-userid" data-allow-clear="true"  class="select2" multiple="multiple">'+taskuseriddata+'</select> <br></div>';
@@ -248,9 +248,17 @@ $eventSelect.on("select2:select", function (e) {
 //$eventSelect.on("select2:unselect", function (e) { console.log('unselect');});
 jQuery('.bulktasktypedrop').on("select2:selecting", function(e) {
     console.log(e.currentTarget['id']);
+   
+   
+    
+   
+    
     var oldselectingvalue ='';
     oldselectingvalue = jQuery('#'+e.currentTarget['id']).val();
     
+  
+    
+   
     swal({
             title: "Warning !",
             text: 'Changing task input type can result in losing user submissions that were made for this task in the past. Are you sure you want to continue?',
@@ -396,12 +404,17 @@ function clonebulk_task(e){
       // t.row.add(data).draw().node();
        
         var oldvalue = jQuery('#row-'+uniquecode+'-title').val();
+        
         jQuery('#row-'+uniquecode+'-title').val('Copy of '+oldvalue);
+        jQuery('#row-'+uniquecode+'-title').attr('readonly',false);
+        jQuery('#row-'+uniquecode+'-SystemTask').val('');
+        
         jQuery('#row-'+uniquecode+'-key').val('');
         jQuery('#bulktasktype_'+uniquecode).select2();
         jQuery('#row-'+uniquecode+'-levels').select2();
         jQuery('#row-'+uniquecode+'-userid').select2();
-    
+        
+        jQuery("#bulktasktype_"+uniquecode).attr('disabled',false);
         var $eventSelect = jQuery(".bulktasktypedrop");
         //$eventSelect.on("select2:open", function (e) {  console.log('open'); });
         //$eventSelect.on("select2:close", function (e) { console.log('close'); });
@@ -649,6 +662,8 @@ function saveallbulktask(){
         singletaskarray['taskMWDDP'] = jQuery( '#row-'+taskid+'-taskMWDDP' ).val();
         singletaskarray['roles'] = jQuery( '#row-'+taskid+'-levels' ).val();
         singletaskarray['usersids'] = jQuery( '#row-'+taskid+'-userid' ).val();
+        singletaskarray['SystemTask'] = jQuery( '#row-'+taskid+'-SystemTask' ).val();
+        singletaskarray['taskCode'] = jQuery( '#row-'+taskid+'-taskCode' ).val();
         singletaskarray['descrpition'] = jQuery( '#row-'+taskid+'-descrpition' ).html();
         singletaskarray['key'] = uniqueKey;
         
@@ -829,9 +844,11 @@ function bulktasksettings(e){
   var trvalue='';
   if(selectedtasktype == 'color'){
      var attributes_file = task_attribute_value.replace('accept=','');
+     var substr = attributes_file.split(',');
+	 
+		trvalue = '<td ><strong>Accept File Types</strong><br>(List of acceptable file extensions. Leave blank for all)</td><td ><select style="width:150px !important;" id="confrim_attributes" title="Select File Types" class="select2 form-control newmultiselect" multiple="multiple" name="attribure" value="'+attributes_file+'" ><option value=".eps" ' + ((jQuery.inArray("eps", substr) != -1)? "selected" : "") + '>.eps</option><option value=".ai" ' + ((jQuery.inArray("ai", substr) != -1)? "selected" : "") + '>.ai</option><option value=".jpg" ' + ((jQuery.inArray("jpg", substr) != -1)? "selected" : "") + '>.jpg</option><option value=".png" ' + ((jQuery.inArray("png", substr) != -1)? "selected" : "") + '>.png</option><option value=".jpeg" ' + ((jQuery.inArray("jpeg", substr) != -1)? "selected" : "") + '>.jpeg</option><option value=".pdf" ' + ((jQuery.inArray("pdf", substr) != -1)? "selected" : "") + '>.pdf</option><option value=".ppt" ' + ((jQuery.inArray("ppt", substr) != -1)? "selected" : "") + '>.ppt</option><option value=".pptx" ' + ((jQuery.inArray("pptx", substr) != -1)? "selected" : "") + '>.pptx</option><option value=".doc" ' + ((jQuery.inArray("doc", substr) != -1)? "selected" : "") + '>.doc</option><option value=".docx" ' + ((jQuery.inArray("docx", substr) != -1)? "selected" : "") + '>.docx</option><option value=".xls" ' + ((jQuery.inArray("xls", substr) != -1)? "selected" : "") + '>.xls</option><option value=".xlsx" ' + ((jQuery.inArray("xlsx", substr) != -1)? "selected" : "") + '>.xlsx</option></select></td>';
      
-     
-     trvalue='<td ><strong>Accept File Types</strong><br>(List of acceptable file extensions)</td><td ><input name="attribure"  placeholder=".png,.eps" id="confrim_attributes"  class="form-control"  value="'+attributes_file+'" ></td>';
+    // trvalue='<td ><strong>Accept File Types</strong><br>(List of acceptable file extensions)</td><td ><input name="attribure"  placeholder=".png,.eps" id="confrim_attributes"  class="form-control"  value="'+attributes_file+'" ></td>';
   }else if(selectedtasktype == 'textarea'){
        var attributes_file = task_attribute_value.replace('maxlength=','');
        trvalue = '<td ><strong>Max Length</strong><br>(Number of characters allowed)</td><td ><input name="attribure"  placeholder="200" id="confrim_attributes"  class="form-control"  value="'+attributes_file+'" ></td>';
@@ -840,14 +857,26 @@ function bulktasksettings(e){
       
   }
   
+  var currentadmnirole = jQuery('#currentadmnirole').val();
   var task_additional_MWComplete = jQuery('#row-'+task_code+'-taskMWC').val();
   var task_additional_MWDueDatePass = jQuery('#row-'+task_code+'-taskMWDDP').val();
+  var task_additional_taskCode = jQuery('#row-'+task_code+'-taskCode').val();
+  var task_additional_systmeTaskStatus = jQuery('#row-'+task_code+'-SystemTask').val();
   var task_title = jQuery('#row-'+task_code+'-title').val();
+  var specialclasssnmae="display:none;";
+  if(currentadmnirole == 'Administrator'){
+      
+    specialclasssnmae = "";
+  }
+  
+   var htmlforsystemtask = '<tr style="'+specialclasssnmae+'"><td>System Task Status</td><td><input '+task_additional_systmeTaskStatus+' type="checkbox" class="toggle-one" id="confrim_systaskstatus" data-toggle="toggle"></td></tr>';
+   var htmlfortaskCode = '<tr style="'+specialclasssnmae+'"><td>Task Code</td><td><input value="'+task_additional_taskCode+'" type="text"  id="confrim_taskCode" ></td></tr>';
+  
   
   var content='';
  
             
-  content='<table><tr><h5 style="margin-top: 2px;">'+task_title+'</h5><hr/></tr></table><table><tr><td><strong>Lock task when submitted</strong><br>(User cannot remove their submission)</td><td><input '+task_additional_MWComplete+' type="checkbox" class="toggle-one" id="confrim_taskMWC" data-toggle="toggle"></td></tr><tr><td><strong>Lock task when due date is passed</strong><br>(User cannot submit after due date)</td><td><input '+task_additional_MWDueDatePass+' type="checkbox" class="toggle-one"  id="confrim_taskMWDDP" data-toggle="toggle"></td></tr><tr>'+trvalue+'</tr></table>';
+  content='<table><tr><h5 style="margin-top: 2px;">'+task_title+'</h5><hr/></tr></table><table><tr><td><strong>Lock task when submitted</strong><br>(User cannot remove their submission)</td><td><input '+task_additional_MWComplete+' type="checkbox" class="toggle-one" id="confrim_taskMWC" data-toggle="toggle"></td></tr><tr><td><strong>Lock task when due date is passed</strong><br>(User cannot submit after due date)</td><td><input '+task_additional_MWDueDatePass+' type="checkbox" class="toggle-one"  id="confrim_taskMWDDP" data-toggle="toggle"></td></tr><tr>'+trvalue+'</tr>'+htmlforsystemtask+htmlfortaskCode+'</table>';
    
  
   jQuery.confirm({
@@ -860,6 +889,14 @@ function bulktasksettings(e){
         closeIcon: true,
         onOpen: function() {
          jQuery('.toggle-one').bootstrapToggle();   
+		 
+		 jQuery.each(attributes_file.split(","), function(i,e){
+		 jQuery(".select2 option[value='" + e + "']").prop("selected", true);
+		  
+		});
+		jQuery('.newmultiselect').select2({
+			placeholder: "Select file types"
+		});
         },
         confirm: function () {
             
@@ -882,6 +919,15 @@ function bulktasksettings(e){
            }else{
               jQuery('#row-'+task_code+'-taskMWC').val(''); 
            }
+           
+           if(jQuery('#confrim_systaskstatus').is(':checked')){
+                jQuery('#row-'+task_code+'-SystemTask').val('checked');
+           }else{
+              jQuery('#row-'+task_code+'-SystemTask').val(''); 
+           }
+           
+           jQuery('#row-'+task_code+'-taskCode').val(jQuery('#confrim_taskCode').val());
+           
            if(jQuery('#confrim_taskMWDDP').is(':checked')){
                 jQuery('#row-'+task_code+'-taskMWDDP').val('checked');
            }else{

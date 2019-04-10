@@ -309,12 +309,7 @@ $blog_id2 = get_current_blog_id();
 	                    <span class="lbl menumargine">Manage Shop</span>
 	                </a>
                         </li>
-                        <li class="mythemestyle">
-	                <a href="<?php echo $site_url; ?>/manage-bulk-products/?productCatName=booths">
-	                  <i class="font-icon fa fa-product-hunt"></i>
-	                    <span class="lbl menumargine">Manage Booth Products</span>
-	                </a>
-                        </li>
+                       
                     </ul>
                 </li>
              <?php if($expogeniefloorplanstatus == 'enable'){?>

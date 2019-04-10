@@ -71,6 +71,10 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
            $product_id = $_GET['productid'];
            $update_product = wc_get_product( $product_id );
            
+           $get_results = get_post_meta($product_id, "productlevel",true);
+           
+           
+         
           
            $selectedTaskListData = get_post_meta( $product_id);
            
@@ -166,7 +170,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
 
               <form method="post" action="javascript:void(0);" onSubmit="check_whocat_selet()">
                 
-              
+             
 
                   <input type="hidden" id="productid" value="<?php echo $product_id;?>" />
                   <div class="form-group row">
@@ -363,7 +367,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
 
                                                                              if ($key != 'administrator' && $key != 'contentmanager' && $key != 'subscriber') {
                                                                                 
-                                                                                 if($update_product->tax_class == $key){
+                                                                                 if($get_results == $key){
                                                                                      
                                                                                      echo '<option value="' . $key . '" selected="selected">' . $name['name'] . '</option>';
                                                                                  }else{

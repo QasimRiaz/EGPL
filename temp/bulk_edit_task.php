@@ -6,6 +6,14 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     $sponsor_id = get_current_user_id();
     $test = 'custome_task_manager_data';
     $result = get_option($test);
+    global $wp_roles;
+        global $current_user, $wpdb;
+        $all_roles = $wp_roles->roles;
+        $editable_roles = apply_filters('editable_roles', $all_roles);
+        $role = $wpdb->prefix . 'capabilities';
+        $current_user->role = array_keys($current_user->$role);
+        $currentrolename = $editable_roles[$current_user->role[0]]['name'];
+  
     
     $args = array(
 	'posts_per_page'   => -1,
@@ -59,6 +67,18 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     include 'cm_header.php';
     include 'cm_left_menu_bar.php';
     ?>
+
+<style>
+	.select2-search__field {
+	
+	    display: none !important;
+		margin-bottom: -20px;
+}.select2-search--dropdown {
+	
+	    padding: 0px;
+}
+	
+	</style>
 <!--   <div class="spoverlay overlay-hugeinc " id="loadingalert">
    <div class="sweet-alert showSweetAlert visible" data-custom-class="" data-has-cancel-button="false" data-has-confirm-button="true" data-allow-outside-click="false" data-has-done-function="false" data-animation="pop" data-timer="null" style="display:block;border: #b7b7b8 solid 1px;height: 329px;">
                 
@@ -159,7 +179,8 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                     
                      
                       
-             
+                     <span><input type="hidden" id="currentadmnirole"  value="<?php echo $currentrolename;?>" ></span>
+                                            
                     <table  class="bulkedittask  table-bordered compact dataTable no-footer cards"  width="100%">
                             <thead>
                                 <tr class="text_th" >
@@ -203,6 +224,13 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     $value_usersids = get_post_meta( $tasksID, 'usersids' , false);
                                     $value_descrpition = get_post_meta( $tasksID, 'descrpition', false);
                                     $value_key = get_post_meta( $tasksID, 'key', false);
+                                    
+                                    $value_taskCode = get_post_meta( $tasksID, 'taskCode', true);
+                                    $value_systaskstatus = get_post_meta( $tasksID, 'SystemTask', true);
+                                    
+                                    $value['SystemTask'] =$value_systaskstatus;
+                                    $value['taskCode'] =$value_taskCode;
+                                    
                                     $key  = $value_key[0];
                                     $value['value'] = $value_value[0];
                                     $value['unique'] = $value_unique[0];
@@ -219,6 +247,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     $value['attrs'] =$value_attr[0];
                                     $value['taskattrs'] =$value_taskattrs[0];
                                     $value['taskMWC'] =$value_taskMWC[0];
+                                    $value['taskMWDDP'] =$value_taskMWDDP[0];
                                     $value['taskMWDDP'] =$value_taskMWDDP[0];
                                     $value['roles'] =$value_roles[0];
                                     $value['usersids'] =$value_usersids[0];
@@ -245,19 +274,24 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                 
                                                 <i data-toggle="tooltip" class="hi-icon fa fa-clone saveeverything" id="<?php echo $task_code; ?>" onclick="clonebulk_task(this)" title="Create a clone" ></i>
                                                 <i  data-toggle="tooltip" title="Advanced" name="<?php echo $task_code; ?>" onclick="bulktasksettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i>
+                                                <?php if($value['SystemTask'] != "checked") {?>
                                                 <i  data-toggle="tooltip" title="Remove this task" name="<?php echo $task_code; ?>" onclick="removebulk_task(this)" class="hi-icon fusion-li-icon fa fa-times-circle" ></i>
-                                                 
+                                                <?php }?>
                                             </div> </td>
-                                        <td><input type="text" style="margin-top: 10px;margin-bottom: 10px;" id="row-<?php echo $task_code; ?>-title" class="form-control" name="tasklabel" placeholder="Title" data-toggle="tooltip" title="Title" value="<?php echo $value['label']; ?>" required> 
+                                        <td><input <?php if($value['SystemTask'] == "checked") {echo 'readonly="true" title="This is a system task. Changing its title is not allowed"';}else{echo 'title="Title"';} ?> type="text" style="margin-top: 10px;margin-bottom: 10px;" id="row-<?php echo $task_code; ?>-title" class="form-control" name="tasklabel" placeholder="Title" data-toggle="tooltip" title="Title" value="<?php echo $value['label']; ?>" required> 
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-key"  value="<?php echo $key; ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-attribute"  value="<?php echo $value['taskattrs']; ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-taskMWC"  value="<?php  if(isset($value['taskMWC'])){ echo $value['taskMWC']; }?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-taskMWDDP"  value="<?php if(isset($value['taskMWDDP'])){ echo $value['taskMWDDP'];} ?>" ></span>
-                                        
+                                            <span><input type="hidden" id="row-<?php echo $task_code; ?>-taskCode"  value="<?php  if(isset($value['taskCode'])){ echo $value['taskCode']; }?>" ></span>
+                                            <span><input type="hidden" id="row-<?php echo $task_code; ?>-SystemTask"  value="<?php if(isset($value['SystemTask'])){ echo $value['SystemTask'];} ?>" ></span>
+                                            
+                                            
+                                            
                                         </td>
                                         <td>
                                            <div class="topmarrginebulkedit">
-                                                <select  style="width:100px !important;"class="select2 bulktasktypedrop tasktypesdata" id="bulktasktype_<?php echo $task_code; ?>" data-placeholder="Select Type" data-toggle="tooltip" title="Select Type" data-allow-clear="true">
+                                               <select  <?php if($value['SystemTask'] == "checked") {echo 'disabled="true" title="This is a system task. Changing its type is not allowed"';}else{echo 'title="Task Type"';} ?>  style="width:100px !important;"class="select2 bulktasktypedrop tasktypesdata" id="bulktasktype_<?php echo $task_code; ?>" data-placeholder="Select Type" data-toggle="tooltip" data-allow-clear="true">
                                                     <?php foreach ($plug_in_settings['ContentManager']['taskmanager']['input_type'] as $val) { ?>
                                                         <?php if ($val['type'] == $value['type']) { ?>
                                                             <option value="<?php echo $val['type']; ?>" selected="selected"><?php echo $val['lable']; ?></option>
