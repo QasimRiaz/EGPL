@@ -48,7 +48,7 @@
       
         <script src='/wp-content/plugins/EGPL/js/randomColor.js?v=2.95'></script>
         <script src='/wp-content/plugins/EGPL/js/jquery.ajax-progress.js?v=2.95'></script>
-         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=2.37"></script>
+         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=2.39"></script>
          <script type="text/javascript" src="/wp-content/plugins/EGPL/js/moment.min.js?v=2.95"></script>
          
 	 <?php
@@ -70,7 +70,21 @@
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/dashboardrequest.js?v=2.96"></script>
   
            <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.alerts.js?v=2.95"></script>
-<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+           
+<script type="text/javascript" src="https://cdn.tinymce.com/4/tinymce.min.js" onclick="trackLink('https://cdn.tinymce.com/4/tinymce.min.js', event);"></script>
+<script>
+function trackLink(url,event) {
+    event.preventDefault();
+    if (window.ga && ga.loaded) {
+         ga('send', 'event', 'outbound', 'click', url, {
+         'transport': 'beacon',
+         'hitCallback': function() { document.location = url; }
+       });
+    } else {
+        document.location = url;
+    }
+}
+</script>
 <script>
 jQuery(document).ready(function() {
    

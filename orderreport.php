@@ -622,7 +622,7 @@ function loadorderreport() {
 
         $columns_list_order_report_postmeta[18]['title'] = 'Net Revenue From Stripe';
         $columns_list_order_report_postmeta[18]['type'] = 'num-fmt';
-        $columns_list_order_report_postmeta[18]['key'] = 'Net Revenue From Stripe';
+        $columns_list_order_report_postmeta[18]['key'] = '_stripe_net';
 
         $columns_list_order_report_postmeta[19]['title'] = 'Payment Date';
         $columns_list_order_report_postmeta[19]['type'] = 'date';
@@ -664,8 +664,8 @@ function loadorderreport() {
             $header_array = get_object_vars($single_post);
             $post_meta = get_post_meta($header_array['ID']);
             
-           
-            
+         
+         
             
             $column_row;
             ksort($post_meta);
@@ -1304,32 +1304,6 @@ function productclone($productcloneid) {
         $url = get_site_url();
         
        
-       
-       
-        /*$data = [
-                'title' => $get_product_clone->product->title,
-                'manage_stock' => true,
-                'tax_class' =>$get_product_clone->product->tax_class,
-                'regular_price' => $get_product_clone->product->regular_price,
-                'managing_stock'=>true,
-                "stock_quantity"=> $get_product_clone->product->stock_quantity,
-                "in_stock"=> $get_product_clone->product->in_stock,
-                'name' => $get_product_clone->product->name,
-                'type' => 'simple',
-                'enable_html_description'=> true,
-                'enable_html_short_description'=> true,
-                'description' => $get_product_clone->product->description,
-                'short_description' => $get_product_clone->product->short_description,
-                'categories' => [$catid],
-                
-                'images' => [
-                    [
-                        'src' =>  $get_product_clone->product->images[0]->src,
-                        'position' => 0
-                    ]
-                ]
-            ];*/
-       
         
         $oldproduct = wc_get_product( $postid );
        
@@ -1351,18 +1325,17 @@ function productclone($productcloneid) {
         $objProduct->set_backorders('no'); //Set backorders.                                        | string $backorders Options: 'yes', 'no' or 'notify'.
         $objProduct->set_sold_individually(FALSE);
         $get_results = get_post_meta($postid, "productlevel",true);
-         if(!empty($get_results)){
-            
-          
-                     $objProduct->update_meta_data('productlevel', $get_results);
-            
-                }
-                
-       // $objProduct->set_tax_class($oldproduct->get_tax_class()); 
+        $get_levels= get_post_meta($postid, "seletedtaskKeys",true);
+        if (!empty($get_results)) {
 
-        
-        
-        
+
+            $objProduct->update_meta_data('productlevel', $get_results);
+        }
+        if(!empty($get_levels)){
+           
+            $objProduct->update_meta_data('seletedtaskKeys', $get_levels);
+        }
+     
         $objProduct->set_reviews_allowed(TRUE); //Set if reviews is allowed.                        | bool
         
       

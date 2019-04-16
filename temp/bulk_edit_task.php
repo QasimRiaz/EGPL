@@ -77,7 +77,15 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 	
 	    padding: 0px;
 }
+	.select2-container--open .select2-dropdown--below {
+z-index:100000000000;
+height: 50% !important;
+
+}.select2-results__options {
 	
+	background: #FFFFFF !important;
+	border: 1px solid #d7dee2 !important;
+}
 	</style>
 <!--   <div class="spoverlay overlay-hugeinc " id="loadingalert">
    <div class="sweet-alert showSweetAlert visible" data-custom-class="" data-has-cancel-button="false" data-has-confirm-button="true" data-allow-outside-click="false" data-has-done-function="false" data-animation="pop" data-timer="null" style="display:block;border: #b7b7b8 solid 1px;height: 329px;">
@@ -264,12 +272,15 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                              }
                                    }
                                    
-                                    
+                                    if($value['SystemTask'] == 'checked'){
                                     
                                     ?>
-
-                                    <tr>
-
+                                   
+                                <tr style="background-color:  #2196f31c !important;">
+                                    
+                                    <?php }else{?>
+                                <tr>
+                                    <?php }?>
                                         <td><div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a">
                                                 
                                                 <i data-toggle="tooltip" class="hi-icon fa fa-clone saveeverything" id="<?php echo $task_code; ?>" onclick="clonebulk_task(this)" title="Create a clone" ></i>
@@ -403,7 +414,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
                         </table>
                 </div>
-                <div class="form-group row">
+            <div class="form-group row"> 
                     
                     <div class="col-sm-10">
                         
