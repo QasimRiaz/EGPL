@@ -19,7 +19,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     
     include 'cm_header.php';
     include 'cm_left_menu_bar.php';
-    query_posts('category_name=Content Manager Editor&showposts=-1');
+	query_posts('category_name=Content Manager Editor&showposts=-1&orderby=title&order=ASC'); //edit query_posts('category_name=Content Manager Editor&showposts=-1');
     
     ?>
 

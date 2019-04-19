@@ -305,7 +305,7 @@ $blog_id2 = get_current_blog_id();
                     <ul class="mynav">
                        <li class="mythemestyle">
 	                <a href="<?php echo $site_url; ?>/manage-products/">
-	                  <i class="font-icon fa fa-bars"></i>
+	                  <i class="font-icon fa fa-shopping-cart"></i>
 	                    <span class="lbl menumargine">Manage Shop</span>
 	                </a>
                         </li>

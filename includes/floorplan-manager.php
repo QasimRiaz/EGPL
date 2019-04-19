@@ -141,7 +141,18 @@ class FloorPlanManager {
                         }else if($boothObject->boothstatus == "updated"){
                             
                             
+                            
+                            
+                            
+                            if(!empty($boothObject->boothID)){
+                            
+                            
+                           
+                                
                             $objProduct = wc_get_product( $boothObject->boothID );
+                           
+                           if(isset($objProduct)){
+                            
                             $objProduct->set_name($boothObject->boothtitle); 
                             $objProduct->set_stock_quantity(1); //Set number of items available for sale.
                             $objProduct->set_description($boothObject->boothdescripition); //Set product description.
@@ -149,7 +160,7 @@ class FloorPlanManager {
                             $objProduct->set_price($boothObject->boothprice); //Set the product's active price.
                             $objProduct->set_regular_price($boothObject->boothprice); //Set the product's regular price.
                             $objProduct->update_meta_data('productlevel', $boothObject->boothlevel);
-                           // $objProduct->set_tax_class($boothObject->boothlevel); 
+                            $objProduct->set_tax_class($boothObject->boothlevel); 
                             $objProduct->set_image_id($productpicID); //Set main image ID.
                             $new_product_id = $objProduct->save();
                             
@@ -157,7 +168,9 @@ class FloorPlanManager {
                             $newRequestBoothArray->boothstatus = 'updated';
                             $newRequestBoothArray->boothID = $new_product_id;
                             $NewProductArray[$NewProductArrayIndex] = $newRequestBoothArray;
+                            
                             $NewProductArrayIndex++;
+                            }}
 
                         }else if($boothObject->boothstatus == "deleterequest"){
 
@@ -170,6 +183,7 @@ class FloorPlanManager {
                              $xml->root->MyNode[$currentIndex]->attributes()->$att = $new_product_id;  
                         }
                      }
+                     
                     }
                      
                     $currentIndex++;
