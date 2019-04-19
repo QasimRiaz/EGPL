@@ -29,7 +29,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
 
             <div class="box-typical box-typical-padding">
                 <p>
-               This is where you can manage and create various items that your users can purchase. An "Add-On" is anything you want to make available for purchase for all your users in the Add-On area of the portal. A "Package" is something your users are initially required to purchase prior to gaining full access to ExpoGenie. "Booth" is used if you plan on allowing users to select and purchase booths directly from the interactive floor plan. If you need help on any of these categories, see the "Help" menu in the top right and reach out to us on the support form. </p>
+               This is where you can manage and create various items that your users can purchase. An "Add-On" is anything you want to make available for purchase for all your users in the Add-On area of the portal. A "Package" is something your users are initially required to purchase prior to gaining full access to ExpoGenie.</p>
 
                 <h5 class="m-t-lg with-border"></h5>
                  <div class="form-group row">
@@ -39,18 +39,13 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                         
                                         
                                     </div>
-                                    <div class="col-sm-3" >
+                                    <div class="col-sm-6" >
                                             
                                         <a class="btn btn-lg mycustomwidth btn-success" href="<?php echo $site_url;?>/add-new-product/?producttype=package">Create Package</a>
                                         
                                         
                                     </div>
-                                    <div class="col-sm-3" >
-                                            
-                                        <a class="btn btn-lg mycustomwidth btn-success" href="<?php echo $site_url;?>/add-new-product/?producttype=booths">Create Booths</a>
-                                        
-                                        
-                                    </div>
+                                  
                                    
                                     <div class="col-sm-1" ><label style="font-weight: normal;margin-right: -13px;float: right;margin-top: 7px;">Filter:</label></div>
                      
@@ -60,7 +55,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                                     <option value="">All</option>
                                                     <option value="Add-ons">Add-ons</option>
                                                     <option value="Packages">Packages</option>
-                                                    <option value="Booths">Booths</option>
+                                                   
                                         </select> 
                                     </div>
                     

@@ -77,15 +77,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 	
 	    padding: 0px;
 }
-	.select2-container--open .select2-dropdown--below {
-z-index:100000000000;
-height: 50% !important;
-
-}.select2-results__options {
 	
-	background: #FFFFFF !important;
-	border: 1px solid #d7dee2 !important;
-}
 	</style>
 <!--   <div class="spoverlay overlay-hugeinc " id="loadingalert">
    <div class="sweet-alert showSweetAlert visible" data-custom-class="" data-has-cancel-button="false" data-has-confirm-button="true" data-allow-outside-click="false" data-has-done-function="false" data-animation="pop" data-timer="null" style="display:block;border: #b7b7b8 solid 1px;height: 329px;">
@@ -272,15 +264,12 @@ height: 50% !important;
                                              }
                                    }
                                    
-                                    if($value['SystemTask'] == 'checked'){
+                                    
                                     
                                     ?>
-                                   
-                                <tr style="background-color:  #2196f31c !important;">
-                                    
-                                    <?php }else{?>
-                                <tr>
-                                    <?php }?>
+
+                                    <tr>
+
                                         <td><div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a">
                                                 
                                                 <i data-toggle="tooltip" class="hi-icon fa fa-clone saveeverything" id="<?php echo $task_code; ?>" onclick="clonebulk_task(this)" title="Create a clone" ></i>
@@ -289,7 +278,7 @@ height: 50% !important;
                                                 <i  data-toggle="tooltip" title="Remove this task" name="<?php echo $task_code; ?>" onclick="removebulk_task(this)" class="hi-icon fusion-li-icon fa fa-times-circle" ></i>
                                                 <?php }?>
                                             </div> </td>
-                                        <td><input <?php if($value['SystemTask'] == "checked") {echo 'readonly="true" title="This is a system task. Changing its title is not allowed"';}else{echo 'title="Title"';} ?> type="text" style="margin-top: 10px;margin-bottom: 10px;" id="row-<?php echo $task_code; ?>-title" class="form-control" name="tasklabel" placeholder="Title" data-toggle="tooltip" title="Title" value="<?php echo $value['label']; ?>" required> 
+                                        <td><input <?php if($value['SystemTask'] == "checked") {echo 'readonly="true" title="This is a system task. Changing it title is not allowed"';}else{echo 'title="Title"';} ?> type="text" style="margin-top: 10px;margin-bottom: 10px;" id="row-<?php echo $task_code; ?>-title" class="form-control" name="tasklabel" placeholder="Title" data-toggle="tooltip" title="Title" value="<?php echo $value['label']; ?>" required> 
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-key"  value="<?php echo $key; ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-attribute"  value="<?php echo $value['taskattrs']; ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-taskMWC"  value="<?php  if(isset($value['taskMWC'])){ echo $value['taskMWC']; }?>" ></span>
@@ -302,7 +291,7 @@ height: 50% !important;
                                         </td>
                                         <td>
                                            <div class="topmarrginebulkedit">
-                                               <select  <?php if($value['SystemTask'] == "checked") {echo 'disabled="true" title="This is a system task. Changing its type is not allowed"';}else{echo 'title="Task Type"';} ?>  style="width:100px !important;"class="select2 bulktasktypedrop tasktypesdata" id="bulktasktype_<?php echo $task_code; ?>" data-placeholder="Select Type" data-toggle="tooltip" data-allow-clear="true">
+                                               <select  <?php if($value['SystemTask'] == "checked") {echo 'disabled="true" title="This is a system task. Changing it type is not allowed"';}else{echo 'title="Task Type"';} ?>  style="width:100px !important;"class="select2 bulktasktypedrop tasktypesdata" id="bulktasktype_<?php echo $task_code; ?>" data-placeholder="Select Type" data-toggle="tooltip" data-allow-clear="true">
                                                     <?php foreach ($plug_in_settings['ContentManager']['taskmanager']['input_type'] as $val) { ?>
                                                         <?php if ($val['type'] == $value['type']) { ?>
                                                             <option value="<?php echo $val['type']; ?>" selected="selected"><?php echo $val['lable']; ?></option>
@@ -414,7 +403,7 @@ height: 50% !important;
 
                         </table>
                 </div>
-            <div class="form-group row"> 
+                <div class="form-group row">
                     
                     <div class="col-sm-10">
                         

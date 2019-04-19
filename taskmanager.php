@@ -304,7 +304,8 @@ function savebulktask_update($request){
             update_post_meta( $tasksID, 'usersids', $taskObject->usersids );
             update_post_meta( $tasksID, 'descrpition', $taskObject->descrpition );
             update_post_meta( $tasksID, 'key', $taskObject->key );
-            update_post_meta( $tasksID, 'SystemTask', 0 );
+            update_post_meta( $tasksID, 'SystemTask', $taskObject->SystemTask  );
+            update_post_meta( $tasksID, 'taskCode', $taskObject->taskCode );
             
             
             
