@@ -5,13 +5,13 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.2.0
+ * Version:           3.2.2
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
  * Network:           true
  * GitHub Plugin URI: https://github.com/QasimRiaz/EGPL
- * Requires WP:       5.1.1
+ * Requires WP:       5.0.3
  * Requires PHP:      7.2
  * Date 11/02/2019
  */
@@ -6552,10 +6552,12 @@ function checkloginuserstatus_fun() {
      if($redirectname == 'boothpurchase'){
          
          $redirectURL = $site_url.'/floor-plan/';
+         $valuename = "booth";
          
      }else{
          
          $redirectURL = $site_url.'/product-category/packages/';
+         $valuename = "package";
      }
     
      if(!empty($mainheader)){
@@ -6588,7 +6590,7 @@ function checkloginuserstatus_fun() {
                             
                                
                             
-                                 echo '<script type="text/javascript">swal({title: "Welcome!", type: "success", html:true,showConfirmButton:false,text: "<p>This will serve as your portal for managing all of your pre-show logistics. Before gaining access, you\'ll need to first select and purchase a package.</p><p style=\'margin-top:18px\'><a href='.$redirectURL.' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Next</a></p>"});</script>';
+                                 echo '<script type="text/javascript">swal({title: "Welcome!", type: "success", html:true,showConfirmButton:false,text: "<p>This will serve as your portal for managing all of your pre-show logistics. Before gaining access, you\'ll need to first select and purchase a '.$valuename.'.</p><p style=\'margin-top:18px\'><a href='.$redirectURL.' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Next</a></p>"});</script>';
                                 
                             }
                     }
