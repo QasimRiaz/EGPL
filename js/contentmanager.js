@@ -1786,7 +1786,7 @@ function checkemailaddressalreadyexist(){
                         title: 'Email Status',
                         content: '<div id="titlestatus" ></div><div ><p></p><input value="'+currentemail+'" style="margin-bottom: 10px;padding: 9px;border: #d6e2e8 solid 1px; width: 100%; height: 35px; border-radius: 3px;" type="text" id="newemailaddress" readonly><p style="margin: 5px 0px;">A user account with this email address already exists and attached to a different event. Would you like to add this user to the current event?</p></div>',
                         confirmButtonClass: 'mycustomwidth specialbuttoncolor',
-                        confirmButton: 'Fetch details',
+                        confirmButton: 'Retrieve details',//edit
                         cancelButton: 'Cancel',
                         animation: 'rotateY',
                         closeIcon: true,

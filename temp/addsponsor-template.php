@@ -123,7 +123,7 @@
                                     </div>
                                     <div class="col-sm-5">
                                         
-                                        <a class="btn btn-inline" onclick="checkemailaddressalreadyexist()" >Find email address</a>
+                                        <a class="btn btn-inline" onclick="checkemailaddressalreadyexist()" >Lookup User</a>
                                         
                                     </div>
                                 </div>
