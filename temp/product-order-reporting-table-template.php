@@ -13,7 +13,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     
     <?php include 'cm_header.php';
     
-    if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+  //  if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
     ?>
     <!--    order-reporting jQuery Querybuilder css-->
     <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap-select.min.css?v=2.18">
@@ -25,9 +25,9 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
 
     <?php
-        }
+  //      }
    include 'cm_left_menu_bar.php';
-    if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+  //  if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
         
         if(isset($_GET['orderreport'])){
             
@@ -296,9 +296,9 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
 
     <?php
-    }else{?>
+   // }else{?>
     
-    <div class="page-content">
+<!--    <div class="page-content">
         <div class="container-fluid">
             <header class="section-header" id="bulkimport">
                 <div class="tbl">
@@ -320,13 +320,13 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                 </div>
             </div>
         </div>
-    </div>
+    </div>-->
 
     
     <?php
-    }
+   // }
     include 'cm_footer.php';
-     if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+    // if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
     ?>
     
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-select.js?v=2.18"></script>
@@ -342,7 +342,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     
     
    <?php
-     }
+   //  }
 } else {
     $redirect = get_site_url();
     wp_redirect($redirect);
