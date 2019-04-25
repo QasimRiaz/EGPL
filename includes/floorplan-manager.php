@@ -39,6 +39,82 @@ class FloorPlanManager {
         return $GetAllBoothsWithUsers;
     }
     
+    function getFloorplanStatus($floorplanID){
+        
+        
+       
+        $ViewerLockstatus = get_post_meta( $floorplanID, 'updateboothpurchasestatus', true );
+        
+        return $ViewerLockstatus;
+        
+    }
+    function getProductstauts($product_ID){
+        
+        
+        $get_BoothCellID = "";
+        $getBoothOwner = "none";
+        
+        
+        $contentmanager_settings = get_option( 'ContenteManager_Settings' );
+        $FloorpLanid = $contentmanager_settings['ContentManager']['floorplanactiveid'];
+        
+        $FloorplanXml = get_post_meta( $FloorpLanid, 'floorplan_xml', true );
+        $sellboothsjson = json_decode(get_post_meta( $FloorpLanid, 'sellboothsjson', true ));
+        
+        $FloorplanXml = str_replace('"n<','<',$FloorplanXml);
+        $FloorplanXml = str_replace('>n"','>',$FloorplanXml);
+        
+        $xml=simplexml_load_string($FloorplanXml) or die("Error: Cannot create object");
+       
+        
+        foreach($sellboothsjson as $boothIndex=>$boothObject){
+            
+            
+            if($boothObject->boothID == $product_ID){
+                
+                $get_BoothCellID = $boothObject->cellID;
+                
+                
+            }
+        }
+        
+        if(!empty($get_BoothCellID)){
+            $currentIndex=0;
+            foreach ($xml->root->MyNode as $cellIndex=>$CellValue){
+            
+            
+          
+       
+                    $new_product_id = "";
+                    $cellboothlabelvalue = $CellValue->attributes();
+                    $getCellStylevalue = $xml->root->MyNode[$currentIndex]->mxCell->attributes();
+                    $boothid = $cellboothlabelvalue['id'];
+                    
+                   
+                    
+                    if($boothid == $get_BoothCellID){
+                        
+                       
+                        $getBoothOwner = $cellboothlabelvalue['boothOwner'];
+                        break;
+                       
+                    }
+                    $currentIndex++;
+                    
+                    
+            }
+            
+            
+            
+        }
+        
+        $data['BoothID'] = $get_BoothCellID;
+        $data['BoothOwner'] = $getBoothOwner;
+        
+        return $data;
+        
+    }
+    
     
     function createAllBoothPorducts($floorplanID,$requestBoothsproductArray, $UpdatedFloorplanXml,$productpicID){
     
