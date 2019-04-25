@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.22
+ * Version:           3.23
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -6111,13 +6111,17 @@ add_action( 'woocommerce_checkout_process', 'reviewboothproducts', 10 );
 
 function reviewboothproducts($order){
     
-    $items = WC()->cart->get_cart();
-     $contentmanager_settings = get_option( 'ContenteManager_Settings' );
-     $FloorpLanid = $contentmanager_settings['ContentManager']['floorplanactiveid'];
     
-     $ViewerLockstatus = get_post_meta( $FloorpLanid, 'updateboothpurchasestatus', true );
+    
+    require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/floorplan-manager.php';
+    $floorplanObject = new FloorPlanManager();
+    $items = WC()->cart->get_cart();
      
-     if($ViewerLockstatus == 'unlock'){
+      $contentmanager_settings = get_option( 'ContenteManager_Settings' );
+      $FloorpLanid = $contentmanager_settings['ContentManager']['floorplanactiveid'];
+      
+      
+   
     
     
     foreach ($items as $item => $values)
@@ -6126,78 +6130,32 @@ function reviewboothproducts($order){
         $product_ID = $_product->ID;
         $product_title = $_product->post_title;
        
-        $get_BoothCellID = "";
-        $getBoothOwner = "none";
+        $getthisproductdetailinfloorplan = $floorplanObject->getProductstauts($product_ID);
         
-        $FloorplanXml = get_post_meta( $FloorpLanid, 'floorplan_xml', true );
-        $sellboothsjson = json_decode(get_post_meta( $FloorpLanid, 'sellboothsjson', true ));
+        $get_BoothCellID = $getthisproductdetailinfloorplan['BoothID'];
         
-        $FloorplanXml = str_replace('"n<','<',$FloorplanXml);
-        $FloorplanXml = str_replace('>n"','>',$FloorplanXml);
-        
-        $xml=simplexml_load_string($FloorplanXml) or die("Error: Cannot create object");
-       
-        
-        foreach($sellboothsjson as $boothIndex=>$boothObject){
-            
-            
-            if($boothObject->boothID == $product_ID){
-                
-                $get_BoothCellID = $boothObject->cellID;
-                
-                
-            }
-        }
-        
-      
-         
         if(!empty($get_BoothCellID)){
-            $currentIndex=0;
-            foreach ($xml->root->MyNode as $cellIndex=>$CellValue){
+            
+         $ViewerLockstatus = $floorplanObject->getFloorplanStatus($FloorpLanid);
+         if($ViewerLockstatus != 'lock'){
+             
+            $getBoothOwner = $getthisproductdetailinfloorplan['BoothOwner'];
+        
+            if($getBoothOwner != 'none' && $getBoothOwner != ''){
             
             
-          
-       
-                    $new_product_id = "";
-                    $cellboothlabelvalue = $CellValue->attributes();
-                    $getCellStylevalue = $xml->root->MyNode[$currentIndex]->mxCell->attributes();
-                    $boothid = $cellboothlabelvalue['id'];
-                    
-                   
-                    
-                    if($boothid == $get_BoothCellID){
-                        
-                       
-                        $getBoothOwner = $cellboothlabelvalue['boothOwner'];
-                        break;
-                       
-                    }
-                    $currentIndex++;
-                    
-                    
+                wc_add_notice( __( 'Booth number '.$product_title.' in your cart is no longer available for purchase. Please try another booth.' ), 'error' );
             }
             
+         }else{
+             
+            wc_add_notice( __( 'The floorplan is currently locked by the Administrators so checkout is not possible. Please try again later.' ), 'error' );
+         
             
-            
+         }
         }
-        
-        
-        if($getBoothOwner != 'none' && $getBoothOwner != ''){
-            
-            
-            wc_add_notice( __( 'Booth number '.$product_title.' in your cart is no longer available for purchase. Please try another booth.' ), 'error' );
-            
-            
-        }
-       
     }
-  }else{
-      
-      
-      wc_add_notice( __( 'The floorplan is currently locked by the Administrators so checkout is not possible. Please try again later.' ), 'error' );
-            
-      
-  }
+  
    
     
 }

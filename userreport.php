@@ -1230,6 +1230,9 @@ function userreportresultdraw() {
             
             
             $thisBoothNumber ="";
+            
+            if(!empty($AllBoothsList)){
+            
             foreach ($AllBoothsList as $boothIndex=>$boothValue ){
                 
                 if($boothValue['bootheOwnerID'] == $aid->ID){
@@ -1240,6 +1243,9 @@ function userreportresultdraw() {
                 }
                 
                 
+            }
+            }else{
+                $thisBoothNumber = "";
             }
           // echo $user_data->roles[0].'</br>';
             $all_meta_for_user = get_user_meta($aid->ID);
