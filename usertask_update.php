@@ -39,7 +39,7 @@ if ($_GET['usertask_update'] == "update_submission_status") {
     $status=$_POST['status'];
     $oldvalue=$_POST['lastvalue'];
     $sponsorid=$_POST['sponsorid'];
-	
+    $updatevalue['post_request']=$_POST;
 	
 	$postid = get_current_user_id();
 	if($sponsorid !='undefined'){
@@ -50,7 +50,7 @@ if ($_GET['usertask_update'] == "update_submission_status") {
         }
        
        $user_info = get_userdata($postid);
-       $lastInsertId = contentmanagerlogging('Save Task File',"User Action",serialize($_POST),$postid,$user_info->user_email,"pre_action_data");
+       $lastInsertId = contentmanagerlogging('Save Task File',"User Action",serialize($updatevalue),$postid,$user_info->user_email,"pre_action_data");
        user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$lastInsertId);
       
     
@@ -304,11 +304,12 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
     $email_body_message_for_admin['Updated Value']= $movefile['url'];
     $email_body_message_for_admin['Task Status']= $status;
     $email_body_message_for_admin['Task Update Date']=$datetime;
+    $email_body_message_for_admin['ErrorMsg']=$movefile;
     
     $headers[] = 'Cc: Qasim Riaz <qasim.riaz@e2esp.com>';
     $site_url = get_option('siteurl');
-    $to = "azhar.ghias@e2esp.com";
-    $subject = $postid . ' <' . $site_url . '>';
+   
+   
     
     contentmanagerlogging_file_upload ($lastInsertId,serialize($email_body_message_for_admin));
     updatetocvent($postid,$movefile['url'],$keyvalue);

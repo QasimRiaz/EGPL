@@ -276,18 +276,69 @@ function update_user_meta_custome(elem) {
             success: function(data) {
                 var speratdata = data.split('////');
                 var alertmessage = jQuery.parseJSON(speratdata[1]);
-
+                    
+                
+                
                 if (typeof(alertmessage.error) != 'undefined') {
-                    //console.log(alertmessage.error);
-                    if (alertmessage.error != "Empty File") {
+                  
+                    
+                    
+                   if(alertmessage.error == "Sorry, this file type is not permitted for security reasons."){
+                        
+                         console.log(alertmessage.error);
+                         var sponsorid=getUrlParameter('sponsorid');
+                         if(sponsorid){
+                             
+                              swal({
+                                title: "Error",
+                                text: "This file type is not permitted for security reasons or the file extension is invalid.",
+                                type: "error",
+                                confirmButtonClass: "btn-danger",
+                                confirmButtonText: "Ok"
+                            });
+                             
+                         }
+                         
+                         filestatus=true;
+                         erroralert = 'faildfileextenshion';
+                         jQuery("body").css({'cursor':'default'});
+                          
+                         
+                    }else if (alertmessage.error != "Empty File") {
 
                         erroralert = true;
                         filestatus=true;
                         jQuery("body").css({'cursor':'default'});
+                        var sponsorid=getUrlParameter('sponsorid');
+                         if(sponsorid){
+                             
+                              swal({
+                                title: "Error",
+                                text: alertmessage.error,
+                                type: "error",
+                                confirmButtonClass: "btn-danger",
+                                confirmButtonText: "Ok"
+                            });
+                             
+                         }
                         
                     }else{
+                        
                         filestatus=true;
-                         jQuery("body").css({'cursor':'default'});
+                        jQuery("body").css({'cursor':'default'});
+                        
+                        var sponsorid=getUrlParameter('sponsorid');
+                         if(sponsorid){
+                             
+                              swal({
+                                title: "Error",
+                                text: alertmessage.error,
+                                type: "error",
+                                confirmButtonClass: "btn-danger",
+                                confirmButtonText: "Ok"
+                            });
+                             
+                         }
                     }
 
                 } else {
@@ -307,10 +358,12 @@ function update_user_meta_custome(elem) {
 
                 }
                 //alert(alertmessage);
-            },error: function (xhr, ajaxOptions, thrownError) {
+            },error: function (alertmessage, ajaxOptions, thrownError) {
+                
+                    
                     swal({
 					title: "Error",
-					text: "There was an error during the requested operation. Please try again.",
+					text: alertmessage.error,
 					type: "error",
 					confirmButtonClass: "btn-danger",
 					confirmButtonText: "Ok"
@@ -363,6 +416,15 @@ jQuery(document).ready(function() {
                                                                                 confirmButtonText: "Ok"
                                                                         });
                                                                         
+                                                                    }else if(erroralert == "faildfileextenshion"){
+                                                                        
+                                                                               swal({
+                                                                                           title: "Error",
+                                                                                           text: "This file type is not permitted for security reasons or the file extension is invalid.",
+                                                                                           type: "error",
+                                                                                           confirmButtonClass: "btn-danger",
+                                                                                           confirmButtonText: "Ok"
+                                                                                   });
                                                                     }else{
                                                                         instance._stop(1);
                                                                     }
