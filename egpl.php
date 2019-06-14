@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.23
+ * Version:           3.24
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -3588,7 +3588,7 @@ function getReportsdatanew($report_name,$usertimezone){
 
 add_action('wp_enqueue_scripts', 'add_contentmanager_js');
 function add_contentmanager_js(){
-      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'2.2.0', true);
+      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'2.3.0', true);
     
      wp_enqueue_script( 'jquery.alerts', plugins_url() . '/EGPL/js/jquery.alerts.js', array(), '1.1.0', true );
      wp_enqueue_script( 'boot-date-picker', plugins_url() . '/EGPL/js/bootstrap-datepicker.js', array(), '1.2.0', true );
@@ -3605,7 +3605,7 @@ function add_contentmanager_js(){
      wp_enqueue_script('sweetalert', plugins_url('/EGPL/cmtemplate/js/lib/bootstrap-sweetalert/sweetalert.min.js'), array('jquery'));
      wp_enqueue_script('password_strength_cal', plugins_url('/js/passwordstrength.js', __FILE__), array('jquery'));
      
-     wp_enqueue_script( 'selfsignupjs', plugins_url('/EGPL/js/selfsignupjs.js'), array(), '1.2.9', true );
+     wp_enqueue_script( 'selfsignupjs', plugins_url('/EGPL/js/selfsignupjs.js'), array(), '1.3.9', true );
      wp_enqueue_script( 'jquery-confirm', plugins_url('/EGPL/js/jquery-confirm.js'), array(), '1.2.7', true );
       
      wp_enqueue_script('select2', plugins_url('/cmtemplate/js/lib/select2/select2.full.js', __FILE__), array('jquery'));

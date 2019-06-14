@@ -1896,6 +1896,8 @@ function  check_useremail_exist($useremail){
           if($user_status_for_this_site == 'alreadyexist'){
               
               echo 'User already exists for this site.'; 
+              contentmanagerlogging_file_upload ($lastInsertId,serialize('User already exists for this site.'));
+              
           }else{
               
               $data_array['first_name'] = get_user_meta($user_id, 'wp_'.$fetchuserdatauserblogID.'_first_name', true);
@@ -1907,7 +1909,7 @@ function  check_useremail_exist($useremail){
                       
               echo json_encode($data_array);        
               
-              
+              contentmanagerlogging_file_upload ($lastInsertId,serialize($data_array));
               
           }
         }

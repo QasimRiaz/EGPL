@@ -83,16 +83,7 @@
                                         
                                     </div>
                                 </div>
-                    <div class="form-group row">
-                                     <label class="col-sm-4 fontclass">Company Logo </label>
-                                    <div class="col-sm-8">
-                                                     
-                                          
-					<input  type="file" class="form-control" name="profilepic" id="profilepic" >				
-								
-				    </div>
-                                    
-                        </div>
+                    
                   
                                                      
                                           
@@ -104,7 +95,7 @@
                        <?php   foreach ($additional_fields as $key=>$value){  
                                 
                                 $htmlinputfield ="";
-                                if($additional_fields[$key]['type'] !='checkbox' && $additional_fields[$key]['type'] !='html' ){
+                                if($additional_fields[$key]['type'] !='checkbox' && $additional_fields[$key]['type'] !='html' && $additional_fields[$key]['hiddenflag'] !=1){
                                     
                                     if($additional_fields[$key]['formlabel'] != 'Registration Codes'){
                                     ?>

@@ -3,7 +3,7 @@ function selfisignupadd_new_sponsor(){
     
   var url = currentsiteurl + "/";
   var email =  jQuery("#Semail").val();
-  var profilepic = jQuery('#profilepic')[0].files[0]; 
+  var profilepic = ""; 
   var data = new FormData();
   
   var sponsorlevel = 'subscriber';

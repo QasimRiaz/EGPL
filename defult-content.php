@@ -55,20 +55,20 @@
                         $user_additional_field_default[0]['required'] = false;
                
                 
-                        $user_additional_field_default[1]['name'] = 'Address 1';
+                        $user_additional_field_default[1]['name'] = 'Address Line 1';
                         $user_additional_field_default[1]['key']  = 'address_line_1';
                         
                        	$user_additional_field_default[1]['type'] = 'text';
                         $user_additional_field_default[1]['hiddenflag'] = false;
-                        $user_additional_field_default[1]['formlabel'] = 'Address 1';
+                        $user_additional_field_default[1]['formlabel'] = 'Address Line 1';
                         $user_additional_field_default[1]['required'] = false;
 
-                        $user_additional_field_default[2]['name'] = 'Address 2';
+                        $user_additional_field_default[2]['name'] = 'Address Line 2';
                         $user_additional_field_default[2]['key']  = 'address_line_2';
                         
                         $user_additional_field_default[2]['type'] = 'text';
                         $user_additional_field_default[2]['hiddenflag'] = false;
-                        $user_additional_field_default[2]['formlabel'] = 'Address 2';
+                        $user_additional_field_default[2]['formlabel'] = 'Address Line 2';
                         $user_additional_field_default[2]['required'] = false;
 
                         $user_additional_field_default[3]['name'] = 'City';
@@ -115,7 +115,7 @@
                         $user_additional_field_default[8]['key']  = 'user_phone_2';
                         
                         $user_additional_field_default[8]['type'] = 'text';
-                        $user_additional_field_default[8]['hiddenflag'] = false;
+                        $user_additional_field_default[8]['hiddenflag'] = true;
                         $user_additional_field_default[8]['formlabel'] = 'Phone 2';
                         $user_additional_field_default[8]['required'] = false;
 
@@ -131,7 +131,7 @@
                         $user_additional_field_default[10]['key']  = 'usernotes';
                         
                         $user_additional_field_default[10]['type'] = 'textarea';
-                        $user_additional_field_default[10]['hiddenflag'] = false;
+                        $user_additional_field_default[10]['hiddenflag'] = true;
                         $user_additional_field_default[10]['formlabel'] = 'Notes';
                         $user_additional_field_default[10]['required'] = false;
                 
