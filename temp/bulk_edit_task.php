@@ -69,9 +69,14 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     ?>
 
 <style>
-	.select2-search__field {
+	.select2-container--default .select2-search--dropdown {
+    padding-left: 0px;
+    padding-right: 0px;
+	border-radius: 0px;
+}
+	.select2-search__field .newmultiselect{
 	
-	    display: none !important;
+	   
 		margin-bottom: -20px;
 }.select2-search--dropdown {
 	
@@ -287,6 +292,10 @@ height: 50% !important;
                                                 <i  data-toggle="tooltip" title="Advanced" name="<?php echo $task_code; ?>" onclick="bulktasksettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i>
                                                 <?php if($value['SystemTask'] != "checked") {?>
                                                 <i  data-toggle="tooltip" title="Remove this task" name="<?php echo $task_code; ?>" onclick="removebulk_task(this)" class="hi-icon fusion-li-icon fa fa-times-circle" ></i>
+                                                <?php }?>
+												
+												<?php if($value['SystemTask'] == "checked") {?>
+												 <i  data-toggle="tooltip" title='This highlighted task is a "System Task". If you use this task on your Task Page, that means whatever value users submit to this task will automatically show up in the pop-up of their assigned booth(s) once assigned. By default they are not assigned to any Level, and you can configure most of the settings such as the due date and description, however they cannot be deleted. For more details on how these are used, please contact support@expo-genie.com'  name="" onclick="" class="hi-icon fusion-li-icon fa fa-question-circle" ></i>
                                                 <?php }?>
                                             </div> </td>
                                         <td><input <?php if($value['SystemTask'] == "checked") {echo 'readonly="true" title="This is a system task. Changing its title is not allowed"';}else{echo 'title="Title"';} ?> type="text" style="margin-top: 10px;margin-bottom: 10px;" id="row-<?php echo $task_code; ?>-title" class="form-control" name="tasklabel" placeholder="Title" data-toggle="tooltip" title="Title" value="<?php echo $value['label']; ?>" required> 

@@ -632,3 +632,103 @@
 .content-vertical-middle{
    vertical-align: middle !important; 
 }
+
+
+/*//Orders History Css*/
+
+
+.header-wc-completed{
+  
+    border: 1px #0a4c9c  solid;
+    margin-bottom: 4%;
+    
+}
+.wc-completed-bg{
+    
+    background: #0a4c9c;
+     padding: 16px;
+}
+.wc-completed-bg a{
+    
+    color:#fff !important;
+    font-size: 22px !important;
+      cursor: pointer;
+}
+
+
+.header-wc-open{
+  
+    border: 1px #f88300   solid;
+    margin-bottom: 4%;
+    
+}
+.wc-open-bg{
+    
+    background: #f88300 ;
+    padding: 16px;
+    
+}
+.wc-open-bg a{
+    
+    color:#fff !important;
+    font-size: 22px !important;
+    cursor: pointer;
+    
+}
+
+.header-wc-cancell{
+  
+    border: 1px #c5c5c5  solid;
+    margin-bottom: 4%;
+    
+}
+.wc-cancell-bg{
+    
+    background: #c5c5c5 ;
+    
+}
+.wc-cancell-bg a{
+    
+    color:#fff !important;
+    font-size: 22px !important;
+    
+}
+.paddingclasswctable{
+    
+    padding: 10px !important;
+    
+}
+
+
+.wc-open-bg a:active , .wc-open-bg a:focus{
+    
+    
+    border: 1px #f88300  solid !important;
+}
+
+.wc-cancell-bg a:active , .wc-cancell-bg a:focus{
+    
+    
+    border: 1px #c5c5c5  solid !important;
+}
+
+.wc-completed-bg a:active , .wc-completed-bg a:focus{
+    
+    
+    border: 1px #0a4c9c  solid !important;
+}
+
+.myproductdetail>tbody>tr>td, .myproductdetail>tbody>tr>th, .myproductdetail>tfoot>tr>td, .myproductdetail>tfoot>tr>th, .myproductdetail>thead>tr>td, .myproductdetail>thead>tr>th{
+    
+    
+    
+    vertical-align: middle !important;
+}
+
+.customeicon{
+    
+    font-size: 27px;
+    color: white;
+    float: right;
+    margin-top: 8px;
+}

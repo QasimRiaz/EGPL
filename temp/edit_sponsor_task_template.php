@@ -178,6 +178,7 @@
                    $timestamp_task_data = strtotime($profile_field_settings['attrs']);
                    $value = get_user_meta($sponsor_id, $profile_field_name, true);
                    $status_value = get_user_meta($sponsor_id, $profile_field_name.'_status', true);
+                  // echo $result_date;exit;
                    
                    if ($result_date < 0) {
 

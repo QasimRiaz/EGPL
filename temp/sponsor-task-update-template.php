@@ -212,7 +212,7 @@
                    }
                    if($profile_field_settings['taskMWDDP']== 'checked'){
                        
-                       if ($result_date < 0) {
+                       if ($result_date <= 0) {
                            
                        }else{
                            $lockdownstatus = 'checked';
@@ -222,8 +222,8 @@
                        
                    }
                    
-                   
-                   if ($result_date < 0) {
+                  
+                   if ($result_date <= 0) {
 
                        $duedate_html = '<td class="duedate"  data-order="' . $timestamp_task_data . '" >' . $profile_field_settings['attrs'] . '</td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . stripslashes($profile_field_settings['descrpition']) . '</td>';
                    

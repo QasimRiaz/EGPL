@@ -265,7 +265,6 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item" onclick="get_bulk_email_address()"><i class="fa fa-mail-forward"></i> Bulk Email</a>
                                                     <a class="dropdown-item" onclick="sendwelcomemsg()"><i class="fa fa-paper-plane"></i> Welcome Email</a>
-                                                    <a class="dropdown-item" onclick="sync_bulk_users()"><i class="fa fa-refresh"></i> Sync to Floorplan</a>
                                                     <a class="dropdown-item" onclick="reportbulkdownload()"><i class="fa fa-download"></i> Bulk Download</a>
                                                     
                                                     

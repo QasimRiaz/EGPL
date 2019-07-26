@@ -9,7 +9,7 @@
 jQuery(document).ready(function() {
   
    t = jQuery('.bulkedittask').DataTable( {
-    
+        "order": [[ 0, "desc" ]],
         initComplete: function () {
             
            this.api().columns([1]).every( function () {

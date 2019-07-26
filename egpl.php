@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.24
+ * Version:           3.3
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -283,7 +283,7 @@ if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {
                 
                 
                 
-                custome_email_send($user_id,$email);
+               // custome_email_send($user_id,$email);
                  if($welcomeemail_status == 'send'){
                     $useremail='';
                     custome_email_send($user_id,$email,$welcomeemailtemplatename);
@@ -1258,7 +1258,7 @@ try {
 <tbody>
 <tr>
 <td style="border-top: solid 1px #d9d9d9;" colspan="2">
-<div style="padding: 15px 0;">
+<div style="padding: 1em 0;">
 '.$body.'
 </div>
 </td>
@@ -1759,7 +1759,7 @@ try {
 <tbody>
 <tr>
 <td style="border-top: solid 1px #d9d9d9;" colspan="2">
-<div style="padding: 15px 0;">
+<div style="padding: 1em 0;">
 '.$body_message.'
 </div>
 </td>
@@ -3588,7 +3588,7 @@ function getReportsdatanew($report_name,$usertimezone){
 
 add_action('wp_enqueue_scripts', 'add_contentmanager_js');
 function add_contentmanager_js(){
-      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'2.3.0', true);
+      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'2.2.0', true);
     
      wp_enqueue_script( 'jquery.alerts', plugins_url() . '/EGPL/js/jquery.alerts.js', array(), '1.1.0', true );
      wp_enqueue_script( 'boot-date-picker', plugins_url() . '/EGPL/js/bootstrap-datepicker.js', array(), '1.2.0', true );
@@ -3605,11 +3605,12 @@ function add_contentmanager_js(){
      wp_enqueue_script('sweetalert', plugins_url('/EGPL/cmtemplate/js/lib/bootstrap-sweetalert/sweetalert.min.js'), array('jquery'));
      wp_enqueue_script('password_strength_cal', plugins_url('/js/passwordstrength.js', __FILE__), array('jquery'));
      
-     wp_enqueue_script( 'selfsignupjs', plugins_url('/EGPL/js/selfsignupjs.js'), array(), '1.3.9', true );
+     wp_enqueue_script( 'selfsignupjs', plugins_url('/EGPL/js/selfsignupjs.js'), array(), '1.2.9', true );
      wp_enqueue_script( 'jquery-confirm', plugins_url('/EGPL/js/jquery-confirm.js'), array(), '1.2.7', true );
       
      wp_enqueue_script('select2', plugins_url('/cmtemplate/js/lib/select2/select2.full.js', __FILE__), array('jquery'));
-      //wp_enqueue_script('rolejs', plugins_url('/js/role.js', __FILE__), array('jquery'));
+    
+     wp_enqueue_script( 'order-history', plugins_url('/EGPL/js/orderhistory.js'), array(), '1.2.0', true );
      
    
 }
@@ -3629,7 +3630,7 @@ function my_contentmanager_style() {
     wp_enqueue_style('my-datatable-tools', plugins_url().'/EGPL/css/dataTables.tableTools.css');
    // wp_enqueue_style('cleditor-css', plugins_url() .'/EGPL/css/jquery.cleditor.css');
    // wp_enqueue_style('contentmanager-css', plugins_url() .'/EGPL/css/forntend.css');
-    wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '1.4', 'all');
+    wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '2.4', 'all');
     wp_enqueue_style('my-admin-theme', plugins_url('css/normalize.css', __FILE__));
   
    
@@ -4965,7 +4966,7 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
 <tbody>
 <tr>
 <td style="border-top: solid 1px #d9d9d9;" colspan="2">
-<div style="padding: 15px 0;">
+<div style="padding: 1em 0;">
 '.$body.'
 </div>
 </td>
@@ -5633,7 +5634,7 @@ try {
             <tbody>
             <tr>
             <td style="border-top: solid 1px #d9d9d9;" colspan="2">
-            <div style="padding: 15px 0;">
+            <div style="padding: 1em 0;">
             '.$body.'
             </div>
             </td>
@@ -6028,38 +6029,210 @@ if (is_admin()) { // note the use of is_admin() to double check that this is hap
         );
         new WP_GitHub_Updater($config);
     }
+
 add_filter('woocommerce_payment_complete_order_status', 'exp_autocomplete_paid_orders', 10, 2);
 add_action('woocommerce_thankyou', 'exp_autocomplete_all_orders');
+
 function exp_autocomplete_all_orders($order_id) {
         
         if (!$order_id)
                 return;
-        
+        $orderstatus = "completed";
         //$order = new WC_Order($order_id);
         $order = wc_get_order($order_id);
-        
-     
-        
-        
-        
+        $user_ID = get_current_user_id();
         $payment_method = get_post_meta($order->id, '_payment_method', true);
+        
+        foreach( $order->get_items() as $item ) {
+                      
+                               
+				if ( 'line_item' === $item['type'] && ! empty( $item['is_deposit'] ) ) {
+					$deposit_full_amount       = (float) $item['_deposit_full_amount_ex_tax'];
+					$deposit_deposit_amount    = (float) $item['_deposit_deposit_amount_ex_tax'];
+					$deposit_deferred_discount = (float) $item['_deposit_deferred_discount'];
+					if ( ( $deposit_full_amount - $deposit_deposit_amount ) > $deposit_deferred_discount ) {
+                                                $productremaningProductsID = $item['product_id'];
+						$remmaningamount =  $deposit_full_amount - $deposit_deposit_amount;
+					}
+				}
+                    }
+        if($remmaningamount !=0){
+            
+            $original_order = wc_get_order( $order_id );
+            
+        
+           
+            $items     = false;
+            $status = "";
+		foreach ( $original_order->get_items() as $order_item_id => $order_item ) {
+                    
+                        
+                         
+                         $order_item_pro_id = wc_get_order_item_meta($order_item_id, '_product_id', true);
+                    
+                        
+			if ( $productremaningProductsID == $order_item_pro_id ) {
+                            
+                             
+                                $order_item_id_update = $order_item_id;
+				$items = $order_item;
+			}
+                        
+		}
+                
+                
+              
+                
+		if ( ! $items || empty( $items['is_deposit'] ) ) {
+			return;
+		}
+                
+                
+                $full_amount_excl_tax = floatval( $items['deposit_full_amount_ex_tax'] );
+
+				// Next, get the initial deposit already paid, excluding tax
+				$amount_already_paid = floatval( $items['deposit_deposit_amount_ex_tax'] );
+
+				// Then, set the item subtotal that will be used in create order to the full amount less the amount already paid
+				$subtotal = $full_amount_excl_tax - $amount_already_paid;
+				
+				if( version_compare( WC_VERSION, '3.2', '>=' ) ){
+					// Lastly, subtract the deferred discount from the subtotal to get the total to be used to create the order
+					$discount_excl_tax = isset($item['deposit_deferred_discount_ex_tax']) ? floatval( $item['deposit_deferred_discount_ex_tax'] ) : 0;
+					$total = $subtotal - $discount_excl_tax;
+				} else {
+					$discount = floatval( $item['deposit_deferred_discount'] );
+					$total = empty( $discount ) ? $subtotal : $subtotal - $discount;
+				}
+				
+
+				
+
+				
+                
+                
+		$new_order      = wc_create_order( array(
+			'status'        => $status,
+			'customer_id'   => $original_order->get_user_id(),
+			'customer_note' => $original_order->customer_note,
+			'created_via'   => 'wc_deposits',
+		) );
+                
+                $item = array(
+					'product'   => $original_order->get_product_from_item( $items ),
+					'qty'       => 0,
+					'subtotal'  => $subtotal,
+					'total'     => $total
+				);
+                
+                
+                
+		if ( is_wp_error( $new_order ) ) {
+                    
+                    $original_order->add_order_note( sprintf( __( 'Error: Unable to create follow up payment (%s)', 'woocommerce-deposits' ), $scheduled_order->get_error_message() ) );
+		
+                    
+                } else {
+                    
+                    
+                        //echo 'checkoutstatus';
+                  
+			$new_order->set_address( array(
+				'first_name' => $original_order->shipping_first_name,
+				'last_name'  => $original_order->shipping_last_name,
+				'company'    => $original_order->shipping_company,
+				'address_1'  => $original_order->shipping_address_1,
+				'address_2'  => $original_order->shipping_address_2,
+				'city'       => $original_order->shipping_city,
+				'state'      => $original_order->shipping_state,
+				'postcode'   => $original_order->shipping_postcode,
+				'country'    => $original_order->shipping_country,
+			), 'shipping' );
+
+			// Handle items
+			$item_id = $new_order->add_product( $item['product'], $item['qty'], array(
+				'totals' => array(
+					'subtotal'     => $item['subtotal'], // cost before discount (for line quantity, not just unit)
+					'total'        => $item['total'], // item cost (after discount) (for line quantity, not just unit)
+					'subtotal_tax' => 0, // calculated within (WC_Abstract_Order) $new_order->calculate_totals
+					'tax'          => 0, // calculated within (WC_Abstract_Order) $new_order->calculate_totals
+				)
+			) );
+			wc_add_order_item_meta( $item_id, '_original_order_id', $order_id );
+
+			/* translators: Payment number for product's title */
+			wc_update_order_item( $item_id, array( 'order_item_name' => sprintf( __( 'Payment #%d for %s', 'woocommerce-deposits' ), 2, $item['product']->get_title() ) ) );
+
+			// (WC_Abstract_Order) Calculate totals by looking at the contents of the order. Stores the totals and returns the orders final total.
+			$new_order->calculate_totals( wc_tax_enabled() );
+
+			// Set future date and parent
+			$new_order_post = array(
+				'ID'          => $new_order->id,
+				'post_date'   => date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ),
+				'post_parent' => $order_id,
+			);
+			wp_update_post( $new_order_post );
+                        
+			do_action( 'woocommerce_deposits_create_order', $new_order->id );
+                        $new_order->update_status('wc-pending-deposit');
+                        
+                        foreach ( $new_order->get_items() as $order_item_id => $order_item ) {
+                    
+                        
+                         
+                         $order_item_pro_id = wc_get_order_item_meta($order_item_id, '_product_id', true);
+                    
+                        
+                            if ( $productremaningProductsID == $order_item_pro_id ) {
+
+
+                                    $order_item_id_update = $order_item_id;
+                                    
+                            }
+                        
+                        }
+                        
+                        
+                        wc_add_order_item_meta( $order_item_id_update, '_remaining_balance_order_id', $order_id );
+			$new_order_ID =  $new_order->id;
+		}
+            
+   
+                
+                
+            
+            $emails = WC_Emails::instance();
+            $emails->customer_invoice( wc_get_order( $new_order_ID ) );
+            $orderstatus = "partial-payment";
+            
+            
+            
+        }
+        
+        
         if($payment_method == 'cheque'){
-           
-                  foreach ($order->get_items() as $item_id => $item_obj) {
-                    
+                  
+            
+            
+            
+                  foreach( $order->get_items() as $item ) {
                       
-                      
-                    
-                    $porduct_ids_array[] = wc_get_order_item_meta($item_id, '_product_id', true);
-                 }
+                                $porduct_ids_array[] = $item['product_id'];
+				
+                    }
            
-           
-         
+            
             //exp_updateuser_role_onmpospurches($order,$porduct_ids_array);
             exp_updateuser_role_onmpospurches($order->id,$porduct_ids_array);
             
-            $order->update_status('completed');
+            
+            
+           
+            
+            $order->update_status($orderstatus);
         }
+     
 }
 function exp_autocomplete_paid_orders($order_status, $order_id) {
         
@@ -6094,12 +6267,12 @@ function exp_autocomplete_paid_orders($order_status, $order_id) {
             exp_updateuser_role_onmpospurches($order->id,$porduct_ids_array);
         
             
-            
+           
           
             if ($order_status == 'processing' && ($order->status == 'on-hold' || $order->status == 'pending' || $order->status == 'failed')) {
                 return 'completed';
             }
-            return $order_status;
+            return 'completed';
 }
 
 
@@ -6499,60 +6672,88 @@ function myregisterrequest_new_user($username, $email){
 add_action( 'wp_footer','checkloginuserstatus_fun' );
 function checkloginuserstatus_fun() {
     
-    
+    if ( is_user_logged_in() ) {
      $site_url  = get_site_url();
      $oldvalues = get_option( 'ContenteManager_Settings' );
      $mainheader = $oldvalues['ContentManager']['mainheader'];
      $mainheaderlogo = $oldvalues['ContentManager']['mainheaderlogo'];
      $redirectname = $oldvalues['ContentManager']['redirectcatname'];
      $redirectURL = "";
+     $current_user = wp_get_current_user();
+     $user_id = get_current_user_id();
+     $currentSiteID = get_current_blog_id();
      
-     if($redirectname == 'boothpurchase'){
+     $current_user_blogs = get_blogs_of_user( $user_id );
+     foreach($current_user_blogs as $BlogIndex=>$BlogData){
          
-         $redirectURL = $site_url.'/floor-plan/';
-         $valuename = "booth";
          
-     }else{
+         $currentuserArray[]=$BlogData->userblog_id;
          
-         $redirectURL = $site_url.'/product-category/packages/';
-         $valuename = "package";
+         
      }
+     
+     if (in_array($currentSiteID, $currentuserArray)) {
     
-     if(!empty($mainheader)){
-         
-             
-           $headerbanner =  "url('".$mainheader."')";
-           
-           echo '<script type="text/javascript"> jQuery(".fusion-header").css("background-image","'.$headerbanner.'"); </script>';
-           
-         
-         
+     
+                if($redirectname == 'boothpurchase'){
+
+                    $redirectURL = $site_url.'/floor-plan/';
+                    $valuename = "booth";
+
+                }else{
+
+                    $redirectURL = $site_url.'/product-category/packages/';
+                    $valuename = "package";
+                }
+
+                if(!empty($mainheader)){
+
+
+                      $headerbanner =  "url('".$mainheader."')";
+
+                      echo '<script type="text/javascript"> jQuery(".fusion-header").css("background-image","'.$headerbanner.'"); </script>';
+
+
+
+               }
+
+               $current_user = wp_get_current_user();
+               $roles = $current_user->roles;
+
+               $newvalue = time();
+               $custome_login_time_site = update_user_option( $current_user->ID, 'custom_login_time_as_site',$newvalue );
+
+
+
+               if ( class_exists( 'WooCommerce' ) ) {	
+                   if (is_user_logged_in()) {
+
+                               if ($roles[0] == 'subscriber') {
+                                   
+                              
+                                   $actual_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                                  
+                                   if($actual_link != "https://" . $_SERVER['SERVER_NAME'].'/home/'){
+                                       if (strpos($actual_link, 'task-list/') !== false || strpos($actual_link, 'home/') !== false  || strpos($actual_link, 'resources/') !== false || strpos($actual_link, 'registration-codes/') !== false) {
+
+
+
+                                            echo '<script type="text/javascript">swal({title: "Welcome!", type: "success", html:true,showConfirmButton:false,text: "<p>This will serve as your portal for managing all of your pre-show logistics. Before gaining access, you\'ll need to first select and purchase a '.$valuename.'.</p><p style=\'margin-top:18px\'><a href='.$redirectURL.' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Next</a></p>"});</script>';
+
+                                       }
+                                    }
+                               }
+                   } 
+               }
+    }else{
+        
+       
+        wp_redirect("https://" . $_SERVER['SERVER_NAME'].'/home/'); 
+      
+        die();
+        
+        
     }
-    
-    $current_user = wp_get_current_user();
-    $roles = $current_user->roles;
-    
-    $newvalue = time();
-    $custome_login_time_site = update_user_option( $current_user->ID, 'custom_login_time_as_site',$newvalue );
-    
-    
-    
-    if ( class_exists( 'WooCommerce' ) ) {	
-        if (is_user_logged_in()) {
-
-                    if ($roles[0] == 'subscriber') {
-
-                        $actual_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-
-                            if (strpos($actual_link, 'task-list/') !== false || strpos($actual_link, 'home/') !== false  || strpos($actual_link, 'resources/') !== false || strpos($actual_link, 'registration-codes/') !== false) {
-                            
-                               
-                            
-                                 echo '<script type="text/javascript">swal({title: "Welcome!", type: "success", html:true,showConfirmButton:false,text: "<p>This will serve as your portal for managing all of your pre-show logistics. Before gaining access, you\'ll need to first select and purchase a '.$valuename.'.</p><p style=\'margin-top:18px\'><a href='.$redirectURL.' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Next</a></p>"});</script>';
-                                
-                            }
-                    }
-        } 
     }
 }
 
@@ -6611,4 +6812,63 @@ function bs_event_table_content( $column_name, $post_id ) {
     
 
 }
+
+
+function myplugin_plugin_path() {
+
+  // gets the absolute path to this plugin directory
+
+  return untrailingslashit( plugin_dir_path( __FILE__ ) );
+}
+add_filter( 'woocommerce_locate_template', 'myplugin_woocommerce_locate_template', 10,10);
+
+
+
+function myplugin_woocommerce_locate_template( $template, $template_name, $template_path ) {
+    
+    
+  global $woocommerce;
+  $_template = $template;
+
+  if ( ! $template_path ) $template_path = $woocommerce->template_url;
+
+  $plugin_path  = myplugin_plugin_path() . '/woocommerce/';
+
+  // Look within passed path within the theme - this is priority
+  $template = locate_template(
+
+    array(
+      $template_path . $template_name,
+      $template_name
+    )
+  );
+
+  // Modification: Get the template from this plugin, if it exists
+  if ( ! $template && file_exists( $plugin_path . $template_name ) )
+    $template = $plugin_path . $template_name;
+
+  // Use default template
+  if ( ! $template )
+    $template = $_template;
+
+  // Return what we found
+  
+//  echo $template;
+  
+  return $template;
+}
+
+
+add_filter('woocommerce_cart_item_permalink','__return_false');
+add_filter( 'woocommerce_order_item_permalink', '__return_false' );
+
+
+
+add_filter('woocommerce_get_availability_text', function($text, $product) {
+    if (!$product->is_in_stock()) {
+        $text = 'No Longer Available';
+    }
+ 
+    return $text;
+}, 10, 2);
 

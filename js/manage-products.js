@@ -9,6 +9,21 @@ jQuery(document).ready(function () {
     
     
     
+   jQuery("#depositsstatus").click(function(){
+        
+        if(jQuery("#depositsstatus").prop( "checked" )){
+            
+            
+            jQuery(".depositsdetail").show();
+            
+            
+        }else{
+            
+             jQuery(".depositsdetail").hide();
+        }
+    });
+    
+    
     jQuery('#selectedtasks').select2();
     
     
@@ -189,6 +204,18 @@ function add_new_product(){
     var menu_order = jQuery("#menu_order").val();
     var selectedtaskvalues = jQuery('#selectedtasks').select2("val");
     var getcatname = jQuery('#getcatname').val();
+    var depositstype = "";
+    var depositsamount = "";
+    
+    if(jQuery("#depositsstatus").prop( "checked" )){
+         
+          depositstype = jQuery("#depositstype option:selected").val(); 
+          depositsamount = jQuery('#depositamount').val();
+         
+         
+     }
+    
+  
     
     
     
@@ -223,6 +250,10 @@ function add_new_product(){
          data.append('selectedtaskvalues', '');
     }
     data.append('ptitle', ptitle);
+    
+    data.append('depositstype', depositstype);
+    data.append('depositsamount', depositsamount);
+    
     data.append('pprice', pprice);
     data.append('pquanitity', pquanitity);
     data.append('stockstatus', stockstatus);

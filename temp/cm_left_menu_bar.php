@@ -77,12 +77,8 @@ $blog_id2 = get_current_blog_id();
                                             <span class="lbl">Add New Admin</span>
                                         </a>
                                         <a class="dropdown-item" href="<?php echo $site_url; ?>/admin-settings/">
-                                            <i class="font-icon fa fa-gears"></i>
-                                            <span class="lbl">Settings</span>
-                                        </a>
-                                        <a class="dropdown-item" href="<?php echo $site_url; ?>/sync-to-floorplan/">
-                                            <i class="font-icon fa fa-refresh"></i>
-                                            <span class="lbl">Sync to ConvoMaps</span>
+                                            <i class="font-icon fa fa-image"></i>
+                                            <span class="lbl">Header</span>
                                         </a>
                                         <a class="dropdown-item" href="<?php echo $site_url; ?>/change-password/">
                                             <i class="font-icon fa fa-lock"></i>
@@ -247,6 +243,12 @@ $blog_id2 = get_current_blog_id();
 	                <a href="<?php echo $site_url; ?>/content-editor/">
 	                   <i class="font-icon fa fa-pencil"></i>
 	                    <span class="lbl menumargine">Content Editor</span>
+	                </a>
+	            </li>
+				<li class="mythemestyle">
+	                <a href="<?php echo $site_url; ?>/admin-settings/">
+	                   <i class="font-icon fa fa-image"></i>
+	                    <span class="lbl menumargine">Header</span>
 	                </a>
 	            </li>
 <!--                    <a href="<?php //echo $site_url; ?>/admin-settings/">

@@ -797,3 +797,9 @@
 	box-shadow: 0 0 0 10px rgba(255,255,255,0.4);
 	color: #fff;
 }
+.myproductdetail>tbody>tr>td, .myproductdetail>tbody>tr>th, .myproductdetail>tfoot>tr>td, .myproductdetail>tfoot>tr>th, .myproductdetail>thead>tr>td, .myproductdetail>thead>tr>th{
+    
+    
+    
+    vertical-align: middle !important;
+}

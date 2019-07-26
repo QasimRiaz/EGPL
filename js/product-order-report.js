@@ -132,11 +132,12 @@ jQuery(document).ready(function () {
                 jQuery('body').css('cursor', 'default');
                 ordertablereport = jQuery('#orderreport');
                 ordertablereport.dataTable({
+                    order: [[ 1, "desc" ]],
                     data: rowsdata,
                     columns: columnsheaderarrayfortable,
                     "columnDefs": [
-                        { "type": "num", "targets": 0 },
-                        { "type": "date", "targets": 1 }
+                        { "type": "date", "targets": 1 },
+                        { "type": "num", "targets": 25 }
                         
                     ],
                     dom: 'fBrlpt',
@@ -195,6 +196,199 @@ jQuery(document).ready(function () {
 
 
 });
+
+function updatecurrentordernotes(OrderID){
+    
+   
+    var url = currentsiteurl + "/";
+    var urlnew = url + 'wp-content/plugins/EGPL/orderreport.php?floorplanRequest=getcurrentOrderNote';
+    var updatevalue = url + 'wp-content/plugins/EGPL/orderreport.php?floorplanRequest=updatedcurrentordernote';
+    var data = new FormData();
+
+
+    data.append('orderID', OrderID);
+   
+
+    jQuery.ajax({
+        url: urlnew,
+        data: data,
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'POST',
+        success: function (data) {
+
+        var OrderNote = jQuery.parseJSON(data);
+        console.log(OrderNote.ordernote);
+        
+         swal({
+            
+            title: 'Add Note',
+            text:'<textarea style="font-weight: 400;padding: 10px;width: 80%;min-height: 150px;"class="ordernotetext">'+OrderNote.ordernote+'</textarea>',
+            confirmButtonText: "Update",
+            showCancelButton: true,
+            html:true,
+            cancelButtonText: "Close"
+         },
+         function(isConfirm) {
+
+            if (isConfirm) {
+                
+                var Textvalue = jQuery(".ordernotetext").val();
+                var data1 = new FormData();
+                data1.append('orderID', OrderID);
+                data1.append('OrderNote', Textvalue);
+                 jQuery.ajax({
+                        url: updatevalue,
+                        data: data1,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        type: 'POST',
+                        success: function (data) {
+                            
+                             swal({
+                                title: "Updated!",
+                                text: "This order note has been updated successfully.",
+                                type: "success",
+                                confirmButtonClass: "btn-success",
+                                
+                            }, function() {
+                                location.reload();
+                               // table.cell({row:2, column:8}).data(Textvalue);
+                            }
+                            );
+                            
+                            
+                        }
+                    
+                    });
+                }
+            });
+        }
+    });
+    
+    
+    
+}
+
+
+function markorderstatuscancel(OrderID){
+    
+    var status ='cancelled';
+    swal({
+            title: "Are you sure?",
+            text: 'Do you want to cancel this order?',
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes, cancelled !",
+            cancelButtonText: "No, cancel please!",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        },
+        function(isConfirm) {
+
+
+
+            if (isConfirm) {
+                confrim_Ordermarkascompleted(OrderID,status);
+                swal({
+                    title: "Cancelled!",
+                    text: "This order has been cancelled successfully.",
+                    type: "success",
+                    confirmButtonClass: "btn-success"
+                }, function() {
+                    location.reload();
+                }
+                );
+            } else {
+                jQuery('body').css('cursor', 'default');
+                swal({
+                    title: "Cancelled",
+                    text: "Order is safe :)",
+                    type: "error",
+                    confirmButtonClass: "btn-danger"
+                });
+            }
+        });
+    
+    
+    
+}
+function markorderstatuscompleted(OrderID){
+    
+    var status ='completed';
+    swal({
+            title: "Are you sure?",
+            text: 'Do want to mark this order as complete?',
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes, completed !",
+            cancelButtonText: "No, cancel please!",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        },
+        function(isConfirm) {
+
+
+
+            if (isConfirm) {
+                confrim_Ordermarkascompleted(OrderID,status);
+                swal({
+                    title: "Completed!",
+                    text: "This order has been completed successfully.",
+                    type: "success",
+                    confirmButtonClass: "btn-success"
+                }, function() {
+                    location.reload();
+                }
+                );
+            } else {
+                jQuery('body').css('cursor', 'default');
+                swal({
+                    title: "Cancelled",
+                    text: "Order is safe :)",
+                    type: "error",
+                    confirmButtonClass: "btn-danger"
+                });
+            }
+        });
+    
+    
+    
+}
+
+function confrim_Ordermarkascompleted(orderID,status) {
+
+    var url = currentsiteurl + "/";
+    var urlnew = url + 'wp-content/plugins/EGPL/orderreport.php?floorplanRequest=updateorderstatus';
+    var data = new FormData();
+
+
+    data.append('orderID', orderID);
+    data.append('status', status);
+
+    jQuery.ajax({
+        url: urlnew,
+        data: data,
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'POST',
+        success: function (data) {
+
+
+            
+
+        }
+
+
+    });
+}
+
+
 
 function request_getapplyfiltersonordereport(){
     

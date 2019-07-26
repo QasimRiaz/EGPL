@@ -36,8 +36,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
       
        
      
-       
-       
+      
        
        
        $all_roles = $wp_roles->roles;
@@ -72,8 +71,13 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
            $update_product = wc_get_product( $product_id );
            
            $get_results = get_post_meta($product_id, "productlevel",true);
+           $get_deposit_type = get_post_meta($product_id, "_wc_deposit_type",true);
+           $get_deposit_amount = get_post_meta($product_id, "_wc_deposit_amount",true);
+         
            
-           
+            
+       
+       
          
           
            $selectedTaskListData = get_post_meta( $product_id);
@@ -117,6 +121,10 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
          
            
        }
+       
+      
+       
+       
        
         include 'cm_header.php';
         include 'cm_left_menu_bar.php';
@@ -479,6 +487,75 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                           <?php } ?>
                  </div>
                   
+                  <div class="form-group row">
+                          
+                          
+                          <label class="col-sm-2 form-control-label">Enable Deposits <i data-toggle="tooltip" title="Select if you want to enable split payments for this booth." class="fa fa-question-circle" aria-hidden="true"></i></label>
+                          <div class="col-sm-10">
+                              
+                             <?php if (isset($_GET['productid'])) { 
+                                   if(!empty($get_deposit_type)){?> 
+                              <input type="checkbox" id="depositsstatus" checked="true">
+                             <?php }else{?>
+                              <input type="checkbox" id="depositsstatus" >
+                             <?php }}else{?>
+                              <input type="checkbox" id="depositsstatus" >
+                             <?php } ?>
+                          </div>
+                   </div>
+                   
+                  
+                   <?php if(isset($_GET['productid'])) { 
+                       if(!empty($get_deposit_type)){  ?>   
+                        <div class="form-group row depositsdetail" >
+                    <?php }else{ ?>      
+                         <div class="form-group row depositsdetail" style="display:none;">
+                     <?php }}else{?>
+                        <div class="form-group row depositsdetail" style="display:none;">
+                     <?php } ?>
+                  
+                 
+                          
+                          
+                          <label class="col-sm-2 form-control-label">Deposits Type <i data-toggle="tooltip" title="For the initial payment, enter either a fixed dollar amount or a percentage of the entire cost." class="fa fa-question-circle" aria-hidden="true"></i></label>
+                          <div class="col-sm-10">
+
+                              <select class="form-control" id="depositstype">
+                                  
+                                <?php if (isset($_GET['productid'])) { 
+                                  if($get_deposit_type == "percent"){  ?> 
+                                   <option value="percent" selected="true">Percentage</option>
+                                   <option value="fixed">Fixed Amount</option>
+                                <?php }else{ ?>
+                                  
+                                   <option value="percent" >Percentage</option>
+                                   <option value="fixed" selected="true">Fixed Amount</option>
+                                <?php }}else{?>
+                                   
+                                  <option value="percent" >Percentage</option>
+                                  <option value="fixed">Fixed Amount</option>
+                                <?php } ?>
+                                  
+                              </select>
+
+                          </div>
+                   </div>
+                    <?php if (isset($_GET['productid'])) { 
+                       if(!empty($get_deposit_type)){  ?>   
+                        <div class="form-group row depositsdetail" >
+                    <?php }else{ ?>      
+                         <div class="form-group row depositsdetail" style="display:none;">
+                     <?php }}else{?>
+                        <div class="form-group row depositsdetail" style="display:none;">
+                     <?php } ?>
+                          <label class="col-sm-2 form-control-label">Deposit Amount <i data-toggle="tooltip" title = ' <?php echo' Enter dollar amount for "Fixed Amount" types, and percentage amount for "Percentage" types';?> ' class="fa fa-question-circle" aria-hidden="true"></i></label>
+                          <div class="col-sm-10">
+
+                               <input  id="depositamount" class="form-control"  value="<?php echo $get_deposit_amount;?>" type="number" >	
+
+                          </div>
+                   </div>
+                  
                     <?php if($product_name_for_fields_lebal != 'Booth'){ ?>
                       <div class="form-group row">
                           <label class="col-sm-2 form-control-label">Position <i data-toggle="tooltip" title="This determines the order in which this product shows up in the shop based on the numeric order. For example, if you create 3 products, and you select the position 1,2,3 for each of the products, the product with the position '1' will appear first. Leaving a position blank will default the product by creation date." class="fa fa-question-circle" aria-hidden="true"></i></label>
@@ -551,7 +628,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
     </div>
 
     <?php }include 'cm_footer.php'; ?>
-<script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=2.45"></script>
+<script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=2.47"></script>
    
         
         

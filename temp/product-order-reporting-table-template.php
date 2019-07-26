@@ -5,7 +5,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
         $order_reportsaved_list = get_option('ContenteManager_Orderreport_settings');
         include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
         
-      
+     
     
     
   
@@ -338,7 +338,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/doT.js?v=2.18"></script>
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/interact.js?v=2.18"></script>
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/query-builder.js?v=2.18"></script>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/product-order-report.js?v=2.23"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/product-order-report.js?v=2.47"></script>
     
     
    <?php

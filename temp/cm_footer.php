@@ -14,6 +14,8 @@
         <script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/bootstrap-select/bootstrap-select.min.js?v=2.95"></script>
 	<script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/select2/select2.full.js?v=2.95"></script>
         <script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/datatables-net/datatables.min.js?v=2.95"></script>
+         
+       
         <script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/clockpicker/bootstrap-clockpicker.min.js?v=2.95"></script>
 	<script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/clockpicker/bootstrap-clockpicker-init.js?v=2.95"></script>
 	<script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/daterangepicker/daterangepicker.js?v=2.95"></script>
@@ -28,19 +30,19 @@
         
         
 <!--        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/exporting.js?v=2.95"></script>-->
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/contentmanager.js?v=3.07"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/contentmanager.js?v=2.97"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.watable.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-datepicker.min.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-multiselect.js?v=2.95"></script>
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk-email.js?v=2.017"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk-email.js?v=2.003"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery-confirm.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/passwordstrength.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/taskmanager.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/role.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.fileDownload.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/admin-modernizr.custom.js?v=2.95"></script>
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/welcomeemail-content.js?v=2.005"></script>
-        
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/welcomeemail-content.js?v=2.95"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/orderhistory.js?v=2.4"></script>
         <script src="https://code.highcharts.com/highcharts.js"></script>
         <script src="https://code.highcharts.com/highcharts-more.js"></script>
         <script src="https://code.highcharts.com/modules/exporting.js"></script>
@@ -48,7 +50,7 @@
       
         <script src='/wp-content/plugins/EGPL/js/randomColor.js?v=2.95'></script>
         <script src='/wp-content/plugins/EGPL/js/jquery.ajax-progress.js?v=2.95'></script>
-         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=2.39"></script>
+         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=2.95"></script>
          <script type="text/javascript" src="/wp-content/plugins/EGPL/js/moment.min.js?v=2.95"></script>
          
 	 <?php
@@ -67,27 +69,13 @@
 	<script type="text/javascript" language="javascript" src="/wp-content/plugins/EGPL/js/dataTables.buttons.min.js?v=2.95"></script>
         <script type="text/javascript" language="javascript" src="/wp-content/plugins/EGPL/js/jszip.min.js?v=2.95"></script>
         <script type="text/javascript" language="javascript" src="/wp-content/plugins/EGPL/js/buttons.html5.min.js?v=2.95"></script>
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/dashboardrequest.js?v=2.96"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/dashboardrequest.js?v=2.95"></script>
   
            <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.alerts.js?v=2.95"></script>
-           
-<script type="text/javascript" src="https://cdn.tinymce.com/4/tinymce.min.js" onclick="trackLink('https://cdn.tinymce.com/4/tinymce.min.js', event);"></script>
-<script>
-function trackLink(url,event) {
-    event.preventDefault();
-    if (window.ga && ga.loaded) {
-         ga('send', 'event', 'outbound', 'click', url, {
-         'transport': 'beacon',
-         'hitCallback': function() { document.location = url; }
-       });
-    } else {
-        document.location = url;
-    }
-}
-</script>
+<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
 <script>
 jQuery(document).ready(function() {
-   
+    
     jQuery('[data-toggle="tooltip"]').tooltip(); 
 jQuery('.panel').lobiPanel({
     reload: false,
@@ -171,7 +159,7 @@ tinymce.init({
 
 </script>
         
-<script>
+	<script>
           
           console.log(window.location.protocol + "//" + window.location.host + this.location.pathname);
           jQuery('a[href="' + window.location.protocol + "//" + window.location.host + this.location.pathname + '"]').parents('li').addClass('active');
@@ -183,7 +171,7 @@ tinymce.init({
             jQuery(".mynav li a").on("click", function(){
                     jQuery('.opened').addClass('opened');
                     jQuery('.active').removeClass('active');
-                   // jQuery('a[href="' + window.location.protocol + "//" + window.location.host + this.location.pathname + '"]').parent('li').addClass("active");
+                    jQuery('a[href="' + window.location.protocol + "//" + window.location.host + this.location.pathname + '"]').parent('li').addClass("active");
             });
 jQuery('#daterange3').daterangepicker({
 				singleDatePicker: true,

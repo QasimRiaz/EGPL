@@ -34,7 +34,7 @@ button,input,input:not([type]),input[type=number],input[type=password],input[typ
 .mce-content-body h4{font-size:22px}
 .mce-content-body h5{font-size:18px}
 .mce-content-body h6{font-size:14px}
-.mce-content-body p{margin:25px 0}
+.mce-content-body p{margin:1em 0}/*danyal*/
 .mce-content-body ol,.mce-content-body ul{margin-left:15px;list-style-position:outside;margin-bottom:20px}
 .mce-content-body ol li,.mce-content-body ul li{margin-left:10px;margin-bottom:10px;color:#000}
 .mce-content-body ul{list-style-type:disc}

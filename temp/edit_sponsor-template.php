@@ -189,7 +189,7 @@
                                 </div>             
                    <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">Company Logo </label>
-                                    <?php if(empty($all_meta_for_user['user_profile_url'][0])){?>  
+                                    <?php if(empty($all_meta_for_user[$site_prefix.'user_profile_url'][0])){?>  
                                     <div class="col-sm-10">
                                                      
                                         
@@ -200,7 +200,7 @@
                                    <?php }else{?>
                                     <div id="showprofilepic">
                                     <div class="col-sm-5">
-                                       <img width="200" id="userprofilepic"  name="userprofilepic" src="<?php echo $all_meta_for_user['user_profile_url'][0];?>" >
+                                       <img width="200" id="userprofilepic"  name="userprofilepic" src="<?php echo $all_meta_for_user[$site_prefix.'user_profile_url'][0];?>" >
                                     </div>
                                     <div class="col-sm-4">
                                         <a width="200" class="btn btn-inline mycustomwidth btn-success" onclick="showprofilefieldupload()" >Edit Logo</a>

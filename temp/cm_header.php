@@ -30,10 +30,10 @@
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/watable.css?v=2.21">
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/datepicker.css?v=2.21">
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap-multiselect.css?v=2.21">
-        <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/jquery-confirm.css?v=2.21">
+        <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/jquery-confirm.css?v=2.22">
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/dataTables.tableTools.css?v=2.21">
         <link rel="stylesheet" type="text/css" href="/wp-content/plugins/EGPL/css/buttons.dataTables.min.css?v=2.21">
-        <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/admin-component.css?v=2.21">
+        <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/admin-component.css?v=2.22">
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/datatables-net/datatables.min.css?v=2.21">
 
     <script>

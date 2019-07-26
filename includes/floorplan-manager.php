@@ -176,6 +176,9 @@ class FloorPlanManager {
                         $newRequestBoothArray->boothprice=$boothObject->boothprice;
                         $newRequestBoothArray->boothlevel=$boothObject->boothlevel;
                         $newRequestBoothArray->boothtitle=$boothObject->boothtitle;
+                        $newRequestBoothArray->depositstype=$boothObject->depositstype;
+                        $newRequestBoothArray->depositsamount=$boothObject->depositsamount;
+                        $newRequestBoothArray->depositestatus=$boothObject->depositestatus;
                       
                          
                          
@@ -205,10 +208,24 @@ class FloorPlanManager {
                             //  $objProduct->set_menu_order($menu_order); 
                             $objProduct->update_meta_data('productlevel', $boothObject->boothlevel);
                             $objProduct->set_reviews_allowed(TRUE); //Set if reviews is allowed.                        | bool
+                            
+                           
+                           if($boothObject->depositestatus != "unchecked"){
+                               
+                                $objProduct->update_meta_data('_wc_deposit_type', $boothObject->depositstype);
+                                $objProduct->update_meta_data('_wc_deposit_amount', $boothObject->depositsamount);
+                                $objProduct->update_meta_data('_wc_deposit_enabled', 'forced');
+                                
+                            }else{
+                                
+                                $objProduct->update_meta_data('_wc_deposit_type', "");
+                                $objProduct->update_meta_data('_wc_deposit_amount', "");
+                                $objProduct->update_meta_data('_wc_deposit_enabled', "");
+                                
+                                
+                            }
+                            
                             $new_product_id = $objProduct->save(); //Saving the data to create new product, it will return product ID.
-                           
-                           
-
                             $newRequestBoothArray->boothstatus = 'updated';
                             $newRequestBoothArray->boothID = $new_product_id;
                             $NewProductArray[$NewProductArrayIndex] = $newRequestBoothArray;
@@ -230,7 +247,7 @@ class FloorPlanManager {
                            if(isset($objProduct)){
                             
                             $objProduct->set_name($boothObject->boothtitle); 
-                            $objProduct->set_stock_quantity(1); //Set number of items available for sale.
+                           // $objProduct->set_stock_quantity(1); //Set number of items available for sale.
                             $objProduct->set_description($boothObject->boothdescripition); //Set product description.
                             $objProduct->set_short_description($boothObject->boothdescripition); //Set product short description.
                             $objProduct->set_price($boothObject->boothprice); //Set the product's active price.
@@ -238,6 +255,24 @@ class FloorPlanManager {
                             $objProduct->update_meta_data('productlevel', $boothObject->boothlevel);
                             $objProduct->set_tax_class($boothObject->boothlevel); 
                             $objProduct->set_image_id($productpicID); //Set main image ID.
+                            
+                             if($boothObject->depositestatus != "unchecked"){
+                               
+                                $objProduct->update_meta_data('_wc_deposit_type', $boothObject->depositstype);
+                                $objProduct->update_meta_data('_wc_deposit_amount', $boothObject->depositsamount);
+                                $objProduct->update_meta_data('_wc_deposit_enabled', 'forced');
+                                
+                            }else{
+                                
+                                $objProduct->update_meta_data('_wc_deposit_type', "");
+                                $objProduct->update_meta_data('_wc_deposit_amount', "");
+                                $objProduct->update_meta_data('_wc_deposit_enabled', "");
+                                
+                                
+                            }
+                            
+                            
+                            
                             $new_product_id = $objProduct->save();
                             
                            
