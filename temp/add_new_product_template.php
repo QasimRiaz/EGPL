@@ -628,7 +628,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
     </div>
 
     <?php }include 'cm_footer.php'; ?>
-<script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=2.47"></script>
+<script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=2.48"></script>
    
         
         

@@ -1640,6 +1640,11 @@ function updateproducts($updateproducts_data) {
             $objProduct->update_meta_data('_wc_deposit_type', $depositstype);
             $objProduct->update_meta_data('_wc_deposit_amount', $depositsamount);
             $objProduct->update_meta_data('_wc_deposit_enabled', 'forced');
+        }else{
+            
+            $objProduct->update_meta_data('_wc_deposit_type', "");
+            $objProduct->update_meta_data('_wc_deposit_amount', "");
+            $objProduct->update_meta_data('_wc_deposit_enabled', '');
         }
         if(!empty($roleassign)){
             

@@ -213,6 +213,10 @@ function add_new_product(){
           depositsamount = jQuery('#depositamount').val();
          
          
+     }else{
+         
+         depositstype = "";
+         depositsamount = "";
      }
     
   
