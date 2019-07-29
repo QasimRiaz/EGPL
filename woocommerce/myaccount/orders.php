@@ -71,7 +71,7 @@ $getcancelledOrdersList['order-actions'] = "Action";
       <h2 class="mb-0 wc-open-bg">
         <a class="collapsed" id="OpenOrderIcon" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
          Open Orders
-         <i class="fas fa-chevron-up customeicon" id="OpenOrderIconicon"></i>
+         <i class="fa fa-chevron-up customeicon" id="OpenOrderIconicon"></i>
         </a>
         
       </h2>
@@ -197,7 +197,7 @@ $getcancelledOrdersList['order-actions'] = "Action";
       <h2 class="mb-0 wc-completed-bg">
         <a class="completedOrdersstatus" id="completedOrderIcon"  type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
           Completed Orders
-           <i class="fas fa-chevron-down customeicon" id="completedOrderIconicon" ></i>
+           <i class="fa fa-chevron-down customeicon" id="completedOrderIconicon" ></i>
         </a>
           
       </h2>
