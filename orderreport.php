@@ -1043,7 +1043,7 @@ function loadorderreport() {
                         
                     }else{
                         
-                        $column_row[$columns_list_order_report_postmeta[$col_keys_index]['title']] = 0;
+                        $column_row[$columns_list_order_report_postmeta[$col_keys_index]['title']] = "";
                     
                         
                     }

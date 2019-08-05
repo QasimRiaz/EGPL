@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.32
+ * Version:           3.33
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -6051,7 +6051,7 @@ function exp_autocomplete_all_orders($order_id) {
 					$deposit_deposit_amount    = (float) $item['_deposit_deposit_amount_ex_tax'];
 					$deposit_deferred_discount = (float) $item['_deposit_deferred_discount'];
 					if ( ( $deposit_full_amount - $deposit_deposit_amount ) > $deposit_deferred_discount ) {
-                                                $productremaningProductsID = $item['product_id'];
+                                                $productremaningProductsID[] = $item['product_id'];
 						$remmaningamount =  $deposit_full_amount - $deposit_deposit_amount;
 					}
 				}
@@ -6071,45 +6071,19 @@ function exp_autocomplete_all_orders($order_id) {
                          $order_item_pro_id = wc_get_order_item_meta($order_item_id, '_product_id', true);
                     
                         
-			if ( $productremaningProductsID == $order_item_pro_id ) {
+			if (in_array($order_item_pro_id, $productremaningProductsID)) {
                             
                              
                                 $order_item_id_update = $order_item_id;
-				$items = $order_item;
+				$items[] = $order_item;
+                                $itemscheck = $order_item;
 			}
                         
 		}
+               
                 
-                
-              
-                
-		if ( ! $items || empty( $items['is_deposit'] ) ) {
-			return;
-		}
-                
-                
-                $full_amount_excl_tax = floatval( $items['deposit_full_amount_ex_tax'] );
-
-				// Next, get the initial deposit already paid, excluding tax
-				$amount_already_paid = floatval( $items['deposit_deposit_amount_ex_tax'] );
-
-				// Then, set the item subtotal that will be used in create order to the full amount less the amount already paid
-				$subtotal = $full_amount_excl_tax - $amount_already_paid;
-				
-				if( version_compare( WC_VERSION, '3.2', '>=' ) ){
-					// Lastly, subtract the deferred discount from the subtotal to get the total to be used to create the order
-					$discount_excl_tax = isset($item['deposit_deferred_discount_ex_tax']) ? floatval( $item['deposit_deferred_discount_ex_tax'] ) : 0;
-					$total = $subtotal - $discount_excl_tax;
-				} else {
-					$discount = floatval( $item['deposit_deferred_discount'] );
-					$total = empty( $discount ) ? $subtotal : $subtotal - $discount;
-				}
-				
-
-				
-
-				
-                
+                    
+               
                 
 		$new_order      = wc_create_order( array(
 			'status'        => $status,
@@ -6118,14 +6092,13 @@ function exp_autocomplete_all_orders($order_id) {
 			'created_via'   => 'wc_deposits',
 		) );
                 
-                $item = array(
-					'product'   => $original_order->get_product_from_item( $items ),
-					'qty'       => 0,
-					'subtotal'  => $subtotal,
-					'total'     => $total
-				);
                 
                 
+               
+                    
+                   
+             
+               
                 
 		if ( is_wp_error( $new_order ) ) {
                     
@@ -6134,9 +6107,22 @@ function exp_autocomplete_all_orders($order_id) {
                     
                 } else {
                     
-                    
+                       
                         //echo 'checkoutstatus';
-                  
+                        $new_order->set_address( array(
+				'first_name' => $original_order->billing_first_name,
+				'last_name'  => $original_order->billing_last_name,
+				'company'    => $original_order->billing_company,
+				'address_1'  => $original_order->billing_address_1,
+				'address_2'  => $original_order->billing_address_2,
+				'city'       => $original_order->billing_city,
+				'state'      => $original_order->billing_state,
+				'postcode'   => $original_order->billing_postcode,
+				'country'    => $original_order->billing_country,
+				'email'      => $original_order->billing_email,
+				'phone'      => $original_order->billing_phone,
+			), 'billing' );
+                        
 			$new_order->set_address( array(
 				'first_name' => $original_order->shipping_first_name,
 				'last_name'  => $original_order->shipping_last_name,
@@ -6150,19 +6136,54 @@ function exp_autocomplete_all_orders($order_id) {
 			), 'shipping' );
 
 			// Handle items
-			$item_id = $new_order->add_product( $item['product'], $item['qty'], array(
+			
+			 foreach($items as $itemKey=>$itemData){
+                            
+                                if ( ! $itemData || empty( $itemData['is_deposit'] ) ) {
+                                    return;
+                                }
+                                $full_amount_excl_tax = floatval( $itemData['deposit_full_amount_ex_tax'] );
+
+                                    // Next, get the initial deposit already paid, excluding tax
+                                $amount_already_paid = floatval( $itemData['deposit_deposit_amount_ex_tax'] );
+                                         // Then, set the item subtotal that will be used in create order to the full amount less the amount already paid
+				$subtotal = $full_amount_excl_tax - $amount_already_paid;
+				
+				if( version_compare( WC_VERSION, '3.2', '>=' ) ){
+					// Lastly, subtract the deferred discount from the subtotal to get the total to be used to create the order
+					$discount_excl_tax = isset($items['deposit_deferred_discount_ex_tax']) ? floatval( $items['deposit_deferred_discount_ex_tax'] ) : 0;
+					$total = $subtotal - $discount_excl_tax;
+				} else {
+					$discount = floatval( $items['deposit_deferred_discount'] );
+					$total = empty( $discount ) ? $subtotal : $subtotal - $discount;
+				}
+                             
+                             
+                            $item = array(
+                                    'product'   => $original_order->get_product_from_item( $itemData ),
+                                    'qty'       => 0,
+                                    'subtotal'  => $subtotal,
+                                    'total'     => $total
+                            );
+                            
+                            $item_id = $new_order->add_product( $item['product'], $item['qty'], array(
 				'totals' => array(
 					'subtotal'     => $item['subtotal'], // cost before discount (for line quantity, not just unit)
 					'total'        => $item['total'], // item cost (after discount) (for line quantity, not just unit)
 					'subtotal_tax' => 0, // calculated within (WC_Abstract_Order) $new_order->calculate_totals
 					'tax'          => 0, // calculated within (WC_Abstract_Order) $new_order->calculate_totals
 				)
-			) );
-			wc_add_order_item_meta( $item_id, '_original_order_id', $order_id );
+                            ) );
+                            
+                            wc_add_order_item_meta( $item_id, '_original_order_id', $order_id );
 
-			/* translators: Payment number for product's title */
-			wc_update_order_item( $item_id, array( 'order_item_name' => sprintf( __( 'Payment #%d for %s', 'woocommerce-deposits' ), 2, $item['product']->get_title() ) ) );
-
+			   /* translators: Payment number for product's title */
+			    wc_update_order_item( $item_id, array( 'order_item_name' => sprintf( __( 'Payment #%d for %s', 'woocommerce-deposits' ), 2, $item['product']->get_title() ) ) );
+                       
+                            
+                        }
+                        
+                        
 			// (WC_Abstract_Order) Calculate totals by looking at the contents of the order. Stores the totals and returns the orders final total.
 			$new_order->calculate_totals( wc_tax_enabled() );
 
@@ -6177,6 +6198,9 @@ function exp_autocomplete_all_orders($order_id) {
 			do_action( 'woocommerce_deposits_create_order', $new_order->id );
                         $new_order->update_status('wc-pending-deposit');
                         
+                        
+                        
+                        
                         foreach ( $new_order->get_items() as $order_item_id => $order_item ) {
                     
                         
@@ -6184,17 +6208,19 @@ function exp_autocomplete_all_orders($order_id) {
                          $order_item_pro_id = wc_get_order_item_meta($order_item_id, '_product_id', true);
                     
                         
-                            if ( $productremaningProductsID == $order_item_pro_id ) {
-
+                           
+                            if (in_array($order_item_pro_id, $productremaningProductsID)) {
 
                                     $order_item_id_update = $order_item_id;
+                                    
+                                    wc_add_order_item_meta( $order_item_id_update, '_remaining_balance_order_id', $order_id );
                                     
                             }
                         
                         }
                         
                         
-                        wc_add_order_item_meta( $order_item_id_update, '_remaining_balance_order_id', $order_id );
+                        
 			$new_order_ID =  $new_order->id;
 		}
             
@@ -6213,24 +6239,14 @@ function exp_autocomplete_all_orders($order_id) {
         
         if($payment_method == 'cheque'){
                   
-            
-            
-            
-                  foreach( $order->get_items() as $item ) {
+                    foreach( $order->get_items() as $item ) {
                       
                                 $porduct_ids_array[] = $item['product_id'];
 				
                     }
-           
-            
-            //exp_updateuser_role_onmpospurches($order,$porduct_ids_array);
-            exp_updateuser_role_onmpospurches($order->id,$porduct_ids_array);
-            
-            
-            
-           
-            
-            $order->update_status($orderstatus);
+                    //exp_updateuser_role_onmpospurches($order,$porduct_ids_array);
+                    exp_updateuser_role_onmpospurches($order->id,$porduct_ids_array);
+                    $order->update_status($orderstatus);
         }
      
 }
@@ -6872,3 +6888,9 @@ add_filter('woocommerce_get_availability_text', function($text, $product) {
     return $text;
 }, 10, 2);
 
+add_filter( 'woocommerce_my_account_my_orders_query', 'custom_my_account_orders_query', 20, 1 );
+function custom_my_account_orders_query( $args ) {
+    $args['limit'] = -1;
+
+    return $args;
+}

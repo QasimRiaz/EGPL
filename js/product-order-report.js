@@ -7,7 +7,12 @@ var orderreportstatusloading ="";
 var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 jQuery(document).ready(function () {
-
+    
+    
+    
+     
+        
+       
     jQuery("body").css({'cursor': 'wait'});
     jQuery('[data-toggle="tooltip"]').tooltip();
     orderreportstatusloading = getUrlParameter('orderreport');
@@ -141,6 +146,21 @@ jQuery(document).ready(function () {
                         
                     ],
                     dom: 'fBrlpt',
+                    initComplete: function () {
+                            this.api().columns().every( function () {
+                                var column = this;
+                               
+                                jQuery('.dataTables_filter input').on( 'keyup click', function () {
+                                     var searchTerm = this.value.toLowerCase();
+                                     regex = '\\b' + searchTerm + '\\b';
+                                     ordertablereport.api().search(regex, true, false).draw();
+                                } );   
+                            });
+                    },
+                    
+                    search: {
+                        "smart": false
+                    },
                     buttons: [
                         {
                             extend: 'excelHtml5',
@@ -189,7 +209,7 @@ jQuery(document).ready(function () {
     });
     
     
-    
+ 
    
 
 
@@ -1000,3 +1020,4 @@ function customeloadorderreport(){
     
     
 }
+

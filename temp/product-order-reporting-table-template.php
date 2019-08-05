@@ -10,7 +10,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     
   
     ?>
-    
+   
     <?php include 'cm_header.php';
     
   //  if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
@@ -48,7 +48,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                     <div class="tbl-row">
                         <div class="tbl-cell">
                             <h3>Orders Report</h3>
-
+                           
                         </div>
                     </div>
                 </div>
@@ -328,7 +328,6 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     include 'cm_footer.php';
     // if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
     ?>
-    
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-select.js?v=2.18"></script>
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootbox.js?v=2.18"></script>
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-slider.min.js?v=2.18"></script>
@@ -338,7 +337,8 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/doT.js?v=2.18"></script>
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/interact.js?v=2.18"></script>
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/query-builder.js?v=2.18"></script>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/product-order-report.js?v=2.47"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/product-order-report.js?v=2.75"></script>
+    
     
     
    <?php

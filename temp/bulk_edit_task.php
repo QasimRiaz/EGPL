@@ -6,7 +6,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     $sponsor_id = get_current_user_id();
     $test = 'custome_task_manager_data';
     $result = get_option($test);
-    global $wp_roles;
+        global $wp_roles;
         global $current_user, $wpdb;
         $all_roles = $wp_roles->roles;
         $editable_roles = apply_filters('editable_roles', $all_roles);
