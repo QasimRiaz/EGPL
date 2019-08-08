@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.33
+ * Version:           3.34
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -3611,6 +3611,7 @@ function add_contentmanager_js(){
      wp_enqueue_script('select2', plugins_url('/cmtemplate/js/lib/select2/select2.full.js', __FILE__), array('jquery'));
     
      wp_enqueue_script( 'order-history', plugins_url('/EGPL/js/orderhistory.js'), array(), '1.2.0', true );
+     wp_enqueue_script( 'Egpl-filters', plugins_url('/EGPL/js/egplfilters.js'), array(), '1.2.2', true );
      
    
 }
@@ -3630,7 +3631,7 @@ function my_contentmanager_style() {
     wp_enqueue_style('my-datatable-tools', plugins_url().'/EGPL/css/dataTables.tableTools.css');
    // wp_enqueue_style('cleditor-css', plugins_url() .'/EGPL/css/jquery.cleditor.css');
    // wp_enqueue_style('contentmanager-css', plugins_url() .'/EGPL/css/forntend.css');
-    wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '2.4', 'all');
+    wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '2.5', 'all');
     wp_enqueue_style('my-admin-theme', plugins_url('css/normalize.css', __FILE__));
   
    
@@ -6239,14 +6240,24 @@ function exp_autocomplete_all_orders($order_id) {
         
         if($payment_method == 'cheque'){
                   
-                    foreach( $order->get_items() as $item ) {
+            
+            
+            
+                  foreach( $order->get_items() as $item ) {
                       
                                 $porduct_ids_array[] = $item['product_id'];
 				
                     }
-                    //exp_updateuser_role_onmpospurches($order,$porduct_ids_array);
-                    exp_updateuser_role_onmpospurches($order->id,$porduct_ids_array);
-                    $order->update_status($orderstatus);
+           
+            
+            //exp_updateuser_role_onmpospurches($order,$porduct_ids_array);
+            exp_updateuser_role_onmpospurches($order->id,$porduct_ids_array);
+            
+            
+            
+           
+            
+            $order->update_status($orderstatus);
         }
      
 }
@@ -6894,3 +6905,5 @@ function custom_my_account_orders_query( $args ) {
 
     return $args;
 }
+
+
