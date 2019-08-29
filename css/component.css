@@ -731,4 +731,24 @@
     color: white;
     float: right;
     margin-top: 8px;
+}.post-content p {
+    margin: 1em 0 !important;
+}
+
+/*
+change coupn text
+*/
+h2.promo-code-heading.fusion-alignleft {
+    display: none;
+}
+form.woocommerce-content-box.full-width.checkout_coupon:after {
+     content: 'Have A Discount Code?';
+    
+}
+.coupon:before {
+    content: 'Have A Discount Code?';
+}
+
+.coupon> h2 {
+    display: none;
 }
