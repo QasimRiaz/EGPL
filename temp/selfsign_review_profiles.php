@@ -10,8 +10,21 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
    global $wp_roles; 
    global $wpdb; 
    
-   $additional_fields_settings_key = 'EGPL_Settings_Additionalfield';
-   $additional_fields = get_option($additional_fields_settings_key);
+   //$additional_fields_settings_key = 'EGPL_Settings_Additionalfield';
+   //$additional_fields = get_option($additional_fields_settings_key);
+   
+   require_once plugin_dir_path( __DIR__ ) . 'includes/egpl-custome-functions.php';
+   $GetAllcustomefields = new EGPLCustomeFunctions();
+   
+   $additional_fields = $GetAllcustomefields->getAllcustomefields();
+      
+   function sortByOrder($a, $b) {
+            return $a['fieldIndex'] - $b['fieldIndex'];
+      }
+
+    usort($additional_fields, 'sortByOrder');
+      
+      
    $site_prefix = $wpdb->get_blog_prefix();
    $args['meta_query']['relation']= 'OR';
    $args['role__not_in']= 'Administrator';
@@ -65,17 +78,23 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                   <thead>
                         <tr>
                             <th>Action</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Company Name</th>
-                             <th>Status</th>
-                            <th>Company Logo</th>
                            
-                            <?php   
-                                foreach ($additional_fields as $key=>$value){  if($additional_fields[$key]['name'] !='Notes' && $additional_fields[$key]['name'] !='Registration Codes'){?>
-                                  <th><?php echo $additional_fields[$key]['name'];?></th>  
-                                <?php } }?>
+                                <?php   
+                                foreach ($additional_fields as $key=>$value){  
+                                    
+                                    if($value['fieldsystemtask'] == "checked" && $value['displayonapplicationform'] == "checked" && $value['SystemfieldInternal'] != "checked" && $value['fieldName'] != "Level"){
+                                        echo "<th>".$value['fieldName']."</th>";
+                                    }
+                                ?>
+                                <?php }?>
+                                <?php   
+                                foreach ($additional_fields as $key=>$value){  
+                                    
+                                    if($value['fieldsystemtask'] != "checked" && $value['displayonapplicationform'] == "checked" && $value['SystemfieldInternal'] != "checked"  ){
+                                        echo "<th>".$additional_fields[$key]['fieldName']."</th>";
+                                    }
+                                ?>
+                               <?php }?>
                         </tr>
                 </thead>
                 <tbody>
@@ -93,8 +112,6 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     $usergetaccessforthisblog = 'active';
                                     break;
                                 }
-                                
-                                
                             }
                            
                            if($usergetaccessforthisblog == 'active'){
@@ -110,27 +127,61 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                             
                             
                             <td><?php echo $column_row_action;?></td>
-                            <td><?php echo $all_meta_for_user[$site_prefix.'first_name'][0];?></td>
-                            <td><?php echo $all_meta_for_user[$site_prefix.'last_name'][0];?></td>
-                            <td><?php echo $user_data->user_email;?></td>
-                            <td><?php echo $all_meta_for_user[$site_prefix.'company_name'][0];?></td>
-                            <td><?php echo $all_meta_for_user[$site_prefix.'selfsignupstatus'][0];?></td>
-                            <?php if(!empty($all_meta_for_user[$site_prefix.'user_profile_url'][0])){
-                                
-                                $imge_src = '<img src="'.$all_meta_for_user[$site_prefix.'user_profile_url'][0].'" width="100" />';
-                             }else{
-                                $imge_src = "";
-                                
-                            } ?>
-                            <td><?php echo $imge_src;?></td>
+                            
                             <?php   
-                                foreach ($additional_fields as $key=>$value){  if($additional_fields[$key]['name'] !='Notes' && $additional_fields[$key]['name'] !='Registration Codes'){
+                                foreach ($additional_fields as $key=>$value){  
+                                    $additionalfieldkey = $value['fielduniquekey'];
                                     
-                                    $additionalfieldkey = $additional_fields[$key]['key'];
-                                    
+                                    if($value['fieldsystemtask'] == "checked" && $value['SystemfieldInternal'] != "checked" && $value['fieldName'] != "Level" && $value['displayonapplicationform'] == "checked"){
+                                         if($value['fieldName'] == "Email"){
+                                             
+                                             echo '<td>'.$user_data->user_email.'</td>';
+                                         }elseif($value['fieldName'] == "Level" || $value['fieldName'] == "User ID" || $value['fieldName'] == "Action"  || $value['fieldName'] == "Last login" ){
+                                             
+                                               echo '<td>'.$all_meta_for_user[$additionalfieldkey][0].'</td>';
+                                             
+                                         }else{
+                                             
+                                             echo '<td>'.$all_meta_for_user[$site_prefix.$additionalfieldkey][0].'</td>';
+                                             
+                                         }
+                                    }
                                     ?>
-                                  <td><?php echo $all_meta_for_user[$site_prefix.$additionalfieldkey][0];?></td>  
-                                <?php } }?>
+                                
+                            <?php }?>
+                            <?php   
+                                foreach ($additional_fields as $key=>$value){  
+                                    $additionalfieldkey = $value['fielduniquekey'];
+                                    
+                                    if($value['fieldsystemtask'] != "checked" && $value['SystemfieldInternal'] != "checked" && $value['displayonapplicationform'] == "checked" ){
+                                        
+                                            if($value['fieldType'] == "file"){
+                                                $valueImage =  $all_meta_for_user[$site_prefix.$additionalfieldkey][0];
+                                                
+                                                
+                                                
+                                                if(!empty($valueImage)){
+                                                    
+                                                     echo "<td><a href='".$valueImage."' target='_blank' >Download</a></td>";
+                                                    
+                                                }else{
+                                                    
+                                                    echo "<td></td>";
+                                                }
+                                               
+                                                
+                                            }else{
+                                                
+                                                 echo '<td>'.$all_meta_for_user[$site_prefix.$additionalfieldkey][0].'</td>';
+                                            }
+                                             
+                                            
+                                             
+                                        
+                                    }
+                                    ?>
+                                
+                            <?php }?>
                             
                         </tr>
                         

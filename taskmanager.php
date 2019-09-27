@@ -19,6 +19,15 @@ if($_GET['createnewtask'] == "savebulktask") {
    
   
 }
+if($_GET['createnewtask'] == "savebulkfields") {        
+    require_once('../../../wp-load.php');
+    
+    
+      
+    savebulkfields_update($_POST);
+   
+  
+}
 
  if ($_GET['createnewtask'] == 'check_sponsor_task_key_value') {
     
@@ -336,6 +345,109 @@ function savebulktask_update($request){
     
 }
 
+
+
+function savebulkfields_update($request){
+    
+     try{
+         
+         
+        
+        $listoftaks = json_decode(stripslashes($request['bulkfielddata']));
+        
+        
+        
+        
+        $removetaskslist = json_decode(stripslashes($request['deletedfieldlist']));  
+         
+        foreach ($removetaskslist as $tasksIndex=>$removetaskID){
+            
+           
+            wp_delete_post($removetaskID);
+            
+        }
+        
+        
+        
+        
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID);  
+        $lastInsertId = contentmanagerlogging('Save Bulk Field',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
+       
+        
+        foreach ($listoftaks as $taksKey=>$taskObject){
+            
+            
+            
+        if( strpos( $taksKey, "addnewfield" ) !== false) {
+            
+          
+                $taskaObjectData = array(
+                    'post_title'    => wp_strip_all_tags( $taskObject->label ),
+                    'post_content'  => "",
+                    'post_status'   => 'draft',
+                    'post_author'   => $user_ID,
+                    'post_type'=>'egpl_custome_fields'
+                );
+                $tasksID = wp_insert_post( $taskaObjectData );
+            
+            }else{
+                
+                $tasksID = $taksKey;
+                
+                
+            }
+            
+         
+            $my_post = array(
+                'ID'           => $tasksID,
+                'post_title'   => $taskObject->label,
+               
+            );
+ 
+            // Update the post into the database
+            wp_update_post( $my_post );
+            update_post_meta( $tasksID, 'label', $taskObject->label );
+            update_post_meta( $tasksID, '_egpl_field_type', $taskObject->type );
+            update_post_meta( $tasksID, '_egpl_link_url', $taskObject->lin_url );
+            update_post_meta( $tasksID, '_egpl_link_name', $taskObject->linkname );
+            update_post_meta( $tasksID, '_egpl_field_tooltip_text', $taskObject->fieldtooltip );
+            update_post_meta( $tasksID, '_egpl_field_requried_status', $taskObject->fieldstatusrequried );
+            update_post_meta( $tasksID, '_egpl_field_system_task', $taskObject->Systemfield );
+            update_post_meta( $tasksID, '_egpl_field_code', $taskObject->fieldCode );
+            update_post_meta( $tasksID, '_egpl_field_display_on_application_form', $taskObject->fieldstatusshowonregform );
+            update_post_meta( $tasksID, '_egpl_field_placeholder', $taskObject->fieldplaceholder );
+            update_post_meta( $tasksID, 'Indexfield', $taskObject->Indexfield );
+            update_post_meta( $tasksID, '_egpl_field_description', $taskObject->descrpition );
+            update_post_meta( $tasksID, '_egpl_field_unique_key', $taskObject->key );
+            update_post_meta( $tasksID, '_egpl_field_allow_multi', $taskObject->key );
+            update_post_meta( $tasksID, '_egpl_field_attribute', $taskObject->attribute );
+            update_post_meta( $tasksID, '_egpl_field_unique_key', $taskObject->fielduniquekey );
+            update_post_meta( $tasksID, '_egpl_field_internal_status', $taskObject->SystemfieldInternal );
+            
+            
+            
+            
+            if(!empty($taskObject->options)){
+                
+                update_post_meta( $tasksID, 'options', $taskObject->options );
+            }
+        }
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
+        
+       
+         
+    }catch (Exception $e) {
+       
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+    }
+ 
+ die();  
+    
+    
+}
 
 
 

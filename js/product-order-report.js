@@ -83,7 +83,8 @@ jQuery(document).ready(function () {
                     columnsheaderarrayfortable.push({type:'num',title: columsheader[key].title, data: columsheader[key].title, render: jQuery.fn.dataTable.render.number(',', '.', 2, '$')});
                 }else if(columsheader[key].type == 'date'){
                     
-                    columnsheaderarrayfortable.push({title: columsheader[key].title, data: columsheader[key].title, type: columsheader[key].type, render: function (data) {if (data !== null && data !== "") {var javascriptDate = new Date(data);javascriptDate = javascriptDate.getDate() + "/" + months[javascriptDate.getMonth()] + "/" + javascriptDate.getFullYear() +" "+javascriptDate.getHours()+":"+javascriptDate.getMinutes()+":"+javascriptDate.getSeconds();return javascriptDate;} else {return "";} }});
+                    //danyal Update Date Formatting in Reports
+                    columnsheaderarrayfortable.push({title: columsheader[key].title, data: columsheader[key].title, type: columsheader[key].type, render: function (data) {if (data !== null && data !== "") {var javascriptDate = new Date(data);javascriptDate = months[javascriptDate.getMonth()]  + " " + javascriptDate.getDate()+ " " + javascriptDate.getFullYear();return javascriptDate;} else {return "";} }});
                 
                 }else {
                     columnsheaderarrayfortable.push({title: columsheader[key].title, data: columsheader[key].title, type: columsheader[key].type});

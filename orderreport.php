@@ -198,17 +198,25 @@ function getOrderProductsdetails($request){
     $OrderID = $request['ID'];
    
     $order = wc_get_order($OrderID);
+   
     
     $blog_id = get_current_blog_id();
     global $wpdb;
-    $get_items_sql = "SELECT items.order_item_id,items.order_item_name,Pid.meta_value as Pid,Qty.meta_value as Qty FROM wp_".$blog_id."_woocommerce_order_items AS items LEFT JOIN wp_".$blog_id."_woocommerce_order_itemmeta AS Pid ON(items.order_item_id = Pid.order_item_id)LEFT JOIN wp_".$blog_id."_woocommerce_order_itemmeta AS Qty ON(items.order_item_id = Qty.order_item_id) WHERE items.order_id = " . $order->get_order_number() . " AND Qty.meta_key IN ( '_qty' )AND Pid.meta_key IN ( '_product_id' ) ORDER BY items.order_item_id";
+     $get_items_sql = "SELECT items.order_item_id,items.order_item_name,Pid.meta_value as Pid,Qty.meta_value as Qty,Subtotal.meta_value as Subtotal FROM wp_".$blog_id."_woocommerce_order_items AS items LEFT JOIN wp_".$blog_id."_woocommerce_order_itemmeta AS Pid ON(items.order_item_id = Pid.order_item_id)LEFT JOIN wp_".$blog_id."_woocommerce_order_itemmeta AS Qty ON(items.order_item_id = Qty.order_item_id)LEFT JOIN wp_".$blog_id."_woocommerce_order_itemmeta AS Subtotal ON(items.order_item_id = Subtotal.order_item_id) WHERE items.order_id = " . $order->get_order_number() . " AND Qty.meta_key IN ( '_qty' )AND Pid.meta_key IN ( '_product_id' )AND Subtotal.meta_key IN ( '_line_subtotal' ) ORDER BY items.order_item_id";
+    
     $products = $wpdb->get_results($get_items_sql);
+    
     
     $tableHTML = "";
     foreach ($products as $single_product => $productname) {
             
             
             $_product = wc_get_product( $productname->Pid );
+            
+            
+            
+            
+            
             $prodcut_prfixname = "";
             
             $args = array(
@@ -240,7 +248,7 @@ function getOrderProductsdetails($request){
            
            
             
-            $product_price = $string = wc_price($_product->regular_price);
+            $product_price =  wc_price($_product->regular_price);
             $image_ID = $_product->image_id;
             $image = "";
             $productQuntity = "";
@@ -256,13 +264,27 @@ function getOrderProductsdetails($request){
                 
                 $productQuntity = $productname->Qty;
             }
-            
+            if(esc_html( wc_get_order_status_name($order->status)) == 'Pending Deposit Payment' ){
+                
+                $subtotalAmount = "-";
+                $OrderTotal = "-";
+                
+            }else{
+                
+                $subtotalAmount =   wc_price($productname->Subtotal);
+                $OrderTotal = wc_price($order->total);
+            }
             $product_title = str_replace("Payment #2 for","",$productname->order_item_name); 
-            $tableHTML .= '<tr><td>'.$image.'</td><td>'.$prodcut_prfixname.$product_title.'</td><td>'.$product_price.'</td></tr>'; 
+            $tableHTML .= '<tr><td>'.$image.'</td><td>'.$prodcut_prfixname.$product_title.'</td><td>'.$product_price.'</td><td>'.$productQuntity.'</td><td>'.$subtotalAmount.'</td></tr>'; 
            
 
                                                                         
     }
+    
+    
+    
+        $tableHTML .= '<tr><td></td><td><strong style="font-style: italic;">Total</strong></td><td></td><td></td><td><strong style="font-style: italic;">'.$OrderTotal.'</strong</td></tr>'; 
+           
     
     echo json_encode($tableHTML);
     

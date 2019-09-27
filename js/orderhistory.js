@@ -32,8 +32,9 @@ function getOrderproductdetail(OrderID){
         swal({
             
             title: 'Products in Order ID #'+OrderID,
-            text:'<table class="table myproductdetail"><thead><tr><td></td><td>Product</td><td>Price</td></tr></thead><tbody>'+message+'</tbody></table>',
-            confirmButtonText: "Close", 
+            text:'<table class="table myproductdetail"><thead><tr><td></td><td>Product</td><td>Price</td><td>Quantity</td><td>Paid Amount</td></tr></thead><tbody>'+message+'</tbody></table>',
+            confirmButtonText: "Close",
+            customClass: "customewidthsweet",
             html:true
          });
          

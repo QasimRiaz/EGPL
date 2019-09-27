@@ -7,10 +7,19 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
     $welcomeemail_template_info_key = 'AR_Contentmanager_Email_Template_welcome';
     $welcomeemail_template_info = get_option($welcomeemail_template_info_key);
-    $additional_fields_settings_key = 'EGPL_Settings_Additionalfield';
-    $additional_fields = get_option($additional_fields_settings_key);
+    //$additional_fields_settings_key = 'EGPL_Settings_Additionalfield';
+   // $additional_fields = get_option($additional_fields_settings_key);
 
+    require_once plugin_dir_path( __DIR__ ) . 'includes/egpl-custome-functions.php';
+       $GetAllcustomefields = new EGPLCustomeFunctions();
+       
+       $additional_fields = $GetAllcustomefields->getAllcustomefields();
+      
+        function sortByOrder($a, $b) {
+            return $a['fieldIndex'] - $b['fieldIndex'];
+        }
 
+        usort($additional_fields, 'sortByOrder');
 
 
     include 'cm_header.php';
@@ -103,11 +112,20 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                             
                            
                     </div>
+                     <?php foreach ($additional_fields as $key => $value) { 
+                            
+                            
+                            if($additional_fields[$key]['fieldsystemtask'] == "checked" && $additional_fields[$key]['SystemfieldInternal'] != "checked" && $additional_fields[$key]['fieldType'] != 'checkbox' && $additional_fields[$key]['fieldType'] != 'display' && $additional_fields[$key]['fieldType'] != 'file'  ){
+                            
+                            
+                            ?>
+                    
+                    
                     <div class="form-group row">
-                            <label class="col-sm-3 form-control-label">Email <strong>*</strong></label>
+                            <label class="col-sm-3 form-control-label"><?php echo $additional_fields[$key]['fieldName']; ?> <strong>*</strong></label>
                             <div class="col-sm-9">
 
-                                <select class="mappingdropdown select2" name="email" id="getusersheetcollist" required>
+                                <select class="mappingdropdown select2" name="<?php echo $additional_fields[$key]['fielduniquekey']; ?>" id="getusersheetcollist" required>
                                     <option ></option>
                                     
 
@@ -119,69 +137,11 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                             </div>
                            
                         </div>
-
-                    <div class="form-group row">
-                            <label class="col-sm-3 form-control-label">First Name <strong>*</strong></label>
-                            <div class="col-sm-9">
-
-                                <select class="mappingdropdown select2" name="fname" id="getusersheetcollist" required>
-                                    <option ></option>
-                                   
-
-
-
-                                </select>
-
-
-                            </div>
-                           
-                        </div>
-                    <div class="form-group row">
-                            <label class="col-sm-3 form-control-label">Last Name <strong>*</strong></label>
-                            <div class="col-sm-9">
-
-                                <select class="mappingdropdown select2" name="lanme" id="getusersheetcollist" required>
-                                    <option ></option>
-                                   
-
-
-                                </select>
-
-
-                            </div>
-                           
-                        </div>
-                    <div class="form-group row">
-                            <label class="col-sm-3 form-control-label">User Level <strong>*</strong></label>
-                            <div class="col-sm-9">
-
-                                <select class="mappingdropdown select2" name="userlevel" id="getusersheetcollist" required>
-                                    <option ></option>
-                                   
-
-
-
-                                </select>
-
-
-                            </div>
-                           
-                        </div>
-                    <div class="form-group row">
-                            <label class="col-sm-3 form-control-label">Company Name <strong>*</strong></label>
-                            <div class="col-sm-9">
-
-                                <select class="mappingdropdown select2" name="companyname" id="getusersheetcollist" required>
-                                    <option ></option>
-                                    
-
-
-                                </select>
-
-
-                            </div>
-                           
-                        </div>
+                     <?php }}?>
+                   
+                  
+                   
+                  
                    
                     <div class="row">
                             <div class="col-sm-3"></div>
@@ -221,29 +181,27 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                     
                            
                         
-                         <h5 class="m-t-lg with-border">Additional Information</h5>        
+                        <h5 class="m-t-lg with-border">Additional Information</h5>        
                          
-                        
-                        
-                        <?php foreach ($additional_fields as $key => $value) { ?>
-                         
-                          <div class="form-group row">
-                            <label class="col-sm-3 form-control-label"><?php echo $additional_fields[$key]['name']; ?> </label>
-                            <div class="col-sm-9">
+                        <?php foreach ($additional_fields as $key => $value) { 
+                            
+                            
+                            if($additional_fields[$key]['fieldsystemtask'] != "checked" && $additional_fields[$key]['SystemfieldInternal'] != "checked" && $additional_fields[$key]['fieldType'] != 'checkbox' && $additional_fields[$key]['fieldType'] != 'display' && $additional_fields[$key]['fieldType'] != 'dropdown' && $additional_fields[$key]['fieldType'] != 'file'){
+                            
+                            
+                            ?>
+                          
+                               
+                            <div class="form-group row">
+                                <label class="col-sm-3 form-control-label"><?php echo $additional_fields[$key]['fieldName']; ?> </label>
+                                <div class="col-sm-9">
 
-                                <select class="mappingdropdown select2" name="<?php echo $additional_fields[$key]['key'];?>" id="getusersheetcollist" >
-                                    <option ></option>
-                                   
-
-
-
-                                </select>
-
-
+                                    <select class="mappingdropdown select2" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" id="getusersheetcollist" >
+                                        <option ></option>
+                                    </select>
+                                </div>
                             </div>
-                           
-                        </div>
-                          <?php } ?>
+                        <?php }} ?>
                         
  
                 <h5 class="m-t-lg with-border"></h5>        

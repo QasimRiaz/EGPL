@@ -76,9 +76,30 @@ if ($_GET['contentManagerRequest'] == 'updateuserforthissite') {
     $user_id = username_exists($username);
     $blogid = get_current_blog_id() ;
     $message['username'] = $username;
-    $profilepic=$_FILES['profilepic'];
-    $picprofileurl = resource_file_upload($profilepic);
     $meta_array=$_POST;
+    require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/egpl-custome-functions.php';
+        $GetAllcustomefields = new EGPLCustomeFunctions();
+        $listOFcustomfieldsArray = $GetAllcustomefields->getAllcustomefields();
+    
+        foreach($listOFcustomfieldsArray as $fieldsKey=>$fieldsObject){
+    
+            $fieldTYpe = $fieldsObject['fieldType'];
+            
+            if($fieldTYpe == "file"){
+
+               
+                $fieldKey = $fieldsObject['fielduniquekey'];
+                $uploadFilesubmit = $_FILES[$fieldKey];
+               
+                if(!empty($uploadFilesubmit)){
+
+                    $uploadedFileURL = resource_file_upload($uploadFilesubmit);
+                    
+                    $meta_array[$fieldKey]=$uploadedFileURL;
+                }
+            }
+        }    
+    
     
   
    
@@ -350,77 +371,62 @@ function getusersreport($data) {
         
         $columns_headers = [];
         $columns_rows_data = [];
-
-        $columns_list_defult_user_report[0]['title'] = 'User ID';
-        $columns_list_defult_user_report[0]['type'] = 'string';
-        $columns_list_defult_user_report[0]['key'] = 'wp_user_id';
         
         
-        $columns_list_defult_user_report[1]['title'] = 'Action';
-        $columns_list_defult_user_report[1]['type'] = 'string';
-        $columns_list_defult_user_report[1]['key'] = 'action_edit_delete';
-
-        $columns_list_defult_user_report[2]['title'] = 'Company Name';
-        $columns_list_defult_user_report[2]['type'] = 'string';
-        $columns_list_defult_user_report[2]['key'] = $site_prefix.'company_name';
-
-        $columns_list_defult_user_report[3]['title'] = 'Level';
-        $columns_list_defult_user_report[3]['type'] = 'string';
-        $columns_list_defult_user_report[3]['key'] = 'Role';
-        
-        $columns_list_defult_user_report[4]['title'] = 'Last login';
-        $columns_list_defult_user_report[4]['type'] = 'date';
-        $columns_list_defult_user_report[4]['key'] = 'last_login';
-        
-        $columns_list_defult_user_report[5]['title'] = 'First Name';
-        $columns_list_defult_user_report[5]['type'] = 'string';
-        $columns_list_defult_user_report[5]['key'] = $site_prefix.'first_name';
-        
-        $columns_list_defult_user_report[6]['title'] = 'Last Name';
-        $columns_list_defult_user_report[6]['type'] = 'string';
-        $columns_list_defult_user_report[6]['key'] = $site_prefix.'last_name';
-        
-        $columns_list_defult_user_report[7]['title'] = 'Email';
-        $columns_list_defult_user_report[7]['type'] = 'string';
-        $columns_list_defult_user_report[7]['key'] = 'Email';
-        
-        $columns_list_defult_user_report[8]['title'] = 'Welcome Email Sent On';
-        $columns_list_defult_user_report[8]['type'] = 'date';
-        $columns_list_defult_user_report[8]['key'] = $site_prefix.'convo_welcomeemail_datetime';
-        
-        $columns_list_defult_user_report[9]['title'] = 'Status';
-        $columns_list_defult_user_report[9]['type'] = 'string';
-        $columns_list_defult_user_report[9]['key'] = $site_prefix.'selfsignupstatus'; 
-        
-        $columns_list_defult_user_report[10]['title'] = 'User Company Logo';
-        $columns_list_defult_user_report[10]['type'] = 'string';
-        $columns_list_defult_user_report[10]['key'] = $site_prefix.'user_profile_url';
-        
-        $columns_list_defult_user_report[11]['title'] = 'Booth Number';
-        $columns_list_defult_user_report[11]['type'] = 'string';
-        $columns_list_defult_user_report[11]['key'] = 'booth_number';
+       require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/egpl-custome-functions.php';
+       $GetAllcustomefields = new EGPLCustomeFunctions();
        
+        $additional_fields = $GetAllcustomefields->getAllcustomefields();
+        usort($additional_fields, 'sortByOrder');
         
         
-        $index_count = 11;
-        if(!empty($additional_settings)){
-            
-            foreach ($additional_settings as $key=>$valuename){
+        
+        
+        $index_count = 0;
+        foreach ($additional_fields as $key=>$value){ 
+           
+            if($value['fieldType']!="html"){
+            $columns_list_defult_user_report[$index_count]['title'] = $value['fieldName'];
+            if($value['fieldType'] == "text" || $value['fieldType'] == "textarea" || $value['fieldType'] == "link" || $value['fieldType'] == "url" || $value['fieldType'] == "dropdown"){
                 
-                if($additional_settings[$key]['type']!="html"){
-                    $columns_list_defult_user_report[$index_count]['title'] = $additional_settings[$key]['name'];
-                    $columns_list_defult_user_report[$index_count]['type'] = 'string';
-                    $columns_list_defult_user_report[$index_count]['key'] = $site_prefix.$additional_settings[$key]['key'];
-                }
-                $index_count++;  
-            
+                $type = "string";
+            }elseif($value['fieldType'] == "file" ){
+                
+                $type = "file";
+            }else{
+                
+                $type = $value['fieldType'];
             }
-        
             
-        }
+            if($value['fieldsystemtask'] == true || $value['SystemfieldInternal'] == true){
+                
+                
+               
+                if($value['fieldName'] == "Email" || $value['fieldName'] == "Level" || $value['fieldName'] == "User ID" || $value['fieldName'] == "Action"  || $value['fieldName'] == "Last login" ){
+                   
+                    $columns_list_defult_user_report[$index_count]['key'] = $value['fielduniquekey'];
+                
+                }else{
+                
+                    $columns_list_defult_user_report[$index_count]['key'] = $site_prefix.$value['fielduniquekey'];
+                }
+                
+            }else{
+                
+                
+                $columns_list_defult_user_report[$index_count]['key'] = $site_prefix.$value['fielduniquekey'];
+                
+                
+            }
+            
+            $columns_list_defult_user_report[$index_count]['type'] = $type;
+            
+            $index_count++;
+            
+        }}
         
-
-      
+       
+    
         
        
     if(!empty($result_task_array_list)){
@@ -980,77 +986,64 @@ function userreportresultdraw() {
         $columns_headers = [];
         $columns_rows_data = [];
         
-        $columns_list_defult_user_report[0]['title'] = 'User ID';
-        $columns_list_defult_user_report[0]['type'] = 'string';
-        $columns_list_defult_user_report[0]['key'] = 'wp_user_id';
+           
         
+       require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/egpl-custome-functions.php';
+       $GetAllcustomefields = new EGPLCustomeFunctions();
+       
+       $additional_fields = $GetAllcustomefields->getAllcustomefields();
+      
         
-        $columns_list_defult_user_report[1]['title'] = 'Action';
-        $columns_list_defult_user_report[1]['type'] = 'string';
-        $columns_list_defult_user_report[1]['key'] = 'action_edit_delete';
 
-        $columns_list_defult_user_report[2]['title'] = 'Company Name';
-        $columns_list_defult_user_report[2]['type'] = 'string';
-        $columns_list_defult_user_report[2]['key'] = $site_prefix.'company_name';
-
-        $columns_list_defult_user_report[3]['title'] = 'Level';
-        $columns_list_defult_user_report[3]['type'] = 'string';
-        $columns_list_defult_user_report[3]['key'] = 'Role';
-        
-        $columns_list_defult_user_report[4]['title'] = 'Last login';
-        $columns_list_defult_user_report[4]['type'] = 'date';
-        $columns_list_defult_user_report[4]['key'] = 'last_login';
-        
-        $columns_list_defult_user_report[5]['title'] = 'First Name';
-        $columns_list_defult_user_report[5]['type'] = 'string';
-        $columns_list_defult_user_report[5]['key'] = $site_prefix.'first_name';
-        
-        $columns_list_defult_user_report[6]['title'] = 'Last Name';
-        $columns_list_defult_user_report[6]['type'] = 'string';
-        $columns_list_defult_user_report[6]['key'] = $site_prefix.'last_name';
-        
-        $columns_list_defult_user_report[7]['title'] = 'Email';
-        $columns_list_defult_user_report[7]['type'] = 'string';
-        $columns_list_defult_user_report[7]['key'] = 'Email';
-        
-        $columns_list_defult_user_report[8]['title'] = 'Welcome Email Sent On';
-        $columns_list_defult_user_report[8]['type'] = 'date';
-        $columns_list_defult_user_report[8]['key'] = $site_prefix.'convo_welcomeemail_datetime';
-        
-        
-        $columns_list_defult_user_report[9]['title'] = 'Status';
-        $columns_list_defult_user_report[9]['type'] = 'string';
-        $columns_list_defult_user_report[9]['key'] = $site_prefix.'selfsignupstatus'; 
-        
-        
-        
-        $columns_list_defult_user_report[10]['title'] = 'User Company Logo';
-        $columns_list_defult_user_report[10]['type'] = 'string';
-        $columns_list_defult_user_report[10]['key'] = $site_prefix.'user_profile_url';
-        
-    $columns_list_defult_user_report[11]['title'] = 'Booth Number';
-        $columns_list_defult_user_report[11]['type'] = 'string';
-        $columns_list_defult_user_report[11]['key'] = 'booth_number';
-        
-        
-        $index_count = 12;
-        if(!empty($additional_settings)){
+        usort($additional_fields, 'sortByOrder');
+        $index_count = 0;
+         foreach ($additional_fields as $key=>$value){ 
             
-            foreach ($additional_settings as $key=>$valuename){
-                if($additional_settings[$key]['type']!="html"){
-                    
-                    $columns_list_defult_user_report[$index_count]['title'] = $additional_settings[$key]['name'];
-                    $columns_list_defult_user_report[$index_count]['type'] = 'string';
-                    $columns_list_defult_user_report[$index_count]['key'] = $site_prefix.$additional_settings[$key]['key'];
-                  
-                    
-                }
-                $index_count++;  
-            
+            if($value['fieldType']!="html"){
+            $columns_list_defult_user_report[$index_count]['title'] = $value['fieldName'];
+            if($value['fieldType'] == "text" || $value['fieldType'] == "textarea" || $value['fieldType'] == "link" || $value['fieldType'] == "url" || $value['fieldType'] == "dropdown"){
+                
+                $type = "string";
+            }elseif($value['fieldType'] == "file" ){
+                
+                $type = "file";
+            }else{
+                
+                $type = $value['fieldType'];
             }
-        
             
-        }
+            if($value['fieldsystemtask'] == true || $value['SystemfieldInternal'] == true){
+                
+                
+               
+                if($value['fieldName'] == "Email" || $value['fieldName'] == "Level" || $value['fieldName'] == "User ID" || $value['fieldName'] == "Action"  || $value['fieldName'] == "Last login" ){
+                   
+                    $columns_list_defult_user_report[$index_count]['key'] = $value['fielduniquekey'];
+                
+                }else{
+                
+                    $columns_list_defult_user_report[$index_count]['key'] = $site_prefix.$value['fielduniquekey'];
+                }
+                
+            }else{
+                
+                
+                $columns_list_defult_user_report[$index_count]['key'] = $site_prefix.$value['fielduniquekey'];
+                
+                
+            }
+            
+            $columns_list_defult_user_report[$index_count]['type'] = $type;
+            
+            $index_count++;
+            
+        }}
+        
+       
+     //  echo '<pre>';
+      // print_r($columns_list_defult_user_report);exit;
+      
+        
      
      
     if(!empty($result_task_array_list)){
@@ -1238,7 +1231,7 @@ function userreportresultdraw() {
                 if($boothValue['bootheOwnerID'] == $aid->ID){
                     
                     
-                    $thisBoothNumber = $boothValue['boothNumber'];
+                    $thisBoothNumber .= $boothValue['boothNumber'].',';
                     
                 }
                 
@@ -1301,26 +1294,37 @@ function userreportresultdraw() {
                 $column_row['Email'] = $user_data->user_email;
                 $column_row['Welcome Email Sent On'] = $last_send_welcome_timestamp;
                 $column_row['Status'] = $all_meta_for_user[$site_prefix.'selfsignupstatus'][0];
-            $column_row['Booth Number'] = $thisBoothNumber;//$all_meta_for_user[$site_prefix.'exhibitor_map_dynamics_ID'][0];
-                
-//                if(!empty($all_meta_for_user['user_profile_url'][0])){
-//                    
-//                    $image_src = '<img src="'.$all_meta_for_user['user_profile_url'][0].'" width="100" />';
-//                }else{
-//                    $image_src = '';
-//                }
-                
-                $column_row['User Company Logo'] = $all_meta_for_user[$site_prefix.'user_profile_url'][0];
+                $column_row['Booth Number'] = $thisBoothNumber;
                 $column_row['User ID'] = $aid->ID;
-                if (!empty($additional_settings)) {
+                
+                foreach ($additional_fields as $key=>$value){ 
+            
+                        if($value['fieldType']!="html"){
+                        
 
-                    foreach ($additional_settings as $key => $valuename) {
-                        
-                        
-                        $additionfield = $additional_settings[$key]['key'];
-                        $column_row[$additional_settings[$key]['name']] = $all_meta_for_user[$site_prefix.$additionfield][0];
-                    }
-                }
+                        if($value['fieldsystemtask'] == true || $value['SystemfieldInternal'] == true){
+
+                            
+                        }else{
+                            if($value['fieldType'] == "file"){
+                                if(!empty($all_meta_for_user[$site_prefix.$value['fielduniquekey']][0])){
+                                  $column_row[$value['fieldName']] = '<a href="'.$all_meta_for_user[$site_prefix.$value['fielduniquekey']][0].'" target="_blank" >Download</a>';
+                                }else{
+                                    $column_row[$value['fieldName']] = "";
+                                }
+                                
+                            }else{
+                                
+                                $column_row[$value['fieldName']] = $all_meta_for_user[$site_prefix.$value['fielduniquekey']][0];
+                                
+                            }
+
+                            
+
+                        }
+                    }}
+                
+                
             
              foreach ($result_task_array_list as $taskIndex => $taskObject) {
            
@@ -1757,7 +1761,7 @@ function selfsign_registration_emails($user_id,$send_email_type){
         
         $sponsor_info['selfsign_registration_request_email']['selfsignfromname'] = $site_title;
         $sponsor_info['selfsign_registration_request_email']['selfsignsubject'] = 'Registration Application Received for '.$site_title;
-        $sponsor_info['selfsign_registration_request_email']['selfsignboday'] = '<p>Hi '.$all_meta_for_user[$site_prefix.'first_name'][0].'  '.$all_meta_for_user[$site_prefix.'last_name'][0].',</p><p>Thank you for submitting your reservation form for the <strong>'.$site_title.'</strong>. We are currently reviewing your form. You will receive an email with login credentials to the <strong>'.$site_title.'</strong> portal once the review is complete.</p><p>Thank You!</p>';
+        $sponsor_info['selfsign_registration_request_email']['selfsignboday'] = '<p>Hi '.$all_meta_for_user[$site_prefix.'first_name'][0].'  '.$all_meta_for_user[$site_prefix.'last_name'][0].',</p><p>Thank you for submitting your reservation form for <strong>'.$site_title.'</strong>. We are currently reviewing your submission. You will receive an email with login credentials once the review is complete.</p><p>Thank You!</p>';
 
         $sponsor_info['selfsign_registration_declined_email']['declinedfromname'] = $site_title;
         $sponsor_info['selfsign_registration_declined_email']['declinedsubject'] = 'Registration Application Declined for '.$site_title;
@@ -2007,3 +2011,7 @@ function updateuserforthissite($userinfo){
     
     
 }
+
+function sortByOrder($a, $b) {
+            return $a['fieldIndex'] - $b['fieldIndex'];
+        }

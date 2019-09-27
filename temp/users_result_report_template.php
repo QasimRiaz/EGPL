@@ -446,7 +446,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                  
                                 
                                 <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label">Message <strong>*</strong> <p style="margin-top: 53px" id="sponsor_meta_keys"><a class="btn btn-sm btn-primary mergefieldbutton" style="cursor: pointer;" onclick="keys_preview()">Insert Merge Fields</a></p></label>
+                                    <label class="col-sm-2 form-control-label">Message <strong>*</strong> <p style="margin-top: 53px" id="sponsor_meta_keys"><a class="btn btn-sm btn-primary mergefieldbutton" style="cursor: pointer;" onclick="welcome_available_merge_fields()">Insert Merge Fields</a></p></label>
                                     <div class="col-sm-10">
                                         <p class="form-control-static"><textarea id="bodytext"></textarea></p>
                                         

@@ -621,6 +621,14 @@ li.active a, li.active a:hover {
             overflow: auto !important;
         
     }
+    .addscrolfield{
+        
+            height: 40px !important;
+            overflow: auto !important;
+            margin-top: -14px;
+        
+    }
+    
     .addscrolproducts{
         
             height: 70px !important;
@@ -824,4 +832,85 @@ table.dataTable tbody td {
     margin-right: 10% !important;
     margin-top: 36px !important;
     
+}
+
+.cardsfields {
+        background-color: transparent;
+    }
+
+    /*--[  This does the job of making the table rows appear as cards ]----------------*/
+    .cardsfields tbody img {
+        height: 100px;
+    }
+    .cardsfields tbody tr {
+        float: left;
+        margin: 10px;
+        border: 1px solid #aaa;
+        box-shadow: 3px 3px 6px rgba(0,0,0,0.25);
+        background-color: white;
+        height: 250px ;
+    }
+    .bulkproductedits tbody tr {
+        float: left;
+        margin: 10px;
+        border: 1px solid #aaa;
+        box-shadow: 3px 3px 6px rgba(0,0,0,0.25);
+        background-color: white;
+        height: 460px ;
+    }
+    .cardsfields tbody td {
+        display: block;
+        width: 279px;
+        overflow: hidden;
+        text-align: left;
+    }
+
+    /*---[ The remaining is just more dressing to fit my preferances ]-----------------*/
+    .cardsfields {
+        background-color: #fff;
+    }
+    .cardsfields tbody label {
+        display: none;
+        margin-right: 5px;
+        width: 50px;
+    }   
+    .cardsfields .glyphicon {
+        font-size: 20px;
+    }
+
+    .cardsfields .glyphicon {
+        font-size: 75px;
+    }
+
+    .cardsfields tbody label {
+        display: inline;
+        position: relative;
+        font-size: 85%;
+        font-weight: normal;
+        top: -5px;
+        left: -3px;
+        float: left;
+        color: #808080;
+    }
+    .cardsfields tbody td:nth-child(1) {
+        text-align: center;
+    }
+    
+    .cardsfields thead{
+        
+        display: none;
+    }
+    
+    
+    .customewidthsweet{
+    
+    
+    width:60% !important;
+    left:40% !important;
+    
+}
+.internalfields{
+    
+    
+    display: none !important;
 }

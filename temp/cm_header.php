@@ -13,10 +13,13 @@
         <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
-        <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/contentmanager.css?v=2.39">
+        <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/contentmanager.css?v=2.48">
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/lobipanel/lobipanel.min.css?v=2.22">
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/jqueryui/jquery-ui.min.css?v=2.21">
+        
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/font-awesome/font-awesome.min.css?v=2.21">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/main.css?v=2.21">
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/customstyle.css?v=2.21">
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css?v=2.21"/>
@@ -26,7 +29,7 @@
         <!--    <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap.min.css">-->
 
         <!--    contetnmanager css-->
-
+         
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/watable.css?v=2.21">
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/datepicker.css?v=2.21">
         <link rel="stylesheet" href="/wp-content/plugins/EGPL/css/bootstrap-multiselect.css?v=2.21">

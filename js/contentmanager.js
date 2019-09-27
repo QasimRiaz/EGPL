@@ -1,5 +1,21 @@
+
+    
+ 
 jQuery(document).ready(function() {
-  
+    
+    jQuery('input[required]').on('invalid', function(e){
+        
+        jQuery(".nav-link").css("color","red");
+        jQuery(".nav-link span span").css("color","red");
+            
+        setTimeout(function(){ 
+            
+            jQuery(".nav-link").css("color","#00a8ff");
+            jQuery(".nav-link span span").css("color","#00a8ff");
+            
+        }, 6000);
+    }); 
+ 
     jQuery( ".sf-sub-indicator" ).addClass( "icon-play" ); 
     
     
@@ -253,12 +269,25 @@ function embadhelpvidoe(){
     
 }
 function add_new_sponsor(){
-   var url = currentsiteurl+'/';
   
+    
+    
+  var url = currentsiteurl+'/';
   var email =  jQuery("#Semail").val();
-  var profilepic = jQuery('#profilepic')[0].files[0]; 
   var data = new FormData();
-  var sponsorlevel = jQuery("#Srole option:selected").val();
+  var errorURLValidation = false;
+  
+  
+  jQuery('input[name="customefiels[]"]').each(function() {
+      var fieldID = jQuery(this).attr("id");
+      data.append(fieldID, jQuery(this)[0].files[0]);
+      
+  });
+  
+  var sponsorlevel = jQuery("#Role option:selected").val();
+  
+    
+    
   if (jQuery('#checknewuser').is(":checked")){
        
         
@@ -278,19 +307,57 @@ function add_new_sponsor(){
   
   
   var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=add_new_sponsor_metafields';
- 
-   jQuery("body").css("cursor", "progress");
-  if(email !=""  ){
+  
+  
+  jQuery("body").css("cursor", "progress");
+   
+  jQuery('.speiclurlfield').each(function(){
+           
+            var metaupdate = jQuery(this).val();
+             var pattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/g;
+       
+            if(pattern.test(metaupdate)  == true){
+               
+                 var checkstatus  = metaupdate.includes("http");
+                 var checkstatuswww  = metaupdate.includes("www");
+                 if(checkstatus == false && checkstatuswww == false){
+                     
+                     
+                     metaupdate = "https://www."+metaupdate;
+                     
+                 }else if(checkstatus == false && checkstatuswww == true){
+                     
+                     metaupdate = "https://"+metaupdate;
+                     
+                 }
+                  
+                data.append(jQuery(this).attr( "name" ), metaupdate);
+            }else{
+                
+                errorURLValidation = true;
+                
+            }
+            
+           
+       });
+   
+  
+  if(errorURLValidation == false  ){
       
        data.append('username', email);
        data.append('email', email);
-       data.append('profilepic', profilepic);
+      
        data.append('sponsorlevel', sponsorlevel);
        
        jQuery('.mymetakey').each(function(){
            
             data.append(jQuery(this).attr( "name" ), jQuery(this).val());
        });
+       
+       
+       
+       
+     
        
        
        jQuery.ajax({
@@ -301,7 +368,8 @@ function add_new_sponsor(){
             processData: false,
             type: 'POST',
             success: function(data) {
-                
+               
+               console.log(data);
                var message = jQuery.parseJSON(data);
                console.log(message);
                 var sName = settingArray.ContentManager['sponsor_name'];
@@ -382,6 +450,17 @@ function add_new_sponsor(){
       
       
       
+  }else{
+      
+      
+      
+      swal({
+                                                                                           title: "Error",
+                                                                                           text: "Url is not valid. Provide a valid url (e.g. https://www.domain.com).",
+                                                                                           type: "error",
+                                                                                           confirmButtonClass: "btn-danger",
+                                                                                           confirmButtonText: "Ok"
+                                                                                   });
   }
 }
 function add_new_admin_user(){
@@ -390,7 +469,7 @@ function add_new_admin_user(){
    var url = currentsiteurl+'/';
    var email =  jQuery("#Semail").val();
    var username =  jQuery("#Semail").val();
-   var sponsorlevel = jQuery("#Srole option:selected").val();
+   var sponsorlevel = jQuery("#Role option:selected").val();
    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=addnewadminuser';
    var data = new FormData();
    
@@ -502,32 +581,36 @@ function add_new_admin_user(){
 function update_sponsor(){
    var url = currentsiteurl+'/';
   
- var profilepic ="";
-  var profilepicurl="";
   var sponsorid =  parseInt(jQuery("#sponsorid").val());
-  if(jQuery('#userprofilepic').attr('src') == undefined){
-  
-        profilepic = jQuery('#profilepic')[0].files[0]; 
-  }else{
-        profilepicurl = jQuery('#userprofilepic').attr('src');
-  }
- console.log(profilepicurl);
-  var sponsorlevel = jQuery("#Srole option:selected").val();
+  var sponsorlevel = jQuery("#Role option:selected").val();
   var password =  jQuery("#password").val();
-  
   var Semail = jQuery('#Semail').val();
+  var errorURLValidation = false;
   
+    
+    
   var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=update_new_sponsor_metafields';
   var data = new FormData();
-   jQuery("body").css("cursor", "progress");
+  
+  jQuery('input[name="customefiels[]"]').each(function() {
+      var fieldID = jQuery(this).attr("id");
+      if(jQuery(this)[0].files[0]){
+         data.append(fieldID, jQuery(this)[0].files[0]);
+      }else{
+          
+           data.append(fieldID, "");
+      }
+      
+  });
+  
+  jQuery("body").css("cursor", "progress");
 
       
       
        data.append('password', password);
        data.append('sponsorid', sponsorid);
        data.append('sponsorlevel', sponsorlevel);
-       data.append('profilepic', profilepic);
-       data.append('profilepicurl', profilepicurl);
+       
        data.append('Semail', Semail);
        
        jQuery('.mymetakey').each(function(){
@@ -535,7 +618,40 @@ function update_sponsor(){
             data.append(jQuery(this).attr( "name" ), jQuery(this).val());
        });
        
+       jQuery('.speiclurlfield').each(function(){
+           
+            var metaupdate = jQuery(this).val();
+            var pattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/g;
        
+             
+            if(pattern.test(metaupdate)  == true){
+               
+                 var checkstatus  = metaupdate.includes("http");
+                 var checkstatuswww  = metaupdate.includes("www");
+                 
+                 if(checkstatus == false && checkstatuswww == false){
+                     
+                     
+                     metaupdate = "https://www."+metaupdate;
+                     
+                 }else if(checkstatus == false && checkstatuswww == true){
+                     
+                     metaupdate = "https://"+metaupdate;
+                     
+                 }
+                  
+                data.append(jQuery(this).attr( "name" ), metaupdate);
+            }else{
+                
+                errorURLValidation = true;
+                
+            }
+            
+           
+       });
+      
+       
+      if(errorURLValidation == false  ){
        jQuery.ajax({
             url: urlnew,
             data: data,
@@ -555,6 +671,10 @@ function update_sponsor(){
                         type: "success",
                         html:true,
                         confirmButtonClass: "btn-success"
+                    },function(){
+                        
+                        location.reload();
+                        
                     });
                     
                 jQuery('body').css('cursor', 'default');
@@ -573,7 +693,18 @@ function update_sponsor(){
       }
         });
 
-        
+       }else{
+           
+               
+                swal({
+                    title: "Error",
+                    text: "Url is not valid. Provide a valid url (e.g. https://www.domain.com).",
+                    type: "error",
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Ok"
+                });
+           
+       }
       
       
       
@@ -1332,12 +1463,29 @@ function conform_edit_resource(idresource){
     
 }
 
-function showprofilefieldupload(){
+function showprofilefieldupload(e){
     
-    jQuery("#showprofilepic").hide();
-    jQuery("#updateprofilepic").show();
+   var IDdata =  jQuery(e).attr("id");
+   var name =  jQuery(e).attr("name");
+   var GetID = IDdata.toString().split('_');
+   var reqstatus = jQuery("#"+GetID[0]+"_requiredstatus").val();
+   var specialattributes = jQuery("#"+GetID[0]+"_specialattributes").val();
+   
+  
+  
+   jQuery("#"+GetID[0]+'_fileuploadpic').hide();
+   if(reqstatus != "" && reqstatus == true){
+       
+        var htmlfile = '<input  '+specialattributes+' type="file"  class="form-control '+GetID[0]+'_fileupload"" id="'+name+'" name="customefiels[]" required="ture">';
+       
+   }else{
+       
+        var htmlfile = '<input  '+specialattributes+' type="file"  class="form-control '+GetID[0]+'_fileupload"" id="'+name+'" name="customefiels[]" >';
+        
+   }
+   
+   jQuery("#"+GetID[0]+'_fileuploadholder').append(htmlfile);
     
-    jQuery('#userprofilepic').remove();
     
 }
         

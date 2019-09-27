@@ -440,6 +440,12 @@ height: 50% !important;
 
         <?php
         include 'cm_footer.php';
+        ?>
+            
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=2.95"></script>    
+            
+        <?php
+        
     } else {
         $redirect = get_site_url();
         wp_redirect($redirect);

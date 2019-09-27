@@ -87,7 +87,8 @@ jQuery(document).ready(function () {
                  
                 }else if(newcolumsheader[nkey].type == 'date'){
                     
-                    newcolumnsheaderarrayfortable.push({visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type, render: function (data) {if (data !== null && data !== "") {var javascriptDate = new Date(data);javascriptDate = javascriptDate.getDate() + "/" + months[javascriptDate.getMonth()] + "/" + javascriptDate.getFullYear() +" "+javascriptDate.getHours()+":"+javascriptDate.getMinutes()+":"+javascriptDate.getSeconds();return javascriptDate;} else {return "";} }});
+                    //danyal Update Date Formatting in Reports
+                    newcolumnsheaderarrayfortable.push({visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type, render: function (data) {if (data !== null && data !== "") {var javascriptDate = new Date(data);javascriptDate =  months[javascriptDate.getMonth()] + " " + javascriptDate.getDate() + " " + javascriptDate.getFullYear();return javascriptDate;} else {return "";} }});
                 }else {
                     if(newcolumsheader[nkey].title == 'Action' ){
                         newcolumnsheaderarrayfortable.push({class:'noExport noclick',visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type});
@@ -257,8 +258,9 @@ if ( window.location.href.indexOf("user-report-result/?report=run") > -1)
        for (var counter = 0, iLen = tablesettings[0].aoColumns.length; counter < iLen; counter++)
             {
                
-     if(tablesettings[0].aoColumns[counter].sTitle == i){      
-      if(i != 'Action'){
+     if(tablesettings[0].aoColumns[counter].sTitle == i){ 
+	//danyal    
+       if((i != 'Action') &&  (! ~i.indexOf(" Status")) &&  (! ~i.indexOf(" Datetime"))){
        if(tablesettings[0].aoColumns[counter].type == 'date'){
           // console.log(l)
             if(l !="" && l != null ){
@@ -267,7 +269,8 @@ if ( window.location.href.indexOf("user-report-result/?report=run") > -1)
                 var curr_month = d.getMonth();
                 var curr_year = d.getFullYear();
                 var time = d.getHours() + "" + d.getMinutes();
-                curr_dat = d.getDate() + "-" + monthnames[curr_month] + "-" + d.getFullYear();
+                //danyal Update Date Formatting in Reports
+                curr_dat = monthnames[curr_month]  + " " +  d.getDate()+ " " + d.getFullYear();
             }else{
                 curr_dat ="";
             }

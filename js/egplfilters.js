@@ -12,7 +12,10 @@ jQuery( document ).ready(function() {
                 jQuery(this).append("No Longer Available");
                 
             });
-           
+            
+            jQuery("#avada_coupon_code").attr("placeholder","Discount Code");
+            jQuery("#coupon_code").attr("placeholder","Discount Code");
+            
             
             
 });

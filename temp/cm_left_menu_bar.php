@@ -217,12 +217,19 @@ $blog_id2 = get_current_blog_id();
 	                </a>
                         </li>
                            
-                     <li class="mythemestyle">
+                    <li class="mythemestyle">
 	                <a href="<?php echo $site_url; ?>/review-registration/">
 	                  <i class="font-icon fa fa-eye"></i>
 	                    <span class="lbl menumargine">Review Applicants</span>
 	                </a>
 	            </li> 
+                    <li class="mythemestyle">
+	                <a href="<?php echo $site_url; ?>/user-fields/">
+	                  <i class="font-icon fa fa-wpforms"></i>
+	                    <span class="lbl menumargine">User Fields</span>
+	                </a>
+	            </li> 
+                    
                     
                     
 	            </ul>
@@ -325,7 +332,7 @@ $blog_id2 = get_current_blog_id();
                        <li class="mythemestyle">
                            <a href="<?php echo $site_url; ?>/floor-plan-editor/" target="_blank">
                                 <i class="font-icon fa fa-map-o"></i>
-                                <span class="lbl menumargine">Floor Plan Editor </span><i style="color:black;left:163px;"class="fa fa-window-restore" aria-hidden="true"></i>
+                                <span class="lbl menumargine">Floor Plan Editor    </span><i style="color:black;left:170px;"class="fa fa-window-restore" aria-hidden="true"></i>
                            </a>
                       </li>
 	              <li class="mythemestyle">

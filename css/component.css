@@ -752,3 +752,16 @@ form.woocommerce-content-box.full-width.checkout_coupon:after {
 .coupon> h2 {
     display: none;
 }
+
+.customewidthsweet{
+    
+    
+    width:60% !important;
+    left:40% !important;
+    
+}
+.mymetakey{
+    
+    
+    color:#333 !important;
+}

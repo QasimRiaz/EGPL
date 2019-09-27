@@ -51,7 +51,7 @@
         
         
     </script> 
-     <link href="<?php echo $base_url;?>/wp-content/plugins/EGPL/js/jquery-confirm.css" rel="stylesheet">
+    
     <style>
         .content{
             
@@ -253,7 +253,7 @@
                        
                        case 'url':
                            
-                           $action_col .= '<input '.$fields_staus_type.' class="myclass" type="text" id="' . $profile_field_name;
+                           $action_col .= '<input '.$fields_staus_type.' class="myclass" type="url" id="' . $profile_field_name;
                            $action_col .= '" value="'.htmlspecialchars($value).'" >';  
                            break;
                        case 'color':

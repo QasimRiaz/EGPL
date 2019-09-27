@@ -723,22 +723,35 @@ function keys_preview(){
     for (var i = 0, iLen = tablesettings[0].aoColumns.length; i < iLen; i++)
             {
                if(tablesettings[0].aoColumns[i].sTitle != '<input name="select_all" value="1" type="checkbox">' && tablesettings[0].aoColumns[i].sTitle != "Action"){
-                 columnheaderdataarray.push({colkey:tablesettings[0].aoColumns[i].title});
+                    
+                    var fieldKey = tablesettings[0].aoColumns[i].title;
+                     if(fieldKey.search('task') > -1){
+                         
+                         
+                         
+                     }else{
+                      var str = tablesettings[0].aoColumns[i].sTitle;
+                      var str = str.replace(/\s+/g, '_').toLowerCase();
+                      columnheaderdataarray.push({colkey:str});   
+                         
+                     }
+                    
+                    
                 }
             }
-   console.log(columnheaderdataarray);
+   
    for (var index in columnheaderdataarray) {
        if (typeof(columnheaderdataarray[index]) != "undefined") {
            
           var colvalue = columnheaderdataarray[index].colkey;
          
-          if(colvalue.search('task') > -1){
+         
               
-         }else{
+        
               var keyvalue ='{'+colvalue+'}';
               //console.log(arrData['cols'][index].column) ;
               datavaluesfields+='<a style="cursor: pointer;" class = "addmetafields" onclick=\'insertAtCaret("'+areaId+'","'+keyvalue+'")\' > '+keyvalue+'</a><br>';  
-          }
+         
            
                
           

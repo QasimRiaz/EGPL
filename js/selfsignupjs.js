@@ -5,11 +5,45 @@ function selfisignupadd_new_sponsor(){
   var email =  jQuery("#Semail").val();
   var profilepic = ""; 
   var data = new FormData();
-  
+  var errorURLValidation = false;
   var sponsorlevel = 'subscriber';
   var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=selfsignadd_new_sponsor_metafields';
  
   jQuery("body").css("cursor", "progress");
+  
+  jQuery('.speiclurlfield').each(function(){
+           
+            var metaupdate = jQuery(this).val();
+            var pattern = /(?:https?:\/\/)?(?:[a-zA-Z0-9.-]+?\.(?:[a-zA-Z])|\d+\.\d+\.\d+\.\d+)/;
+             
+            if(pattern.test(metaupdate)  == true){
+               
+                 var checkstatus  = metaupdate.includes("http");
+                 var checkstatuswww  = metaupdate.includes("www");
+                 if(checkstatus == false && checkstatuswww == false){
+                     
+                     
+                     metaupdate = "https://www."+metaupdate;
+                     
+                 }else if(checkstatus == false && checkstatuswww == true){
+                     
+                     metaupdate = "https://"+metaupdate;
+                     
+                 }
+                  
+                data.append(jQuery(this).attr( "name" ), metaupdate);
+            }else{
+                
+                errorURLValidation = true;
+                
+            }
+            
+           
+       });
+       
+  
+  
+  if(errorURLValidation == false){
   if(email !=""  ){
       
        data.append('username', email);
@@ -22,22 +56,43 @@ function selfisignupadd_new_sponsor(){
             data.append(jQuery(this).attr( "name" ), jQuery(this).val());
        });
        
+       
+       
+       jQuery('input[name="customefiels[]"]').each(function() {
+      var fieldID = jQuery(this).attr("id");
+      if(jQuery(this)[0].files[0]){
+         data.append(fieldID, jQuery(this)[0].files[0]);
+      }else{
+          
+           data.append(fieldID, "");
+      }
+      
+    });
         jQuery('.mycustomedropdown').each(function() {
            
            
            var ID = jQuery(this).attr( "id" );
-           var mydata = jQuery("#"+ID).val();
-           
-           console.log(mydata);
-           
-           
            var selectedValues = "";
-           jQuery.each(mydata,function(index,value){
+           var mydata = jQuery("#"+ID).val();
+           if(jQuery("#"+ID).prop("multiple")){
                
-               console.log(value);
-                selectedValues += value+';';
-                
-           });
+               
+            jQuery.each(mydata,function(index,value){
+
+                console.log(value);
+                 selectedValues += value+';';
+
+            });
+               
+           }else{
+               
+               selectedValues = mydata;
+               
+           }
+           
+           
+           
+           
            
            
            
@@ -126,7 +181,18 @@ function selfisignupadd_new_sponsor(){
 
         
       
+        }  
+      
+  }else{
       
       
+       swal({
+            title: "Error",
+            text: "Url is not valid. Provide a valid url (e.g. https://www.domain.com).",
+            type: "error",
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Ok"
+        });
+           
   }
 }

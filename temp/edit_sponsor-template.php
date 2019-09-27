@@ -17,13 +17,29 @@
        $additional_fields_settings_key = 'EGPL_Settings_Additionalfield';
        $additional_fields = get_option($additional_fields_settings_key);
        $sponsor_name = $sponsor_info['ContentManager']['sponsor-name'];
-       
        $welcomeemail_template_info_key='AR_Contentmanager_Email_Template_welcome';
        $welcomeemail_template_info = get_option($welcomeemail_template_info_key);
+       
+       require_once plugin_dir_path( __DIR__ ) . 'includes/egpl-custome-functions.php';
+       $GetAllcustomefields = new EGPLCustomeFunctions();
+       
+       $additional_fields = $GetAllcustomefields->getAllcustomefields();
       
+        function sortByOrder($a, $b) {
+            return $a['fieldIndex'] - $b['fieldIndex'];
+        }
+
+        usort($additional_fields, 'sortByOrder');
+       
+       
         global $wp_roles;
 
   //  $all_roles = $wp_roles->roles;
+        
+        
+       // echo '<pre>';
+      //  print_r($all_roles);exit;
+        
     if (is_multisite()) {
                 $blog_id = get_current_blog_id();
                 $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
@@ -40,8 +56,8 @@
        }else{
          $rolename = $meta_for_user->roles[0];  
        }
-       
-       
+      
+     //  echo $rolename;exit;
        include 'cm_header.php';
        include 'cm_left_menu_bar.php';
                 ?>
@@ -110,264 +126,312 @@
 
 				<div class="tab-content">
                                     <div role="tabpanel" class="tab-pane fade in active" id="tabs-1-tab-1">  
-                    
-              
-                                    <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label">Email <strong>*</strong></label>
-                                    <div class="col-sm-5">
-                                         <input type="hidden" name="sponsorid" id="sponsorid" value="<?php echo $sponsor_id;?>" >
-					 <input type="text"  class="form-control" id="Semail" placeholder="Email"  value="<?php echo $meta_for_user->user_email;?>" readonly>
-							
+                                        <input type="hidden" name="sponsorid" id="sponsorid" value="<?php echo $sponsor_id;?>" >
                                         
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <a    class="btn btn-inline mycustomwidth btn-success" onclick="changeuseremailaddressalert()">Change Email</a>
-                                          
+                                        
+                                     <?php   foreach ($additional_fields as $key=>$value){ 
+                           
+                                if($additional_fields[$key]['fieldsystemtask'] == "checked" && $additional_fields[$key]['SystemfieldInternal'] != "checked"){
+                                $requiredStatus = $additional_fields[$key]['fieldrequriedstatus'];
+                                $requriedStatus = "";
+                                $requiredStatueUpdate = "";
+                                if($requiredStatus == true){
+                                    
+                                    
+                                    $requiredStatueUpdate = "required='ture'";
+                                    $requriedStatus = "*";
+                                    
+                                }
+                                ?>
+                                
+                                <?php if($additional_fields[$key]['fieldType'] != 'checkbox' && $additional_fields[$key]['fieldType'] != 'display'){ ?>
+                               
+                                    <div class="form-group row" >
+                                    <div class="col-sm-2">
+                                    <label><?php echo $additional_fields[$key]['fieldName'].' '.$requriedStatus;?>
+                                    <?php if(!empty($additional_fields[$key]['fieldtooltiptext'])){?>
+                                    
+                                      <i style="cursor: pointer;" title="<?php echo $additional_fields[$key]['fieldtooltiptext'];?>" class="reporticon font-icon fa fa-question-circle"></i>
+                                    <?php }?>
+                                    </label>
+                                    <?php if(!empty($additional_fields[$key]['fielddescription'])){?>
+                                    
+                                    <?php echo $additional_fields[$key]['fielddescription'];?>
+                                    <?php }?>
                                     </div>
                                     
-                                </div>
-                   <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label">First Name <strong>*</strong></label>
-                                    <div class="col-sm-10">
-                                          
-								<input type="text"  class="form-control mymetakey" id="Sfname" name="first_name" placeholder="First Name" value="<?php echo $all_meta_for_user[$site_prefix.'first_name'][0];?>" required>
-								
+                                    <?php if($additional_fields[$key]['fieldType'] == 'text' || $additional_fields[$key]['fieldType'] == 'email' || $additional_fields[$key]['fieldType'] == 'url' ||$additional_fields[$key]['fieldType'] == 'date' ||$additional_fields[$key]['fieldType'] == 'number'){ ?> 
                                         
-                                    </div>
-                                </div>
-                                 <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label">Last Name <strong>*</strong></label>
-                                    <div class="col-sm-10">
-                                           
-								<input type="text"  class="form-control mymetakey" id="Slname" name="last_name" placeholder="Last Name" value="<?php echo $all_meta_for_user[$site_prefix.'last_name'][0];?>"  required>
-								
+                                        <?php if($additional_fields[$key]['fieldType'] == 'email'){?>
+                                    
+                                            <div class="col-sm-5">
+                                                <input type="<?php echo $additional_fields[$key]['fieldType'];?>"  class="form-control mymetakey" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" value="<?php echo $meta_for_user->user_email;?>" readonly placeholder="<?php echo $additional_fields[$key]['fieldplaceholder'];?>" <?php echo $requiredStatueUpdate;?>>
+                                            </div>
+                                            <div class="col-sm-5">
                                         
-                                    </div>
-                                </div>
-                    <div class="form-group row">
+                                                 <a    class="btn btn-inline mycustomwidth btn-success" onclick="changeuseremailaddressalert()">Change Email</a>
+                                        
+                                             </div>
+                                    
+                                        <?php }else{?>
+                                        <div class="col-sm-10">
+					<input type="<?php echo $additional_fields[$key]['fieldType'];?>"  class="form-control mymetakey" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" placeholder="<?php echo $additional_fields[$key]['fieldplaceholder'];?>" value="<?php echo $all_meta_for_user[$site_prefix.$additional_fields[$key]['fielduniquekey']][0];?>" <?php echo $requiredStatueUpdate;?>>
+                                        </div>
+                                        <?php }}else if($additional_fields[$key]['fieldType'] == 'textarea'){?>
+                                             <div class="col-sm-10">
+                                             <textarea   <?php echo $additional_fields[$key]['attribute'];?> class="form-control mymetakey" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" placeholder="<?php echo $additional_fields[$key]['fieldplaceholder'];?>" <?php echo $requiredStatueUpdate;?>><?php echo $all_meta_for_user[$site_prefix.$additional_fields[$key]['fielduniquekey']][0];?></textarea>
+                                             </div>
+                                        
+                                       <?php }else if($additional_fields[$key]['fieldType'] == 'dropdown'){?>
+                                             
+                                             <div class="col-sm-10">
+                                             <?php if($additional_fields[$key]['multiselect'] == 'chekced') {?>
+                                              <select class="select2 mycustomedropdown "  title="<?php echo $additional_fields[$key]['fielduniquekey'];?>" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" data-allow-clear="true" data-toggle="tooltip" multiple="multiple" <?php echo $requiredStatueUpdate;?>>
+                                                    <?php  foreach ($all_roles as $key => $name) { 
+                                                        
+                                                        
+                                                        if ($key != 'administrator' && $key != 'subscriber') {
+                                                        ?>
+                                                  
+                                                         <option value='<?php echo$key; ?>'><?php echo $name['name'];?></option>
+                                                    
+                                                    <? }} ?>
+                                                   
+                                              </select>
+                                             <?php }else {?>
+                                                    
+                                                    <select class="select2 mycustomedropdown "  title="<?php echo $additional_fields[$key]['fielduniquekey'];?>" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" data-allow-clear="true" <?php echo $requiredStatueUpdate;?>>
+
+                                                       <?php  foreach ($all_roles as $key => $name) { 
+                                                        
+                                                        
+                                                        if ($key != 'administrator'  && $key != 'subscriber') {
+                                                            
+                                                           // echo $rolename;exit;
+                                                            if($rolename == $key){
+                                                        ?>
+                                                        <option value='<?php echo $key;?>' selected="true"><?php echo $name['name'];?></option>
+                                                        <? }else{if ($key != 'administrator' && $key != 'contentmanager' && $key != 'subscriber') {?>
+                                                        <option value='<?php echo $key;?>' ><?php echo $name['name'];?></option>
+                                                        <?php }}}} ?>
+
+                                                   </select>
+                                             
+                                             <?php } ?>
+                                             </div>
+                                       <?php }?> </div> <?php }?> 
+                                       <?php if($additional_fields[$key]['fieldType'] == 'checkbox'){ ?>
+                                             <div class="form-group row" >
+                                                 
+                                                 <div class="col-sm-12">
+                                                     
+                                                     <input  <?php echo $all_meta_for_user[$site_prefix.$additional_fields[$key]['fielduniquekey']][0];?>  class="mycustomcheckbox"<?php echo $requiredStatueUpdate;?> type="checkbox" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>"><?php echo '   '.$additional_fields[$key]['fieldName'];?><br/>
+                                             
+                                                </div>
+                                                </div>      
+                                               
+                                            
+                                       <?}?>
+                                       <?php if($additional_fields[$key]['fieldType'] == 'display'){ ?>
+                                             <div class="form-group row" >
+                                                 
+                                                 <div class="col-sm-12">
+                                                     
+                                                     <?php echo $additional_fields[$key]['fielddescription'];?>
+                                                </div>
+                                               </div>  
+                                       <?}?>
+                                    
+                                  
+                           
+                                <?php }} ?>
+              
+                                   
+                                        
+                             
+                                <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">Change Password <p>(if u want to change or reset password)</p></label>
                                     <div class="col-sm-10">
                                           
-								<input type="password"  class="form-control mymetakey" id="password" name="password" placeholder="Password" value="" >
-							
-                                        
+					<input type="password"  class="form-control mymetakey" id="password" name="password" placeholder="Password" value="" >
+					
                                     </div>
                                 </div>
                                   
-                              <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label">User Level <strong>*</strong></label>
-                                    <div class="col-sm-10">
-                                           
-								 <select  class="form-control" id="Srole" required>
-								
-                                                                     <option></option>
-                                                                         <?php
-                                             foreach ($all_roles as $key => $name) {
-                                                if ($rolename == $key) {
-                                                echo '<option value="' . $key . '" selected>' . $name['name'] . '</option>';
-        } else {
-
-            if ($key != 'administrator' && $key != 'contentmanager' && $key != 'subscriber') {
-                echo '<option value="' . $key . '">' . $name['name'] . '</option>';
-            }
-        }
-    }
-                                                                         ?>
-								 </select>
-					   
-                                        
-                                    </div>
-                 </div>   
-                 <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label">Company Name <strong>*</strong></label>
-                                    <div class="col-sm-10">
-                                        
-								<input type="text"  class="form-control mymetakey" id="company_name" name="company_name" placeholder="Company Name" value="<?php echo $all_meta_for_user[$site_prefix.'company_name'][0];?>"  required>
-								
-                                        
-                                    </div>
-                                </div>             
-                   <div class="form-group row">
-                                    <label class="col-sm-2 form-control-label">Company Logo </label>
-                                    <?php if(empty($all_meta_for_user[$site_prefix.'user_profile_url'][0])){?>  
-                                    <div class="col-sm-10">
-                                                     
-                                        
-					<input  type="file" class="form-control" name="profilepic" id="profilepic" >				
-                                      
-                                       
-		                  </div>
-                                   <?php }else{?>
-                                    <div id="showprofilepic">
-                                    <div class="col-sm-5">
-                                       <img width="200" id="userprofilepic"  name="userprofilepic" src="<?php echo $all_meta_for_user[$site_prefix.'user_profile_url'][0];?>" >
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <a width="200" class="btn btn-inline mycustomwidth btn-success" onclick="showprofilefieldupload()" >Edit Logo</a>
-                                    </div>
-                                     </div>
-                                      <?php } ?>
-                                    
-                                    <div class="col-sm-10" style="display:none;" id="updateprofilepic">
-                                                     
-                                        
-					<input  type="file" class="form-control" name="profilepic" id="profilepic" >				
-                                      
-                                       
-		                  </div>
-		</div>                   
+                              
+                       
                               
                                    
                   </div>                  
                       <div role="tabpanel" class="tab-pane fade" id="tabs-1-tab-2">
                           
                            
-                             <?php   foreach ($additional_fields as $key=>$value){ if($additional_fields[$key]['type'] != 'checkbox' && $additional_fields[$key]['type'] != 'html'){ ?>
+                             <?php   foreach ($additional_fields as $key=>$value){ 
+                           
+                                if($additional_fields[$key]['fieldsystemtask'] != "checked" && $additional_fields[$key]['SystemfieldInternal'] != "checked"){
+                                
+                                
+                                
+                                if($additional_fields[$key]['fieldType'] != 'checkbox' && $additional_fields[$key]['fieldType'] != 'display'){ 
+                                    
+                                    $requiredStatus = $additional_fields[$key]['fieldrequriedstatus'];
+                                    $requriedStatussysomb = "";
+                                    $requiredStatueUpdate = "";
+                                    $showstatus = "";
+                                    if($requiredStatus == true){
+                                    
+                                    
+                                    $requiredStatueUpdate = "required='ture'";
+                                    $requriedStatussysomb = "*";
+                                    $showstatus = true;
+                                    
+                                    }
+                                    
+                                    
+                                    
+                                    ?>
                                
-                                <div class="form-group row" >
-                                    <label class="col-sm-4 form-control-label"><?php echo $additional_fields[$key]['formlabel'];?></label>
+                                   
+                                      <?php if($additional_fields[$key]['fieldType'] == 'text' || $additional_fields[$key]['fieldType'] == 'email' || $additional_fields[$key]['fieldType'] == 'url' ||$additional_fields[$key]['fieldType'] == 'date' ||$additional_fields[$key]['fieldType'] == 'number'){ ?> 
+                                             <div class="form-group row" >
+                                    <div class="col-sm-4">
+                                    <label><?php echo $additional_fields[$key]['fieldName'].' '.$requriedStatussysomb;?>
+                                    <?php if(!empty($additional_fields[$key]['fieldtooltiptext'])){?>
+                                    
+                                      <i style="cursor: pointer;" title="<?php echo $additional_fields[$key]['fieldtooltiptext'];?>" class="reporticon font-icon fa fa-question-circle"></i>
+                                    <?php }?>
+                                    </label>
+                                    <?php if(!empty($additional_fields[$key]['fielddescription'])){?>
+                                    
+                                    <?php echo $additional_fields[$key]['fielddescription'];?>
+                                    <?php }?>
+                                    </div>
                                     <div class="col-sm-8">
+                                         <input type="hidden" name="requiredstatus" id="<?php echo $additional_fields[$key]['fieldID'];?>_requiredstatus" value="<?php echo $showstatus;?>" >
+                                   
+                                            <input type="<?php echo $additional_fields[$key]['fieldType'];?>"  class="form-control mymetakey" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" value="<?php echo $all_meta_for_user[$site_prefix.$additional_fields[$key]['fielduniquekey']][0];?>" placeholder="<?php echo $additional_fields[$key]['fieldplaceholder'];?>" <?php echo $requiredStatueUpdate;?>>
+                                        </div></div>
+                                        <?php }else if($additional_fields[$key]['fieldType'] == 'textarea'){?>
+                                              <div class="form-group row" >
+                                    <div class="col-sm-4">
+                                    <label><?php echo $additional_fields[$key]['fieldName'].' '.$requriedStatussysomb;?>
+                                    <?php if(!empty($additional_fields[$key]['fieldtooltiptext'])){?>
+                                    
+                                      <i style="cursor: pointer;" title="<?php echo $additional_fields[$key]['fieldtooltiptext'];?>" class="reporticon font-icon fa fa-question-circle"></i>
+                                    <?php }?>
+                                    </label>
+                                    <?php if(!empty($additional_fields[$key]['fielddescription'])){?>
+                                    
+                                    <?php echo $additional_fields[$key]['fielddescription'];?>
+                                    <?php }?>
+                                    </div>
+                                    <div class="col-sm-8">
+                                         <input type="hidden" name="requiredstatus" id="<?php echo $additional_fields[$key]['fieldID'];?>_requiredstatus" value="<?php echo $showstatus;?>" >
+                                   
+                                             <textarea   <?php echo $additional_fields[$key]['attribute'];?>  class="form-control mymetakey" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" placeholder="<?php echo $additional_fields[$key]['fieldplaceholder'];?>" <?php echo $requiredStatueUpdate;?>><?php echo $all_meta_for_user[$site_prefix.$additional_fields[$key]['fielduniquekey']][0];?></textarea>
                                         
-                                       <?php if($additional_fields[$key]['type'] == 'text'){ ?> 
-                                        
-					<input type="text"  class="form-control mymetakey" id="<?php echo $additional_fields[$key]['key'];?>" name="<?php echo $additional_fields[$key]['key'];?>" value="<?php echo $all_meta_for_user[$site_prefix.$additional_fields[$key]['key']][0];?>" placeholder="<?php echo $additional_fields[$key]['formlabel'];?>" >
-                                       
-                                        <?php }else if($additional_fields[$key]['type'] == 'textarea'){?>
-                                        
-                                             <textarea   class="form-control mymetakey" id="<?php echo $additional_fields[$key]['key'];?>" name="<?php echo $additional_fields[$key]['key'];?>" placeholder="<?php echo $additional_fields[$key]['formlabel'];?>"><?php echo $all_meta_for_user[$site_prefix.$additional_fields[$key]['key']][0];?></textarea>
-                                        
-                                        
-                                       <?php }else if($additional_fields[$key]['type'] == 'dropdown'){?>
+                                         </div></div>
+                                       <?php }else if($additional_fields[$key]['fieldType'] == 'file'){?>
+                                           
+                                            <div class="form-group row" >
+                                    <div class="col-sm-4">
+                                    <label><?php echo $additional_fields[$key]['fieldName'].' '.$requriedStatussysomb;?>
+                                    <?php if(!empty($additional_fields[$key]['fieldtooltiptext'])){?>
+                                    
+                                      <i style="cursor: pointer;" title="<?php echo $additional_fields[$key]['fieldtooltiptext'];?>" class="reporticon font-icon fa fa-question-circle"></i>
+                                    <?php }?>
+                                    </label>
+                                    <?php if(!empty($additional_fields[$key]['fielddescription'])){?>
+                                    
+                                    <?php echo $additional_fields[$key]['fielddescription'];?>
+                                    <?php }?>
+                                    </div>
+                                    <div class="col-sm-8">
+                                         <input type="hidden" name="requiredstatus" id="<?php echo $additional_fields[$key]['fieldID'];?>_requiredstatus" value="<?php echo $showstatus;?>" >
+                                   
+                                         <?php   if(!empty($all_meta_for_user[$site_prefix.$additional_fields[$key]['fielduniquekey']][0])){
+                                               
+                                               echo '<div id="'.$additional_fields[$key]['fieldID'].'_fileuploadholder"></div><div id="'.$additional_fields[$key]['fieldID'].'_fileuploadpic"><div class="col-sm-5"><img width="200" id="'.$additional_fields[$key]['fieldID'].'_fileuploadpicviewer"  name="userprofilepic" src="'.$all_meta_for_user[$site_prefix.$additional_fields[$key]['fielduniquekey']][0].'" ></div><div class="col-sm-4"><a width="200" id="'.$additional_fields[$key]['fieldID'].'_fileuploadbutton" class="btn btn-inline mycustomwidth btn-success" name="'.$additional_fields[$key]['fielduniquekey'].'" onclick="showprofilefieldupload(this)" >Edit</a></div></div>';
+                                               
+                                           }else{
+                                               
+                                               echo '<input  type="'.$additional_fields[$key]['fieldType'].'"  class="form-control '.$additional_fields[$key]['fieldID'].'_fileupload"" id="'.$additional_fields[$key]['fielduniquekey'].'" name="customefiels[]" placeholder="'.$additional_fields[$key]['fieldplaceholder'].'"'.$requiredStatueUpdate.'>';
+                                               
+                                               
+                                           }
+                                           
+                                           ?>
+                                            </div></div>
+                                           
+                                       <?php }else if($additional_fields[$key]['fieldType'] == 'dropdown'){?>
                                              
-                                             
-                                             <?php if($additional_fields[$key]['multiselect'] == true) {
-                                                 
-                                                    $multiselectvalues = explode(";",$all_meta_for_user[$site_prefix.$additional_fields[$key]['key']][0]);
-                                                   
-                                                 
-                                                 ?>
-                                              <select class="select2 mycustomedropdown"   id="<?php echo $additional_fields[$key]['key'];?>" data-allow-clear="true" data-toggle="tooltip" multiple="multiple">
-                                                    <?php foreach ($additional_fields[$key]['options'] as $key=>$value){
-                                                            $skipthis = false;
-                                                        foreach ($multiselectvalues as $nkey=>$nvalue){
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            if(!empty($nvalue) && $nvalue == $value['value'] ){
-                                                                
-                                                                $skipthis = true;
-                                                                
-                                                                
-                                                                ?>
+                                              <div class="form-group row" >
+                                    <div class="col-sm-4">
+                                    <label><?php echo $additional_fields[$key]['fieldName'].' '.$requriedStatussysomb;?>
+                                    <?php if(!empty($additional_fields[$key]['fieldtooltiptext'])){?>
+                                    
+                                      <i style="cursor: pointer;" title="<?php echo $additional_fields[$key]['fieldtooltiptext'];?>" class="reporticon font-icon fa fa-question-circle"></i>
+                                    <?php }?>
+                                    </label>
+                                    <?php if(!empty($additional_fields[$key]['fielddescription'])){?>
+                                    
+                                    <?php echo $additional_fields[$key]['fielddescription'];?>
+                                    <?php }?>
+                                    </div>
+                                    <div class="col-sm-8">
+                                         <input type="hidden" name="requiredstatus" id="<?php echo $additional_fields[$key]['fieldID'];?>_requiredstatus" value="<?php echo $showstatus;?>" >
+                                   
+                                             <?php if($additional_fields[$key]['multiselect'] == "checked") {?>
+                                              <select class="select2 mycustomedropdown mymetakey"  title="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" data-allow-clear="true" data-toggle="tooltip" multiple="multiple" <?php echo $requiredStatueUpdate;?>>
+                                                    <?php foreach ($additional_fields[$key]['options'] as $key=>$value){ ?>
                                                   
-                                                  
-                                                                 <option value='<?php echo $value['value'];?>' selected="selected"><?php echo $value['value'];?></option>
-                                                                
-                                                                
-                                                                
-                                                            <?php } ?>
-                                                            
-                                                        
-                                                        
-                                                                
-                                                         
+                                                         <option value='<?php echo $value->label;?>'><?php echo $value->label;?></option>
                                                     
-                                                            <?php }?>
-                                                            <?php if($skipthis == false){?>
-                                                                
-                                                                <option value='<?php echo $value['value'];?>'><?php echo $value['value'];?></option>
-                                                                
-                                                                
-                                                            <?php }} ?>
-                                                         
-                                                         
-                                                         
-                                                         
-                                                       
+                                                    <? } ?>
                                                    
                                               </select>
                                              <?php }else {
-                                                 
-                                                  $multiselectvalues = explode(";",$all_meta_for_user[$site_prefix.$additional_fields[$key]['key']][0]);
-                                                 
-                                                 
-                                                 ?>
-                                                
-                                                    <select class="select2 mycustomedropdown"   id="<?php echo $additional_fields[$key]['key'];?>" data-allow-clear="true">
+                                                    ?>
+                                                    <select class="select2 mycustomedropdown mymetakey"  title="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" data-allow-clear="true" <?php echo $requiredStatueUpdate;?>>
 
-                                                       <?php foreach ($additional_fields[$key]['options'] as $key=>$value){ 
+                                                       <?php foreach ($additional_fields[$key]['options'] as $keysoptions=>$additionalvalue){ 
                                                            
-                                                           
-                                                           if($multiselectvalues[0] == $value['value']){
-                                                           
-                                                           
-                                                           ?>
-                                                                
-                                                           
-                                                            
-                                                        <option value='<?php echo $value['value'];?>' selected="selected"><?php echo $value['value'];?></option>
-                                                                 
-                                                              
-                                                           <?php }else{?>
+                                                        if($additionalvalue->label == $all_meta_for_user[$site_prefix.$additional_fields[$key]['fielduniquekey']][0]){?>
+                                                               
+                                                        <option value='<?php echo $additionalvalue->label;?>' selected="true"><?php echo $additionalvalue->label;?></option>    
+                                                      <? }else{?>
                                                         
-                                                        
-                                                   
-                                                            <option value='<?php echo $value['value'];?>'><?php echo $value['value'];?></option>
-                                                       
-                                                        
-                                                         
-                                                       <?php }} ?>
+                                                           <option value='<?php echo $additionalvalue->label;?>'><?php echo $additionalvalue->label;?></option>  
+                                                     <?php }} ?>
 
                                                    </select>
                                              
                                              <?php } ?>
-                                             
+                                         </div></div>
                                        <?php } }?> 
-                                       <?php if($additional_fields[$key]['type'] == 'checkbox'){ 
-                                           
-                                           
-                                           $checkstatusValue = $all_meta_for_user[$site_prefix.$additional_fields[$key]['key']][0];
-                                           
-                                           ?>
+                                       <?php if($additional_fields[$key]['fieldType'] == 'checkbox'){ ?>
                                              <div class="form-group row" >
                                                  
                                                  <div class="col-sm-12">
-                                                     <?php if($checkstatusValue == true){ ?>
-                                                         
-                                                     <input  class="mycustomcheckbox" type="checkbox" id="<?php echo $additional_fields[$key]['key'];?>" checked="true"><?php echo '   '.$additional_fields[$key]['formlabel'];?><br/>
-                                                         
-                                                     <?php }else{ ?>
-                                                         
-                                                         
-                                                         <input  class="mycustomcheckbox" type="checkbox" id="<?php echo $additional_fields[$key]['key'];?>"><?php echo '   '.$additional_fields[$key]['formlabel'];?><br/>
+                                                     
+                                                     <input  class="mycustomcheckbox" <?php echo $all_meta_for_user[$site_prefix.$additional_fields[$key]['fielduniquekey']][0];?> <?php echo $requiredStatueUpdate;?> type="checkbox" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>"><?php echo '   '.$additional_fields[$key]['fieldName'];?><br/>
                                              
-                                                         
-                                                         
                                                      
-                                                    <?php }?>  
-                                                     
-                                               
+                                                </div></div>
                                             
                                        <?}?>
-                                       
-                                       <?php if($additional_fields[$key]['type'] == 'html'){ ?>
+                                       <?php if($additional_fields[$key]['fieldType'] == 'display'){ ?>
                                              <div class="form-group row" >
                                                  
-                                                 <div class="col-sm-12">
-                                                    
-                                                    <?php echo $additional_fields[$key]['name'];?>
+                                                 <div class="col-sm-12 ">
                                                      
-                                                     
-                                               
-                                            
+                                                     <?php echo $additional_fields[$key]['fielddescription'];?>
+                                                </div></div>
                                        <?}?>
-                                        
-                                    </div>
-                                </div>
+                                    
+                                    
                            
-                       <?php } ?>  
+                       <?php }} ?>
                              
                           
                           

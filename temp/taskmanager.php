@@ -10,27 +10,21 @@ if($_GET['createnewtask'] == "create_new_task") {
    
   
 }
-if($_GET['createnewtask'] == "editrolekey") {        
-    require_once('../../../wp-load.php');
-    
-    editrolename($_POST);
-   
-  
-}
-if($_GET['createnewtask'] == "roleassignnewtasks") {        
-    require_once('../../../wp-load.php');
-    
-    roleassignnewtasks($_POST);
-   
-  
-}
-
 if($_GET['createnewtask'] == "savebulktask") {        
     require_once('../../../wp-load.php');
     
     
       
     savebulktask_update($_POST);
+   
+  
+}
+if($_GET['createnewtask'] == "savebulkfields") {        
+    require_once('../../../wp-load.php');
+    
+    
+      
+    savebulkfields_update($_POST);
    
   
 }
@@ -260,146 +254,84 @@ function savebulktask_update($request){
          
          
         
+        $listoftaks = json_decode(stripslashes($request['bulktaskdata']));
+        $removetaskslist = json_decode(stripslashes($request['deletedtaskslist']));  
          
+        foreach ($removetaskslist as $tasksIndex=>$removetaskID){
+            
+            
+            wp_delete_post($removetaskID);
+            
+        }
+        
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);  
         $lastInsertId = contentmanagerlogging('Save Bulk Task',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
        
-        $tasksdata=json_decode(stripslashes($request['bulktaskdata']));
-        $tasksdata = json_decode(json_encode($tasksdata), true);
-        $test = 'custome_task_manager_data';
-        $result = get_option($test);
-        $result['profile_fields'] = $tasksdata;
-        $user_info = get_userdata($user_ID);
-        $restults = update_option($test, $result);
         
-        contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
-        
-       
-         
-    }catch (Exception $e) {
-       
-        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
-   
-      return $e;
-    }
- 
- die();  
-    
-    
-}
-
-
-function roleassignnewtasks($request){
-    
-     try{
-         
-         
-        
-         
-        $user_ID = get_current_user_id();
-        $user_info = get_userdata($user_ID);  
-        $lastInsertId = contentmanagerlogging('Role Assigned New Tasks',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
-        $role_name = $request['rolename'];
-        $test = 'custome_task_manager_data';
-        $result_old = get_option($test);
-        
-        $tasksdatalist=json_decode(stripslashes($request['roleassigntaskdatalist']));
-        $removetasklist = json_decode(stripslashes($request['removetasklist'])); 
-        if(!empty($tasksdatalist)) {
-        foreach($tasksdatalist as $key){
-           foreach($result_old['profile_fields'] as $profile_field_name => $profile_field_settings) {
-               
-               if($key == $profile_field_name){
-                   if(!in_array($role_name,$result_old['profile_fields'][$key]['roles'])){
-                        array_push($result_old['profile_fields'][$key]['roles'],$role_name);
-                   }
-               }
-               
-           } 
-            //echo $key;
+        foreach ($listoftaks as $taksKey=>$taskObject){
             
-        }
-        }
-       if(!empty($removetasklist)) {
-        foreach($removetasklist as $key){
-           foreach($result_old['profile_fields'] as $profile_field_name => $profile_field_settings) {
-               
-               if($key == $profile_field_name){
-                   foreach (array_keys($result_old['profile_fields'][$key]['roles'], $role_name) as $key1) {
-                    unset($result_old['profile_fields'][$key]['roles'][$key1]);
-                  } 
-               }
-               
-           } 
-            //echo $key;
             
-        }
-       }
-        
-        
-        
-       
-        
-        
-        //echo '<pre>';
-        //print_r($result_old['profile_fields']);exit;
-        
-        
-        $user_info = get_userdata($user_ID);
-        $restults = update_option($test, $result_old);
-        
-        contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
-        
-       
-         
-    }catch (Exception $e) {
-       
-        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
-   
-      return $e;
-    }
- 
- die();  
-    
-    
-}
-function editrolename($request){
-    
-     try{
-      
-        
-         
-        $user_ID = get_current_user_id();
-        $user_info = get_userdata($user_ID);  
-        $lastInsertId = contentmanagerlogging('Edit Level Name',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
-       
-        $levelnamenew = $request['rolenewname'];
-        $levelkey = $request['rolekey'];
-        
-        $get_all_roles_array = 'wp_user_roles';
-        $get_all_roles = get_option($get_all_roles_array);
-        $result_update = 'newvalue';
-        foreach ($get_all_roles as $key => $item) {
             
-            if(in_array($levelnamenew,$item)){
-                $result_update = 'already';
-                break;
+        if( strpos( $taksKey, "addnewtasks" ) !== false) {
+            
+          
+                $taskaObjectData = array(
+                    'post_title'    => wp_strip_all_tags( $taskObject->label ),
+                    'post_content'  => "",
+                    'post_status'   => 'draft',
+                    'post_author'   => $user_ID,
+                    'post_type'=>'egpl_custome_tasks'
+                );
+                $tasksID = wp_insert_post( $taskaObjectData );
+            
+            }else{
+                
+                $tasksID = $taksKey;
+                
+                
             }
-        }
-        if($result_update == 'newvalue'){
-            $get_all_roles[$levelkey]['name'] = $levelnamenew;
-            $restults = update_option($get_all_roles_array, $get_all_roles);
-             $result_status['msg']= 'update';
-        }else{
+            
+            
+            update_post_meta( $tasksID, 'value', $taskObject->value );
+            update_post_meta( $tasksID, 'unique', $taskObject->unique );
+            update_post_meta( $tasksID, 'class', $taskObject->class );
+            update_post_meta( $tasksID, 'after', $taskObject->after );
+            update_post_meta( $tasksID, 'required', $taskObject->required );
+            update_post_meta( $tasksID, 'allow_tags', $taskObject->allow_tags );
+            update_post_meta( $tasksID, 'add_to_profile', $taskObject->add_to_profile );
+            update_post_meta( $tasksID, 'allow_multi', $taskObject->allow_multi );
+            update_post_meta( $tasksID, 'label', $taskObject->label );
+            update_post_meta( $tasksID, 'type', $taskObject->type );
+            update_post_meta( $tasksID, 'link_url', $taskObject->lin_url );
+            update_post_meta( $tasksID, 'linkname', $taskObject->linkname );
+            update_post_meta( $tasksID, 'duedate', $taskObject->attrs );
+            update_post_meta( $tasksID, 'taskattrs', $taskObject->taskattrs );
+            update_post_meta( $tasksID, 'taskMWC', $taskObject->taskMWC );
+            update_post_meta( $tasksID, 'taskMWDDP', $taskObject->taskMWDDP );
+            update_post_meta( $tasksID, 'roles', $taskObject->roles );
+            update_post_meta( $tasksID, 'usersids', $taskObject->usersids );
+            update_post_meta( $tasksID, 'descrpition', $taskObject->descrpition );
+            update_post_meta( $tasksID, 'key', $taskObject->key );
+            update_post_meta( $tasksID, 'SystemTask', $taskObject->SystemTask  );
+            update_post_meta( $tasksID, 'taskCode', $taskObject->taskCode );
+            
+            
+            
+            if(!empty($taskObject->options)){
+                
+                update_post_meta( $tasksID, 'options', $taskObject->options );
+            }
            
-            $result_status['msg']= 'already exists';
+            
+            
+            
         }
         
         
-        contentmanagerlogging_file_upload ($lastInsertId,serialize($result_status));
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
         
-       echo json_encode($result_status);
+       
          
     }catch (Exception $e) {
        
@@ -412,4 +344,102 @@ function editrolename($request){
     
     
 }
+
+
+
+function savebulkfields_update($request){
+    
+     try{
+         
+         
+        
+        $listoftaks = json_decode(stripslashes($request['bulkfielddata']));
+        
+        
+        
+        
+        $removetaskslist = json_decode(stripslashes($request['deletedfieldlist']));  
+         
+        foreach ($removetaskslist as $tasksIndex=>$removetaskID){
+            
+            
+            wp_delete_post($removetaskID);
+            
+        }
+        
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID);  
+        $lastInsertId = contentmanagerlogging('Save Bulk Field',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
+       
+        
+        foreach ($listoftaks as $taksKey=>$taskObject){
+            
+            
+            
+        if( strpos( $taksKey, "addnewfield" ) !== false) {
+            
+          
+                $taskaObjectData = array(
+                    'post_title'    => wp_strip_all_tags( $taskObject->label ),
+                    'post_content'  => "",
+                    'post_status'   => 'draft',
+                    'post_author'   => $user_ID,
+                    'post_type'=>'egpl_custome_fields'
+                );
+                $tasksID = wp_insert_post( $taskaObjectData );
+            
+            }else{
+                
+                $tasksID = $taksKey;
+                
+                
+            }
+            
+         
+            
+            update_post_meta( $tasksID, 'label', $taskObject->label );
+            update_post_meta( $tasksID, '_egpl_field_type', $taskObject->type );
+            update_post_meta( $tasksID, '_egpl_link_url', $taskObject->lin_url );
+            update_post_meta( $tasksID, '_egpl_link_name', $taskObject->linkname );
+            update_post_meta( $tasksID, '_egpl_field_tooltip_text', $taskObject->fieldtooltip );
+            update_post_meta( $tasksID, '_egpl_field_requried_status', $taskObject->fieldstatusrequried );
+            update_post_meta( $tasksID, '_egpl_field_system_task', $taskObject->Systemfield );
+            update_post_meta( $tasksID, '_egpl_field_code', $taskObject->fieldCode );
+            update_post_meta( $tasksID, '_egpl_field_display_on_application_form', $taskObject->fieldstatusshowonregform );
+            update_post_meta( $tasksID, '_egpl_field_placeholder', $taskObject->fieldplaceholder );
+            update_post_meta( $tasksID, 'Indexfield', $taskObject->Indexfield );
+            update_post_meta( $tasksID, '_egpl_field_description', $taskObject->descrpition );
+            update_post_meta( $tasksID, '_egpl_field_unique_key', $taskObject->key );
+            update_post_meta( $tasksID, '_egpl_field_allow_multi', $taskObject->key );
+            update_post_meta( $tasksID, '_egpl_field_attribute', $taskObject->attribute );
+            
+            
+            
+            
+            if(!empty($taskObject->options)){
+                
+                update_post_meta( $tasksID, 'options', $taskObject->options );
+            }
+           
+        }
+        
+        
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
+        
+       
+         
+    }catch (Exception $e) {
+       
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+    }
+ 
+ die();  
+    
+    
+}
+
+
+
 

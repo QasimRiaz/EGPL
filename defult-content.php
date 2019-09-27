@@ -1,6 +1,32 @@
 <?php
                     
-
+                $field_input_type[0]['lable'] = 'Line-Break Text';
+                $field_input_type[0]['type']  = 'display';
+                
+                $field_input_type[1]['lable'] = 'Text';
+                $field_input_type[1]['type']  = 'text';
+                
+                $field_input_type[2]['lable'] = 'Date';
+                $field_input_type[2]['type']  = 'date';
+                
+                $field_input_type[3]['lable'] = 'URL';
+                $field_input_type[3]['type']  = 'url';
+                
+                $field_input_type[4]['lable'] = 'Email';
+                $field_input_type[4]['type']  = 'email';
+               
+                $field_input_type[5]['lable'] = 'Drop Down';
+                $field_input_type[5]['type']  = 'dropdown';
+                
+                $field_input_type[6]['lable'] = 'Number';
+                $field_input_type[6]['type']  = 'number';
+                
+                $field_input_type[7]['lable'] = 'File Upload';
+                $field_input_type[7]['type']  = 'file';
+                
+                $field_input_type[8]['lable'] = 'Text Area';
+                $field_input_type[8]['type']  = 'textarea';
+                
                 
                 $cventmappingarray['task_company_name_for_print_463cz']['name'] = 'Company Name';
                 $cventmappingarray['task_company_name_for_print_463cz']['taskkey'] = 'task_company_name_for_print_463cz';

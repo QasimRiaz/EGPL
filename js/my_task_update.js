@@ -157,32 +157,57 @@ jQuery(function() {
 
 var erroralert;
 var  filestatus;
+var erroralert;
 function update_user_meta_custome(elem) {
     
     jQuery("body").css({'cursor':'wait'})
     var id = jQuery(elem).attr("id");
-    console.log(id)
+    erroralert = "";
     var sponsorid=getUrlParameter('sponsorid');
-    
     var url = currentsiteurl+'/';
     var statusid = id.replace('update_', '');
     var statusvalue ;
     var value = statusid.replace('_status', '');
     var elementType = jQuery("#my" + value).is("input[type='file']"); //jQuery(this).prev().prop('tagName');
+    
     if (elementType == false) {
-        var metaupdate = jQuery('#' + value).val();
-        if(metaupdate !=""){
-            
-            statusvalue = 'Complete';
-            
-        }else{
-           
-            statusvalue = 'Pending';
-        }
+        
+        var pattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/g;
+        var GetFieldurlValue = jQuery("#" + value).is("input[type='url']");
+       
+        
+        
+        
+        if(GetFieldurlValue == true){
+             var metaupdate = jQuery('#' + value).val();
+             
+             if(pattern.test(metaupdate)){
+                 
+                 
+                 var checkstatus  = metaupdate.includes("http");
+                  var checkstatuswww  = metaupdate.includes("www");
+                if(checkstatus == false && checkstatuswww == false){
+                     
+                     
+                     metaupdate = "https://www."+metaupdate;
+                     
+                 }else if(checkstatus == false && checkstatuswww == true){
+                     
+                     metaupdate = "https://"+metaupdate;
+                     
+                 }
+                if(metaupdate !=""){
+
+                    statusvalue = 'Complete';
+
+                    }else{
+
+                    statusvalue = 'Pending';
+                }
 
 
 
-    jQuery.ajax({url: url + 'wp-content/plugins/EGPL/usertask_update.php?usertask_update=update_user_meta_custome',
+        jQuery.ajax({url: url + 'wp-content/plugins/EGPL/usertask_update.php?usertask_update=update_user_meta_custome',
             data: {action: value, updatevalue: metaupdate, status: statusvalue,sponsorid:sponsorid},
             type: 'post',
             success: function(output) {
@@ -224,8 +249,83 @@ function update_user_meta_custome(elem) {
 					confirmButtonClass: "btn-danger",
 					confirmButtonText: "Ok"
 				});
-      }
+                    }     
+                });
+            }else{
+                
+                filestatus=true;
+                erroralert = "faildvaildurl";
+                jQuery("body").css({'cursor':'default'});
+                
+            }
+            
+        }else{
+            
+             var metaupdate = jQuery('#' + value).val();
+             if(metaupdate !=""){
+
+                statusvalue = 'Complete';
+
+                }else{
+
+                statusvalue = 'Pending';
+             }
+
+
+
+        jQuery.ajax({url: url + 'wp-content/plugins/EGPL/usertask_update.php?usertask_update=update_user_meta_custome',
+            data: {action: value, updatevalue: metaupdate, status: statusvalue,sponsorid:sponsorid},
+            type: 'post',
+            success: function(output) {
+             
+               filestatus=true;
+               jQuery("body").css({'cursor':'default'});
+               if(metaupdate !=""){
+                   
+                   jQuery('#update_'+value+'_remove').removeClass('specialremoveicondisable');
+                   jQuery("." + value+'_submissionstatus').css( "background-color", "#d5f1d5");
+                   jQuery('#update_'+value+'_remove').addClass('specialremoveiconenable');
+                   jQuery('#'+id).children('.content').text('Submitted');
+                   
+                   
+               }
+               if(sponsorid){
+                   
+                    swal({
+                                 title: "Success",
+                                 text: "Value has been updated successfully.",
+                                 type: "success",
+                                 confirmButtonClass: "btn-success",
+                                 confirmButtonText: "Ok"
+                             });
+                }else{
+                    
+                    if(metaupdate !=""){
+                        jQuery('#'+id).addClass('disableremovebutton');
+                        jQuery("#" + value).prop("disabled", true);
+                    }
+                }
+               
+               
+            },error: function (xhr, ajaxOptions, thrownError) {
+                    swal({
+					title: "Error",
+					text: "There was an error during the requested operation. Please try again.",
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				});
+            }     
         });
+            
+            
+            
+            
+        }
+       
+        
+        
+        
     } else {
 
         //var metaupdate =jQuery('#my'+value).val();
@@ -285,7 +385,7 @@ function update_user_meta_custome(elem) {
                     
                    if(alertmessage.error == "Sorry, this file type is not permitted for security reasons."){
                         
-                         console.log(alertmessage.error);
+                        
                          var sponsorid=getUrlParameter('sponsorid');
                          if(sponsorid){
                              
@@ -390,6 +490,9 @@ function update_user_meta_custome(elem) {
         //alert(metaupdate);
         //l.stop();
     }
+    
+    
+    
 }
 jQuery(document).ready(function() {
     
@@ -421,6 +524,15 @@ jQuery(document).ready(function() {
                                                                                swal({
                                                                                            title: "Error",
                                                                                            text: "This file type is not permitted for security reasons or the file extension is invalid.",
+                                                                                           type: "error",
+                                                                                           confirmButtonClass: "btn-danger",
+                                                                                           confirmButtonText: "Ok"
+                                                                                   });
+                                                                    }else if(erroralert == "faildvaildurl"){
+                                                                                instance._stop(1);
+                                                                               swal({
+                                                                                           title: "Error",
+                                                                                           text: "Url is not valid. Provide a valid url (e.g. https://www.domain.com).",
                                                                                            type: "error",
                                                                                            confirmButtonClass: "btn-danger",
                                                                                            confirmButtonText: "Ok"
