@@ -4983,8 +4983,8 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
                         
                        if($getfieldType == "date"){
                             
-                            $buildData = date('d-M-Y H:i:s', $get_meta_value / 1000);
-                            $data_field_array[] = array('name'=>$index_subject,'content'=>$get_meta_value);
+                            $date_value =   date('d-m-Y' , intval($all_meta_for_user[$keyvalue_subject][0])/1000);
+                            $data_field_array[] = array('name'=>$index_subject,'content'=>$date_value);
                            
                        }else{
                            
@@ -5065,7 +5065,7 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
 
                            if($getfieldType == "date"){
 
-                                $date_value =   date('d-m-Y' , intval($all_meta_for_user[$keyvalue][0])/1000);
+                                $date_value =   date('d-m-Y' , intval($get_meta_value)/1000);
                                 $data_field_array[] = array('name'=>$index,'content'=>$date_value);
 
                            }else{
