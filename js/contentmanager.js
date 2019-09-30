@@ -469,7 +469,7 @@ function add_new_admin_user(){
    var url = currentsiteurl+'/';
    var email =  jQuery("#Semail").val();
    var username =  jQuery("#Semail").val();
-   var sponsorlevel = jQuery("#Role option:selected").val();
+   var sponsorlevel = jQuery("#Srole option:selected").val();
    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=addnewadminuser';
    var data = new FormData();
    

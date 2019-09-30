@@ -33,7 +33,7 @@
         
         
 <!--        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/exporting.js?v=2.95"></script>-->
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/contentmanager.js?v=3.40"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/contentmanager.js?v=3.41"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.watable.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-datepicker.min.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-multiselect.js?v=2.95"></script>
