@@ -11,6 +11,11 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     
     
     $user_reportsaved_list = get_option('ContenteManager_usersreport_settings');
+    
+   //    echo '<pre>';
+  // print_r($user_reportsaved_list);exit;
+    
+    
     $get_email_template='AR_Contentmanager_Email_Template';
     $email_template_data = get_option($get_email_template);
     $content = "";

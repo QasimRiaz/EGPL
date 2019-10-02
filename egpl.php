@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.41
+ * Version:           3.42
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -7188,17 +7188,24 @@ function myregisterrequest_new_user($username, $email){
     
 }
 
-
 add_action( 'wp_footer','checkloginuserstatus_fun' );
 function checkloginuserstatus_fun() {
     
-    if ( is_user_logged_in() ) {
+    
      $site_url  = get_site_url();
      $oldvalues = get_option( 'ContenteManager_Settings' );
      $mainheader = $oldvalues['ContentManager']['mainheader'];
      $mainheaderlogo = $oldvalues['ContentManager']['mainheaderlogo'];
      $redirectname = $oldvalues['ContentManager']['redirectcatname'];
+     
+     if(!empty($mainheader)){
+                      $headerbanner =  "url('".$mainheader."')";
+                      echo '<style> .fusion-header{background-image:'.$headerbanner.'}; </style>';
+                }
+     
      $redirectURL = "";
+    if ( is_user_logged_in() ) {
+     
      $current_user = wp_get_current_user();
      $user_id = get_current_user_id();
      $currentSiteID = get_current_blog_id();
@@ -7226,16 +7233,7 @@ function checkloginuserstatus_fun() {
                     $valuename = "package";
                 }
 
-                if(!empty($mainheader)){
-
-
-                      $headerbanner =  "url('".$mainheader."')";
-
-                      echo '<script type="text/javascript"> jQuery(".fusion-header").css("background-image","'.$headerbanner.'"); </script>';
-
-
-
-               }
+                
 
                $current_user = wp_get_current_user();
                $roles = $current_user->roles;
