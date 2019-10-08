@@ -1,7 +1,7 @@
 ~Current Version:3.43~
 
 
--------------------27-09-2019-----------------
+-------------------27-09-2019---Main release 3.40--------------
 Release Items
 
 1.Company URL Task validation
@@ -15,7 +15,7 @@ Release Items
 9.Registration Confirmation Email Content
 10.Remove Logo from User Account
 
--------------------08-10-2019-----------------
+-------------------08-10-2019------Bug release 3.43-----------
 
 -Fixed the content Editor Bug 
 -Manage Level Screen Fix Level assinge/Unassigned
