@@ -914,3 +914,9 @@ table.dataTable tbody td {
     
     display: none !important;
 }
+
+.site-header .help-dropdown {
+	
+	width: 40% !important;
+    text-align: center !important;
+}

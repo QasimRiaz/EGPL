@@ -55,8 +55,9 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     // foreach ($result['profile_fields'] as $key=>$value){  
         $tasktitle_list = array();
         foreach($listOFtaskArray as $taskKey=>$tasksObject){
-    
-            $tasktitle_list[] = htmlspecialchars($tasksObject->post_title);
+            $tasksID = $tasksObject->ID;
+            $value_label = get_post_meta( $tasksID, 'label' , false);
+            $tasktitle_list[] = $value_label;//htmlspecialchars($tasksObject->post_title);
     
         }
      sort($tasktitle_list);

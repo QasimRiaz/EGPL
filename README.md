@@ -1,4 +1,4 @@
-~Current Version:3.42~
+~Current Version:3.43~
 
 
 -------------------27-09-2019-----------------
@@ -14,3 +14,10 @@ Release Items
 8.Relabel Merge Fields
 9.Registration Confirmation Email Content
 10.Remove Logo from User Account
+
+-------------------08-10-2019-----------------
+
+-Fixed the content Editor Bug 
+-Manage Level Screen Fix Level assinge/Unassigned
+-Fixed Large Site Title 
+-Rename Task not updating in Quick Search

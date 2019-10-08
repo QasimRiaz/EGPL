@@ -1,6 +1,8 @@
+   var roleassignmenttable ;
    jQuery(document).ready(function() {
        
        
+       roleassignmenttable = jQuery(".assigntaskrole").Datatable({"pageLength": 100});
        var getcontainerwidth =  jQuery( "#previewheaderdiv" ).width() / 5.5 ;
        jQuery("#previewheaderdiv").css("height",getcontainerwidth);
         jQuery("#previewlogo").css("height",getcontainerwidth);  

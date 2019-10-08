@@ -824,11 +824,11 @@ function conform_update_content_page(){
     var contenttitle =jQuery('#pagetitle').val();
     
     var contentbody =tinymce.activeEditor.getContent();
-    if(contentbody == ""){
+   // if(contentbody == ""){
         
-     contentbody   = jQuery('#mycustomeditor').val();
+    // contentbody   = jQuery('#mycustomeditor').val();
      
-    }
+   // }
    // console.log(contentbody);
     var contentbodyID =jQuery('#pagecontentid').val();
   
