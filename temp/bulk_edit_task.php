@@ -56,7 +56,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
         $tasktitle_list = array();
         foreach($listOFtaskArray as $taskKey=>$tasksObject){
             $tasksID = $tasksObject->ID;
-            $value_label = get_post_meta( $tasksID, 'label' , false);
+            $value_label = get_post_meta( $tasksID, 'label' , true);
             $tasktitle_list[] = $value_label;//htmlspecialchars($tasksObject->post_title);
     
         }

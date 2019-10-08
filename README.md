@@ -15,7 +15,7 @@ Release Items
 9.Registration Confirmation Email Content
 10.Remove Logo from User Account
 
--------------------08-10-2019------Bug release 3.44-----------
+-------------------08-10-2019------Bug release 3.45-----------
 
 -Fixed the content Editor Bug 
 -Manage Level Screen Fix Level assinge/Unassigned
