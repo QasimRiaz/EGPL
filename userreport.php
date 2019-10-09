@@ -1314,8 +1314,14 @@ function userreportresultdraw() {
                                 }
                                 
                             }else{
-                                
-                                $column_row[$value['fieldName']] = $all_meta_for_user[$site_prefix.$value['fielduniquekey']][0];
+                                if(empty($all_meta_for_user[$site_prefix.$value['fielduniquekey']][0]) || $all_meta_for_user[$site_prefix.$value['fielduniquekey']][0]== "null"){
+                                    
+                                   $column_row[$value['fieldName']] = ""; 
+                                    
+                                }else{
+                                   
+                                    $column_row[$value['fieldName']] = $all_meta_for_user[$site_prefix.$value['fielduniquekey']][0];
+                                }
                                 
                             }
 

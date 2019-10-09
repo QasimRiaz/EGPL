@@ -315,7 +315,7 @@ function add_new_sponsor(){
            
             var metaupdate = jQuery(this).val();
              var pattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/g;
-       
+            if(metaupdate!=""){
             if(pattern.test(metaupdate)  == true){
                
                  var checkstatus  = metaupdate.includes("http");
@@ -337,7 +337,9 @@ function add_new_sponsor(){
                 errorURLValidation = true;
                 
             }
-            
+        }else{
+             data.append(jQuery(this).attr( "name" ), metaupdate);
+        }
            
        });
    
@@ -646,7 +648,7 @@ function update_sponsor(){
             var metaupdate = jQuery(this).val();
             var pattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/g;
        
-             
+             if(metaupdate!=""){
             if(pattern.test(metaupdate)  == true){
                
                  var checkstatus  = metaupdate.includes("http");
@@ -668,6 +670,9 @@ function update_sponsor(){
                 
                 errorURLValidation = true;
                 
+            }}else{
+            
+                 data.append(jQuery(this).attr( "name" ), metaupdate);
             }
             
            

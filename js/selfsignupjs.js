@@ -15,7 +15,7 @@ function selfisignupadd_new_sponsor(){
            
             var metaupdate = jQuery(this).val();
             var pattern = /(?:https?:\/\/)?(?:[a-zA-Z0-9.-]+?\.(?:[a-zA-Z])|\d+\.\d+\.\d+\.\d+)/;
-             
+            if(metaupdate !=""){
             if(pattern.test(metaupdate)  == true){
                
                  var checkstatus  = metaupdate.includes("http");
@@ -36,6 +36,11 @@ function selfisignupadd_new_sponsor(){
                 
                 errorURLValidation = true;
                 
+            }}else{
+            
+            
+            data.append(jQuery(this).attr( "name" ), metaupdate);
+            
             }
             
            
@@ -116,9 +121,9 @@ function selfisignupadd_new_sponsor(){
            
             var ID = jQuery(this).attr( "id" );
             if(jQuery(this).prop("checked")) {
-                data.append(jQuery(this).attr( "id" ), true);
+                data.append(jQuery(this).attr( "id" ), "Checked");
               } else {
-                 data.append(jQuery(this).attr( "id" ), false);
+                 data.append(jQuery(this).attr( "id" ), "");
               }
            
            
