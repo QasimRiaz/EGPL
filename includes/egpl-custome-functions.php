@@ -50,6 +50,7 @@ class EGPLCustomeFunctions {
             $value['attribute'] = get_post_meta( $value['fieldID'], '_egpl_field_attribute', true);
             $value['fieldIndex'] = get_post_meta( $value['fieldID'], 'Indexfield', true);
             $value['options'] = get_post_meta( $value['fieldID'], 'options', true);
+            $value['multiselect'] = get_post_meta( $value['fieldID'], 'multiselect', true);
             
             
             
