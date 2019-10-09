@@ -112,8 +112,11 @@ height: 50% !important;
             </header>
            
             <div class="box-typical box-typical-padding">
-                <p>
-                    You can create new or edit all existing fields here.
+                
+                <p>This section is where you can create additional custom user fields to manage your user data. </p>
+                <p>If you are using the exhibitor application form, this is where you can add additional fields to capture information on potential exhibitors and later report on.</p> 
+<p>You can also create custom internal fields on your users. For example, if you capture meal preferences for your exhibitors in another system but want to also expose it in ExpoGenie, you can create a custom field to add that data and use in reporting.</p>
+<p>Note that the sections in BLUE are standard and required ExpoGenie fields that you cannot remove.
                 </p>
                
                 <h5 class="m-t-lg with-border"></h5>
@@ -123,8 +126,9 @@ height: 50% !important;
                        <span><input type="hidden" id="currentadmnirole"  value="<?php echo $currentrolename;?>" ></span>
                        <select  class="addnewtaskdata-type" style="display: none;">
                                 
-                                
+                                <option></option>
                                 <?php foreach ($field_input_type as $val) { ?>
+                                        
                                         <option value="<?php echo $val['type']; ?>" ><?php echo $val['lable']; ?></option>
                                 <?php } ?>
                         </select>
@@ -172,6 +176,8 @@ height: 50% !important;
                             <tbody>
 
                                 <?php
+                                
+                                
                                foreach ($listOFcustomfieldsArray as $fieldskey => $value) {
                                     
                                     
@@ -186,7 +192,7 @@ height: 50% !important;
                                                
                                                 
                                                 <i data-toggle="tooltip" class="hi-icon fa fa-clone saveeverything" id="<?php echo $value['fieldID']; ?>" onclick="clonebulk_fields(this)" title="Create a clone" ></i>
-                                                <i  data-toggle="tooltip" title="Advanced" name="<?php echo $value['fieldID']; ?>" onclick="bulkfieldsettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i>
+                                                <i  data-toggle="tooltip" title="Field Settings" name="<?php echo $value['fieldID']; ?>" onclick="bulkfieldsettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i>
                                                 <?php if($value['SystemfieldInternal'] != "checked") {?>
                                                 <i  data-toggle="tooltip" title="Remove this field" name="<?php echo $value['fieldID']; ?>" onclick="removebulk_fields(this)" class="hi-icon fusion-li-icon fa fa-times-circle" ></i>
                                                 <?php }?>
@@ -206,8 +212,9 @@ height: 50% !important;
                                             <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-fieldplaceholder"  value="<?php if(isset($value['fieldplaceholder'])){ echo $value['fieldplaceholder'];} ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-attribute"  value="<?php if(isset($value['attribute'])){ echo $value['attribute'];} ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-SystemfieldInternal"  value="<?php if(isset($value['SystemfieldInternal'])){ echo $value['SystemfieldInternal'];} ?>" ></span>
+                                            <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-multiselect"  value="<?php if(isset($value['multiselect'])){ echo $value['multiselect'];} ?>" ></span>
                                             
-                                                
+                                               
                                                 
                                                 <?php if ($value['fieldType'] == 'dropdown') {
                                                 $options_values = "";
@@ -227,7 +234,7 @@ height: 50% !important;
                                         </td>
                                         <td>
                                            <div class="topmarrginebulkedit">
-                                               <select  <?php if($value['fieldsystemtask'] == "checked") {echo 'disabled="true" title="This is a system field. Changing its type is not allowed"';}else{echo 'title="Field Type"';} ?>  style="width:100px !important;"class="select2 bulktasktypedrop tasktypesdata" id="bulktasktype_<?php echo $value['fieldID']; ?>" data-placeholder="Select Type" data-toggle="tooltip" data-allow-clear="true">
+                                               <select  <?php if($value['fieldsystemtask'] == "checked") {echo 'disabled="true" title="This is a system field. Changing its type is not allowed"';}else{echo 'title="Field Type"';} ?>  style="width:100px !important;"class="select2 bulktasktypedrop tasktypesdata" id="bulktasktype_<?php echo $value['fieldID']; ?>" data-placeholder="Field Type" data-toggle="tooltip" data-allow-clear="true">
                                                     <?php foreach ($field_input_type as $val) { ?>
                                                         <?php if ($val['type'] == $value['fieldType']) { ?>
                                                             <option value="<?php echo $val['type']; ?>" selected="selected"><?php echo $val['lable']; ?></option>
@@ -280,7 +287,7 @@ height: 50% !important;
                                                
                                                 
                                                 <i data-toggle="tooltip" class="hi-icon fa fa-clone saveeverything" id="<?php echo $value['fieldID']; ?>" onclick="clonebulk_fields(this)" title="Create a clone" ></i>
-                                                <i  data-toggle="tooltip" title="Advanced" name="<?php echo $value['fieldID']; ?>" onclick="bulkfieldsettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i>
+                                                <i  data-toggle="tooltip" title="Field Settings" name="<?php echo $value['fieldID']; ?>" onclick="bulkfieldsettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i>
                                                 <?php if($value['fieldsystemtask'] != "checked") {?>
                                                 <i  data-toggle="tooltip" title="Remove this field" name="<?php echo $value['fieldID']; ?>" onclick="removebulk_fields(this)" class="hi-icon fusion-li-icon fa fa-times-circle" ></i>
                                                 <?php }?>
@@ -300,6 +307,7 @@ height: 50% !important;
                                             <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-fieldplaceholder"  value="<?php if(isset($value['fieldplaceholder'])){ echo $value['fieldplaceholder'];} ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-attribute"  value="<?php if(isset($value['attribute'])){ echo $value['attribute'];} ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-SystemfieldInternal"  value="<?php if(isset($value['SystemfieldInternal'])){ echo $value['SystemfieldInternal'];} ?>" ></span>
+                                            <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-multiselect"  value="<?php if(isset($value['multiselect'])){ echo $value['multiselect'];} ?>" ></span>
                                             
                                                 
                                                 
@@ -321,7 +329,7 @@ height: 50% !important;
                                         </td>
                                         <td>
                                            <div class="topmarrginebulkedit">
-                                               <select  <?php if($value['fieldsystemtask'] == "checked") {echo 'disabled="true" title="This is a system field. Changing its type is not allowed"';}else{echo 'title="Field Type"';} ?>  style="width:100px !important;"class="select2 bulktasktypedrop tasktypesdata" id="bulktasktype_<?php echo $value['fieldID']; ?>" data-placeholder="Select Type" data-toggle="tooltip" data-allow-clear="true">
+                                               <select  <?php if($value['fieldsystemtask'] == "checked") {echo 'disabled="true" title="This is a system field. Changing its type is not allowed"';}else{echo 'title="Field Type"';} ?>  style="width:100px !important;"class="select2 bulktasktypedrop tasktypesdata" id="bulktasktype_<?php echo $value['fieldID']; ?>" data-placeholder="Field Type" data-toggle="tooltip" data-allow-clear="true">
                                                     <?php foreach ($field_input_type as $val) { ?>
                                                         <?php if ($val['type'] == $value['fieldType']) { ?>
                                                             <option value="<?php echo $val['type']; ?>" selected="selected"><?php echo $val['lable']; ?></option>
@@ -383,7 +391,7 @@ height: 50% !important;
 
    
  <script type="text/javascript" src="https://mpryvkin.github.io/jquery-datatables-row-reordering/1.2.3/jquery.dataTables.rowReordering.js"></script>    
- <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_fields.js?v=4.04"></script>    
+ <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_fields.js?v=4.18"></script>    
 
  
 <?php 

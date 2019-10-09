@@ -18,6 +18,11 @@ Release Items
 -------------------08-10-2019------Bug release 3.45-----------
 
 -Fixed the content Editor Bug 
--Manage Level Screen Fix Level assinge/Unassigned
+-Manage Level Screen Fix Level Assigne/Unassigned
 -Fixed Large Site Title 
 -Rename Task not updating in Quick Search
+
+-------------------09-10-2019------Bug release 3.46-----------
+
+- Add new field type checkbox
+- Fix multiselect drop down custom field

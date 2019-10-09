@@ -765,3 +765,13 @@ form.woocommerce-content-box.full-width.checkout_coupon:after {
     
     color:#333 !important;
 }
+.mycustomedropdown{
+    
+    
+    width: 100% !important;
+    color: #333 !important;
+}
+.select2{
+    
+     color: #333 !important;
+}

@@ -354,7 +354,17 @@ function add_new_sponsor(){
             data.append(jQuery(this).attr( "name" ), jQuery(this).val());
        });
        
-       
+        jQuery('.mycustomcheckbox').each(function(){
+           
+           if (jQuery(this).is(":checked"))
+            {
+              data.append(jQuery(this).attr( "id" ), "Checked");
+            }else{
+                
+              data.append(jQuery(this).attr( "id" ), "");  
+            }
+            
+       });
        
        
      
@@ -617,6 +627,19 @@ function update_sponsor(){
            
             data.append(jQuery(this).attr( "name" ), jQuery(this).val());
        });
+       
+       jQuery('.mycustomcheckbox').each(function(){
+           
+           if (jQuery(this).is(":checked"))
+            {
+              data.append(jQuery(this).attr( "id" ), "Checked");
+            }else{
+                
+              data.append(jQuery(this).attr( "id" ), "");  
+            }
+            
+       });
+       
        
        jQuery('.speiclurlfield').each(function(){
            

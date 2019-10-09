@@ -73,7 +73,7 @@
                                
                                     
                                     
-                                    <?php if($additional_fields[$key]['fieldType'] == 'email' || $additional_fields[$key]['fieldType'] == 'text' || $additional_fields[$key]['fieldType'] == 'email' || $additional_fields[$key]['fieldType'] == 'url' ||$additional_fields[$key]['fieldType'] == 'date' ||$additional_fields[$key]['fieldType'] == 'number'){ ?> 
+                                    <?php if($additional_fields[$key]['fieldType'] == 'email' || $additional_fields[$key]['fieldType'] == 'text' ||  $additional_fields[$key]['fieldType'] == 'date' ||$additional_fields[$key]['fieldType'] == 'number'){ ?> 
                                          <div class="form-group row">
                                         <div class="col-sm-4 fontclass">
                                         <label ><?php echo $additional_fields[$key]['fieldName'].' '.$requriedStatus;?>
@@ -91,6 +91,27 @@
 					<input type="<?php echo $additional_fields[$key]['fieldType'];?>"  class="form-control mymetakey" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" placeholder="<?php echo $additional_fields[$key]['fieldplaceholder'];?>" <?php echo $requiredStatueUpdate;?>>
                                         </div>
                                          </div>
+                                        <?php }else if($additional_fields[$key]['fieldType'] == 'url'){?>
+                  
+                                            <div class="form-group row" >
+                                            <div class="col-sm-4">
+                                            <label><?php echo $additional_fields[$key]['fieldName'].' '.$requriedStatussysomb;?>
+                                            <?php if(!empty($additional_fields[$key]['fieldtooltiptext'])){?>
+
+                                              <i style="cursor: pointer;" title="<?php echo $additional_fields[$key]['fieldtooltiptext'];?>" class="reporticon font-icon fa fa-question-circle"></i>
+                                            <?php }?>
+                                            </label>
+                                            <?php if(!empty($additional_fields[$key]['fielddescription'])){?>
+
+                                            <?php echo $additional_fields[$key]['fielddescription'];?>
+                                            <?php }?>
+                                            </div>
+                                            <div class="col-sm-8">
+                                            <input type="text"  class="form-control speiclurlfield" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" placeholder="<?php echo $additional_fields[$key]['fieldplaceholder'];?>" <?php echo $requiredStatueUpdate;?>>
+                                            </div>
+                                            </div>
+                  
+                                            
                                         <?php }else if($additional_fields[$key]['fieldType'] == 'textarea'){?>
                                              <div class="form-group row">
                                         <div class="col-sm-4 fontclass">
@@ -161,7 +182,7 @@
                                        
                                              <div class="form-group row" >
                                                  
-                                                 <div class="col-sm-12">
+                                                 <div class="col-sm-12" style='color:#333'>
                                                      
                                                      <input  class="mycustomcheckbox"  <?php echo $requiredStatueUpdate;?> type="checkbox" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>"><?php echo '   '.$additional_fields[$key]['fieldName'];?><br/>
                                              
@@ -231,10 +252,17 @@
                                     </div>
                                     <div class="col-sm-8">
                                         
-                                      <?php if($additional_fields[$key]['fieldType'] == 'text' || $additional_fields[$key]['fieldType'] == 'email' || $additional_fields[$key]['fieldType'] == 'url' ||$additional_fields[$key]['fieldType'] == 'date' ||$additional_fields[$key]['fieldType'] == 'number'){ ?> 
+                                      <?php if($additional_fields[$key]['fieldType'] == 'text' || $additional_fields[$key]['fieldType'] == 'email'  ||$additional_fields[$key]['fieldType'] == 'date' ||$additional_fields[$key]['fieldType'] == 'number'){ ?> 
                                      
                                             <input type="<?php echo $additional_fields[$key]['fieldType'];?>"  class="form-control mymetakey" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" placeholder="<?php echo $additional_fields[$key]['fieldplaceholder'];?>" <?php echo $requiredStatueUpdate;?>>
                                        
+                                        <?php }else if($additional_fields[$key]['fieldType'] == 'url'){?>
+                  
+                                           
+                                            <input type="text"  class="form-control speiclurlfield" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" placeholder="<?php echo $additional_fields[$key]['fieldplaceholder'];?>" <?php echo $requiredStatueUpdate;?>>
+                                            
+                  
+                                            
                                         <?php }else if($additional_fields[$key]['fieldType'] == 'textarea'){?>
                                         
                                              <textarea  <?php echo $additional_fields[$key]['attribute'];?>  class="form-control mymetakey" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" placeholder="<?php echo $additional_fields[$key]['fieldplaceholder'];?>" <?php echo $requiredStatueUpdate;?>></textarea>
@@ -243,7 +271,7 @@
                                        <?php }else if($additional_fields[$key]['fieldType'] == 'file'){?>
                                            
                                            
-                                           <input type="<?php echo $additional_fields[$key]['fieldType'];?>"  class="form-control" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="customefiels[]" placeholder="<?php echo $additional_fields[$key]['fieldplaceholder'];?>" <?php echo $requiredStatueUpdate;?>>
+                                           <input <?php echo $additional_fields[$key]['attribute'];?> type="<?php echo $additional_fields[$key]['fieldType'];?>"  class="form-control" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="customefiels[]" placeholder="<?php echo $additional_fields[$key]['fieldplaceholder'];?>" <?php echo $requiredStatueUpdate;?>>
                                        
                                            
                                        <?php }else if($additional_fields[$key]['fieldType'] == 'dropdown'){?>
@@ -275,10 +303,25 @@
                                        <?php } ?> </div> </div> <?php }?> 
                                         
                                     
-                                       <?php if($additional_fields[$key]['fieldType'] == 'checkbox'){ ?>
+                                       <?php if($additional_fields[$key]['fieldType'] == 'checkbox'){ 
+                                           
+                                            $requiredStatus = $additional_fields[$key]['fieldrequriedstatus'];
+                                    $requriedStatussysomb = "";
+                                    $requiredStatueUpdate = "";
+                                    
+                                    if($requiredStatus == true){
+                                    
+                                    
+                                    $requiredStatueUpdate = "required='ture'";
+                                    $requriedStatussysomb = "*";
+                                    
+                                    }
+                                           
+                                           
+                                           ?>
                                              <div class="form-group row" >
-                                                 
-                                                 <div class="col-sm-12">
+                                                
+                                                 <div class="col-sm-8" style="color:#333;">
                                                      
                                                      <input  class="mycustomcheckbox"  <?php echo $requiredStatueUpdate;?> type="checkbox" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>"><?php echo '   '.$additional_fields[$key]['fieldName'];?><br/>
                                              

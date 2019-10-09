@@ -27,6 +27,9 @@
                 $field_input_type[8]['lable'] = 'Text Area';
                 $field_input_type[8]['type']  = 'textarea';
                 
+                $field_input_type[9]['lable'] = 'Checkbox';
+                $field_input_type[9]['type']  = 'checkbox';
+                
                 
                 $cventmappingarray['task_company_name_for_print_463cz']['name'] = 'Company Name';
                 $cventmappingarray['task_company_name_for_print_463cz']['taskkey'] = 'task_company_name_for_print_463cz';

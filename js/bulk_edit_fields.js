@@ -119,7 +119,7 @@ jQuery(window).load(function() {
           console.log(col01);
         var col1 = '<div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"><i class="hi-icon fa fa-clone saveeverything" id="'+uniquecode+'" title="Create a clone" onclick="clonebulk_fields(this)" style="color:#262626;cursor: pointer;" data-toggle="tooltip" aria-hidden="true"></i> <i data-toggle="tooltip" title="Field Settings" name="'+uniquecode+'" onclick="bulkfieldsettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i><i name="'+uniquecode+'" data-toggle="tooltip" style=" cursor: pointer;margin-left: 10px;" onclick="removebulk_fields(this)" title="Remove this field" class="hi-icon fusion-li-icon fa fa-times-circle " style="color:#262626;"></i></div>';
         
-        var col2 = '<input data-toggle="tooltip" placeholder="Title" title="Title" id="row-'+uniquecode+'-title" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control" name="tasklabel" >  <input type="hidden" id="row-'+uniquecode+'-fieldCode" value=""><input type="hidden" id="row-'+uniquecode+'-Systemfield"  value="" ><input type="hidden" id="row-'+uniquecode+'-fieldtooltip"  value="" > <input type="hidden" id="row-'+uniquecode+'-SystemfieldInternal"  value="" > <input type="hidden" id="row-'+uniquecode+'-fieldstatusrequried"  value="" ><input type="hidden" id="row-'+uniquecode+'-fieldstatusshowonregform"  value="" ><input type="hidden" id="row-'+uniquecode+'-fieldplaceholder"  value="" > <input type="hidden" id="row-'+uniquecode+'-attribute"  value="" ><input type="hidden" id="row-'+uniquecode+'-fielduniquekey"  value="" ><input type="hidden" id="row-'+uniquecode+'-linkurl"  value="" ><input type="hidden" id="row-'+uniquecode+'-linkname"  value="" ><input type="hidden" id="row-'+uniquecode+'-dropdownvlaues"  value="" >';
+        var col2 = '<input data-toggle="tooltip" placeholder="Title" title="Title" id="row-'+uniquecode+'-title" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control" name="tasklabel" >  <input type="hidden" id="row-'+uniquecode+'-fieldCode" value=""><input type="hidden" id="row-'+uniquecode+'-Systemfield"  value="" ><input type="hidden" id="row-'+uniquecode+'-fieldtooltip"  value="" > <input type="hidden" id="row-'+uniquecode+'-SystemfieldInternal"  value="" > <input type="hidden" id="row-'+uniquecode+'-fieldstatusrequried"  value="" ><input type="hidden" id="row-'+uniquecode+'-fieldstatusshowonregform"  value="" ><input type="hidden" id="row-'+uniquecode+'-fieldplaceholder"  value="" > <input type="hidden" id="row-'+uniquecode+'-attribute"  value="" ><input type="hidden" id="row-'+uniquecode+'-fielduniquekey"  value="" ><input type="hidden" id="row-'+uniquecode+'-linkurl"  value="" ><input type="hidden" id="row-'+uniquecode+'-linkname"  value="" ><input type="hidden" id="row-'+uniquecode+'-multiselect"  value="" > <input type="hidden" id="row-'+uniquecode+'-dropdownvlaues"  value="" >';
         
         var col3 = '<div class="topmarrginebulkedit"><select  data-toggle="tooltip" title="Field Type" class="select2 bulktasktypedrop" id="bulktasktype_'+uniquecode+'" data-placeholder="Field Type" data-allow-clear="true">'+tasktypedata+'</select></div>'; //var col4 = '<br><div class="addscrol"><div id="row-'+uniquecode+'-descrpition" class="editfielddiscrpition_'+uniquecode+'"></div><p ><i class="font-icon fa fa-edit" id="fielddiscrpition_'+uniquecode+'" title="Edit your task description"style="cursor: pointer;color: #0082ff;"onclick="bulkfield_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Description</span></p></div></div>';
         var col4 = '<p style="margin-top: 5px;"><i class="font-icon fa fa-edit" id="fielddiscrpition_'+uniquecode+'" title="Edit your field description"style="cursor: pointer;color: #0082ff;"onclick="bulkfield_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Description</span></p><div class="addscrolfield"><div id="row-'+uniquecode+'-descrpition" class="editfielddiscrpition_'+uniquecode+'"></div></div></div>';
@@ -489,7 +489,7 @@ function clonebulk_fields(e){
         function(isConfirm) {
 
             
-           
+            jQuery('#customers_select_search').val(null).trigger('change');
             if (isConfirm) {
                  t.row( jQuery(e).parents('tr') ).remove().draw();
                  
@@ -669,6 +669,9 @@ function saveallbulkcustomefields(){
         singletaskarray['fieldplaceholder'] = jQuery( '#row-'+taskid+'-fieldplaceholder' ).val();
         singletaskarray['attribute'] = jQuery( '#row-'+taskid+'-attribute' ).val();
         singletaskarray['SystemfieldInternal'] = jQuery( '#row-'+taskid+'-SystemfieldInternal' ).val();
+        singletaskarray['multiselect'] = jQuery( '#row-'+taskid+'-multiselect' ).val();
+        
+        
          singletaskarray['fielduniquekey'] = uniqueKey;
         
                
@@ -883,6 +886,7 @@ function bulkfieldsettings(e){
   var dropdownvlaues = jQuery('#row-'+task_code+'-dropdownvlaues').val();
   var fielduniquekey = jQuery('#row-'+task_code+'-fielduniquekey').val();
   var SystemfieldInternal = jQuery('#row-'+task_code+'-SystemfieldInternal').val();
+  var multiselect = jQuery('#row-'+task_code+'-multiselect').val();
   
   
   var trvalue='';
@@ -908,7 +912,8 @@ function bulkfieldsettings(e){
       
       
      trvalue = '<tr><td ><strong>Comma separated list of values</strong></td><td ><input id="field_drop_down_values" value="'+dropdownvlaues+'"></td></tr>';
-      
+     trvalue += '<tr style="'+specialclasssnmae+'"><td><strong>Multi Select</strong></td><td><input '+multiselect+' type="checkbox" class="toggle-one" id="confrim_multiselect" data-toggle="toggle"></td></tr>';
+    
   }
   
   var currentadmnirole = jQuery('#currentadmnirole').val();
@@ -947,7 +952,8 @@ function bulkfieldsettings(e){
           jQuery('#confrim_showonapplicationstatus').bootstrapToggle({
             on: 'Yes',
             off: 'No'
-          });
+          });   
+                 console.log(attributes_file);
 		 jQuery.each(attributes_file.split(","), function(i,e){
 		 jQuery(".select2 option[value='" + e + "']").prop("selected", true);
 		  
@@ -991,6 +997,12 @@ function bulkfieldsettings(e){
            }
            
          
+           if(jQuery('#confrim_multiselect').is(':checked')){
+                jQuery('#row-'+task_code+'-multiselect').val('checked');
+           }else{
+             jQuery('#row-'+task_code+'-multiselect').val('');
+           }
+           
            
            if(jQuery('#confrim_systaskstatus').is(':checked')){
                 jQuery('#row-'+task_code+'-Systemfield').val('checked');

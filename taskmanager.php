@@ -318,6 +318,7 @@ function savebulktask_update($request){
             
             
             
+            
             if(!empty($taskObject->options)){
                 
                 update_post_meta( $tasksID, 'options', $taskObject->options );
@@ -424,7 +425,7 @@ function savebulkfields_update($request){
             update_post_meta( $tasksID, '_egpl_field_attribute', $taskObject->attribute );
             update_post_meta( $tasksID, '_egpl_field_unique_key', $taskObject->fielduniquekey );
             update_post_meta( $tasksID, '_egpl_field_internal_status', $taskObject->SystemfieldInternal );
-            
+            update_post_meta( $tasksID, 'multiselect', $taskObject->multiselect );
             
             
             

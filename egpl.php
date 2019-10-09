@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.45
+ * Version:           3.46
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -3803,7 +3803,7 @@ function my_contentmanager_style() {
     wp_enqueue_style('my-datatable-tools', plugins_url().'/EGPL/css/dataTables.tableTools.css');
    // wp_enqueue_style('cleditor-css', plugins_url() .'/EGPL/css/jquery.cleditor.css');
    // wp_enqueue_style('contentmanager-css', plugins_url() .'/EGPL/css/forntend.css');
-    wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '2.54', 'all');
+    wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '2.55', 'all');
     wp_enqueue_style('my-admin-theme', plugins_url('css/normalize.css', __FILE__));
   
    
