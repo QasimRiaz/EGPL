@@ -1,4 +1,4 @@
-~Current Version:3.47~
+~Current Version:3.48~
 
 
 -------------------27-09-2019---Main release 3.40--------------
@@ -26,3 +26,8 @@ Release Items
 
 - Add new field type checkbox
 - Fix multiselect drop down custom field
+
+
+-------------------23-10-2019------Bug release 3.47-----------
+
+-Fixed Registration Page style missing color

@@ -24,7 +24,13 @@
   </script> 
   <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
   <link href="<?php echo $base_url;?>/wp-content/plugins/EGPL/js/jquery-confirm.css" rel="stylesheet">
-  
+  <style> 
+ .form-group a {
+    color: #428bca !important;
+ }
+ 
+ </style>
+ 
 <div id="content" class="full-width">
         <div class="page-content" style="max-width: 85%;margin-left: auto;margin-right: auto;">
         

@@ -243,8 +243,10 @@ class FloorPlanManager {
                            
                                 
                             $objProduct = wc_get_product( $boothObject->boothID );
+                            
+                            
                            
-                           if(isset($objProduct)){
+                           if(!empty($objProduct)){
                             
                             $objProduct->set_name($boothObject->boothtitle); 
                            // $objProduct->set_stock_quantity(1); //Set number of items available for sale.
@@ -281,6 +283,57 @@ class FloorPlanManager {
                             $NewProductArray[$NewProductArrayIndex] = $newRequestBoothArray;
                             
                             $NewProductArrayIndex++;
+                            }else{
+                                
+                                
+                                $objProduct = new WC_Product();
+                            $objProduct->set_slug($boothObject->cellID);
+                            $objProduct->set_name($boothObject->boothtitle); 
+
+                            $objProduct->set_status('publish'); //Set product status.
+                            $objProduct->set_featured(TRUE); //Set if the product is featured.                          | bool
+                            $objProduct->set_catalog_visibility('visible'); //Set catalog visibility.                   | string $visibility Options: 'hidden', 'visible', 'search' and 'catalog'.
+                            $objProduct->set_description($boothObject->boothdescripition); //Set product description.
+                            $objProduct->set_short_description($boothObject->boothdescripition); //Set product short description.
+
+                            $objProduct->set_price($boothObject->boothprice); //Set the product's active price.
+                            $objProduct->set_regular_price($boothObject->boothprice); //Set the product's regular price.
+
+                            $objProduct->set_manage_stock(TRUE); //Set if product manage stock.                         | bool
+                            $objProduct->set_stock_quantity(1); //Set number of items available for sale.
+                            $objProduct->set_stock_status('instock'); //Set stock status.                               | string $status 'instock', 'outofstock' and 'onbackorder'
+                            $objProduct->set_backorders('no'); //Set backorders.                                        | string $backorders Options: 'yes', 'no' or 'notify'.
+                            $objProduct->set_sold_individually(FALSE);
+                           // $objProduct->set_tax_class(); 
+                            $objProduct->set_image_id($productpicID); //Set main image ID.
+                            //  $objProduct->set_menu_order($menu_order); 
+                            $objProduct->update_meta_data('productlevel', $boothObject->boothlevel);
+                            $objProduct->set_reviews_allowed(TRUE); //Set if reviews is allowed.                        | bool
+                            
+                           
+                           if($boothObject->depositestatus != "unchecked"){
+                               
+                                $objProduct->update_meta_data('_wc_deposit_type', $boothObject->depositstype);
+                                $objProduct->update_meta_data('_wc_deposit_amount', $boothObject->depositsamount);
+                                $objProduct->update_meta_data('_wc_deposit_enabled', 'forced');
+                                
+                            }else{
+                                
+                                $objProduct->update_meta_data('_wc_deposit_type', "");
+                                $objProduct->update_meta_data('_wc_deposit_amount', "");
+                                $objProduct->update_meta_data('_wc_deposit_enabled', "");
+                                
+                                
+                            }
+                            
+                            $new_product_id = $objProduct->save(); //Saving the data to create new product, it will return product ID.
+                            $newRequestBoothArray->boothstatus = 'updated';
+                            $newRequestBoothArray->boothID = $new_product_id;
+                            $NewProductArray[$NewProductArrayIndex] = $newRequestBoothArray;
+                            $NewProductArrayIndex++;
+                                
+                                
+                                
                             }}
 
                         }else if($boothObject->boothstatus == "deleterequest"){
