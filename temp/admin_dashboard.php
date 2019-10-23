@@ -1,6 +1,6 @@
 <?php
 // Silence is golden.
-   if (current_user_can('administrator') || current_user_can('admin') || current_user_can('staff') || current_user_can('manager') ) {
+   if (current_user_can('administrator') || current_user_can('contentmanager') ) {
        
   
        $site_url  = get_site_url();
