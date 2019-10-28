@@ -1,4 +1,3 @@
-~Current Version:3.49~
 
 
 -------------------27-09-2019---Main release 3.40--------------
@@ -31,3 +30,7 @@ Release Items
 -------------------23-10-2019------Bug release 3.47-----------
 
 -Fixed Registration Page style missing color
+
+-------------------23-10-2019------Bug release 3.50-----------
+
+Update Content on Exhibitor Application Form Submission Email

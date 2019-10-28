@@ -1766,11 +1766,11 @@ function selfsign_registration_emails($user_id,$send_email_type){
         //$sponsor_info = get_option($settitng_key);
         
         $sponsor_info['selfsign_registration_request_email']['selfsignfromname'] = $site_title;
-        $sponsor_info['selfsign_registration_request_email']['selfsignsubject'] = 'Registration Application Received for '.$site_title;
-        $sponsor_info['selfsign_registration_request_email']['selfsignboday'] = '<p>Hi '.$all_meta_for_user[$site_prefix.'first_name'][0].'  '.$all_meta_for_user[$site_prefix.'last_name'][0].',</p><p>Thank you for submitting your reservation form for <strong>'.$site_title.'</strong>. We are currently reviewing your submission. You will receive an email with login credentials once the review is complete.</p><p>Thank You!</p>';
-
+        $sponsor_info['selfsign_registration_request_email']['selfsignsubject'] = 'Exhibitor Application Received for ['.$site_title.']';
+        $sponsor_info['selfsign_registration_request_email']['selfsignboday'] = '<p>Hi '.$all_meta_for_user[$site_prefix.'first_name'][0].'  '.$all_meta_for_user[$site_prefix.'last_name'][0].',</p><p>Thank you for submitting your application form for [<strong>'.$site_title.'</strong>]. We are currently reviewing your submission. You will receive an email with login credentials once the review is complete.</p><p>Thank You!</p>';
+        
         $sponsor_info['selfsign_registration_declined_email']['declinedfromname'] = $site_title;
-        $sponsor_info['selfsign_registration_declined_email']['declinedsubject'] = 'Registration Application Declined for '.$site_title;
+        $sponsor_info['selfsign_registration_declined_email']['declinedsubject'] = 'Registration Application Declined for ['.$site_title.']';
         $sponsor_info['selfsign_registration_declined_email']['declinedboday'] = '<p>Dear '.$all_meta_for_user[$site_prefix.'first_name'][0].'  '.$all_meta_for_user[$site_prefix.'last_name'][0].',</p><p>Your registration application on <strong>'.$site_title.'</strong>  has been declined. If you have any further queries, please contact us: <strong>'.$site_url.'</strong> </p><p>Thanks</p>';
 
         $oldvalues = get_option( 'ContenteManager_Settings' );
