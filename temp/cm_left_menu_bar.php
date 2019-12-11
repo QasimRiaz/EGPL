@@ -335,13 +335,13 @@ $blog_id2 = get_current_blog_id();
                                 <span class="lbl menumargine">Floor Plan Editor    </span><i style="color:black;left:170px;"class="fa fa-window-restore" aria-hidden="true"></i>
                            </a>
                       </li>
-	              <li class="mythemestyle">
+<!--	              <li class="mythemestyle">
                            <a href="<?php echo $site_url; ?>/floor-plan-2/" target="_blank">
                                 <i class="font-icon fa fa-map"></i>
                                 <span class="lbl menumargine">Floor Plan Viewer </span>
                            
                             </a>
-                      </li>
+                      </li>-->
                      <?php if($autoreviewstatus != 'enabled'){?>  
                      
                       <li class="mythemestyle">

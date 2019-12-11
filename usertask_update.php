@@ -48,9 +48,16 @@ if ($_GET['usertask_update'] == "update_submission_status") {
          $postid = $postid;
 	
         }
+       global  $wpdb;
+       $site_prefix = $wpdb->get_blog_prefix();
+       $company_name = get_user_meta($postid, $site_prefix.'company_name', true);
+      
        
        $user_info = get_userdata($postid);
        $lastInsertId = contentmanagerlogging('Save Task File',"User Action",serialize($updatevalue),$postid,$user_info->user_email,"pre_action_data");
+       
+      
+       $updatevalue['name']=$company_name.'_'.$updatevalue['name'];
        user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$lastInsertId);
       
     
@@ -142,7 +149,8 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
    try {
     $user_info = get_userdata($postid);
     $old_meta_value=get_user_meta($postid, $keyvalue); 
-  
+    
+   
    
     if(!empty($updatevalue)){
     if ( ! function_exists( 'wp_handle_upload' ) ) require_once( ABSPATH . 'wp-admin/includes/file.php' );

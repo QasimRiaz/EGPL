@@ -182,8 +182,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
 
                   <input type="hidden" id="productid" value="<?php echo $product_id;?>" />
                   <div class="form-group row">
-                          <label class="col-sm-2 form-control-label">Title <strong>*</strong></label>
-                          <div class="col-sm-10">
+                          <label class="col-sm-3 form-control-label">Title <strong>*</strong></label>
+                          <div class="col-sm-9">
                               
                               <?php if($product_name_for_fields_lebal == 'Booth'){
                                   
@@ -203,8 +203,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                           </div>
                       </div>
                       <div class="form-group row">
-                          <label class="col-sm-2 form-control-label">Price <strong>*</strong></label>
-                          <div class="col-sm-10">
+                          <label class="col-sm-3 form-control-label">Price <strong>*</strong></label>
+                          <div class="col-sm-9">
 
                               <input type="number"  class="form-control" id="pprice" name="pprice" value="<?php echo $update_product->regular_price; ?>" placeholder="<?php echo $product_name_for_fields_lebal;?> Price" required>
 
@@ -213,8 +213,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                       </div>
                       <?php if($product_name_for_fields_lebal != 'Booth'){ ?>
                      <div class="form-group row">
-                          <label class="col-sm-2 form-control-label">Stock status <strong>*</strong></label>
-                          <div class="col-sm-10">
+                          <label class="col-sm-3 form-control-label">Stock status <strong>*</strong></label>
+                          <div class="col-sm-9">
 
                               <select onchange="checkstockstatus()" id="pstrockstatus" class="form-control" required>
                                  
@@ -240,8 +240,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                   <div class="quanititybox">
                       <?php if (isset($_GET['productid'])) { if($update_product->stock_status == 'instock'){ ?>
                   <div class="form-group row stockstatusbox">
-                          <label class="col-sm-2 form-control-label">Stock Quantity<strong>*</strong></label>
-                          <div class="col-sm-10">
+                          <label class="col-sm-3 form-control-label">Stock Quantity<strong>*</strong></label>
+                          <div class="col-sm-9">
 
                               <input type="number"  class="form-control" id="pquanitity" value="<?php echo $update_product->stock_quantity; ?>" name="pquanitity" placeholder="Stock Quantity" >
 
@@ -250,8 +250,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                  </div>
                       <?php }}else{?>
                   <div class="form-group row stockstatusbox" >
-                          <label class="col-sm-2 form-control-label">Stock Quantity<strong>*</strong></label>
-                          <div class="col-sm-10">
+                          <label class="col-sm-3 form-control-label">Stock Quantity<strong>*</strong></label>
+                          <div class="col-sm-9">
 
                               <input type="number"  class="form-control" id="pquanitity" name="pquanitity" placeholder="Stock Quantity" >
 
@@ -262,8 +262,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                  
                   
                   <div class="form-group row">
-                          <label class="col-sm-2 form-control-label"><?php echo $product_name_for_fields_lebal;?> Status <strong>*</strong></label>
-                          <div class="col-sm-10">
+                          <label class="col-sm-3 form-control-label"><?php echo $product_name_for_fields_lebal;?> Status <strong>*</strong></label>
+                          <div class="col-sm-9">
 
                               <select id="pstatus" class="form-control" required>
                                      
@@ -295,8 +295,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                    </div>
                    <?php }?>
                   <div class="form-group row">
-                          <label class="col-sm-2 form-control-label">Type </label>
-                          <div class="col-sm-10">
+                          <label class="col-sm-3 form-control-label">Type </label>
+                          <div class="col-sm-9">
                               
                               
                               
@@ -356,15 +356,15 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                             <?php  } }} ?> 
                                               
                                   </select>
-                                  <label class="col-sm-2 form-control-label"><?php echo $typename;?></label>
+                                  <label class="col-sm-3 form-control-label"><?php echo $typename;?></label>
 
                           </div>
                    </div>
                   
                   <div class="form-group row" id="assignmentlevelfield" >
                  
-                                    <label class="col-sm-2 form-control-label">Assign Level <i data-toggle="tooltip" title="If you select a level here, the buyer of this product will be automatically assigned this level on successfully placing the order." class="fa fa-question-circle" aria-hidden="true"></i></label>
-                                    <div class="col-sm-10">
+                                    <label class="col-sm-3 form-control-label">Level Assignment <i data-toggle="tooltip" title="If you select a level here, the buyer of this product will be automatically assigned this level on successfully placing the order." class="fa fa-question-circle" aria-hidden="true"></i></label>
+                                    <div class="col-sm-9">
                                            
 								 <select  class="form-control" id="roleassign" >
 								
@@ -405,8 +405,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                 
                     
                  
-                                    <label class="col-sm-2 form-control-label">Select Tasks <i data-toggle="tooltip" title="If you select one or more tasks here, the buyer of this product will be automatically assigned these tasks on successfully placing the order." class="fa fa-question-circle" aria-hidden="true"></i></label>
-                                    <div class="col-sm-10">
+                                    <label class="col-sm-3 form-control-label">Task Assignment <i data-toggle="tooltip" title="If you select one or more tasks here, the buyer of this product will be automatically assigned these tasks on successfully placing the order." class="fa fa-question-circle" aria-hidden="true"></i></label>
+                                    <div class="col-sm-9">
                                            
 								 <select  class="form-control" class="select2"  data-placeholder="Select Tasks" data-allow-clear="true" data-toggle="tooltip" multiple="multiple" id="selectedtasks" >
 								
@@ -456,8 +456,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                     </div>
                  </div>
                   <div class="form-group row">
-                          <label class="col-sm-2 form-control-label"><?php echo $product_name_for_fields_lebal;?> Image </label>
-                          <div class="col-sm-10" id="changeimageupload" style="display:none;">
+                          <label class="col-sm-3 form-control-label"><?php echo $product_name_for_fields_lebal;?> Image <i data-toggle="tooltip" title="Recommended Max Size: w:500 h:500" class="fa fa-question-circle" aria-hidden="true"></i></label>
+                          <div class="col-sm-9" id="changeimageupload" style="display:none;">
                               <input  type="file" class="form-control" id="updateproductimage" >				
                             </div>
                            <?php if (isset($_GET['productid'])) { 
@@ -473,15 +473,15 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                    <img src="<?php echo $url; ?>" width="150" />
                                     <input type="hidden" id="productoldimage" value="<?php echo $update_product->image_id; ?>" />
                                 </div>
-                                <div class="col-sm-5 productremoveimageblock" style="margin-top: 5%;">
+                                <div class="col-sm-4 productremoveimageblock" style="margin-top: 5%;">
                                     <a   onclick="changeimage()" class="btn btn-lg btn-danger" >Change Image</a>
                                 </div>
                            <?php }else{ ?>
-                            <div class="col-sm-10">
+                            <div class="col-sm-9">
                               <input  type="file" class="form-control" id="productimage" >				
                             </div>
                            <?php }}else{ ?>
-                          <div class="col-sm-10">
+                          <div class="col-sm-9">
                               <input  type="file" class="form-control" id="productimage" >				
                             </div>
                           <?php } ?>
@@ -490,8 +490,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                   <div class="form-group row">
                           
                           
-                          <label class="col-sm-2 form-control-label">Enable Deposits <i data-toggle="tooltip" title="Select if you want to enable split payments for this booth." class="fa fa-question-circle" aria-hidden="true"></i></label>
-                          <div class="col-sm-10">
+                          <label class="col-sm-3 form-control-label">Enable Deposits <i data-toggle="tooltip" title="Select if you want to enable split payments for this booth." class="fa fa-question-circle" aria-hidden="true"></i></label>
+                          <div class="col-sm-9">
                               
                              <?php if (isset($_GET['productid'])) { 
                                    if(!empty($get_deposit_type)){?> 
@@ -517,8 +517,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                  
                           
                           
-                          <label class="col-sm-2 form-control-label">Deposits Type <i data-toggle="tooltip" title="For the initial payment, enter either a fixed dollar amount or a percentage of the entire cost." class="fa fa-question-circle" aria-hidden="true"></i></label>
-                          <div class="col-sm-10">
+                          <label class="col-sm-3 form-control-label">Deposits Type <i data-toggle="tooltip" title="For the initial payment, enter either a fixed dollar amount or a percentage of the entire cost." class="fa fa-question-circle" aria-hidden="true"></i></label>
+                          <div class="col-sm-9">
 
                               <select class="form-control" id="depositstype">
                                   
@@ -548,8 +548,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                      <?php }}else{?>
                         <div class="form-group row depositsdetail" style="display:none;">
                      <?php } ?>
-                          <label class="col-sm-2 form-control-label">Deposit Amount <i data-toggle="tooltip" title = ' <?php echo' Enter dollar amount for "Fixed Amount" types, and percentage amount for "Percentage" types';?> ' class="fa fa-question-circle" aria-hidden="true"></i></label>
-                          <div class="col-sm-10">
+                          <label class="col-sm-3 form-control-label">Deposit Amount <i data-toggle="tooltip" title = ' <?php echo' Enter dollar amount for "Fixed Amount" types, and percentage amount for "Percentage" types';?> ' class="fa fa-question-circle" aria-hidden="true"></i></label>
+                          <div class="col-sm-9">
 
                                <input  id="depositamount" class="form-control"  value="<?php echo $get_deposit_amount;?>" type="number" >	
 
@@ -558,8 +558,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                   
                     <?php if($product_name_for_fields_lebal != 'Booth'){ ?>
                       <div class="form-group row">
-                          <label class="col-sm-2 form-control-label">Position <i data-toggle="tooltip" title="This determines the order in which this product shows up in the shop based on the numeric order. For example, if you create 3 products, and you select the position 1,2,3 for each of the products, the product with the position '1' will appear first. Leaving a position blank will default the product by creation date." class="fa fa-question-circle" aria-hidden="true"></i></label>
-                          <div class="col-sm-10">
+                          <label class="col-sm-3 form-control-label">Position <i data-toggle="tooltip" title="This determines the order in which this product shows up in the shop based on the numeric order. For example, if you create 3 products, and you select the position 1,2,3 for each of the products, the product with the position '1' will appear first. Leaving a position blank will default the product by creation date." class="fa fa-question-circle" aria-hidden="true"></i></label>
+                          <div class="col-sm-9">
 
                             <input  id="menu_order" class="form-control"  value="<?php echo $update_product->menu_order; ?>" type="number" >		
 
@@ -567,8 +567,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                       </div>
                     <?php }?>
                       <div class="form-group row">
-                          <label class="col-sm-2 form-control-label"><?php echo $product_name_for_fields_lebal;?> Description </br>(Shown on Detail Page)</label>
-                          <div class="col-sm-10">
+                          <label class="col-sm-3 form-control-label"><?php echo $product_name_for_fields_lebal;?> Description </br>(Shown on Detail Page)</label>
+                          <div class="col-sm-9">
 
                              
                               <textarea  class="pdescriptionbox"   id="pdescription"  ><?php echo $update_product->description; ?></textarea>		
@@ -577,8 +577,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                       </div>
                   <?php if($product_name_for_fields_lebal != 'Booth'){ ?>
                      <div class="form-group row">
-                          <label class="col-sm-2 form-control-label"><?php echo $product_name_for_fields_lebal;?> Short Description </br>(Shown on Listing Page)</label>
-                          <div class="col-sm-10">
+                          <label class="col-sm-3 form-control-label"><?php echo $product_name_for_fields_lebal;?> Short Description </br>(Shown on Listing Page)</label>
+                          <div class="col-sm-9">
 
                              <textarea   class="pdescriptionbox"  id="pshortdescription"  ><?php echo $update_product->short_description; ?></textarea>	
 

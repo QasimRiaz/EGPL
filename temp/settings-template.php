@@ -49,8 +49,8 @@
                   
                   
                 <div class="form-group row">
-                    <div class="col-sm-4"><label class=" form-control-label">Header Image </label><p style="font-size: 12px;margin-left: 12px;">(Recommended size - w:1260 x h:230)</p></div>
-                        <div class="col-sm-8">
+                    <div class="col-sm-5"><label class=" form-control-label">Header Image </label><p style="font-size: 16px;margin-left: 12px;">(Recommended size (Pixels) - w:1260 x h:230)</p></div>
+                        <div class="col-sm-7">
                             <input type="hidden" id="headerbannerurl" value="<?php echo $mainheaderbackground;?>" /> 
                             
                             

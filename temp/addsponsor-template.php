@@ -107,7 +107,7 @@
 								<a class="nav-link active" href="#tabs-1-tab-1" role="tab" data-toggle="tab">
 									<span class="nav-link-in">
 										<span class="fa fa-info-circle" ></span>
-										Basic Information
+										User Details
 									</span>
 								</a>
 							</li>
@@ -212,7 +212,7 @@
                                                        <?php  foreach ($all_roles as $key => $name) { 
                                                         
                                                         
-                                                        if ($key != 'administrator' && $key != 'contentmanager' && $key != 'subscriber') {
+                                                        if ($key != 'administrator' && $key != 'contentmanager') {
                                                         ?>
                                                   
                                                          <option value='<?php echo $key;?>'><?php echo $name['name'];?></option>

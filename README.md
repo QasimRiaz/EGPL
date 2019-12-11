@@ -1,4 +1,4 @@
-~Current Version:3.410~
+~Current Version:3.50~
 
 
 -------------------27-09-2019---Main release 3.40--------------
@@ -32,6 +32,16 @@ Release Items
 
 -Fixed Registration Page style missing color
 
--------------------23-10-2019------Bug release 3.50-----------
+-------------------23-10-2019------Bug release 3.410-----------
 
 Update Content on Exhibitor Application Form Submission Email
+
+-------------------11-12-2019---Main release 3.50--------------
+Release Items
+
+1.Correct Login Link on pages that required login
+2.System Level - Unassigned
+3.Create Add-On Content Change
+4.Update "Basic Information" in Add User
+5.Update Header Specs
+6.Update From Email
