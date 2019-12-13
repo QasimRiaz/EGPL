@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.50
+ * Version:           3.51
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -2744,7 +2744,12 @@ function add_new_sponsor_metafields($user_id,$meta_array,$role){
    
     
     $result = update_user_option($user_id, 'capabilities',  $leavel);
-   
+    $t=time();
+    
+    $result = update_user_option($user_id, 'profile_updated',  $t*1000);
+    
+  
+    
     return $result;
 }
 
@@ -3803,7 +3808,7 @@ function my_contentmanager_style() {
     wp_enqueue_style('my-datatable-tools', plugins_url().'/EGPL/css/dataTables.tableTools.css');
    // wp_enqueue_style('cleditor-css', plugins_url() .'/EGPL/css/jquery.cleditor.css');
    // wp_enqueue_style('contentmanager-css', plugins_url() .'/EGPL/css/forntend.css');
-    wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '2.55', 'all');
+    wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '2.56', 'all');
     wp_enqueue_style('my-admin-theme', plugins_url('css/normalize.css', __FILE__));
   
    
@@ -8079,6 +8084,25 @@ function UpdateNewUser($updateContactUserData){
             
             $user_id = $authors[0]->ID;
             $user_data = get_userdata($authors[0]->ID);
+            
+             $role = $updateContactUserData->Role;
+            
+            
+    
+                if (is_multisite()) {
+                    $blog_id = get_current_blog_id();
+                    $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+                }else{
+                    $get_all_roles_array = 'wp_user_roles';
+                }
+                $get_all_roles = get_option($get_all_roles_array);
+                foreach ($get_all_roles as $key => $item) {
+                     if($role == $item['name']){
+                         $role = $key;
+
+                     }
+                }
+          
             if($updateContactUserData->Semail != $user_data->user_email){
             
                 
@@ -8123,7 +8147,7 @@ function UpdateNewUser($updateContactUserData){
                 
             }
             update_user_option($user_id, 'profile_updated', $t*1000);
-            updateregistredUserMeta($user_id,$updateContactUserData);
+            updateregistredUserMeta($user_id,$updateContactUserData,$role);
             
             $responce['id'] = time()*1000;
             $responce['message'] = "Requested data has been updated successfully.";
@@ -8188,7 +8212,7 @@ function CreateNewUser($newContactUserData){
         // custome_email_send($user_id,$newContactUserData->Semail,"welcome_email_template");
         // $t=time();
          update_user_option($user_id, 'profile_updated', $t*1000);
-         updateregistredUserMeta($user_id,$newContactUserData);
+         updateregistredUserMeta($user_id,$newContactUserData,$role);
          if (add_user_to_blog($blogid, $user_id, $role)) {
 
                  add_user_to_blog(1, $user_id, $role);
@@ -8238,7 +8262,7 @@ function CreateNewUser($newContactUserData){
     if($user_status_for_this_site == 'alreadyexist'){
         
         $message['message'] =  'User already exists for this site.';
-        
+        update_user_option($user_id, 'profile_updated', $t*1000);
     }else{    
         
         
@@ -8254,7 +8278,7 @@ function CreateNewUser($newContactUserData){
                    // custome_email_send($user_id,$email,"welcome_email_template");
                    // $t=time();
                     update_user_option($user_id, 'profile_updated', $t*1000);
-                    updateregistredUserMeta($user_id,$newContactUserData);
+                    updateregistredUserMeta($user_id,$newContactUserData,$role);
                 
                 $message['message'] =  'User added to this blog.';
             
@@ -8276,7 +8300,7 @@ function CreateNewUser($newContactUserData){
     
 }
 
-function updateregistredUserMeta($userID,$userMetaData){
+function updateregistredUserMeta($userID,$userMetaData,$role){
     
     try {
     
@@ -8289,6 +8313,8 @@ function updateregistredUserMeta($userID,$userMetaData){
         }
         
         
+        $leavel[strtolower($role)] = 1;
+        $result = update_user_option($userID, 'capabilities',  $leavel);
     
      }catch (Exception $e) {
 
@@ -8307,11 +8333,11 @@ function updatetask(){
         
         $taskkey = $newContactUserData->taskkey;
         $getkeyinformation  = gettasktype($taskkey);
-        global $wpdb;
-        $site_prefix = $wpdb->get_blog_prefix();
-       
+        
         
         global $wpdb;
+        
+        $site_prefix = $wpdb->get_blog_prefix();
         $user_query = new WP_User_Query( array( 'role__not_in' => 'Administrator' ) );
         $authors = $user_query->get_results();
         
@@ -8343,12 +8369,18 @@ function updatetask(){
                    
              if($getkeyinformation['fieldtype'] == 'customfield'){
                  
+                $dataandtime = $all_meta_for_user[$site_prefix.'profile_updated'][0]/1000;
+               
+                
+                $createuniqueKey = date('YmdHis', $dataandtime);
+              
+               
                 
              if($getkeyinformation['type'] == 'fileupload'){
                  
                  $file_info   = unserialize($all_meta_for_user[$getkeyinformation['key']][0]);
-                 $dataandtime = $all_meta_for_user[$site_prefix.'profile_updated'][0]/1000;
-                 $createuniqueKey = date('YmdHis', $dataandtime);
+                
+                
                  
                 
                  
@@ -8364,11 +8396,13 @@ function updatetask(){
                 }else{
                     
                         if(!empty($dataandtime) && !empty($all_meta_for_user[$contactIDkey][0])){
+                            
                             $dataandtime = $all_meta_for_user[$site_prefix.'profile_updated'][0]/1000;
                             $createuniqueKey = date('YmdHis', $dataandtime);
+                            
                             $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$createuniqueKey;
                             $columns_rows_dataFinalData[$mainArrayIndex][$fiekldlable] = $all_meta_for_user[$getkeyinformation['key']][0];
-                            $columns_rows_dataFinalData[$mainArrayIndex]['contact-id'] = $all_meta_for_user[$contactIDkey][0];
+                            $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
                             $columns_rows_dataFinalData[$mainArrayIndex]['date-time'] = date('d-M-Y H:i:s', $dataandtime);
                             $mainArrayIndex++;
                         }
@@ -8423,22 +8457,19 @@ function updatetask(){
         
         if(empty($columns_rows_dataFinalData)){
             
-            
-            $columns_rows_dataFinalData['message'] ="No record found.";
-        }
-        
-        
-        $resutl =  json_encode($columns_rows_dataFinalData);
-        
-        
-        echo $resutl;
+              $resutl ="[]";
+              echo $resutl;
         }else{
             
-            $columns_rows_dataFinalData['error'] = "Invaild Task Lable.";
-            $columns_rows_dataFinalData['id'] = time()*1000;
-            $resutl = "[".json_encode($columns_rows_dataFinalData)."]";
+            $resutl =  json_encode($columns_rows_dataFinalData);
             echo $resutl;
+        }
+        
+        }else{
             
+            $resutl ="[]";
+            echo $resutl;
+           
         }
         die();
         

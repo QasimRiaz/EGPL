@@ -373,7 +373,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                                                          foreach ($all_roles as $key => $name) {
 
 
-                                                                             if ($key != 'administrator' && $key != 'contentmanager' && $key != 'subscriber') {
+                                                                             if ($key != 'administrator' && $key != 'contentmanager' ) {
                                                                                 
                                                                                  if($get_results == $key){
                                                                                      
@@ -387,7 +387,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                                                         foreach ($all_roles as $key => $name) {
 
 
-                                                                             if ($key != 'administrator' && $key != 'contentmanager' && $key != 'subscriber') {
+                                                                             if ($key != 'administrator' && $key != 'contentmanager' ) {
                                                                                  echo '<option value="' . $key . '">' . $name['name'] . '</option>';
                                                                              }
                                                                          }

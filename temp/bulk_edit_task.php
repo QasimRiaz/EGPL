@@ -173,7 +173,7 @@ height: 50% !important;
                             <?php 
                             
                             foreach ($all_roles as $key=>$name) {
-                                if($key !='administrator' && $key !='subscriber'){
+                                if($key !='administrator' ){
                                     echo '<option value="' . $key . '">' . $name['name'] . '</option>';
                                 }
                             }
@@ -370,7 +370,7 @@ height: 50% !important;
                                                     }
 
                                                     foreach ($all_roles as $key => $name) {
-                                                        if($key !='administrator' && $key !='subscriber'){
+                                                        if($key !='administrator' ){
                                                         if (in_array($key, $value['roles'])) {
 
                                                             echo '<option value="' . $key . '" selected="selected">' . $name['name'] . '</option>';
@@ -416,24 +416,22 @@ height: 50% !important;
                                             </div> 
                                         </td>
                                     </tr>  
+        <?php } ?>        
 
+                    </tbody>
 
-    <?php } ?>        
-
-                            </tbody>
-
-                        </table>
+                    </table>
                 </div>
             <div class="form-group row"> 
                     
                     <div class="col-sm-10">
                         
-
-
                         <button  type="submit"  name="savealltask"   class="btn btn-lg mycustomwidth btn-success" value="Register">Save All Changes</button>
                         <a  name="addsponsor2"   class="addnewbulktask btn btn-lg mycustomwidth btn-success" value="Register">Add New Task</a>
+                    
                     </div>
-                </div>
+            </div>
+            
             </form>
             </div>
         </div>

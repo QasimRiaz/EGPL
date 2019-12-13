@@ -1,4 +1,4 @@
-~Current Version:3.50~
+~Current Version:3.51~
 
 
 -------------------27-09-2019---Main release 3.40--------------
@@ -28,13 +28,10 @@ Release Items
 - Fix multiselect drop down custom field
 
 
--------------------23-10-2019------Bug release 3.47-----------
-
--Fixed Registration Page style missing color
-
 -------------------23-10-2019------Bug release 3.410-----------
 
-Update Content on Exhibitor Application Form Submission Email
+-Fixed Registration Page style missing color
+-Update Content on Exhibitor Application Form Submission Email
 
 -------------------11-12-2019---Main release 3.50--------------
 Release Items
@@ -45,3 +42,8 @@ Release Items
 4.Update "Basic Information" in Add User
 5.Update Header Specs
 6.Update From Email
+
+-------------------14-12-2019---Bug Fixed Release--------------
+
+1.Level Not Updating in Zapier code
+2.Update New Product roles Dropdown

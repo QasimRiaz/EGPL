@@ -66,10 +66,6 @@
 							
 						</div>
 					</section>
-                                        
-                                        
-                                       
-                    
                     </div>
                     <div class=""> </div><!--.row-->
                         <div class=" col-md-6">  
@@ -118,16 +114,9 @@
 	    </div><!--.container-fluid-->
 	</div><!--.page-content-->
 
-
-
-       
-      <?php //include 'cm_controll_panel.php';
+   <?php //include 'cm_controll_panel.php';
        include 'cm_footer.php';
 		
-      
-      
-      
-       
    }else{
        $redirect = get_site_url();
     wp_redirect( $redirect );exit;
