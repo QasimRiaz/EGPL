@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.54
+ * Version:           3.55
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -16,7 +16,7 @@
  * Date 11/02/2019
  */
 
-//get all the plugin settings
+
 //get all the plugin settings
 if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {        
     require_once('../../../wp-load.php');
@@ -8549,7 +8549,6 @@ function gettasktype($taskkey){
     }
     return $getOrginalData;
 }
-
 //[siturl]
 function currentsiteurl_func( $atts ){
 	
