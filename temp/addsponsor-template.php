@@ -127,6 +127,76 @@
 				<div class="tab-content">
                                     <div role="tabpanel" class="tab-pane fade in active" id="tabs-1-tab-1">
                                         
+                                       <div class="form-group row" >
+                                            <div class="col-sm-2">
+                                                <label>Email *</label>
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <input type="email"  class="form-control mymetakey"  id="Semail" name="Semail" placeholder="Email" required='ture'>
+                                            </div>
+                                            <div class="col-sm-5">
+                                        
+                                                <a class="btn btn-inline" onclick="checkemailaddressalreadyexist()">Lookup User</a>
+                                            </div> 
+                                        </div>  
+                                        
+                                        
+                                        <div class="form-group row" >
+                                            <div class="col-sm-2">
+                                                <label>First Name *</label>
+                                            </div>
+                                            <div class="col-sm-10">
+                                                <input  type="text"  class="form-control mymetakey" id="first_name" name="first_name" placeholder="First Name" required='ture'>
+                                            </div>
+                                           
+                                        </div>  
+                                        
+                                        <div class="form-group row" >
+                                            <div class="col-sm-2">
+                                                <label>Last Name *</label>
+                                            </div>
+                                            <div class="col-sm-10">
+                                                <input type="text"  class="form-control mymetakey" id="last_name" name="last_name" placeholder="Last Name" required='ture'>
+                                            </div>
+                                           
+                                        </div> 
+                                          <div class="form-group row" >
+                                            <div class="col-sm-2">
+                                                <label>Company Name *</label>
+                                            </div>
+                                            <div class="col-sm-10">
+                                                <input type="text"  class="form-control mymetakey" id="company_name" name="company_name" placeholder="Company Name" required='ture'>
+                                            </div>
+                                           
+                                        </div> 
+                                        
+                                        <div class="form-group row" >
+                                            <div class="col-sm-2">
+                                                <label>Level *</label>
+                                            </div>
+                                            <div class="col-sm-10">
+                                                <select class="select2 mycustomedropdown"  title="Role" id="Role" data-allow-clear="true" data-toggle="tooltip" required='ture' >
+                                                     <option value=""></option>
+                                                    <?php  foreach ($all_roles as $key => $name) { 
+                                                        
+                                                        
+                                                       
+                                                        if ($key != 'administrator' && $key != 'contentmanager') {
+                                                        ?>
+                                                  
+                                                         <option value='<?php echo$key; ?>'><?php echo $name['name'];?></option>
+                                                    
+                                                    <? }} ?>
+                                                </select>
+                                            </div>
+                                           
+                                        </div> 
+                                        
+                                      
+                                        
+                                              
+                                       
+                                        
                                         
                               <?php   foreach ($additional_fields as $key=>$value){ 
                            
@@ -143,7 +213,7 @@
                                 }
                                 ?>
                                 
-                                <?php if($additional_fields[$key]['fieldType'] != 'checkbox' && $additional_fields[$key]['fieldType'] != 'display'){ ?>
+                                <?php if($additional_fields[$key]['fielduniquekey'] !="Semail" && $additional_fields[$key]['fielduniquekey'] !="first_name" && $additional_fields[$key]['fielduniquekey'] !="last_name" && $additional_fields[$key]['fielduniquekey'] !="Role" && $additional_fields[$key]['fielduniquekey'] !="company_name" && $additional_fields[$key]['fieldType'] != 'checkbox' && $additional_fields[$key]['fieldType'] != 'display'){ ?>
                                
                                     <div class="form-group row" >
                                     <div class="col-sm-2">

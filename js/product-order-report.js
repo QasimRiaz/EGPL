@@ -76,20 +76,39 @@ jQuery(document).ready(function () {
             columnsheaderarrayfortable;
             //console.log(columsheader);
             var showcolumnrows = [];
+            
+            
             jQuery.each(columsheader, function (key, value) {
-
-                if (columsheader[key].type == 'num' || columsheader[key].type == 'num-fmt') {
-
-                    columnsheaderarrayfortable.push({type:'num',title: columsheader[key].title, data: columsheader[key].title, render: jQuery.fn.dataTable.render.number(',', '.', 2, '$')});
-                }else if(columsheader[key].type == 'date'){
-                    
-                    //danyal Update Date Formatting in Reports
-                    columnsheaderarrayfortable.push({title: columsheader[key].title, data: columsheader[key].title, type: columsheader[key].type, render: function (data) {if (data !== null && data !== "") {var javascriptDate = new Date(data);javascriptDate = months[javascriptDate.getMonth()]  + " " + javascriptDate.getDate()+ " " + javascriptDate.getFullYear();return javascriptDate;} else {return "";} }});
                 
-                }else {
-                    columnsheaderarrayfortable.push({title: columsheader[key].title, data: columsheader[key].title, type: columsheader[key].type});
-                }
+               // console.log(columsheader[key]);
+                
+                if(columsheader[key].data == 'Products List' ){
+                    
+                    columnsheaderarrayfortable.push({visible:false,title: columsheader[key].title, data: columsheader[key].title, type: columsheader[key].type});
+                    
+                    
+                }else if (columsheader[key].data == 'Products Details'){
+                    
+                    columnsheaderarrayfortable.push({class:'noExport',type:columsheader[key].type, data: columsheader[key].title, title: columsheader[key].title});
+            
+                    
+                    
+                }else{
+                
+                
+                
+                    if (columsheader[key].type == 'num' || columsheader[key].type == 'num-fmt') {
 
+                        columnsheaderarrayfortable.push({type:'num',title: columsheader[key].title, data: columsheader[key].title, render: jQuery.fn.dataTable.render.number(',', '.', 2, '$')});
+                    }else if(columsheader[key].type == 'date'){
+
+                        //danyal Update Date Formatting in Reports
+                        columnsheaderarrayfortable.push({title: columsheader[key].title, data: columsheader[key].title, type: columsheader[key].type, render: function (data) {if (data !== null && data !== "") {var javascriptDate = new Date(data);javascriptDate = months[javascriptDate.getMonth()]  + " " + javascriptDate.getDate()+ " " + javascriptDate.getFullYear();return javascriptDate;} else {return "";} }});
+
+                    }else {
+                        columnsheaderarrayfortable.push({title: columsheader[key].title, data: columsheader[key].title, type: columsheader[key].type});
+                    }
+              }
             })
             jQuery.each(columsheader, function (key, value) {
 
@@ -166,23 +185,17 @@ jQuery(document).ready(function () {
                         {
                             extend: 'excelHtml5',
                             title: 'orderreport_' + jQuery.now(),
-                            exportOptions: {
-                                columns: ':visible'
-                            }
+                            
                         },
                         {
                             extend: 'csvHtml5',
                             title: 'orderreport_' + jQuery.now(),
-                            exportOptions: {
-                                columns: ':visible'
-                            }
+                           
                         },
                         
                         {
                             extend: 'print',
-                            exportOptions: {
-                                columns: ':visible'
-                            }
+                           
                         }
                     ]
 

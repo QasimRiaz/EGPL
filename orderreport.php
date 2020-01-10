@@ -807,56 +807,68 @@ function loadorderreport() {
         
         
           
-        $columns_list_order_report_postmeta[5]['title'] = 'Product Details';
+         $columns_list_order_report_postmeta[5]['title'] = 'Products List';
         $columns_list_order_report_postmeta[5]['type'] = 'string';
-        $columns_list_order_report_postmeta[5]['key'] = 'Products';
+        $columns_list_order_report_postmeta[5]['key'] = 'Productslistexcel';
         
         
-        $columns_list_order_report_postmeta[6]['title'] = 'Payment Method';
+        $columns_list_order_report_postmeta[6]['title'] = 'Product Details';
         $columns_list_order_report_postmeta[6]['type'] = 'string';
-        $columns_list_order_report_postmeta[6]['key'] = '_payment_method_title';
+        $columns_list_order_report_postmeta[6]['key'] = 'Products';
         
         
-        $columns_list_order_report_postmeta[7]['title'] = 'Payment Date';
-        $columns_list_order_report_postmeta[7]['type'] = 'date';
-        $columns_list_order_report_postmeta[7]['key'] = '_paid_date';
+          
+       
+        
+        
+        
+        
+        
+        $columns_list_order_report_postmeta[7]['title'] = 'Payment Method';
+        $columns_list_order_report_postmeta[7]['type'] = 'string';
+        $columns_list_order_report_postmeta[7]['key'] = '_payment_method_title';
+        
+        
+        $columns_list_order_report_postmeta[8]['title'] = 'Payment Date';
+        $columns_list_order_report_postmeta[8]['type'] = 'date';
+        $columns_list_order_report_postmeta[8]['key'] = '_paid_date';
         
         $columns_list_order_report_postmeta[8]['title'] = 'Order Note';
         $columns_list_order_report_postmeta[8]['type'] = 'string';
         $columns_list_order_report_postmeta[8]['key'] = '_order_custome_note';
         
         
-        $columns_list_order_report_postmeta[9]['title'] = 'Age';
-        $columns_list_order_report_postmeta[9]['type'] = 'string';
-        $columns_list_order_report_postmeta[9]['key'] = '_product_age_calculate';
-        
-        $columns_list_order_report_postmeta[10]['title'] = 'First Name';
+        $columns_list_order_report_postmeta[10]['title'] = 'Age';
         $columns_list_order_report_postmeta[10]['type'] = 'string';
-        $columns_list_order_report_postmeta[10]['key'] = '_billing_first_name';
+        $columns_list_order_report_postmeta[10]['key'] = '_product_age_calculate';
         
-        $columns_list_order_report_postmeta[11]['title'] = 'Last Name';
+        $columns_list_order_report_postmeta[11]['title'] = 'First Name';
         $columns_list_order_report_postmeta[11]['type'] = 'string';
-        $columns_list_order_report_postmeta[11]['key'] = '_billing_last_name';
+        $columns_list_order_report_postmeta[11]['key'] = '_billing_first_name';
         
-        $columns_list_order_report_postmeta[12]['title'] = 'Email';
+        $columns_list_order_report_postmeta[12]['title'] = 'Last Name';
         $columns_list_order_report_postmeta[12]['type'] = 'string';
-        $columns_list_order_report_postmeta[12]['key'] = '_billing_email';
+        $columns_list_order_report_postmeta[12]['key'] = '_billing_last_name';
         
-        
-        $columns_list_order_report_postmeta[13]['title'] = 'Phone Number';
+        $columns_list_order_report_postmeta[13]['title'] = 'Email';
         $columns_list_order_report_postmeta[13]['type'] = 'string';
-        $columns_list_order_report_postmeta[13]['key'] = '_billing_phone';
+        $columns_list_order_report_postmeta[13]['key'] = '_billing_email';
         
         
-
-
-        $columns_list_order_report_postmeta[14]['title'] = 'Order Currency';
+        $columns_list_order_report_postmeta[14]['title'] = 'Phone Number';
         $columns_list_order_report_postmeta[14]['type'] = 'string';
-        $columns_list_order_report_postmeta[14]['key'] = '_order_currency';
+        $columns_list_order_report_postmeta[14]['key'] = '_billing_phone';
+        
+        
 
-        $columns_list_order_report_postmeta[15]['title'] = 'User IP Address';
+
+        $columns_list_order_report_postmeta[15]['title'] = 'Order Currency';
         $columns_list_order_report_postmeta[15]['type'] = 'string';
-        $columns_list_order_report_postmeta[15]['key'] = '_customer_ip_address';
+        $columns_list_order_report_postmeta[15]['key'] = '_order_currency';
+
+        $columns_list_order_report_postmeta[16]['title'] = 'User IP Address';
+        $columns_list_order_report_postmeta[16]['type'] = 'string';
+        $columns_list_order_report_postmeta[16]['key'] = '_customer_ip_address';
 
 
        
@@ -868,61 +880,61 @@ function loadorderreport() {
 
         
 
-        $columns_list_order_report_postmeta[16]['title'] = 'Address Line 1';
-        $columns_list_order_report_postmeta[16]['key'] = '_billing_address_1';
-        $columns_list_order_report_postmeta[16]['type'] = 'string';
-
-        $columns_list_order_report_postmeta[17]['title'] = 'Address Line 2';
-        $columns_list_order_report_postmeta[17]['key'] = '_billing_address_2';
+        $columns_list_order_report_postmeta[17]['title'] = 'Address Line 1';
+        $columns_list_order_report_postmeta[17]['key'] = '_billing_address_1';
         $columns_list_order_report_postmeta[17]['type'] = 'string';
 
-        $columns_list_order_report_postmeta[18]['title'] = 'Zipcode';
-        $columns_list_order_report_postmeta[18]['key'] = '_billing_postcode';
+        $columns_list_order_report_postmeta[18]['title'] = 'Address Line 2';
+        $columns_list_order_report_postmeta[18]['key'] = '_billing_address_2';
         $columns_list_order_report_postmeta[18]['type'] = 'string';
 
-        $columns_list_order_report_postmeta[19]['title'] = 'City';
-        $columns_list_order_report_postmeta[19]['key'] = '_billing_city';
+        $columns_list_order_report_postmeta[19]['title'] = 'Zipcode';
+        $columns_list_order_report_postmeta[19]['key'] = '_billing_postcode';
         $columns_list_order_report_postmeta[19]['type'] = 'string';
 
-        $columns_list_order_report_postmeta[20]['title'] = 'State';
-        $columns_list_order_report_postmeta[20]['key'] = '_billing_state';
+        $columns_list_order_report_postmeta[20]['title'] = 'City';
+        $columns_list_order_report_postmeta[20]['key'] = '_billing_city';
         $columns_list_order_report_postmeta[20]['type'] = 'string';
 
-        $columns_list_order_report_postmeta[21]['title'] = 'Country';
-        $columns_list_order_report_postmeta[21]['key'] = '_billing_country';
+        $columns_list_order_report_postmeta[21]['title'] = 'State';
+        $columns_list_order_report_postmeta[21]['key'] = '_billing_state';
         $columns_list_order_report_postmeta[21]['type'] = 'string';
 
-        $columns_list_order_report_postmeta[22]['title'] = 'Stripe Fee';
-        $columns_list_order_report_postmeta[22]['type'] = 'num-fmt';
-        $columns_list_order_report_postmeta[22]['key'] = '_stripe_fee';
+        $columns_list_order_report_postmeta[22]['title'] = 'Country';
+        $columns_list_order_report_postmeta[22]['key'] = '_billing_country';
+        $columns_list_order_report_postmeta[22]['type'] = 'string';
 
-        $columns_list_order_report_postmeta[23]['title'] = 'Net Revenue From Stripe';
+        $columns_list_order_report_postmeta[23]['title'] = 'Stripe Fee';
         $columns_list_order_report_postmeta[23]['type'] = 'num-fmt';
-        $columns_list_order_report_postmeta[23]['key'] = '_stripe_net';
+        $columns_list_order_report_postmeta[23]['key'] = '_stripe_fee';
 
-        $columns_list_order_report_postmeta[24]['title'] = 'Order ID';
-        $columns_list_order_report_postmeta[24]['type'] = 'string';
-        $columns_list_order_report_postmeta[24]['key'] = 'ID';
-        
-        
-        $columns_list_order_report_postmeta[25]['title'] = 'Initial Order ID';
+        $columns_list_order_report_postmeta[24]['title'] = 'Net Revenue From Stripe';
+        $columns_list_order_report_postmeta[24]['type'] = 'num-fmt';
+        $columns_list_order_report_postmeta[24]['key'] = '_stripe_net';
+
+        $columns_list_order_report_postmeta[25]['title'] = 'Order ID';
         $columns_list_order_report_postmeta[25]['type'] = 'string';
-        $columns_list_order_report_postmeta[25]['key'] = '_initial_payment_order_id';
+        $columns_list_order_report_postmeta[25]['key'] = 'ID';
         
-
-        $columns_list_order_report_postmeta[26]['title'] = 'Transaction ID';
+        
+        $columns_list_order_report_postmeta[26]['title'] = 'Initial Order ID';
         $columns_list_order_report_postmeta[26]['type'] = 'string';
-        $columns_list_order_report_postmeta[26]['key'] = '_transaction_id';
-
+        $columns_list_order_report_postmeta[26]['key'] = '_initial_payment_order_id';
         
 
-        $columns_list_order_report_postmeta[27]['title'] = 'Account Holder Email';
+        $columns_list_order_report_postmeta[27]['title'] = 'Transaction ID';
         $columns_list_order_report_postmeta[27]['type'] = 'string';
-        $columns_list_order_report_postmeta[27]['key'] = 'Account Holder Email';
+        $columns_list_order_report_postmeta[27]['key'] = '_transaction_id';
+
         
-          $columns_list_order_report_postmeta[28]['title'] = 'Order Discount';
-        $columns_list_order_report_postmeta[28]['type'] = 'num-fmt';
-        $columns_list_order_report_postmeta[28]['key'] = '_cart_discount';
+
+        $columns_list_order_report_postmeta[28]['title'] = 'Account Holder Email';
+        $columns_list_order_report_postmeta[28]['type'] = 'string';
+        $columns_list_order_report_postmeta[28]['key'] = 'Account Holder Email';
+        
+        $columns_list_order_report_postmeta[29]['title'] = 'Order Discount';
+        $columns_list_order_report_postmeta[29]['type'] = 'num-fmt';
+        $columns_list_order_report_postmeta[29]['key'] = '_cart_discount';
 
         
        
@@ -1070,6 +1082,11 @@ function loadorderreport() {
                         
                     }
                     
+                }else if($columns_list_order_report_postmeta[$col_keys_index]['key'] == 'Productslistexcel'){
+                    
+                        
+                    
+                    
                 }else if($columns_list_order_report_postmeta[$col_keys_index]['key'] == '_initial_payment_order_id'){
                     
                     $column_row[$columns_list_order_report_postmeta[$col_keys_index]['title']] = $custom_field;
@@ -1158,6 +1175,7 @@ function loadorderreport() {
                 
                 $order_productsnames.= $productname->order_item_name.' (x'.$productname->Qty.')<br>';
             }
+            $column_row['Products List'] = $order_productsnames;
             $column_row['Product Details'] = '<a style="cursor: pointer;" onclick="getOrderproductdetail('.$header_array['ID'].')">Product Details</a>';//$order_productsnames;
             $column_row['Account Holder Email'] = $accountholder_email;
             array_push($columns_rows_data, $column_row);
@@ -1280,15 +1298,7 @@ function manageproducts() {
             $colums_array_data['data'] = $columns_list_order_report[$col_keys]['title'];
             array_push($columns_headers, $colums_array_data);
         }
-//        foreach ($columns_list_order_report_postmeta as $col_keys => $col_keys_title) {
-//
-//
-//            $colums_array_data['title'] = $columns_list_order_report_postmeta[$col_keys]['title'];
-//            $colums_array_data['data'] = $columns_list_order_report_postmeta[$col_keys]['title'];
-//            $colums_array_data['type'] = $columns_list_order_report_postmeta[$col_keys]['type'];
-//
-//            array_push($columns_headers, $colums_array_data);
-//        }
+
         foreach ($all_products->products as $single_product) {
 
            
@@ -1403,7 +1413,9 @@ function addnewproducts($addnewproduct_data) {
         $depositstype = $addnewproduct_data['depositstype'];
         $depositsamount = $addnewproduct_data['depositsamount'];
         
-      
+        $selectedtaskArray['visiblelevels'] = json_decode(stripslashes($_POST['visiblelevels']), true);
+        $selectedtaskArray['invisiblelevels'] = json_decode(stripslashes($_POST['invisiblelevels']), true);
+        $selectedtaskArray['listofuservisible'] = json_decode(stripslashes($_POST['listofuservisible']), true);
        
         
         $url = get_site_url();
@@ -1489,7 +1501,19 @@ function addnewproducts($addnewproduct_data) {
             
                 }
         
-       // $objProduct->set_tax_class($roleassign); 
+        if(!empty($selectedtaskArray['visiblelevels'])){
+
+
+                      $objProduct->update_meta_data('_alg_wc_pvbur_visible', $selectedtaskArray['visiblelevels']);
+
+         }
+         
+         if(!empty($selectedtaskArray['listofuservisible'])){
+
+
+                      $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', $selectedtaskArray['listofuservisible']);
+
+         }
         
         
         
@@ -1535,6 +1559,11 @@ function updateproducts($updateproducts_data) {
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);
         $selectedtaskArray['selectedtasks'] = json_decode(stripslashes($_POST['selectedtaskvalues']), true);
+        
+        
+        $selectedtaskArray['visiblelevels'] = json_decode(stripslashes($_POST['visiblelevels']), true);
+        $selectedtaskArray['invisiblelevels'] = json_decode(stripslashes($_POST['invisiblelevels']), true);
+        $selectedtaskArray['listofuservisible'] = json_decode(stripslashes($_POST['listofuservisible']), true);
         
         
       
@@ -1674,6 +1703,20 @@ function updateproducts($updateproducts_data) {
                      $objProduct->update_meta_data('productlevel', $roleassign);
             
         }
+        if(!empty($selectedtaskArray['visiblelevels'])){
+            
+          
+                     $objProduct->update_meta_data('_alg_wc_pvbur_visible', $selectedtaskArray['visiblelevels']);
+            
+        }
+        
+        if(!empty($selectedtaskArray['listofuservisible'])){
+            
+          
+                     $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', $selectedtaskArray['listofuservisible']);
+            
+        }
+        
         $new_product_id = $objProduct->save();
         
         

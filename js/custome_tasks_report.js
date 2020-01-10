@@ -7,7 +7,7 @@ var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun",
                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 jQuery(document).ready(function () {
 
- if ( window.location.href.indexOf("user-report-result") > -1)
+ if ( window.location.href.indexOf("custome_task_report") > -1)
     {
        jQuery("body").css({'cursor': 'wait'}); 
         var data = new FormData();
@@ -15,7 +15,7 @@ jQuery(document).ready(function () {
         var usertimezone = curdate.getTimezoneOffset()/60;
          data.append('usertimezone', usertimezone);
          var url = currentsiteurl+'/';
-       if ( window.location.href.indexOf("user-report-result/?report") > -1){
+       if ( window.location.href.indexOf("custome_task_report/?report") > -1){
            
            
        
@@ -46,14 +46,14 @@ jQuery(document).ready(function () {
        
        }else{
            
-        var showcollist = JSON.parse('["Action","Company Name","Last login","First Name","Last Name","Email","Level"]');   
+        var showcollist = JSON.parse('["Action","Task Name","Submitted Value","Submitted On","Company Name","Email","Level"]');   
         var ordercolname = 'Company Name';
         var orderby = 'asc';
        }
        
       console.log(showcollist);
        var hideFromExport = [0,1];
-       var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=userreportresultdraw';
+       var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=custometasksreport';
        jQuery.ajax({
         url: urlnew,
         data:data,
@@ -99,7 +99,7 @@ jQuery(document).ready(function () {
             
             });
             console.log(newcolumnsheaderarrayfortable);
-             resultuserdatatable = jQuery('#example').DataTable({
+             resultuserdatatable = jQuery('#customereports').DataTable({
                                         data: newrowsdata,
                                         columns: newcolumnsheaderarrayfortable,
                                         aLengthMenu : [[100, 150, 200, -1], [100, 150, 200, "All"]],
@@ -146,7 +146,7 @@ jQuery(document).ready(function () {
       jQuery('body').css('cursor', 'default');
       resultuserdatatable.column(':contains(' + ordercolname + ')').order(orderby).draw();
       var rows_selected = [];
-      jQuery('#example tbody').on('click', 'input[type="checkbox"]', function(e){
+      jQuery('#customereports tbody').on('click', 'input[type="checkbox"]', function(e){
           
       var $row = jQuery(this).closest('tr');
 
@@ -189,9 +189,9 @@ jQuery(document).ready(function () {
    // Handle click on "Select all" control
    jQuery('thead input[name="select_all"]', resultuserdatatable.table().container()).on('click', function(e){
       if(this.checked){
-         jQuery('#example tbody input[type="checkbox"]:not(:checked)').trigger('click');
+         jQuery('#customereports tbody input[type="checkbox"]:not(:checked)').trigger('click');
       } else {
-         jQuery('#example tbody input[type="checkbox"]:checked').trigger('click');
+         jQuery('#customereports tbody input[type="checkbox"]:checked').trigger('click');
       }
 
       // Prevent click event from propagating to parent
@@ -204,7 +204,7 @@ if ( window.location.href.indexOf("user-report-result/?report=run") > -1)
      
     var filteroutput = '';
     
-    var tablesettings = jQuery('#example').DataTable().settings();
+    var tablesettings = jQuery('#customereports').DataTable().settings();
     jQuery.each(jsondatauser.rules, function (key, value) {
             
             for (var i = 0, iLen = tablesettings[0].aoColumns.length; i < iLen; i++)
@@ -246,7 +246,7 @@ if ( window.location.href.indexOf("user-report-result/?report=run") > -1)
     function new_userview_profile(elem){
     
      var data = resultuserdatatable.row( jQuery(elem).parents('tr') ).data();
-     var tablesettings = jQuery('#example').DataTable().settings();
+     var tablesettings = jQuery('#customereports').DataTable().settings();
      // console.log(data)
      var curr_dat ='';
      var tablehtml='';
@@ -309,7 +309,7 @@ if ( window.location.href.indexOf("user-report-result/?report=run") > -1)
 
 function updateDataTableSelectAllCtrl(resultuserdatatable){
     
-    var datatable = jQuery('#example').DataTable();
+    var datatable = jQuery('#customereports').DataTable();
     
   
    var $table             = resultuserdatatable.table().node();
@@ -432,7 +432,7 @@ function reportbulkdownload(){
 
 function get_all_selected_users_files(selectedtaskkey) {
 
-    var datatable = jQuery('#example').DataTable();
+    var datatable = jQuery('#customereports').DataTable();
    // console.log(selectedtaskkey);
     var listofids = [];
     

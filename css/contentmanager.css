@@ -715,10 +715,7 @@ table.dataTable tbody td {
     margin-bottom: 11px !important;;
     margin-top: -35px !important;;
     }
-    #example_wrapper {
-        overflow: auto !important;
-        margin: 0 auto;
-    }
+    
 #selfsignusers_wrapper {
         overflow: auto !important;
         margin: 0 auto;
@@ -728,7 +725,10 @@ table.dataTable tbody td {
     margin-bottom: 11px !important;;
     margin-top: -35px !important;;
     }
-    
+    #example_wrapper {
+        overflow: auto !important;
+        margin: 0 auto;
+    }
     .menumargine{
         
         margin-left: 27px;
@@ -919,4 +919,42 @@ table.dataTable tbody td {
 	
 	width: 40% !important;
     text-align: center !important;
+}
+
+
+#customereports_wrapper .dt-buttons{
+            float: right !important;
+    margin-bottom: 11px !important;;
+    margin-top: -35px !important;;
+    }
+    #customereports_wrapper {
+        overflow: auto !important;
+        margin: 0 auto;
+    }
+    #customereports_filter{
+    
+    text-align: left !important;
+    float: none !important;
+}
+
+#customereports_paginate{
+    
+   margin-top: -47px !important;
+    float: right;
+}
+#customereports_length{
+    
+    margin-top: 17px !important;
+    margin-bottom: 0px !important;
+   
+}
+#customereports_wrapper .dataTables_length{
+    
+        margin-bottom: -39px;
+    margin-top: 21px !important;
+}
+#customereports_wrapper .dataTables_filter{
+    
+    
+    float: none !important;
 }

@@ -112,10 +112,101 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                             
                            
                     </div>
+                    
+                      
+                    <div class="form-group row">
+                            <label class="col-sm-3 form-control-label">Email <strong>*</strong></label>
+                            <div class="col-sm-9">
+
+                                <select class="mappingdropdown select2" name="Semail" id="getusersheetcollist" required>
+                                    <option ></option>
+                                    
+
+
+
+                                </select>
+
+
+                            </div>
+                           
+                        </div>
+                    
+                      
+                    <div class="form-group row">
+                            <label class="col-sm-3 form-control-label">First Name <strong>*</strong></label>
+                            <div class="col-sm-9">
+
+                                <select class="mappingdropdown select2" name="first_name" id="getusersheetcollist" required>
+                                    <option ></option>
+                                    
+
+
+
+                                </select>
+
+
+                            </div>
+                           
+                        </div>
+                    
+                      
+                    <div class="form-group row">
+                            <label class="col-sm-3 form-control-label">Last Name <strong>*</strong></label>
+                            <div class="col-sm-9">
+
+                                <select class="mappingdropdown select2" name="last_name" id="getusersheetcollist" required>
+                                    <option ></option>
+                                    
+
+
+
+                                </select>
+
+
+                            </div>
+                           
+                        </div>
+                    
+                      
+                    <div class="form-group row">
+                            <label class="col-sm-3 form-control-label">Level<strong>*</strong></label>
+                            <div class="col-sm-9">
+
+                                <select class="mappingdropdown select2" name="Role" id="getusersheetcollist" required>
+                                    <option ></option>
+                                    
+
+
+
+                                </select>
+
+
+                            </div>
+                           
+                        </div>
+                    
+                      <div class="form-group row">
+                            <label class="col-sm-3 form-control-label">Company Name<strong>*</strong></label>
+                            <div class="col-sm-9">
+
+                                <select class="mappingdropdown select2" name="company_name" id="getusersheetcollist" required>
+                                    <option ></option>
+                                    
+
+
+
+                                </select>
+
+
+                            </div>
+                           
+                        </div>
+                    
+                    
                      <?php foreach ($additional_fields as $key => $value) { 
                             
                             
-                            if($additional_fields[$key]['fieldsystemtask'] == "checked" && $additional_fields[$key]['SystemfieldInternal'] != "checked" && $additional_fields[$key]['fieldType'] != 'checkbox' && $additional_fields[$key]['fieldType'] != 'display' && $additional_fields[$key]['fieldType'] != 'file'  ){
+                            if($additional_fields[$key]['fielduniquekey'] !="Semail" && $additional_fields[$key]['fielduniquekey'] !="first_name" && $additional_fields[$key]['fielduniquekey'] !="last_name" && $additional_fields[$key]['fielduniquekey'] !="Role" && $additional_fields[$key]['fielduniquekey'] !="company_name" && $additional_fields[$key]['fieldsystemtask'] == "checked" && $additional_fields[$key]['SystemfieldInternal'] != "checked" && $additional_fields[$key]['fieldType'] != 'checkbox' && $additional_fields[$key]['fieldType'] != 'display' && $additional_fields[$key]['fieldType'] != 'file'  ){
                             
                             
                             ?>

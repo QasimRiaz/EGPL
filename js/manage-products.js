@@ -203,6 +203,14 @@ function add_new_product(){
     var pcategoriesname = jQuery("#pcategories option:selected").text();
     var menu_order = jQuery("#menu_order").val();
     var selectedtaskvalues = jQuery('#selectedtasks').select2("val");
+    
+    
+    var visiblelevels = jQuery('#visiblelevels').select2("val");
+   
+    var listofuservisible = jQuery('#listofuservisible').select2("val");
+    
+    
+    
     var getcatname = jQuery('#getcatname').val();
     var depositstype = "";
     var depositsamount = "";
@@ -253,6 +261,23 @@ function add_new_product(){
     }else{
          data.append('selectedtaskvalues', '');
     }
+    
+    
+    if(visiblelevels != 'null'){
+        data.append('visiblelevels', JSON.stringify(visiblelevels));
+    }else{
+         data.append('visiblelevels', '');
+    }
+    
+    
+    
+    if(listofuservisible != 'null'){
+        data.append('listofuservisible', JSON.stringify(listofuservisible));
+    }else{
+         data.append('listofuservisible', '');
+    }
+    
+    
     data.append('ptitle', ptitle);
     
     data.append('depositstype', depositstype);

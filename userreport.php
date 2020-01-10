@@ -218,6 +218,10 @@ if ($_GET['contentManagerRequest'] == 'updateuserforthissite') {
     require_once('../../../wp-load.php');
 
     getusersreport($_POST);
+}else if ($_GET['contentManagerRequest'] == "gettasksreport") {
+    require_once('../../../wp-load.php');
+
+    gettasksreport($_POST);
 }else if ($_GET['contentManagerRequest'] == "user_report_removefilter") {
 
     require_once('../../../wp-load.php');
@@ -249,6 +253,14 @@ if ($_GET['contentManagerRequest'] == 'updateuserforthissite') {
     
    
     userreportresultdraw();
+    
+    die();
+   
+}else if ($_GET['contentManagerRequest'] == "custometasksreport") {
+    require_once('../../../wp-load.php');
+    
+   
+    custometasksreport();
     
     die();
    
@@ -338,7 +350,171 @@ if ($_GET['contentManagerRequest'] == 'updateuserforthissite') {
 	 
 }
 
+function gettasksreport($data) {
 
+    require_once('../../../wp-load.php');
+
+    try {
+
+        global $wpdb;
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID);
+        $site_prefix = $wpdb->get_blog_prefix();
+        $lastInsertId = contentmanagerlogging('Get Tasks Report Date', "Admin Action", $orderreportdata, $user_ID, $user_info->user_email, "pre_action_data");
+        $usertimezone = $data['usertimezone'];
+        $additional_settings = get_option( 'EGPL_Settings_Additionalfield' );
+        
+        
+        
+        
+        
+        $columns_headers = [];
+        $columns_filter_array_data = [];
+        
+         $columns_headers[0]['key'] = 'action_edit_tasks';
+         $columns_headers[0]['type'] = 'display';
+         $columns_headers[0]['title'] = 'Action';
+         
+         
+         $columns_headers[1]['key'] = 'task_name';
+         $columns_headers[1]['type'] = 'string';
+         $columns_headers[1]['title'] = 'Task Name';
+         
+         $columns_headers[2]['key'] = 'task_value';
+         $columns_headers[2]['type'] = 'string';
+         $columns_headers[2]['title'] = 'Submitted Value';
+         
+         $columns_headers[3]['key'] = 'task_date';
+         $columns_headers[3]['type'] = 'date';
+         $columns_headers[3]['title'] = 'Submitted On';
+         
+         $columns_headers[4]['key'] = 'compnay_name';
+         $columns_headers[4]['type'] = 'string';
+         $columns_headers[4]['title'] = 'Company Name';
+         
+         $columns_headers[5]['key'] = 'Semail';
+         $columns_headers[5]['type'] = 'string';
+         $columns_headers[5]['title'] = 'Email';
+         
+         $columns_headers[6]['key'] = 'Role';
+         $columns_headers[6]['type'] = 'string';
+         $columns_headers[6]['title'] = 'Level';
+
+       
+    
+     foreach ($columns_headers as $rows=>$row){
+          
+             if ($row['title'] != 'Action' && $row['type'] != "html" ) {
+                 
+                 
+                if ($row['title'] == 'User ID') {
+                    
+                    $pusheaderfilter = array(
+                            'id' => $row['key'],
+                            'unique'=> true,
+                            'label'=> $row['title'],
+                            'operators'=> ['equal','is_not_empty'],
+                            'type'=> 'integer',
+                            'size'=> 20
+
+                    );
+                    
+                }else if ($row['title'] == 'Email' || $row['title'] == 'Level') {
+                     
+                    $pusheaderfilter = array(
+                            'id' => $row['key'],
+                            'unique'=> true,
+                            'label'=> $row['title'],
+                            'operators'=> ['equal','is_not_empty'],
+                            'type'=> 'string',
+                            'size'=> 20
+
+                    );
+                     
+                 }else if ($row['type'] == 'date') {
+                     
+                     $pusheaderfilter = array(
+                            'id'            => $row['key'],
+                            'unique'        => true,
+                            'type'          => 'date',
+                            'label'         => $row['title'],
+                            'operators'     => ['is_empty','is_not_empty','equal', 'less', 'greater', 'between'],
+                            'validation'    => ['format'=> 'DD-MMM-YYYY'],
+                            'plugin'=> 'datepicker',
+                            'plugin_config' => ['format'=> 'dd-M-yyyy', 'todayBtn'=> 'linked', 'todayHighlight'=> true, 'autoclose'=> true],
+                            'size' => 20
+                        );
+                 }else if ($row['type'] == 'num' || $row['type'] == 'num-fmt') {
+                     $pusheaderfilter = array(
+                            'id' => $row['key'],
+                            'unique'=> true,
+                            'label'=> $row['title'],
+                            'operators'=> ['equal', 'less', 'greater','is_empty','is_not_empty'],
+                            'type'=> 'integer',
+                            'size'=> 20
+
+                    );
+                 }else if ($row['type'] == 'customedate') {
+                     $pusheaderfilter = array(
+                            'id' => $row['key'],
+                            'unique'=> true,
+                            'label'=> $row['title'],
+                            'operators'=> ['equal','is_not_empty'],
+                            'plugin'=> 'datepicker',
+                            'plugin_config' => ['format'=> 'dd-M-yyyy', 'todayBtn'=> 'linked', 'todayHighlight'=> true, 'autoclose'=> true],
+                            'validation'    => ['format'=> 'DD-MMM-YYYY'],
+                            'type'=> 'date',
+                            'size'=> 20
+
+                    );
+                 }else{
+                     
+                    $pusheaderfilter = array(
+                            'id' => $row['key'],
+                            'unique'=> true,
+                            'label'=> $row['title'],
+                            'operators'=> ['contains', 'equal','is_empty','is_not_empty'],
+                            'type'=> 'string',
+                            'size'=> 20
+
+                    ); 
+                 }
+              array_push($columns_filter_array_data, $pusheaderfilter);    
+                 
+             }
+             
+           
+        }
+        
+        $blog_id = get_current_blog_id();
+        $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+        $all_roles = get_option($get_all_roles_array);
+        $counter = 0;
+        foreach ($all_roles as $key => $name) {
+            
+            if($name['name'] != "Administrator"){
+                
+                $user_roles_list[$counter]['name'] = $name['name'];
+                $user_roles_list[$counter]['key'] = $key;
+                $counter++;
+                
+            }
+        }
+        
+        
+        
+        echo json_encode($columns_headers) . '//' . json_encode($columns_filter_array_data). '//' . json_encode($user_roles_list);
+    
+        
+    } catch (Exception $e) {
+
+        contentmanagerlogging_file_upload($lastInsertId, serialize($e));
+
+        return $e;
+    }
+
+    die();
+}
 function getusersreport($data) {
 
     require_once('../../../wp-load.php');
@@ -795,6 +971,351 @@ function get_userreport_detail($orderreportname) {
     die();
 }
 
+function custometasksreport() {
+   
+    require_once('../../../wp-load.php');
+     require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/floorplan-manager.php';
+    global $wpdb;
+    try {
+        if(isset($_POST['filterdata'])){
+            
+            $search_filter_array         = json_decode(stripslashes($_POST['filterdata']));
+            $search_filter_collabel      = json_decode(stripslashes($_POST['selectedcolumnslebel']));
+            $search_filter_colarray      = json_decode(stripslashes($_POST['selectedcolumnskeys']));
+            $search_filter_Ordercolname  = $_POST['userbycolname'];
+            $search_filter_Order         = $_POST['userbytype'];
+        }
+        
+      
+        
+        
+        $search_filter_usertimezone  = json_decode(stripslashes($_POST['usertimezone']));
+        $base_url = "https://" . $_SERVER['SERVER_NAME'];
+        
+        $args['role__not_in']= 'Administrator';
+        $site_prefix = $wpdb->get_blog_prefix();
+        
+       if(isset($_POST['filterdata'])){
+        $args['meta_query']['relation']= 'AND';
+        foreach($search_filter_array as $filter){
+        
+            if($filter->operator == 'is_not_empty'){
+                $compare_operator = '!=';
+            }else if($filter->operator == 'equal'){
+                $compare_operator = '=';
+            }else if($filter->operator == 'contains'){
+                $compare_operator = 'LIKE';
+            }else if($filter->operator == 'is_empty'){
+                
+               // $args['meta_query']['relation']= 'OR';
+               // $compare_operator = 'NOT EXISTS';
+                //$sub_query['key']=$filter->id;
+               // $sub_query['compare']='NULL';
+               // $sub_query['value']='';
+                
+                //array_push($args['meta_query'],$sub_query);
+               if($filter->id == 'last_login'){
+                   $sub_query['key']=$site_prefix.'custom_login_time_as_site';
+               }else{
+                   $sub_query['key']=$filter->id;
+               }
+               
+                $sub_query['compare']='NOT EXISTS';
+                $sub_query['value']='';
+              
+                array_push($args['meta_query'],$sub_query);
+               
+                
+                
+               
+                
+            }else if($filter->operator == 'less'){
+                $compare_operator = '<';
+            }else if($filter->operator == 'greater'){
+                $compare_operator = '>';
+            }else if($filter->operator == 'between'){
+                $compare_operator = 'BETWEEN';
+            }
+       if($filter->operator != 'is_empty'){     
+        if($filter->type == 'date'){
+            
+            $filter_apply_array['type']='numeric';
+            
+            if($filter->id == "last_login" ){
+                if($filter->operator == 'between'){
+                    $filter_apply_array['value']=array(strtotime($filter->value[0]), strtotime($filter->value[1]));
+                }else{
+                    if(!empty($filter->value)){
+                        $filter_apply_array['value']=strtotime($filter->value);
+                    }
+                    
+                }
+                $filter_apply_array['key']= $site_prefix.'custom_login_time_as_site';
+                if($filter->operator == 'equal'){
+                     $filter_apply_array['value']=array(strtotime($filter->value.' 00:00'), strtotime($filter->value.' 23:59'));
+                     $compare_operator = "BETWEEN";
+                }
+             }else if($filter->id == $site_prefix."convo_welcomeemail_datetime" ){
+                 
+                if($filter->operator == 'between'){
+                    
+                    
+                    $filter_apply_array['value']=array(strtotime($filter->value[0])*1000, strtotime($filter->value[1])*1000);
+                }else{
+                    if(!empty($filter->value)){
+                        $filter_apply_array['value']=strtotime($filter->value)*1000;
+                    }
+                    
+                }
+                $filter_apply_array['key']= $filter->id; 
+                if($filter->operator == 'equal'){
+                     $filter_apply_array['value']=array(strtotime($filter->value.' 00:00')*1000, strtotime($filter->value.' 23:59')*1000);
+                     $compare_operator = "BETWEEN";
+                }
+             }else if(strpos($filter->id, '_datetime') !== false){
+               
+                $filter_apply_array['key']=$filter->id;
+                $filter_apply_array['value']=$filter->value;
+                $filter_apply_array['type']='CHAR';
+                if($filter->operator == 'equal'){
+                    $compare_operator = 'LIKE';
+                }
+            }
+        
+            $filter_apply_array['compare']=$compare_operator;
+            
+        }else{
+            
+            if($filter->id == 'Email'){
+                
+                
+                $args['search']= $filter->value;
+                $args['search_columns']= array('user_email');
+                
+            }else if($filter->id == 'Role'){
+                $zname_clean = str_replace(" ","_",$filter->value);
+               
+                
+                $args['role']=  strtolower($zname_clean);
+                
+                
+            }else if($filter->id == 'wp_user_id'){
+                
+                $args['include']= $filter->value;
+                
+                
+            }else{
+                
+                $filter_apply_array['key']=$filter->id;
+                $filter_apply_array['value']=$filter->value;
+                $filter_apply_array['type']='CHAR';
+                $filter_apply_array['compare']=$compare_operator;
+            }
+        }   
+        
+        array_push($args['meta_query'],$filter_apply_array);
+       }
+    }
+ }
+ 
+ 
+        $user_query = new WP_User_Query( $args );
+        $authors = $user_query->get_results();
+        
+      //echo '<pre>';
+       //print_r($args);
+      //echo sizeof($authors);exit;
+        
+        
+        
+        if (is_multisite()) {
+                $blog_id = get_current_blog_id();
+                $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+            }else{
+                $get_all_roles_array = 'wp_user_roles';
+            }
+        $get_all_roles = get_option($get_all_roles_array);
+        
+
+        global $wpdb;
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID);
+        $lastInsertId = contentmanagerlogging('Get User Task Report Result', "Admin Action", $orderreportdata, $user_ID, $user_info->user_email, "pre_action_data");
+        $usertimezone = $data['usertimezone'];
+        $additional_settings = get_option( 'EGPL_Settings_Additionalfield' );
+       // $test = 'custome_task_manager_data';
+       // $result_task_array_list = get_option($test);
+       $query = "SELECT DISTINCT ID as user_id FROM " . $wpdb->users;
+        $result_user_id = $wpdb->get_results($query);
+        if (is_multisite()) {
+                $blog_id = get_current_blog_id();
+                $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+            }else{
+                $get_all_roles_array = 'wp_user_roles';
+            }
+        $get_all_roles = get_option($get_all_roles_array);
+        
+        $args = array(
+            'posts_per_page'   => -1,
+            'orderby'          => 'date',
+            'order'            => 'DESC',
+            'post_type'        => 'egpl_custome_tasks',
+            'post_status'      => 'draft',
+
+        );
+        $result_task_array_list = get_posts( $args );
+        
+        
+        $columns_headers = [];
+        $columns_rows_data = [];
+        
+           
+        
+      
+      
+         $columns_list_defult_user_report[0]['key'] = 'action_edit_tasks';
+         $columns_list_defult_user_report[0]['type'] = 'display';
+         $columns_list_defult_user_report[0]['title'] = 'Action';
+         
+         
+         $columns_list_defult_user_report[1]['key'] = 'task_name';
+         $columns_list_defult_user_report[1]['type'] = 'string';
+         $columns_list_defult_user_report[1]['title'] = 'Task Name';
+         
+         $columns_list_defult_user_report[2]['key'] = 'task_value';
+         $columns_list_defult_user_report[2]['type'] = 'string';
+         $columns_list_defult_user_report[2]['title'] = 'Submitted Value';
+         
+         $columns_list_defult_user_report[3]['key'] = 'task_date';
+         $columns_list_defult_user_report[3]['type'] = 'date';
+         $columns_list_defult_user_report[3]['title'] = 'Submitted On';
+         
+         $columns_list_defult_user_report[4]['key'] = 'compnay_name';
+         $columns_list_defult_user_report[4]['type'] = 'string';
+         $columns_list_defult_user_report[4]['title'] = 'Company Name';
+         
+         $columns_list_defult_user_report[5]['key'] = 'Semail';
+         $columns_list_defult_user_report[5]['type'] = 'string';
+         $columns_list_defult_user_report[5]['title'] = 'Email';
+         
+         $columns_list_defult_user_report[6]['key'] = 'Role';
+         $columns_list_defult_user_report[6]['type'] = 'string';
+         $columns_list_defult_user_report[6]['title'] = 'Level';
+         
+         
+      
+      
+        
+         if(!empty($result_task_array_list)){
+        
+        
+            foreach ($result_task_array_list as $taskIndex => $taskObject) {
+                                          
+                $tasksID=$taskObject->ID;
+                $value_key = get_post_meta($tasksID, 'key', true);
+                $value_type = get_post_meta($tasksID, 'type', false);
+                $profile_field_settings['type'] = $value_type[0];
+                $value_label = get_post_meta($tasksID, 'label', true);
+
+                foreach ($authors as $aid) {
+                    
+                    $counter=0;
+                    $user_data = get_userdata($aid->ID);
+                    $all_meta_for_user = get_user_meta($aid->ID);
+                    
+                    $column_row['Action'] = "";
+                    
+                   
+                                              $column_row['Task Name'] =$value_label;
+
+
+                                              if ($profile_field_settings['type'] == 'color') {
+
+                                                  $file_info = unserialize($all_meta_for_user[$value_key][0]);
+                                                  if (!empty($file_info)) {
+
+                                                      $column_row['Submitted Value'] ='<a href="' . $base_url . '/wp-content/plugins/EGPL/download-lib.php?cname=' . $company_name . '&userid=' . $aid->ID . '&fieldname=' . $profile_field_name . '" >Download</a>';
+                                                  } else {
+                                                      
+                                                      $column_row['Submitted Value'] ='';
+                                                  }
+                                              } else {
+
+
+                                                  $column_row['Submitted Value'] =$all_meta_for_user[$value_key][0];
+                                              }
+                                              if (!empty($all_meta_for_user[$value_key . '_datetime'][0])) {
+                                                  if (strpos($all_meta_for_user[$value_key . '_datetime'][0], 'AM') !== false) {
+
+
+                                                      $datevalue = str_replace(":AM", "", $all_meta_for_user[$value_key . '_datetime'][0]);
+                                                      $register_date = date('M d Y', strtotime($datevalue));
+                                                      
+
+                                                      $datemy = $register_date;//strtotime($login_date_time) * 1000;
+                                                  } else {
+                                                      $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                                                      $register_date = date('M d Y', strtotime($datevalue));
+                                                      
+
+                                                      $datemy = $register_date;//strtotime($login_date_time) * 1000;
+                                                  }
+                                              } else {
+                                                  $datemy = "";
+                                              }
+                                              
+                                              $user_company_name = get_user_meta($aid->ID, $site_prefix . 'company_name', true);
+                                              $column_row['Submitted On'] = $datemy;
+                                              $column_row['Company Name']=$user_company_name;
+                                              $column_row['Email']=$user_data->user_email;
+                                              $column_row['Level']=$get_all_roles[$user_data->roles[0]]['name'];
+                                             
+                                              
+                                              array_push($columns_rows_data, $column_row);
+                                          }
+                                      }
+                                  }
+     
+   
+
+        
+
+
+         $site_url  = get_site_url();
+        foreach ($columns_list_defult_user_report as $col_keys => $col_keys_title) {
+
+
+            $colums_array_data['title'] = $columns_list_defult_user_report[$col_keys]['title'];
+            $colums_array_data['type'] = $columns_list_defult_user_report[$col_keys]['type'];
+            $colums_array_data['key'] = $columns_list_defult_user_report[$col_keys]['key'];
+            array_push($columns_headers, $colums_array_data);
+        }
+        
+
+
+        
+        
+        $orderreport_all_col_rows_data['columns'] = $columns_headers;
+        $orderreport_all_col_rows_data['data'] = $columns_rows_data;
+        
+        
+       
+       // print_r($columns_headers); exit;
+        contentmanagerlogging_file_upload($lastInsertId, serialize($orderreport_all_col_rows_data));
+        
+        
+       // echo '<pre>';
+       // print_r($columns_rows_data);exit;
+        echo json_encode($columns_rows_data) . '//' . json_encode($columns_headers);
+    } catch (Exception $e) {
+
+        contentmanagerlogging_file_upload($lastInsertId, serialize($e));
+
+        return $e;
+    }
+
+    die();
+}
 
 function userreportresultdraw() {
    
@@ -993,13 +1514,41 @@ function userreportresultdraw() {
        
        $additional_fields = $GetAllcustomefields->getAllcustomefields();
       
-        
-
+         $columns_list_defult_user_report[0]['key'] = 'action_edit_delete';
+         $columns_list_defult_user_report[0]['type'] = 'display';
+         $columns_list_defult_user_report[0]['title'] = 'Action';
+         
+         
+         $columns_list_defult_user_report[1]['key'] = 'company_name';
+         $columns_list_defult_user_report[1]['type'] = 'string';
+         $columns_list_defult_user_report[1]['title'] = 'Company Name';
+         
+         $columns_list_defult_user_report[2]['key'] = 'Role';
+         $columns_list_defult_user_report[2]['type'] = 'string';
+         $columns_list_defult_user_report[2]['title'] = 'Level';
+         
+         $columns_list_defult_user_report[3]['key'] = 'Semail';
+         $columns_list_defult_user_report[3]['type'] = 'string';
+         $columns_list_defult_user_report[3]['title'] = 'Email';
+         
+         $columns_list_defult_user_report[4]['key'] = 'first_name';
+         $columns_list_defult_user_report[4]['type'] = 'string';
+         $columns_list_defult_user_report[4]['title'] = 'First Name';
+         
+         $columns_list_defult_user_report[5]['key'] = 'last_name';
+         $columns_list_defult_user_report[5]['type'] = 'string';
+         $columns_list_defult_user_report[5]['title'] = 'Last Name';
+         
+         $columns_list_defult_user_report[6]['key'] = 'last_login';
+         $columns_list_defult_user_report[6]['type'] = 'date';
+         $columns_list_defult_user_report[6]['title'] = 'Last login';
+         
+         
         usort($additional_fields, 'sortByOrder');
-        $index_count = 0;
+        $index_count = 7;
          foreach ($additional_fields as $key=>$value){ 
             
-            if($value['fieldType']!="html"){
+            if($value['fieldName'] != "First Name"  && $value['fieldName'] != "Last Name"  && $value['fieldName'] != "Action"  && $value['fieldName'] != "Last login" && $value['fieldName'] != "Email" && $value['fieldName'] != "Level" && $value['fieldName'] != "Company Name" && $value['fieldType']!="html"){
             $columns_list_defult_user_report[$index_count]['title'] = $value['fieldName'];
             if($value['fieldType'] == "text" || $value['fieldType'] == "textarea" || $value['fieldType'] == "link" || $value['fieldType'] == "url" || $value['fieldType'] == "dropdown"){
                 
@@ -1439,6 +1988,7 @@ function userreportresultdraw() {
                     } else {
                         $datemy = "";
                     }
+                    
                     $column_row[$profile_field_settings['label'].' Datetime'] =$datemy;
                     $column_row[$profile_field_settings['label'].' Status'] = $all_meta_for_user[$profile_field_name.'_status'][0];
                     

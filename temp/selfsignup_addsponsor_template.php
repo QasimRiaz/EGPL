@@ -60,7 +60,53 @@
 
               <form method="post" action="javascript:void(0);" onSubmit="selfisignupadd_new_sponsor()">
                  
-		 <?php   foreach ($additional_fields as $key=>$value){ 
+                  
+                  <div class="form-group row">
+                    <div class="col-sm-4 fontclass">
+                        <label >Email *</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="email"  class="form-control mymetakey" id="Semail" name="Semail" placeholder="Email" required="true">
+                    </div>
+                </div>
+                
+                
+                <div class="form-group row">
+                    <div class="col-sm-4 fontclass">
+                        <label >First Name *</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="email"  class="form-control mymetakey" id="first_name" name="first_name" placeholder="First Name" required="true">
+                    </div>
+                </div>
+                  
+                 <div class="form-group row">
+                    <div class="col-sm-4 fontclass">
+                        <label >Last Name *</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="email"  class="form-control mymetakey" id="last_name" name="last_name" placeholder="Last Name" required="true">
+                    </div>
+                </div>
+                  
+                <div class="form-group row">
+                    <div class="col-sm-4 fontclass">
+                        <label >Company Name *</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="email"  class="form-control mymetakey" id="company_name" name="company_name" placeholder="Company Name" required="true">
+                    </div>
+                </div>
+                  
+                  
+                  
+                  
+		 <?php  
+                 
+                
+                 
+                 
+                 foreach ($additional_fields as $key=>$value){ 
                            
                                 if($additional_fields[$key]['fieldsystemtask'] == "checked" && $additional_fields[$key]['SystemfieldInternal'] != "checked" ){
                                 $requiredStatus = $additional_fields[$key]['fieldrequriedstatus'];
@@ -75,23 +121,23 @@
                                 }
                                 ?>
                                 
-                                <?php if($additional_fields[$key]['fieldType'] != 'checkbox' && $additional_fields[$key]['fieldType'] != 'display' && $additional_fields[$key]['displayonapplicationform'] == "checked"){ ?>
+                                <?php if($additional_fields[$key]['fielduniquekey'] !="Semail" && $additional_fields[$key]['fielduniquekey'] !="first_name" && $additional_fields[$key]['fielduniquekey'] !="last_name" && $additional_fields[$key]['fielduniquekey'] !="company_name" && $additional_fields[$key]['fieldType'] != 'checkbox' && $additional_fields[$key]['fieldType'] != 'display' && $additional_fields[$key]['displayonapplicationform'] == "checked"){ ?>
                                
                                     
                                     
                                     <?php if($additional_fields[$key]['fieldType'] == 'email' || $additional_fields[$key]['fieldType'] == 'text' ||  $additional_fields[$key]['fieldType'] == 'date' ||$additional_fields[$key]['fieldType'] == 'number'){ ?> 
-                                         <div class="form-group row">
-                                        <div class="col-sm-4 fontclass">
-                                        <label ><?php echo $additional_fields[$key]['fieldName'].' '.$requriedStatus;?>
-                                        <?php if(!empty($additional_fields[$key]['fieldtooltiptext'])){?>
+                                        <div class="form-group row">
+                                            <div class="col-sm-4 fontclass">
+                                            <label ><?php echo $additional_fields[$key]['fieldName'].' '.$requriedStatus;?>
+                                            <?php if(!empty($additional_fields[$key]['fieldtooltiptext'])){?>
 
-                                          <i style="cursor: pointer;" title="<?php echo $additional_fields[$key]['fieldtooltiptext'];?>" class="reporticon font-icon fa fa-question-circle"></i>
-                                        <?php }?>
-                                        </label>
-                                        <?php if(!empty($additional_fields[$key]['fielddescription'])){?>
+                                              <i style="cursor: pointer;" title="<?php echo $additional_fields[$key]['fieldtooltiptext'];?>" class="reporticon font-icon fa fa-question-circle"></i>
+                                            <?php }?>
+                                            </label>
+                                            <?php if(!empty($additional_fields[$key]['fielddescription'])){?>
 
-                                        <?php echo $additional_fields[$key]['fielddescription'];?>
-                                        <?php }?>
+                                            <?php echo $additional_fields[$key]['fielddescription'];?>
+                                            <?php }?>
                                         </div>
                                         <div class="col-sm-8">
 					<input type="<?php echo $additional_fields[$key]['fieldType'];?>"  class="form-control mymetakey" id="<?php echo $additional_fields[$key]['fielduniquekey'];?>" name="<?php echo $additional_fields[$key]['fielduniquekey'];?>" placeholder="<?php echo $additional_fields[$key]['fieldplaceholder'];?>" <?php echo $requiredStatueUpdate;?>>

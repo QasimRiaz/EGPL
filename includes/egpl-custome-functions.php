@@ -72,4 +72,37 @@ class EGPLCustomeFunctions {
 }
 
 
+function getAllusersemailsaddress(){
+    
+      try{
+          
+          
+        $users_args = array(
+        'role__not_in' => 'Administrator'
+        );
+          
+        $user_query = new WP_User_Query( $users_args );
+        $authors = $user_query->get_results();
+        foreach ($authors as $aid) {
+            
+           
+            $user_data = get_userdata($aid->ID);
+            $value['email'] = $user_data->user_email;
+            $value['id'] = $aid->ID;
+            $completeFieldsDataArray[] = $value;
+           
+        }
+            
+            
+        
+        return $completeFieldsDataArray;
+          
+      } catch (Exception $ex) {
+          
+
+      }
+    
+}
+
+
 }

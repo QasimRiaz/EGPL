@@ -89,7 +89,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
      <?php if(isset($_REQUEST)){ 
          
          ?>
-            <form action="<?php echo $base_url;?>/user-report/?report=edit" method="post"  id="runreportresult"  >
+            <form action="<?php echo $base_url;?>/task-report-filters/?report=edit" method="post"  id="runreportresult"  >
                     <input type="hidden" name='usertimezone-hiddenfield' id='usertimezone-hiddenfield' value='<?php echo $_POST['usertimezone-hiddenfield'];?>' > 
                     <input type="hidden" name='filterdata-hiddenfield' id='filterdata-hiddenfield' value="<?php echo $querybuilderfilter ;?>" > 
                     <input type="hidden" name='selectedcolumnslebel-hiddenfield' id='selectedcolumnslebel-hiddenfield' value="<?php echo $selectedcolumnslebel_hiddenfield;?>" > 
@@ -106,7 +106,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                 <div class="tbl">
                     <div class="tbl-row">
                         <div class="tbl-cell">
-                            <h3>Users Report</h3>
+                            <h3>Tasks Report</h3>
 
                         </div>
                     </div>
@@ -283,7 +283,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                             </div><!--.row-->
                         </section><!--.faq-page-cats-->
                         <h5 class="m-t-lg with-border"></h5>
-                        <table id="example" class="stripe row-border order-column display table table-striped table-bordered" cellspacing="0" width="100%">
+                        <table id="customereports" class="stripe row-border order-column display table table-striped table-bordered" cellspacing="0" width="100%">
                         </table>
                         <h5 class="m-t-lg with-border"></h5>
                         <div class="form-group row">
@@ -481,7 +481,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     <?php
     include 'cm_footer.php';
     ?>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report_result.js?v=2.35"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/custome_tasks_report.js?v=2.36"></script>
 
     <?php
 }else{

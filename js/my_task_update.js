@@ -211,7 +211,8 @@ function update_user_meta_custome(elem) {
             data: {action: value, updatevalue: metaupdate, status: statusvalue,sponsorid:sponsorid},
             type: 'post',
             success: function(output) {
-             
+				console.log("Hello world 1");
+             alert("Hello! I am an alert box!!");
                filestatus=true;
                jQuery("body").css({'cursor':'default'});
                if(metaupdate !=""){
@@ -224,8 +225,7 @@ function update_user_meta_custome(elem) {
                    
                }
                if(sponsorid){
-                   
-                    swal({
+                   swal({
                                  title: "Success",
                                  text: "Value has been updated successfully.",
                                  type: "success",
@@ -277,7 +277,7 @@ function update_user_meta_custome(elem) {
             data: {action: value, updatevalue: metaupdate, status: statusvalue,sponsorid:sponsorid},
             type: 'post',
             success: function(output) {
-             
+             console.log("Hello world 2 " + metaupdate);
                filestatus=true;
                jQuery("body").css({'cursor':'default'});
                if(metaupdate !=""){

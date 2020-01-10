@@ -40,7 +40,14 @@ Release Items
 5.Update Header Specs
 6.Update From Email
 
--------------------14-12-2019---Bug Fixed Release--------------
+-------------------14-12-2019---Bug Fixed Release 3.55--------------
 
 1.Level Not Updating in Zapier code
 2.Update New Product roles Dropdown
+
+
+-------------------10-01-2020---New Feature List 3.60--------------
+
+1.Role Based Add-Ons
+2.User Field Ordering
+3.Default Level to no selection

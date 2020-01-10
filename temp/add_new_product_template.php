@@ -5,9 +5,11 @@
     $woocommerce_rest_api_keys = get_option( 'ContenteManager_Settings' );
     $wooconsumerkey = $woocommerce_rest_api_keys['ContentManager']['wooconsumerkey'];
     $wooseceretkey = $woocommerce_rest_api_keys['ContentManager']['wooseceretkey'];
+  
     
-
-    
+    require_once plugin_dir_path( __DIR__ ) . '/includes/egpl-custome-functions.php';
+    $UserList = new EGPLCustomeFunctions();
+    $listofuseremails = $UserList->getAllusersemailsaddress();
     $args = array(
 	'posts_per_page'   => -1,
 	'orderby'          => 'date',
@@ -35,17 +37,12 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
        global $wp_roles;
       
        
-     
-      
-       
-       
        $all_roles = $wp_roles->roles;
        $client = new WC_API_Client( $url, $wooconsumerkey, $wooseceretkey, $options );
        $product_cat_list = $client->products->get_categories() ;
        
        if(isset($_GET['producttype'])){
        
-           
            $product_type = $_GET['producttype'];
            if ($product_type == 'Packages') {
                  
@@ -60,9 +57,6 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                  $product_name_for_fields_lebal = "Booth";
              }
            
-           
-           
-           
        }
        
        if(isset($_GET['productid'])){
@@ -70,39 +64,30 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
            $product_id = $_GET['productid'];
            $update_product = wc_get_product( $product_id );
            
+           
            $get_results = get_post_meta($product_id, "productlevel",true);
            $get_deposit_type = get_post_meta($product_id, "_wc_deposit_type",true);
            $get_deposit_amount = get_post_meta($product_id, "_wc_deposit_amount",true);
          
-           
-            
-       
-       
-         
-          
            $selectedTaskListData = get_post_meta( $product_id);
            
+           $getvisiblelevelsnames = get_post_meta($product_id, "_alg_wc_pvbur_visible",true);
+           
+           $getvisiblelistofusers = get_post_meta($product_id, "_alg_wc_pvbur_uservisible",true);
+           
            //echo '<pre>';
-           //print_r($selectedTaskListData);exit;
+           //print_r($getvisiblelevelsnames);exit;
            $selectedTaskList = unserialize($selectedTaskListData['seletedtaskKeys'][0]);
          
             foreach ($product_cat_list->product_categories as $cat_key=>$cat_value){
-           
            
                 if($cat_value->id == $update_product->category_ids[0]){
                     
                     $selectedcat_name = $cat_value->name;
                     
-                    
-                    
                 }
-           
-           
-                }
+            }
        
-           
-           
-           
            if ($selectedcat_name == 'Packages') {
                
                 $product_type = "package";
@@ -117,8 +102,6 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                $product_type = "booths";
                $product_name_for_fields_lebal = "Booth";
            }
-           
-         
            
        }
        
@@ -360,10 +343,87 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
 
                           </div>
                    </div>
-                  
-                  <div class="form-group row" id="assignmentlevelfield" >
+                   <div class="form-group row" id="assignmentlevelfield" >
                  
-                                    <label class="col-sm-3 form-control-label">Level Assignment <i data-toggle="tooltip" title="If you select a level here, the buyer of this product will be automatically assigned this level on successfully placing the order." class="fa fa-question-circle" aria-hidden="true"></i></label>
+                                    <label class="col-sm-3 form-control-label">Level Visibility <i data-toggle="tooltip" title="Select user levels that product is visible for. If no levels selected product will be visible for all levels." class="fa fa-question-circle" aria-hidden="true"></i></label>
+                                    <div class="col-sm-9">
+                                           
+								 <select  class="form-control select2" id="visiblelevels" multiple="multiple" data-allow-clear="true"  >
+								
+                                                                     <option></option>
+                                                                     <?php if (isset($_GET['productid'])) { 
+                                                                         foreach ($all_roles as $key => $name) {
+
+
+                                                                             if ($key != 'administrator' && $key != 'contentmanager' ) {
+                                                                                
+                                                                                if (in_array($key,$getvisiblelevelsnames)) {
+                                                                                     
+                                                                                     echo '<option value="' . $key . '" selected="selected">' . $name['name'] . '</option>';
+                                                                                 }else{
+                                                                                 echo '<option value="' . $key . '">' . $name['name'] . '</option>';
+                                                                                 }
+                                                                             }
+                                                                         } 
+                                                                     }else{ 
+                                                                        foreach ($all_roles as $key => $name) {
+
+
+                                                                             if ($key != 'administrator' && $key != 'contentmanager' ) {
+                                                                                 echo '<option value="' . $key . '">' . $name['name'] . '</option>';
+                                                                             }
+                                                                         }
+                                                                        
+                                                                         
+                                                                        }?>
+								 </select>
+					    
+                                        
+                                    </div>
+                 </div>
+                
+                  
+                 <div class="form-group row" id="assignmentlevelfield" >
+                 
+                                    <label class="col-sm-3 form-control-label">User Visibility <i data-toggle="tooltip" title="Select users that product is visible for. If no users selected product will be visible for all users." class="fa fa-question-circle" aria-hidden="true"></i></label>
+                                    <div class="col-sm-9">
+                                           
+								 <select  class="form-control select2" id="listofuservisible" multiple="multiple" data-allow-clear="true"  >
+								
+                                                                     <option></option>
+                                                                     <?php if (isset($_GET['productid'])) { 
+                                                                         foreach ($listofuseremails as $key => $name) {
+
+                                                                                if (in_array($name['id'],$getvisiblelistofusers)) {
+                                                                                 
+                                                                                    echo '<option value="' . $name['id'] . '" selected="selected">' . $name['email'] . '</option>';
+                                                                                 
+                                                                                    
+                                                                                 }else{
+                                                                                    
+                                                                                     echo '<option value="' . $name['id'] . '">' . $name['email'] . '</option>';
+                                                                                 }
+                                                                             
+                                                                         } 
+                                                                     }else{ 
+                                                                        foreach ($listofuseremails as $key => $name) {
+
+
+                                                                             
+                                                                                 echo '<option value="' . $name['id'] . '">' . $name['email'] . '</option>';
+                                                                             
+                                                                         }
+                                                                        
+                                                                         
+                                                                        }?>
+								 </select>
+					    
+                                        
+                                    </div>
+                 </div> 
+                 <div class="form-group row" id="assignmentlevelfield" >
+                 
+                                    <label class="col-sm-3 form-control-label">Level Reassignment <i data-toggle="tooltip" title="If you select a level here, the buyer of this product will be automatically assigned this level on successfully placing the order." class="fa fa-question-circle" aria-hidden="true"></i></label>
                                     <div class="col-sm-9">
                                            
 								 <select  class="form-control" id="roleassign" >
@@ -399,13 +459,14 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                         
                                     </div>
                  </div>
+                
                  
-                   <div class="form-group row" id="assignmentlevelfield">
+                 <div class="form-group row" id="assignmentlevelfield">
                  
                 
                     
                  
-                                    <label class="col-sm-3 form-control-label">Task Assignment <i data-toggle="tooltip" title="If you select one or more tasks here, the buyer of this product will be automatically assigned these tasks on successfully placing the order." class="fa fa-question-circle" aria-hidden="true"></i></label>
+                                    <label class="col-sm-3 form-control-label">Select Task <i data-toggle="tooltip" title="If you select one or more tasks here, the buyer of this product will be automatically assigned these tasks on successfully placing the order." class="fa fa-question-circle" aria-hidden="true"></i></label>
                                     <div class="col-sm-9">
                                            
 								 <select  class="form-control" class="select2"  data-placeholder="Select Tasks" data-allow-clear="true" data-toggle="tooltip" multiple="multiple" id="selectedtasks" >
@@ -628,7 +689,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
     </div>
 
     <?php }include 'cm_footer.php'; ?>
-<script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=2.48"></script>
+<script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=2.49"></script>
    
         
         
