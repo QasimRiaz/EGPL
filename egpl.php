@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.63
+ * Version:           3.64
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -8088,7 +8088,7 @@ function UpdateNewUser($updateContactUserData){
             $user_data = get_userdata($authors[0]->ID);
             
              $role = $updateContactUserData->Role;
-            
+             $roleKeyValue = "";
             
     
                 if (is_multisite()) {
@@ -8101,10 +8101,16 @@ function UpdateNewUser($updateContactUserData){
                 foreach ($get_all_roles as $key => $item) {
                      if($role == $item['name']){
                          $role = $key;
+                         $roleKeyValue = $key;
 
                      }
                 }
-          
+            if(empty($role) || empty($roleKeyValue)){
+        
+                $message['message'] = 'Failed to update user due to User Level not vaild.';
+                
+            }else{
+                
             if($updateContactUserData->Semail != $user_data->user_email){
             
                 
@@ -8153,7 +8159,7 @@ function UpdateNewUser($updateContactUserData){
             
             $responce['id'] = time()*1000;
             $responce['message'] = "Requested data has been updated successfully.";
-            
+            }
         }else{
             
             
@@ -8296,6 +8302,8 @@ function CreateNewUser($newContactUserData){
         }
     }
     }
+    
+    
         echo json_encode($message);
         die();    
         
