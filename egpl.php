@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.6
+ * Version:           3.61
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -8183,7 +8183,7 @@ function CreateNewUser($newContactUserData){
     $user_id = username_exists($newContactUserData->username);
     $role = $newContactUserData->Role;
     $email = $newContactUserData->username;
-    
+    $roleKeyValue = "";
             if (is_multisite()) {
                 $blog_id = get_current_blog_id();
                 $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
@@ -8194,12 +8194,17 @@ function CreateNewUser($newContactUserData){
             foreach ($get_all_roles as $key => $item) {
                  if($role == $item['name']){
                      $role = $key;
+                     $roleKeyValue = $key;
                      
                  }
             }
     
             
-    
+    if(empty($role) || empty($roleKeyValue)){
+        
+        $message['message'] = 'Failed to add user due to User Level not vaild.';
+        
+    }else{
     
     if (!$user_id and email_exists($newContactUserData->username) == false) {
         
@@ -8290,7 +8295,7 @@ function CreateNewUser($newContactUserData){
             }
         }
     }
-        
+    }
         echo json_encode($message);
         die();    
         
@@ -8582,41 +8587,29 @@ add_action( 'pre_get_posts', 'pre_get_posts_hide_invisible_products', PHP_INT_MA
                 
                 if (in_array("administrator", $current_user_roles) || in_array("contentmanager", $current_user_roles)){
                 
-		$invisible_product_ids = array();
+                  $invisible_product_ids = array();
                 
                 }else{
                     
-                  
                   $invisible_product_ids = alg_wc_pvbur_get_invisible_products_ids( $current_user_roles,$current_user_ids,false );  
                   $visible_product_ids_userlist = alg_wc_pvbur_get_invisible_products_ids_userlist( $current_user_roles,$current_user_ids,false );  
                   $visible_product_ids_userlist_views = alg_wc_pvbur_get_invisible_products_ids_userlist_views( $current_user_roles,$current_user_ids,false );  
-                  $invisible_product_ids = array_merge($invisible_product_ids,$visible_product_ids_userlist);
-                    if(!empty($visible_product_ids_userlist_views)){
-
-                        foreach ($visible_product_ids_userlist_views as $porIndex=>$prodID){
-
-                                foreach ($invisible_product_ids as $porInIndex=>$prodINID){
-
-                                    if($prodINID == $prodID){
-
-
-                                        unset($invisible_product_ids[$porInIndex]);
-
-                                    }
-
-                                }
-                            }
-                        }
+                  $results = array_merge($invisible_product_ids,$visible_product_ids_userlist_views);
                   
+                  // echo '<pre>';
+                 //  print_r($invisible_product_ids);
+                 //  print_r($visible_product_ids_userlist_views);
+                  // print_r($results);exit;
+                  
+                  $invisible_product_ids = array_diff($visible_product_ids_userlist,$results);
+                  
+                 
                 }
                 
                 
+               // print_r($invisible_product_ids);exit;
                 
-                
-               
-                
-                
-		if ( is_array( $invisible_product_ids ) && count( $invisible_product_ids ) > 0 ) {
+                if ( is_array( $invisible_product_ids ) && count( $invisible_product_ids ) > 0 ) {
 			foreach ( $invisible_product_ids as $invisible_product_id ) {
 				$filter = apply_filters( 'alg_wc_pvbur_is_visible', false, $current_user_roles, $invisible_product_id );
 				if ( ! filter_var( $filter, FILTER_VALIDATE_BOOLEAN ) ) {
@@ -8830,33 +8823,37 @@ if ( ! function_exists( 'alg_wc_pvbur_get_invisible_products_query_args' ) ) {
                  
                     
                     $visible_meta_query   = array();
-                   
+                    $invisible_meta_query = array();
+                    $visible_meta_query['relation'] = "OR";
+                   // $invisible_meta_query['relation'] = "OR";
                        
                         foreach ( $roles as $role ) {
+                            
                                 $visible_meta_query[] = array(
                                         'key'     => '_alg_wc_pvbur_visible',
                                         'value'   => '"' . $role . '"',
-                                        'compare' => 'NOT LIKE',
+                                        'compare' => 'LIKE',
                                 );
                         }
                         
                         $visible_meta_query[] = array(
-                                'key'     => '_alg_wc_pvbur_visible',
-                                'value'   => 'i:0;',
-                                'compare' => 'LIKE',
-                        );
-
-                       
-                        $query_args['meta_query'][] = $visible_meta_query;
-                       
-                     
-                      
+                                        'key'     => '_alg_wc_pvbur_uservisible',
+                                        'value'   => '"' . $current_user_ids . '"',
+                                        'compare' => 'LIKE',
+                                );
                         
-                        return $query_args;
-                    
-                
-           	
-	}
+                       
+                        
+                      //  $query_args['meta_query']['relation']="OR";
+                        $query_args['meta_query'][] = $visible_meta_query;
+                      //  $query_args['meta_query'][] = $invisible_meta_query;
+                       
+                    // echo '<pre>';
+                    // print_r($query_args);
+                      
+                     return $query_args;
+                     
+                    }
         
         function alg_wc_pvbur_get_invisible_products_query_args_onusersids( $roles = array(),$current_user_ids="" ) {
             
@@ -8864,35 +8861,15 @@ if ( ! function_exists( 'alg_wc_pvbur_get_invisible_products_query_args' ) ) {
 			'fields'           => 'ids',
 			'post_type'        => 'product',
 			'posts_per_page'   => '-1',
+                        'product_cat' => 'add-ons','package',
 			'suppress_filters' => true,
 			'meta_query'       => array()
 		);
                 
-                 
-                    $invisible_meta_query = array();
-                   // $invisible_meta_query['relation'] = 'OR';
-                    $invisible_meta_query[] = array(
-                                        'key'     => '_alg_wc_pvbur_uservisible',
-                                        
-                                        'value'   => '"' . $current_user_ids . '"',
-                                        'compare' => 'NOT LIKE',
-                    );
+                return $query_args;
                     
-                    $invisible_meta_query[] = array(
-                                'key'     => '_alg_wc_pvbur_uservisible',
-                                'value'   => 'i:0;',
-                                'compare' => 'LIKE',
-                        );
-                    
-                    $query_args['meta_query'][] = $invisible_meta_query;
-                    
-                    
-                    
-                    return $query_args;
-                    
-                
-           	
-	}
+            }
+            
         function alg_wc_pvbur_get_invisible_products_query_args_onusersids_views( $roles = array(),$current_user_ids="" ) {
             
 		$query_args = array(
@@ -8905,24 +8882,41 @@ if ( ! function_exists( 'alg_wc_pvbur_get_invisible_products_query_args' ) ) {
                 
                  
                     $invisible_meta_query = array();
-                   // $invisible_meta_query['relation'] = 'OR';
+                    $visible_meta_query   = array();
+                    $visible_meta_query['relation'] = 'OR';
+                    $invisible_meta_query['relation'] = 'OR';
                     $invisible_meta_query[] = array(
                                         'key'     => '_alg_wc_pvbur_uservisible',
-                                        
-                                        'value'   => '"' . $current_user_ids . '"',
-                                        'compare' => 'LIKE',
+                                        'value'   => 'i:0;',
+                                        'compare' => 'NOT LIKE',
                     );
                     
-                  
+                    $invisible_meta_query[] = array(
+                                        'key'     => '_alg_wc_pvbur_uservisible',
+                                        'compare' => 'NOT EXISTS',
+                    );
                     
+                    $visible_meta_query[] = array(
+                                        'key'     => '_alg_wc_pvbur_visible',
+                                        'value'   => 'i:0;',
+                                        'compare' => 'NOT LIKE',
+                    );
+                    
+                    
+                    $visible_meta_query[] = array(
+                                        'key'     => '_alg_wc_pvbur_visible',
+                                        'compare' => 'NOT EXISTS',
+                    );
+                    
+                    $query_args['meta_query']['relation'] = 'AND';
+                    $query_args['meta_query'][] = $visible_meta_query;
                     $query_args['meta_query'][] = $invisible_meta_query;
                     
-                    
+                   // echo '<pre>';
+                   // print_r($query_args);
                     
                     return $query_args;
                     
-                
-           	
-	}
+        }
         
 }

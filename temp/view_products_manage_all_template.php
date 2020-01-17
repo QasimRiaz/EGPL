@@ -39,12 +39,12 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                         
                                         
                                     </div>
-                                    <div class="col-sm-6" >
+<!--                                    <div class="col-sm-6" >
                                             
                                         <a class="btn btn-lg mycustomwidth btn-success" href="<?php echo $site_url;?>/add-new-product/?producttype=package">Create Package</a>
                                         
                                         
-                                    </div>
+                                    </div>-->
                                   
                                    
                                     <div class="col-sm-1" ><label style="font-weight: normal;margin-right: -13px;float: right;margin-top: 7px;">Filter:</label></div>

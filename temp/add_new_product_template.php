@@ -267,9 +267,9 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
 
                                             <?php } } else { ?>
 
-                                               <option value="publish" >Published</option>
+                                               <option value="publish" selected="selected">Published</option>
                                               
-                                               <option value="draft" selected="selected">Draft (<?php echo $product_name_for_fields_lebal;?> will not be visible in the shop)</option>
+                                               <option value="draft" >Draft (<?php echo $product_name_for_fields_lebal;?> will not be visible in the shop)</option>
                                         <?php } ?>
                               </select>
 
@@ -352,11 +352,18 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
 								
                                                                      <option></option>
                                                                      <?php if (isset($_GET['productid'])) { 
+                                                                         
+                                                                          if(empty($getvisiblelevelsnames)){
+                                                                              
+                                                                              echo '<option selected="selected">All</option>';
+                                                                              
+                                                                          }
+                                                                         
                                                                          foreach ($all_roles as $key => $name) {
 
-
+                                                                             
                                                                              if ($key != 'administrator' && $key != 'contentmanager' ) {
-                                                                                
+                                                                               
                                                                                 if (in_array($key,$getvisiblelevelsnames)) {
                                                                                      
                                                                                      echo '<option value="' . $key . '" selected="selected">' . $name['name'] . '</option>';
@@ -365,10 +372,12 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                                                                  }
                                                                              }
                                                                          } 
-                                                                     }else{ 
+                                                                     }else{
+                                                                         
+                                                                        echo '<option selected="selected">All</option>';
                                                                         foreach ($all_roles as $key => $name) {
 
-
+                                                                            
                                                                              if ($key != 'administrator' && $key != 'contentmanager' ) {
                                                                                  echo '<option value="' . $key . '">' . $name['name'] . '</option>';
                                                                              }
@@ -466,7 +475,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                 
                     
                  
-                                    <label class="col-sm-3 form-control-label">Select Task <i data-toggle="tooltip" title="If you select one or more tasks here, the buyer of this product will be automatically assigned these tasks on successfully placing the order." class="fa fa-question-circle" aria-hidden="true"></i></label>
+                                    <label class="col-sm-3 form-control-label">Task Assignment <i data-toggle="tooltip" title="If you select one or more tasks here, the buyer of this product will be automatically assigned these tasks on successfully placing the order." class="fa fa-question-circle" aria-hidden="true"></i></label>
                                     <div class="col-sm-9">
                                            
 								 <select  class="form-control" class="select2"  data-placeholder="Select Tasks" data-allow-clear="true" data-toggle="tooltip" multiple="multiple" id="selectedtasks" >
@@ -689,7 +698,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
     </div>
 
     <?php }include 'cm_footer.php'; ?>
-<script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=2.49"></script>
+<script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=2.50"></script>
    
         
         

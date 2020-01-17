@@ -64,7 +64,7 @@ $blog_id2 = get_current_blog_id();
 	            -->
 	
 	                <div class="mobile-menu-right-overlay"></div>
-	                <div class="site-header-collapsed">
+	                <div class="site-header-collapsed" >
 	                    <div class="site-header-collapsed-in">
                               
                                 <div class="dropdown" style="margin-top: 10px;">
@@ -134,7 +134,7 @@ $blog_id2 = get_current_blog_id();
                                     
                                 </div>
 	                        <div class="help-dropdown">
-                                    <h6 style="color:#000;margin-top: 17px;font-weight: bolder;" >
+                                    <h6 style="text-align: left;color:#000;margin-top: 17px;font-weight: bolder;" >
                                         
                                         
                                         <a style="color:#000;" href="<?php echo $site_url; ?>" target="_blank"><?php echo $blog_title;?></a>
