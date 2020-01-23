@@ -152,38 +152,28 @@ function check_whocat_selet(){
      
      var pcategoriesname = jQuery("#pcategories option:selected").text();
      var roleassign = jQuery("#roleassign option:selected").val();
-     add_new_product();
+     var visiblelevels = jQuery('#visiblelevels').select2("val");
+     var listofuservisible = jQuery('#listofuservisible').select2("val");
      
-//    if(pcategoriesname == 'Add-ons' && roleassign !=""){
-//        swal({
-//            title: "Warning",
-//            text: 'You have selected a level for an Add-on product. This is usually not recommended. Are you sure you want to do this?',
-//            type: "warning",
-//            showCancelButton: true,
-//            confirmButtonClass: "btn-danger",
-//            confirmButtonText: "Yes, continue!",
-//            cancelButtonText: "No, cancel please!",
-//            closeOnConfirm: false,
-//            closeOnCancel: false
-//            },
-//                function (isConfirm) {
-//
-//                    if (isConfirm) {
-//                        
-//                    add_new_product();
-//
-//                    }else{
-//                       
-//                       
-//                       swal.close(); 
-//                        
-//                    }
-//                });
-//    
-//    }else{
-//        
-//        
-//    } 
+     
+     
+     
+     //add_new_product();
+     
+    if(visiblelevels != '' ||  listofuservisible !=""){
+        
+             swal({
+                    title: "Error",
+                    text: 'Please make sure to select at least one selection for Level Visibility OR User Visibility.',
+                    type: "error",
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Ok"
+                });
+              
+    }else{
+        
+          add_new_product();
+    } 
     
     
 }

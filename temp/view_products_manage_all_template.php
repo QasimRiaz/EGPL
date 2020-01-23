@@ -46,18 +46,18 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                         
                                     </div>-->
                                   
-                                   
-                                    <div class="col-sm-1" ><label style="font-weight: normal;margin-right: -13px;float: right;margin-top: 7px;">Filter:</label></div>
-                     
+                                    <div class="col-sm-6"></div>
+<!--                                    <div class="col-sm-1" ><label style="font-weight: normal;margin-right: -13px;float: right;margin-top: 7px;">Filter:</label></div>
+                                    
                                     <div class="col-sm-2">
                                    
                                         <select style="margin-left: -8px;width: 94%;" class="form-control input-sm" id="filterdropdown" onchange="customefilterapplyontable()">
                                                     <option value="">All</option>
                                                     <option value="Add-ons">Add-ons</option>
-                                                    <option value="Packages">Packages</option>
+                                                    
                                                    
                                         </select> 
-                                    </div>
+                                    </div>-->
                     
                                 </div>
                 <div class="card-block" style='margin-left: -24px;'>

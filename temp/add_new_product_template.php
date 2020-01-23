@@ -353,10 +353,13 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                                                      <option></option>
                                                                      <?php if (isset($_GET['productid'])) { 
                                                                          
-                                                                          if(empty($getvisiblelevelsnames)){
+                                                                          if(empty($getvisiblelevelsnames) && empty($getvisiblelistofusers)){
                                                                               
                                                                               echo '<option selected="selected">All</option>';
                                                                               
+                                                                          }else{
+                                                                              
+                                                                              echo '<option >All</option>';
                                                                           }
                                                                          
                                                                          foreach ($all_roles as $key => $name) {
@@ -698,7 +701,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
     </div>
 
     <?php }include 'cm_footer.php'; ?>
-<script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=2.50"></script>
+<script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=2.53"></script>
    
         
         

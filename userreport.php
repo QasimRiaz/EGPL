@@ -380,25 +380,43 @@ function gettasksreport($data) {
          $columns_headers[1]['type'] = 'string';
          $columns_headers[1]['title'] = 'Task Name';
          
-         $columns_headers[2]['key'] = 'task_value';
-         $columns_headers[2]['type'] = 'string';
-         $columns_headers[2]['title'] = 'Submitted Value';
+          $columns_headers[2]['key'] = 'task_due_date';
+         $columns_headers[2]['type'] = 'date';
+         $columns_headers[2]['title'] = 'Due Date';
          
-         $columns_headers[3]['key'] = 'task_date';
-         $columns_headers[3]['type'] = 'date';
-         $columns_headers[3]['title'] = 'Submitted On';
          
-         $columns_headers[4]['key'] = 'compnay_name';
-         $columns_headers[4]['type'] = 'string';
-         $columns_headers[4]['title'] = 'Company Name';
+         $columns_headers[3]['key'] = 'task_value';
+         $columns_headers[3]['type'] = 'string';
+         $columns_headers[3]['title'] = 'Submission';
          
-         $columns_headers[5]['key'] = 'Semail';
+         $columns_headers[4]['key'] = 'task_date';
+         $columns_headers[4]['type'] = 'date';
+         $columns_headers[4]['title'] = 'Submitted On';
+         
+         $columns_headers[5]['key'] = 'compnay_name';
          $columns_headers[5]['type'] = 'string';
-         $columns_headers[5]['title'] = 'Email';
+         $columns_headers[5]['title'] = 'Company';
+         
          
          $columns_headers[6]['key'] = 'Role';
          $columns_headers[6]['type'] = 'string';
          $columns_headers[6]['title'] = 'Level';
+         
+         $columns_headers[7]['key'] = 'first_name';
+         $columns_headers[7]['type'] = 'string';
+         $columns_headers[7]['title'] = 'First Name';
+         
+         $columns_headers[8]['key'] = 'last_name';
+         $columns_headers[8]['type'] = 'string';
+         $columns_headers[8]['title'] = 'Last Name';
+         
+         $columns_headers[9]['key'] = 'Semail';
+         $columns_headers[9]['type'] = 'string';
+         $columns_headers[9]['title'] = 'Email';
+         
+       
+         
+         
 
        
     
@@ -1173,6 +1191,7 @@ function custometasksreport() {
         
       
       
+         
          $columns_list_defult_user_report[0]['key'] = 'action_edit_tasks';
          $columns_list_defult_user_report[0]['type'] = 'display';
          $columns_list_defult_user_report[0]['title'] = 'Action';
@@ -1182,26 +1201,39 @@ function custometasksreport() {
          $columns_list_defult_user_report[1]['type'] = 'string';
          $columns_list_defult_user_report[1]['title'] = 'Task Name';
          
-         $columns_list_defult_user_report[2]['key'] = 'task_value';
-         $columns_list_defult_user_report[2]['type'] = 'string';
-         $columns_list_defult_user_report[2]['title'] = 'Submitted Value';
+          $columns_list_defult_user_report[2]['key'] = 'task_due_date';
+         $columns_list_defult_user_report[2]['type'] = 'date';
+         $columns_list_defult_user_report[2]['title'] = 'Due Date';
          
-         $columns_list_defult_user_report[3]['key'] = 'task_date';
-         $columns_list_defult_user_report[3]['type'] = 'date';
-         $columns_list_defult_user_report[3]['title'] = 'Submitted On';
          
-         $columns_list_defult_user_report[4]['key'] = 'compnay_name';
-         $columns_list_defult_user_report[4]['type'] = 'string';
-         $columns_list_defult_user_report[4]['title'] = 'Company Name';
+         $columns_list_defult_user_report[3]['key'] = 'task_value';
+         $columns_list_defult_user_report[3]['type'] = 'string';
+         $columns_list_defult_user_report[3]['title'] = 'Submission';
          
-         $columns_list_defult_user_report[5]['key'] = 'Semail';
+         $columns_list_defult_user_report[4]['key'] = 'task_date';
+         $columns_list_defult_user_report[4]['type'] = 'date';
+         $columns_list_defult_user_report[4]['title'] = 'Submitted On';
+         
+         $columns_list_defult_user_report[5]['key'] = 'compnay_name';
          $columns_list_defult_user_report[5]['type'] = 'string';
-         $columns_list_defult_user_report[5]['title'] = 'Email';
+         $columns_list_defult_user_report[5]['title'] = 'Company';
+         
          
          $columns_list_defult_user_report[6]['key'] = 'Role';
          $columns_list_defult_user_report[6]['type'] = 'string';
          $columns_list_defult_user_report[6]['title'] = 'Level';
          
+         $columns_list_defult_user_report[7]['key'] = 'first_name';
+         $columns_list_defult_user_report[7]['type'] = 'string';
+         $columns_list_defult_user_report[7]['title'] = 'First Name';
+         
+         $columns_list_defult_user_report[8]['key'] = 'last_name';
+         $columns_list_defult_user_report[8]['type'] = 'string';
+         $columns_list_defult_user_report[8]['title'] = 'Last Name';
+         
+         $columns_list_defult_user_report[9]['key'] = 'Semail';
+         $columns_list_defult_user_report[9]['type'] = 'string';
+         $columns_list_defult_user_report[9]['title'] = 'Email';
          
       
       
@@ -1216,7 +1248,9 @@ function custometasksreport() {
                 $value_type = get_post_meta($tasksID, 'type', false);
                 $profile_field_settings['type'] = $value_type[0];
                 $value_label = get_post_meta($tasksID, 'label', true);
-
+                $taskduedate = get_post_meta($tasksID, 'duedate', true);
+                
+               
                 foreach ($authors as $aid) {
                     
                     $counter=0;
@@ -1227,22 +1261,22 @@ function custometasksreport() {
                     
                    
                                               $column_row['Task Name'] =$value_label;
-
+                                              $column_row['Due Date'] =$taskduedate;
 
                                               if ($profile_field_settings['type'] == 'color') {
 
                                                   $file_info = unserialize($all_meta_for_user[$value_key][0]);
                                                   if (!empty($file_info)) {
 
-                                                      $column_row['Submitted Value'] ='<a href="' . $base_url . '/wp-content/plugins/EGPL/download-lib.php?cname=' . $company_name . '&userid=' . $aid->ID . '&fieldname=' . $profile_field_name . '" >Download</a>';
+                                                      $column_row['Submission'] ='<a href="' . $base_url . '/wp-content/plugins/EGPL/download-lib.php?cname=' . $company_name . '&userid=' . $aid->ID . '&fieldname=' . $profile_field_name . '" >Download</a>';
                                                   } else {
                                                       
-                                                      $column_row['Submitted Value'] ='';
+                                                      $column_row['Submission'] ='';
                                                   }
                                               } else {
 
 
-                                                  $column_row['Submitted Value'] =$all_meta_for_user[$value_key][0];
+                                                  $column_row['Submission'] =$all_meta_for_user[$value_key][0];
                                               }
                                               if (!empty($all_meta_for_user[$value_key . '_datetime'][0])) {
                                                   if (strpos($all_meta_for_user[$value_key . '_datetime'][0], 'AM') !== false) {
@@ -1265,8 +1299,12 @@ function custometasksreport() {
                                               }
                                               
                                               $user_company_name = get_user_meta($aid->ID, $site_prefix . 'company_name', true);
+                                              $first_name = get_user_meta($aid->ID, $site_prefix . 'first_name', true);
+                                              $last_name = get_user_meta($aid->ID, $site_prefix . 'last_name', true);
                                               $column_row['Submitted On'] = $datemy;
-                                              $column_row['Company Name']=$user_company_name;
+                                              $column_row['Company']=$user_company_name;
+                                              $column_row['First Name']=$first_name;
+                                              $column_row['Last Name']=$last_name;
                                               $column_row['Email']=$user_data->user_email;
                                               $column_row['Level']=$get_all_roles[$user_data->roles[0]]['name'];
                                              
@@ -1828,7 +1866,7 @@ function userreportresultdraw() {
                     $last_send_welcome_timestamp = "";
                 }
                 $company_name = $all_meta_for_user[$site_prefix.'company_name'][0];
-                $column_row['Action'] = '<div style="width: 140px !important;"class = "hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"><a href="'.$site_url.'/edit-user/?sponsorid=' . $aid->ID . '" target="_blank" data-toggle="tooltip" title="Edit User Profile"><i  class="hi-icon fusion-li-icon fa fa-pencil-square-o" ></i></a><a  target="_blank" href="'.$site_url.'/edit-sponsor-task/?sponsorid=' . $aid->ID . '" data-toggle="tooltip" title="User Tasks"><i class="hi-icon fusion-li-icon fa fa-th-list" ></i></a><a onclick="new_userview_profile(this)" id="' . $unique_id . '" name="viewprofile"   title="View Profile" data-toggle="tooltip" ><i class="hi-icon fusion-li-icon fa fa-eye" ></i></a><a onclick="delete_sponsor_meta(this)" id="' . $aid->ID . '" name="delete-sponsor" data-toggle="tooltip"  title="Remove User" ><i class="hi-icon fusion-li-icon fa fa-times-circle" ></i></a></div>';
+                $column_row['Action'] = '<div style="width: 140px !important;float: left !important;" class = "hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"><a href="'.$site_url.'/edit-user/?sponsorid=' . $aid->ID . '" target="_blank" data-toggle="tooltip" title="Edit User Profile"><i  class="hi-icon fusion-li-icon fa fa-pencil-square-o" ></i></a><a  target="_blank" href="'.$site_url.'/edit-sponsor-task/?sponsorid=' . $aid->ID . '" data-toggle="tooltip" title="User Tasks"><i class="hi-icon fusion-li-icon fa fa-th-list" ></i></a><a onclick="new_userview_profile(this)" id="' . $unique_id . '" name="viewprofile"   title="View Profile" data-toggle="tooltip" ><i class="hi-icon fusion-li-icon fa fa-eye" ></i></a><a onclick="delete_sponsor_meta(this)" id="' . $aid->ID . '" name="delete-sponsor" data-toggle="tooltip"  title="Remove User" ><i class="hi-icon fusion-li-icon fa fa-times-circle" ></i></a></div>';
 
                 $unique_id++;
 
@@ -2316,8 +2354,8 @@ function selfsign_registration_emails($user_id,$send_email_type){
         //$sponsor_info = get_option($settitng_key);
         
         $sponsor_info['selfsign_registration_request_email']['selfsignfromname'] = $site_title;
-        $sponsor_info['selfsign_registration_request_email']['selfsignsubject'] = 'Exhibitor Application Received for ['.$site_title.']';
-        $sponsor_info['selfsign_registration_request_email']['selfsignboday'] = '<p>Hi '.$all_meta_for_user[$site_prefix.'first_name'][0].'  '.$all_meta_for_user[$site_prefix.'last_name'][0].',</p><p>Thank you for submitting your application form for [<strong>'.$site_title.'</strong>]. We are currently reviewing your submission. You will receive an email with login credentials once the review is complete.</p><p>Thank You!</p>';
+        $sponsor_info['selfsign_registration_request_email']['selfsignsubject'] = 'Exhibitor Application Received for '.$site_title.'';
+        $sponsor_info['selfsign_registration_request_email']['selfsignboday'] = '<p>Hi '.$all_meta_for_user[$site_prefix.'first_name'][0].'  '.$all_meta_for_user[$site_prefix.'last_name'][0].',</p><p>Thank you for submitting your application form for <strong>'.$site_title.'</strong>. We are currently reviewing your submission. You will receive an email with login credentials once the review is complete.</p><p>Thank You!</p>';
         
         $sponsor_info['selfsign_registration_declined_email']['declinedfromname'] = $site_title;
         $sponsor_info['selfsign_registration_declined_email']['declinedsubject'] = 'Registration Application Declined for ['.$site_title.']';

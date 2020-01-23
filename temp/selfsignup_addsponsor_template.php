@@ -76,7 +76,7 @@
                         <label >First Name *</label>
                     </div>
                     <div class="col-sm-8">
-                        <input type="email"  class="form-control mymetakey" id="first_name" name="first_name" placeholder="First Name" required="true">
+                        <input type="text"  class="form-control mymetakey" id="first_name" name="first_name" placeholder="First Name" required="true">
                     </div>
                 </div>
                   
@@ -85,7 +85,7 @@
                         <label >Last Name *</label>
                     </div>
                     <div class="col-sm-8">
-                        <input type="email"  class="form-control mymetakey" id="last_name" name="last_name" placeholder="Last Name" required="true">
+                        <input type="text"  class="form-control mymetakey" id="last_name" name="last_name" placeholder="Last Name" required="true">
                     </div>
                 </div>
                   
@@ -94,7 +94,7 @@
                         <label >Company Name *</label>
                     </div>
                     <div class="col-sm-8">
-                        <input type="email"  class="form-control mymetakey" id="company_name" name="company_name" placeholder="Company Name" required="true">
+                        <input type="text"  class="form-control mymetakey" id="company_name" name="company_name" placeholder="Company Name" required="true">
                     </div>
                 </div>
                   

@@ -1971,8 +1971,8 @@ function checkemailaddressalreadyexist(){
                             
                             var dataArray = jQuery.parseJSON(data);
                             
-                            jQuery('#Sfname').val(dataArray.first_name);
-                            jQuery('#Slname').val(dataArray.last_name);
+                            jQuery('#first_name').val(dataArray.first_name);
+                            jQuery('#last_name').val(dataArray.last_name);
                             jQuery('#company_name').val(dataArray.company_name);
                             jQuery('.preuploadrolename').val(dataArray.role_name);
                             

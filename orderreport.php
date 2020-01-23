@@ -1499,6 +1499,9 @@ function addnewproducts($addnewproduct_data) {
           
                      $objProduct->update_meta_data('productlevel', $roleassign);
             
+                }else{
+                    
+                    $objProduct->update_meta_data('productlevel', "");
                 }
         
         if(!empty($selectedtaskArray['visiblelevels'])){
@@ -1506,20 +1509,24 @@ function addnewproducts($addnewproduct_data) {
 
                       $objProduct->update_meta_data('_alg_wc_pvbur_visible', $selectedtaskArray['visiblelevels']);
 
+         }else{
+             
+             $objProduct->update_meta_data('_alg_wc_pvbur_visible', "");
          }
          
          if(!empty($selectedtaskArray['listofuservisible'])){
 
 
-                      $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', $selectedtaskArray['listofuservisible']);
+              $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', $selectedtaskArray['listofuservisible']);
 
+         }else{
+             
+              $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', "");
          }
         
         
         
         $objProduct->set_reviews_allowed(TRUE); //Set if reviews is allowed.                        | bool
-        
-                     
         
         $term_ids =[$addnewproduct_data['pcategories']];
         $objProduct->set_category_ids($term_ids); //Set the product categories.                   | array $term_ids List of terms IDs.
@@ -1527,6 +1534,7 @@ function addnewproducts($addnewproduct_data) {
         $objProduct->set_image_id($productpicrul); //Set main image ID.                                         | int|string $image_id Product image id.
         //Set gallery attachment ids.                       | array $image_ids List of image ids.
         $new_product_id = $objProduct->save(); //Saving the data to create new product, it will return product ID.
+        
         if(!empty($selectedtaskArray)){
             update_post_meta( $new_product_id, 'seletedtaskKeys', $selectedtaskArray );
         }
@@ -1614,7 +1622,8 @@ function updateproducts($updateproducts_data) {
         }else{
             $instock=false;
         }
-      /*  $data = [
+        
+        /*  $data = [
                 'title' => $updateproducts_data['ptitle'],
                 'manage_stock' => true,
                 'regular_price' => $price,
@@ -1642,14 +1651,12 @@ function updateproducts($updateproducts_data) {
             'timeout' => 30,
             'ssl_verify' => false,
         ); */
-        
-              
         //$objProduct = new WC_Product();
+        
         $objProduct = wc_get_product( $productid );
        
         global $post;
         $terms = get_the_terms( $productid, 'product_cat' );
-        
         
         if($terms[0]->slug == 'booth'){
             
@@ -1662,9 +1669,7 @@ function updateproducts($updateproducts_data) {
             $objProduct->set_short_description($updateproducts_data['pshortdescrpition']); //Set product short description.
             $objProduct->set_stock_quantity($updateproducts_data['pquanitity']); //Set number of items available for sale.
             $objProduct->set_stock_status($instock); 
-            $objProduct->set_menu_order($menu_order); 
-       
-        
+            $objProduct->set_menu_order($menu_order);
             
         }
         
@@ -1700,21 +1705,30 @@ function updateproducts($updateproducts_data) {
         if(!empty($roleassign)){
             
           
-                     $objProduct->update_meta_data('productlevel', $roleassign);
+            $objProduct->update_meta_data('productlevel', $roleassign);
             
+        }else{
+            
+            $objProduct->update_meta_data('productlevel', "");
         }
         if(!empty($selectedtaskArray['visiblelevels'])){
             
           
-                     $objProduct->update_meta_data('_alg_wc_pvbur_visible', $selectedtaskArray['visiblelevels']);
+            $objProduct->update_meta_data('_alg_wc_pvbur_visible', $selectedtaskArray['visiblelevels']);
             
+        }else{
+            
+            $objProduct->update_meta_data('_alg_wc_pvbur_visible', "");
         }
         
         if(!empty($selectedtaskArray['listofuservisible'])){
             
           
-                     $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', $selectedtaskArray['listofuservisible']);
+            $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', $selectedtaskArray['listofuservisible']);
             
+        }else{
+            
+            $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', "");
         }
         
         $new_product_id = $objProduct->save();
