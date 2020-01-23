@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.65
+ * Version:           3.66
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -20,8 +20,8 @@
 //get all the plugin settings
 
 
-require plugin_dir_path( __DIR__ ) . 'EGPL/includes/egpl_requests.php';
-require plugin_dir_path( __DIR__ ) . 'EGPL/includes/egpl_plugin_activations.php';
-require plugin_dir_path( __DIR__ ) . 'EGPL/includes/egpl_custome_request_handler_function.php';
-require plugin_dir_path( __DIR__ ) . 'EGPL/includes/zapier_integration.php';
-require plugin_dir_path( __DIR__ ) . 'EGPL/includes/levelbased_addons.php';
+require 'egpl_requests.php';
+require 'egpl_plugin_activations.php';
+require 'egpl_custome_request_handler_function.php';
+require 'zapier_integration.php';
+require 'levelbased_addons.php';
