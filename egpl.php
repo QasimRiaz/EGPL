@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.67
+ * Version:           3.68
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -8825,6 +8825,9 @@ if ( ! function_exists( 'alg_wc_pvbur_get_invisible_products_query_args' ) ) {
                     $visible_meta_query   = array();
                     $invisible_meta_query = array();
                     $visible_meta_query['relation'] = "OR";
+                    $roles[] = "all";
+                   // echo '<pre>';
+                  //  print_r($roles);exit;
                    // $invisible_meta_query['relation'] = "OR";
                        
                         foreach ( $roles as $role ) {

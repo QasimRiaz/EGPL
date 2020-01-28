@@ -1,4 +1,4 @@
-~Current Version:3.67~
+~Current Version:3.68~
 
 
 -------------------27-09-2019---Main release 3.40--------------
@@ -47,3 +47,7 @@ Release Items
 
 1.Level Not Updating in Zapier code
 2.Update New Product roles Dropdown
+
+-------------------27-01-2020---Bug Fixed Release--------------
+
+1, Level based show add-ons

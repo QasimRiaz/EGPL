@@ -159,12 +159,12 @@ function check_whocat_selet(){
      
      
      //add_new_product();
-     
-    if(visiblelevels != '' ||  listofuservisible !=""){
+     console.log(visiblelevels+'---'+listofuservisible);
+     if(visiblelevels == "" &&  listofuservisible =="" || visiblelevels == null &&  listofuservisible ==null){
         
              swal({
                     title: "Error",
-                    text: 'Please make sure to select at least one selection for Level Visibility OR User Visibility.',
+                    text: 'Please select at least one Level OR User for the Level Visibility or User Visibility fields.',
                     type: "error",
                     confirmButtonClass: "btn-danger",
                     confirmButtonText: "Ok"

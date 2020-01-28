@@ -74,9 +74,10 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
            $getvisiblelevelsnames = get_post_meta($product_id, "_alg_wc_pvbur_visible",true);
            
            $getvisiblelistofusers = get_post_meta($product_id, "_alg_wc_pvbur_uservisible",true);
+         
+         
            
-           //echo '<pre>';
-           //print_r($getvisiblelevelsnames);exit;
+           
            $selectedTaskList = unserialize($selectedTaskListData['seletedtaskKeys'][0]);
          
             foreach ($product_cat_list->product_categories as $cat_key=>$cat_value){
@@ -352,8 +353,12 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
 								
                                                                      <option></option>
                                                                      <?php if (isset($_GET['productid'])) { 
-                                                                         
-                                                                          if(empty($getvisiblelevelsnames) && empty($getvisiblelistofusers)){
+                                                                         if (empty($getvisiblelevelsnames) && empty($listofuseremails)) {
+                                                                             
+                                                                              echo '<option selected="selected">All</option>';
+                                                                         }else{
+                                                                             
+                                                                           if (in_array('All',$getvisiblelevelsnames)) {
                                                                               
                                                                               echo '<option selected="selected">All</option>';
                                                                               
@@ -361,7 +366,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                                                                               
                                                                               echo '<option >All</option>';
                                                                           }
-                                                                         
+                                                                         }
                                                                          foreach ($all_roles as $key => $name) {
 
                                                                              
@@ -690,18 +695,18 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
             </header>
             
 
-            <div class="box-typical box-typical-padding" >
+<!--           /* <div class="box-typical box-typical-padding" >-->
                 <div class="form-group row">
                 
                     <p class="col-sm-12 "><strong>Shop is not configured for this site. Please contact ExpoGenie.</strong></p>
                
-                </div>
+                </div>*/
             </div>
         </div>
     </div>
 
     <?php }include 'cm_footer.php'; ?>
-<script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=2.53"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=2.58"></script>
    
         
         
