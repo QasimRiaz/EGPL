@@ -2708,14 +2708,15 @@ function remove_sponsor_metas($user_id){
         
       
         
-        remove_user_from_blog($user_id, $blog_id);
+        remove_user_from_blog($user_id, $blog_id,1);
         $msg = "This user removes from this blog successfully";
         
     }else{
         
-        
-       $responce = wpmu_delete_user($user_id);
-       $msg = "";
+        remove_user_from_blog($user_id, $blog_id,1); 
+        remove_user_from_blog($user_id, 1,1); 
+       //$responce = wpmu_delete_user($user_id,1);
+       $msg = "This user removes from this blog successfully";
     }
     
     
