@@ -50,4 +50,10 @@ Release Items
 
 -------------------27-01-2020---Bug Fixed Release--------------
 
-1, Level based show add-ons
+1. Level based show add-ons
+
+
+-------------------30-01-2020---Bug Fixed Release--------------
+
+1. Fixed bug saved reports missing filter columns
+2. Search users missings

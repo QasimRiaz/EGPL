@@ -253,21 +253,17 @@ function savebulktask_update($request){
      try{
          
          
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID); 
         
         $listoftaks = json_decode(stripslashes($request['bulktaskdata']));
         $removetaskslist = json_decode(stripslashes($request['deletedtaskslist']));  
-         
-        foreach ($removetaskslist as $tasksIndex=>$removetaskID){
-            
-            
-            wp_delete_post($removetaskID);
-            
-        }
-        
-        $user_ID = get_current_user_id();
-        $user_info = get_userdata($user_ID);  
-        $lastInsertId = contentmanagerlogging('Save Bulk Task',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
        
+        
+        $lastInsertId = contentmanagerlogging('Save Bulk Task',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
+        if(!empty($removetaskslist)){
+            $removedListofTasks = removedcustomeposttypes($removetaskslist);
+        }
         
         foreach ($listoftaks as $taksKey=>$taskObject){
             
@@ -355,26 +351,15 @@ function savebulkfields_update($request){
          
         
         $listoftaks = json_decode(stripslashes($request['bulkfielddata']));
-        
-        
-        
-        
         $removetaskslist = json_decode(stripslashes($request['deletedfieldlist']));  
          
-        foreach ($removetaskslist as $tasksIndex=>$removetaskID){
-            
-           
-            wp_delete_post($removetaskID);
-            
-        }
-        
-        
-        
-        
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);  
         $lastInsertId = contentmanagerlogging('Save Bulk Field',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
-       
+        
+        if(!empty($removetaskslist)){
+            $removedListofTasks = removedcustomeposttypes($removetaskslist);
+        }
         
         foreach ($listoftaks as $taksKey=>$taskObject){
             
@@ -451,4 +436,30 @@ function savebulkfields_update($request){
 }
 
 
+
+function removedcustomeposttypes($removetaskslist){
+    
+    try{
+    
+        
+    $user_ID = get_current_user_id();
+    $user_info = get_userdata($user_ID);  
+        
+    foreach ($removetaskslist as $tasksIndex=>$removetaskID){
+            
+        $lastInsertId = contentmanagerlogging('Trashed Tasks/User Fields',"Admin Action",$removetaskID,$user_ID,$user_info->user_email,"pre_action_data");
+        $Responce = wp_trash_post($removetaskID);
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($Responce));
+        
+    }
+    
+    
+    }catch (Exception $e) {
+       
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+    } 
+    die(); 
+}
 

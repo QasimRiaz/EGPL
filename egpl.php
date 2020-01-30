@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.68
+ * Version:           3.69
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -2655,9 +2655,16 @@ function plugin_settings(){
 
 function remove_post_resource($post_id){
    
+     
+     $user_ID = get_current_user_id();
+     $user_info = get_userdata($user_ID);  
+     $lastInsertId = contentmanagerlogging('Trashed Resource',"Admin Action",$post_id,$user_ID,$user_info->user_email,"pre_action_data");
+     $Responce = wp_trash_post($post_id);
+     contentmanagerlogging_file_upload ($lastInsertId,serialize($Responce));
     
-    $responce = wp_delete_post($post_id);
-    return $responce;
+     return $Responce;
+    //$responce = wp_delete_post($post_id);
+   
     //print_r($responce);
     
 }
@@ -7268,9 +7275,9 @@ function checkloginuserstatus_fun() {
                     $valuename = "booth";
 
                 }else{
-
-                    $redirectURL = $site_url.'/product-category/packages/';
-                    $valuename = "package";
+                                     //packages                           
+                    $redirectURL = $site_url.'/product-category/add-ons/';
+                    $valuename = "add-ons";
                 }
 
                 

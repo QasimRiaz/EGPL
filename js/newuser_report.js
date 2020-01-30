@@ -79,8 +79,34 @@ jQuery(document).ready(function () {
             
             if(tech == 'edit'){
                 
-                 var filtervalue = jQuery("#querybuilderfilter").val();
-                 console.log(filtervalue);
+                 var filtervalue = JSON.parse(jQuery("#querybuilderfilter").val());
+                
+                 var Newfiltervalue = [];
+                 var arrayindex = [];
+                 Newfiltervalue = filtervalue;
+                 
+                 jQuery.each(Newfiltervalue.rules, function (key, value) {
+                     
+                     
+                     var responce = JSON.parse(queryfiltersarray).filter(function (person) { return person.id == value.id });
+                     
+                      console.log(responce)
+                      
+                     if (responce == "" ) {
+                       
+                           // filtervalue.rules.splice(key,1); 
+                           arrayindex.push({valueindex:key});
+                     }
+                     
+                 });
+                 
+                 
+                 jQuery.each(arrayindex, function (key, value) {
+                     
+                      console.log(value.valueindex)
+                      filtervalue.rules.splice(value.valueindex,1); 
+                     
+                 });
                  var showcollist = jQuery("#showcolonreport").val();
                  var orderby     = jQuery("#orderby").val();
                  var orderbycolname = jQuery("#orderbycolname").val();
@@ -94,7 +120,7 @@ jQuery(document).ready(function () {
                  jQuery('#loaduserreport option[value="'+loadreportname+'"]').attr('selected', 'selected');
                  jQuery("#userreportname").val(loadreportname);
                  
-                 jQuery('#builder').queryBuilder('setRules', JSON.parse(filtervalue));
+                 jQuery('#builder').queryBuilder('setRules', filtervalue);
                  jQuery("#usercontactfields").empty();
                  jQuery('#usertaskfields').empty();
                  jQuery("#usercontactfieldssortby").empty();
