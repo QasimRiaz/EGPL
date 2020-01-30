@@ -1846,6 +1846,31 @@ function productclone($productcloneid) {
         $get_deposit_type = get_post_meta($postid, "_wc_deposit_type",true);
         $get_deposit_amount = get_post_meta($postid, "_wc_deposit_amount",true);
         
+        
+        $alg_wc_pvbur_visible = get_post_meta($postid, "_alg_wc_pvbur_visible",true);
+        $alg_wc_pvbur_uservisible = get_post_meta($postid, "_alg_wc_pvbur_uservisible",true);
+        
+        if(!empty($alg_wc_pvbur_visible)){
+            
+          
+            $objProduct->update_meta_data('_alg_wc_pvbur_visible', $alg_wc_pvbur_visible);
+            
+        }else{
+            
+            $objProduct->update_meta_data('_alg_wc_pvbur_visible', "");
+        }
+        
+        if(!empty($alg_wc_pvbur_uservisible)){
+            
+          
+            $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', $alg_wc_pvbur_uservisible);
+            
+        }else{
+            
+            $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', "");
+        }
+        
+        
         if(!empty($get_deposit_type) && !empty($get_deposit_amount)){
             
             $objProduct->update_meta_data('_wc_deposit_type', $get_deposit_type);

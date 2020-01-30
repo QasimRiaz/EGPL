@@ -104,7 +104,7 @@
                                     <label class="col-sm-2 form-control-label">First Name <strong>*</strong></label>
                                     <div class="col-sm-10">
                                           <div class="form-control-wrapper form-control-icon-left">    
-								<input type="text"  class="form-control mymetakey" id="Sfname" name="first_name" placeholder="First Name" required>
+								<input type="text"  class="form-control mymetakey" id="first_name" name="first_name" placeholder="First Name" required>
 						<i class="font-icon  fa fa-pencil"></i>
                                                                	
                                         </div>
@@ -114,7 +114,7 @@
                                     <label class="col-sm-2 form-control-label">Last Name <strong>*</strong></label>
                                     <div class="col-sm-10">
                                          <div class="form-control-wrapper form-control-icon-left">    
-								<input type="text"  class="form-control mymetakey" id="Slname" name="last_name" placeholder="Last Name" required>
+								<input type="text"  class="form-control mymetakey" id="last_name" name="last_name" placeholder="Last Name" required>
 					<i class="font-icon  fa fa-pencil"></i>
                                          </div>			
                                         

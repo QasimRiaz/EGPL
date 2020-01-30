@@ -168,22 +168,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                         </div>
                     
                       
-                    <div class="form-group row">
-                            <label class="col-sm-3 form-control-label">Level<strong>*</strong></label>
-                            <div class="col-sm-9">
-
-                                <select class="mappingdropdown select2" name="Role" id="getusersheetcollist" required>
-                                    <option ></option>
-                                    
-
-
-
-                                </select>
-
-
-                            </div>
-                           
-                        </div>
+                   
                     
                       <div class="form-group row">
                             <label class="col-sm-3 form-control-label">Company Name<strong>*</strong></label>
@@ -201,7 +186,22 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                             </div>
                            
                         </div>
-                    
+                     <div class="form-group row">
+                            <label class="col-sm-3 form-control-label">Level<strong>*</strong></label>
+                            <div class="col-sm-9">
+
+                                <select class="mappingdropdown select2" name="Role" id="getusersheetcollist" required>
+                                    <option ></option>
+                                    
+
+
+
+                                </select>
+
+
+                            </div>
+                           
+                        </div>
                     
                      <?php foreach ($additional_fields as $key => $value) { 
                             

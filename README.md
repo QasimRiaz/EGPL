@@ -1,4 +1,4 @@
-~Current Version:3.68~
+~Current Version:3.6.1~
 
 
 -------------------27-09-2019---Main release 3.40--------------
@@ -56,4 +56,4 @@ Release Items
 -------------------30-01-2020---Bug Fixed Release--------------
 
 1. Fixed bug saved reports missing filter columns
-2. Search users missings
+2. Search users missing data

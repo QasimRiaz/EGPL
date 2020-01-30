@@ -171,7 +171,10 @@
                                                     
                                                     
                                                     
-                                                    <?php  foreach ($all_roles as $key => $name) { 
+                                                    <?php  if($rolename == 'contentmanager'){?>
+                                                         <option value='contentmanager' selected="true">Content Manager</option>
+                                                       <?php }else{
+                                                        foreach ($all_roles as $key => $name) { 
                                                         
                                                         
                                                         if ($key != 'administrator' && $key != 'contentmanager') {
@@ -182,7 +185,10 @@
                                                         <option value='<?php echo $key; ?>' selected="true"><?php echo $name['name'];?></option>
                                                             <?php }else{?>
                                                         <option value='<?php echo $key; ?>' ><?php echo $name['name'];?></option>
-                                                        <? }}} ?>
+                                                        <? }}}     } ?>  
+                                                       
+                                                            
+                                                   
                                                 </select>
                                             </div>
                                            

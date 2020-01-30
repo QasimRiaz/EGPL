@@ -29,7 +29,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
 
             <div class="box-typical box-typical-padding">
                 <p>
-               This is where you can manage and create various items that your users can purchase. An "Add-On" is anything you want to make available for purchase for all your users in the Add-On area of the portal. A "Package" is something your users are initially required to purchase prior to gaining full access to ExpoGenie.</p>
+               This is where you can manage and create various items that your users can purchase. An "Add-On" is anything you want to make available for purchase for all your users in the Add-On area of the portal.</p>
 
                 <h5 class="m-t-lg with-border"></h5>
                  <div class="form-group row">
