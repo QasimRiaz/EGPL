@@ -313,11 +313,15 @@ function updateorderstatus($request){
     
     $OrderID = $request['orderID'];
     $status = $request['status'];
-
+    
+    
     $order = wc_get_order($OrderID);
     $order->update_status($status);
     
-  
+    $Neworder = wc_get_order($OrderID);
+    
+    
+    
     
    // $emails = WC_Emails::instance();
    // $emails->customer_invoice( wc_get_order( $OrderID ) );
@@ -1772,24 +1776,27 @@ function deleteproduct($deletproductid) {
         
         $postid = $deletproductid['postid'];
         
+        $Responce = wp_trash_post($postid);
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($Responce));
         
-        $url = get_site_url();
-        $options = array(
-            'debug' => true,
-            'return_as_array' => false,
-            'validate_url' => false,
-            'timeout' => 30,
-            'ssl_verify' => false,
-        );
         
-        $woocommerce_rest_api_keys = get_option( 'ContenteManager_Settings' );
-        $wooconsumerkey = $woocommerce_rest_api_keys['ContentManager']['wooconsumerkey'];
-        $wooseceretkey = $woocommerce_rest_api_keys['ContentManager']['wooseceretkey'];
-        $woocommerce_object = new WC_API_Client( $url, $wooconsumerkey, $wooseceretkey, $options );
-        
-        $result = $woocommerce_object->products->delete( $postid, true );
+//        $url = get_site_url();
+//        $options = array(
+//            'debug' => true,
+//            'return_as_array' => false,
+//            'validate_url' => false,
+//            'timeout' => 30,
+//            'ssl_verify' => false,
+//        );
+//        
+//        $woocommerce_rest_api_keys = get_option( 'ContenteManager_Settings' );
+//        $wooconsumerkey = $woocommerce_rest_api_keys['ContentManager']['wooconsumerkey'];
+//        $wooseceretkey = $woocommerce_rest_api_keys['ContentManager']['wooseceretkey'];
+//        $woocommerce_object = new WC_API_Client( $url, $wooconsumerkey, $wooseceretkey, $options );
+//        
+//        $result = $woocommerce_object->products->delete( $postid, true );
             
-        contentmanagerlogging_file_upload($lastInsertId, serialize($result));
+     //   contentmanagerlogging_file_upload($lastInsertId, serialize($result));
         echo 'successfully Delete';
 
         
