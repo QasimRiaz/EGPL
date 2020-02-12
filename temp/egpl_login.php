@@ -2,9 +2,12 @@
 
 if ( is_user_logged_in() ) {
         $site_url = get_site_url();
-	 wp_redirect( $site_url.'/home/'); exit;
+	 	wp_redirect( $site_url.'/home/'); exit;
          
 } else {
+
+
+
 
  ?>
 

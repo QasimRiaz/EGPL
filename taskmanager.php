@@ -460,6 +460,6 @@ function removedcustomeposttypes($removetaskslist){
    
       return $e;
     } 
-    die(); 
+   
 }
 

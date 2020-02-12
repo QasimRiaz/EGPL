@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.70
+ * Version:           3.71
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -390,16 +390,10 @@ if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {
             $user_file_list[] = $user_company_name.'*'.$file_url[0]['file'];
            
         }
-        
-
-        
     }
     
-    
     echo   json_encode($user_file_list);
-    
- 
-   die();
+    die();
 
 }else if ($_GET['contentManagerRequest'] == 'getpageContent') {
     
@@ -483,15 +477,9 @@ $user_info = get_userdata($user_ID);
 if ($_GET['contentManagerRequest'] == 'changepassword') {
     
     require_once('../../../wp-load.php');
-   
-     
-    
     $newpassword = $_POST['newpassword'];
-    
     setpasswordcustome($newpassword);
-    
-     
-   die();
+    die();
 
 }else if ($_GET['contentManagerRequest'] == 'plugin_settings') {
     
