@@ -1,6 +1,6 @@
 
-<?php if (is_user_logged_in()) {
- get_header(); ?>
+
+ <?php get_header(); ?>
 <div id="content" <?php Avada()->layout->add_style( 'content_style' ); ?>>
 	<?php while ( have_posts() ) : the_post(); ?>
 		<div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -73,7 +73,5 @@
 </div>
 <?php do_action( 'avada_after_content' ); ?>
 <?php get_footer();
-}else{ $redirect = get_site_url();
-       wp_redirect( $redirect );exit;
-}
+
 // Omit closing PHP tag to avoid "Headers already sent" issues.

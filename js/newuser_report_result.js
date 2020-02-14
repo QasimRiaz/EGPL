@@ -68,7 +68,7 @@ jQuery(document).ready(function () {
             newcolumsheader = JSON.parse(data[1]);
             
             
-            //console.log(columsheader);
+            console.log(newcolumsheader);
             var showcolumnrows = [];
            
             newcolumnsheaderarrayfortable.push({class:'noExport',type:'html',data:'<input name="select_all" value="1" type="checkbox">',title:'<input name="select_all" value="1" type="checkbox">'});
@@ -94,6 +94,7 @@ jQuery(document).ready(function () {
                         newcolumnsheaderarrayfortable.push({class:'noExport noclick',visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type});
                     }else{
                         newcolumnsheaderarrayfortable.push({visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type});
+                    
                     }
                 }
             
@@ -120,21 +121,60 @@ jQuery(document).ready(function () {
                                                             extend: 'excelHtml5',
                                                             title: 'userreport_' + jQuery.now(),
                                                             exportOptions: {
-                                                                columns: "thead th:not(.noExport)"
+                                                                columns: "thead th:not(.noExport)",
+                                                                format: {
+                                                                body: function ( data, row, column, node ) {
+                                                                    
+                                                                    
+                                                                    
+                                                                    var href = jQuery('<div>').append(data).find('a:first').attr('href');
+                                                                    if(href !== undefined){
+                                                                         data = href;
+                                                                    }
+                                                                    return  data;
+                                                                    
+                                                                }
+        }
                                                             },
                                                         },
                                                         {
                                                             extend: 'csvHtml5',
                                                             title: 'userreport_' + jQuery.now(),
                                                             exportOptions: {
-                                                                columns: "thead th:not(.noExport)"
+                                                                columns: "thead th:not(.noExport)",
+                                                                format: {
+                                                                body: function ( data, row, column, node ) {
+                                                                    
+                                                                    
+                                                                    
+                                                                    var href = jQuery('<div>').append(data).find('a:first').attr('href');
+                                                                    if(href !== undefined){
+                                                                         data = href;
+                                                                    }
+                                                                    return  data;
+                                                                    
+                                                                }
+                                                            }
                                                             },
                                                         },
 
                                                         {
                                                             extend: 'print',
                                                             exportOptions: {
-                                                                columns: "thead th:not(.noExport)"
+                                                                columns: "thead th:not(.noExport)",
+                                                                 format: {
+                                                                body: function ( data, row, column, node ) {
+                                                                    
+                                                                    
+                                                                    
+                                                                    var href = jQuery('<div>').append(data).find('a:first').attr('href');
+                                                                    if(href !== undefined){
+                                                                         data = href;
+                                                                    }
+                                                                    return  data;
+                                                                    
+                                                                }
+                                                            }
                                                             }
                                                         }
                                                     ]

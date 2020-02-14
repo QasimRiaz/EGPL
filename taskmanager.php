@@ -357,9 +357,7 @@ function savebulkfields_update($request){
         $user_info = get_userdata($user_ID);  
         $lastInsertId = contentmanagerlogging('Save Bulk Field',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
         
-        if(!empty($removetaskslist)){
-            $removedListofTasks = removedcustomeposttypes($removetaskslist);
-        }
+        
         
         foreach ($listoftaks as $taksKey=>$taskObject){
             
@@ -418,6 +416,10 @@ function savebulkfields_update($request){
                 
                 update_post_meta( $tasksID, 'options', $taskObject->options );
             }
+        }
+        
+        if(!empty($removetaskslist)){
+            $removedListofTasks = removedcustomeposttypes($removetaskslist);
         }
         contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
         

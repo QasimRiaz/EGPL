@@ -29,8 +29,8 @@ if ($_GET['contentManagerRequest'] == "order_report_savefilters") {
 } else if ($_GET['contentManagerRequest'] == "manageproducts") {
 
     require_once('../../../wp-load.php');
+
     manageproducts();
-    
 }else if ($_GET['contentManagerRequest'] == "addnewproducts") {
 
     require_once('../../../wp-load.php');
@@ -92,21 +92,39 @@ if ($_GET['contentManagerRequest'] == "order_report_savefilters") {
     
     
     require_once('../../../wp-load.php');
+    
+    
+  
     getOrderProductsdetails($_POST);
+    
+    
+    
     die();
     
 }else if($_GET['floorplanRequest'] == "getcurrentOrderNote"){
     
     
     require_once('../../../wp-load.php');
+    
+    
+  
     getcurrentOrderNote($_POST);
+    
+    
+    
     die();
     
 }else if($_GET['floorplanRequest'] == "updatedcurrentordernote"){
     
     
     require_once('../../../wp-load.php');
+    
+    
+  
     updatedcurrentordernote($_POST);
+    
+    
+    
     die();
     
 }
@@ -119,8 +137,11 @@ function updatedcurrentordernote($request){
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);  
     $lastInsertId = floorplan_contentmanagerlogging('Update Order Note',"Admin Action",serialize($request),$user_ID,$user_info->user_email,"");
+     
+    
     $OrderID = $request['orderID'];
     $OrderNote = $request['OrderNote'];
+    
     update_post_meta( $OrderID, '_order_custome_note', $OrderNote );
     
     
@@ -1480,12 +1501,12 @@ function addnewproducts($addnewproduct_data) {
          if(!empty($roleassign)){
             
           
-                $objProduct->update_meta_data('productlevel', $roleassign);
+                     $objProduct->update_meta_data('productlevel', $roleassign);
             
                 }else{
                     
-                $objProduct->update_meta_data('productlevel', "");
-         }
+                    $objProduct->update_meta_data('productlevel', "");
+                }
         
         if(!empty($selectedtaskArray['visiblelevels'])){
 

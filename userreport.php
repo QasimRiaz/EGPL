@@ -1990,9 +1990,12 @@ function userreportresultdraw() {
                    
                    
                     if (!empty($file_info)) {
-                        $column_row[$profile_field_settings['label']] = '<a href="'.$base_url.'/wp-content/plugins/EGPL/download-lib.php?cname='.$company_name.'&userid=' . $aid->ID . '&fieldname=' . $profile_field_name . '" >Download</a>';
-                       // $column_row[$profile_field_settings['label']] = '';
                         
+                        
+                        
+                        $column_row[$profile_field_settings['label']] = '<a target="_blank" href="'.$file_info['url'].'" >Download</a>';
+                       // $column_row[$profile_field_settings['label']] = '';
+                                
                         
                     } else {
                         $column_row[$profile_field_settings['label']] = '';

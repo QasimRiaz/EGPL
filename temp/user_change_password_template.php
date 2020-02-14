@@ -2,8 +2,25 @@
 // Silence is golden.
 get_header();
 ?>
-               <div id="content" style="margin: 80px;" class="full-width">
+               <div id="content"  class="full-width">
+                    <div class="fusion-row">
+                    <div class="fusion-fullwidth fullwidth-box fusion-fullwidth-3  fusion-parallax-none nonhundred-percent-fullwidth">
+			<div class="fusion-column-wrapper">
+				<p>
+					<?php 
+					if (!(have_posts())) { ?>
+					<?php __("There are no posts", "Avada"); ?><?php } ?>   
+					<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+               		<?php the_content(); ?>
+           	 	    <?php endwhile; ?> 
+        	        <?php endif; ?>
+			   </p>
 
+			<div class="fusion-clearfix">
+			</div>
+		</div>
+                </div></div>
+               <?php  if ( is_user_logged_in() ) {     ?> 
                     <div id="sponsor-status"></div>
              
                     <form method="post" action="javascript:void(0);" onSubmit="change_password_custome()">
@@ -54,7 +71,7 @@ get_header();
                         </table>
 
                     </form>
-
+               <?php }?>
                 </div>
         
 	<?php get_footer();

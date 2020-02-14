@@ -1,7 +1,7 @@
 <?php
 // Template Name: Sponsor Task Update 
  
-   if ( is_user_logged_in() ) {    
+   
       get_header();
 		
      
@@ -73,7 +73,12 @@
         </div><!-- .entry-content-page -->
 
     <?php
-    endwhile; //resetting the page loop?>
+    endwhile; //resetting the page loop
+    
+    
+    if ( is_user_logged_in() ) {    
+    
+    ?>
 
    
             <table class="mytable table table-striped table-bordered table-condensed" >
@@ -406,10 +411,7 @@
  
 </div>              
 
-<?php 
+    <?php }
     get_footer(); 
-}else{
-     $redirect = get_site_url();
-    wp_redirect( $redirect );exit;
-}
+
 ?>

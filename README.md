@@ -1,4 +1,4 @@
-~Current Version:3.71~
+~Current Version:3.80~
 
 
 -------------------27-09-2019---Main release 3.40--------------
@@ -57,3 +57,14 @@ Release Items
 
 1. Fixed bug saved reports missing filter columns
 2. Search users missing data
+
+
+-------------------14-02-2020---Short Release--------------
+
+1. Welcome Pop-Up Content Correction
+2. Hide related products
+3. Upload Tasks not providing hyperlink in export
+4. Upload link should be URL, not zip
+5. After log-in redirect to requested URL
+6. Update Zapier Number Field Values
+

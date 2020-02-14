@@ -1,14 +1,10 @@
 <?php // Template Name: Resources
 
-if ( !is_user_logged_in() ) {
-        $site_url = get_site_url();
-	wp_redirect( $site_url); exit;
-         
-} else {
 
- ?>
 
-<?php get_header(); 
+ 
+
+ get_header(); 
 
 
 
@@ -26,6 +22,7 @@ $get_all_resources = get_posts( $args );
 
 
 ?>
+
 <div class="fusion-row">
 			<div class="fusion-column-wrapper">
 				<p>
@@ -42,6 +39,7 @@ $get_all_resources = get_posts( $args );
 			</div>
 		</div>
                 </div>
+        <?php if ( is_user_logged_in() ) {?>
         <div id="content" class="fusion-portfolio fusion-portfolio-text fusion-portfolio-unboxed  fusion-portfolio-six" style="width: 100%;">
            
             <div class="fusion-portfolio-wrapper" data-picturesize="fixed" data-pages="1" style="position: relative; height: 303px;">
@@ -99,6 +97,6 @@ $get_all_resources = get_posts( $args );
         </div>
  
 
-<?php get_footer(); } ?>
+<?php } get_footer();  ?>
 
 

@@ -10,13 +10,9 @@
  
 
 ?>
-
-<div id="content" class="full-width">
-        <div class="page-content" style="max-width: 800px;margin-left: auto;margin-right: auto;">
-        
-            <h2 style="text-align: center;"></h2>
-            
-            <div class="fusion-column-wrapper">
+<div class="fusion-row">
+                    <div class="fusion-fullwidth fullwidth-box fusion-fullwidth-3  fusion-parallax-none nonhundred-percent-fullwidth">
+			<div class="fusion-column-wrapper">
 				<p>
 					<?php 
 					if (!(have_posts())) { ?>
@@ -30,10 +26,12 @@
 			<div class="fusion-clearfix">
 			</div>
 		</div>
-            
-            
-          
-            <div class="box-typical box-typical-padding">
+                </div></div>
+ <?php  if ( is_user_logged_in() ) {     ?> 
+<div id="content" class="full-width">
+        <div class="page-content" style="max-width: 800px;margin-left: auto;margin-right: auto;">
+        
+           <div class="box-typical box-typical-padding">
                 
                 <table class="table table-striped">
                     <tbody>
@@ -70,4 +68,4 @@
         </div>
     </div>
 </div>
-<?php   get_footer(); ?>
+ <?php   } get_footer(); ?>

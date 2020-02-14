@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.71
+ * Version:           3.80
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -390,10 +390,16 @@ if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {
             $user_file_list[] = $user_company_name.'*'.$file_url[0]['file'];
            
         }
+        
+
+        
     }
     
+    
     echo   json_encode($user_file_list);
-    die();
+    
+ 
+   die();
 
 }else if ($_GET['contentManagerRequest'] == 'getpageContent') {
     
@@ -477,9 +483,15 @@ $user_info = get_userdata($user_ID);
 if ($_GET['contentManagerRequest'] == 'changepassword') {
     
     require_once('../../../wp-load.php');
+   
+     
+    
     $newpassword = $_POST['newpassword'];
+    
     setpasswordcustome($newpassword);
-    die();
+    
+     
+   die();
 
 }else if ($_GET['contentManagerRequest'] == 'plugin_settings') {
     
@@ -7292,7 +7304,7 @@ function checkloginuserstatus_fun() {
 
 
 
-                                            echo '<script type="text/javascript">swal({title: "Welcome!", type: "success", html:true,showConfirmButton:false,text: "<p>This will serve as your portal for managing all of your pre-show logistics. Before gaining access, you\'ll need to first select and purchase a '.$valuename.'.</p><p style=\'margin-top:18px\'><a href='.$redirectURL.' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Next</a></p>"});</script>';
+                                            echo '<script type="text/javascript">swal({title: "Welcome!", type: "success", html:true,showConfirmButton:false,text: "<p>This will serve as your portal for managing all of your pre-show logistics. Click \'Next\' below to view your exhibit/sponsor options.</p><p style=\'margin-top:18px\'><a href='.$redirectURL.' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Next</a></p>"});</script>';
 
                                        }
                                     }
@@ -7407,7 +7419,7 @@ function myplugin_woocommerce_locate_template( $template, $template_name, $templ
 
   // Return what we found
   
-//  echo $template;
+  //echo $template;
   
   return $template;
 }
@@ -8309,7 +8321,11 @@ function updateregistredUserMeta($userID,$userMetaData,$role){
     
         foreach($userMetaData as $keyIndex=>$valueDataIndex){
             
-            
+            if (is_numeric($valueDataIndex)) {
+                
+                $valueDataIndex =  str_replace(".00","",$valueDataIndex);
+                
+            }
             update_user_option($userID, $keyIndex, $valueDataIndex);
             
             
@@ -8919,3 +8935,4 @@ if ( ! function_exists( 'alg_wc_pvbur_get_invisible_products_query_args' ) ) {
         }
         
 }
+
