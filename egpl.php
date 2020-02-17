@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.80
+ * Version:           3.81
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -8324,6 +8324,7 @@ function updateregistredUserMeta($userID,$userMetaData,$role){
             if (is_numeric($valueDataIndex)) {
                 
                 $valueDataIndex =  str_replace(".00","",$valueDataIndex);
+                $valueDataIndex =  str_replace(".0","",$valueDataIndex);
                 
             }
             update_user_option($userID, $keyIndex, $valueDataIndex);
