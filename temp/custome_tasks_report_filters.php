@@ -214,7 +214,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/query-builder.js?v=2.19"></script>
 
 
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/task_report_filters.js?v=2.40"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/task_report_filters.js?v=2.41"></script>
 
     <?php
 } else {

@@ -433,7 +433,7 @@ function removeeuserreport() {
                             confirmButtonClass: "btn-success"
                         }, function () {
                             var url = currentsiteurl+'/';
-                           window.location.href = url+"user-report/";
+                           window.location.href = url+"custom_task_report/";
                         }
                         );
                     } else {
