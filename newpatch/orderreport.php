@@ -196,7 +196,6 @@ function getOrderProductsdetails($request){
      
     
     $OrderID = $request['ID'];
-    $remaningAmount = $request['remaningamount'];
    
     $order = wc_get_order($OrderID);
    
@@ -209,17 +208,6 @@ function getOrderProductsdetails($request){
     
     
     $tableHTML = "";
-    if($remaningAmount!=""){
-                
-                 $tableHTML .= '<table class="table myproductdetail"><thead><tr><td></td><td>Product</td><td>Price</td><td></td><td>Remaining Amount</td></tr></thead><tbody>';
-            
-                 
-            }else{
-                
-                 $tableHTML .= '<table class="table myproductdetail"><thead><tr><td></td><td>Product</td><td>Price</td><td>Quantity</td><td>Paid Amount</td></tr></thead><tbody>';
-           
-            }
-    
     foreach ($products as $single_product => $productname) {
             
             
@@ -236,8 +224,7 @@ function getOrderProductsdetails($request){
             );
             $product_categories = get_terms($args);
             
-            
-           foreach($product_categories as $catIndex=>$catData){
+            foreach($product_categories as $catIndex=>$catData){
                 
                 
                 if($_product->category_ids[0] == $catData->term_id){
@@ -288,41 +275,16 @@ function getOrderProductsdetails($request){
                 $OrderTotal = wc_price($order->total);
             }
             $product_title = str_replace("Payment #2 for","",$productname->order_item_name); 
-            
-            if($remaningAmount!=""){
-              
-                if(sizeof($products)== 1){
-                    
-                    $tableHTML .= '<tr><td>'.$image.'</td><td>'.$prodcut_prfixname.$product_title.'</td><td>'.$product_price.'</td><td></td><td>'.wc_price($remaningAmount).'</td></tr>'; 
+            $tableHTML .= '<tr><td>'.$image.'</td><td>'.$prodcut_prfixname.$product_title.'</td><td>'.$product_price.'</td><td>'.$productQuntity.'</td><td>'.$subtotalAmount.'</td></tr>'; 
            
-                }else{
-                  
-                    $tableHTML .= '<tr><td>'.$image.'</td><td>'.$prodcut_prfixname.$product_title.'</td><td>'.$product_price.'</td><td></td><td>-</td></tr>'; 
-           
-                }
-                
-                
-            }else{
-                
-                $tableHTML .= '<tr><td>'.$image.'</td><td>'.$prodcut_prfixname.$product_title.'</td><td>'.$product_price.'</td><td>'.$productQuntity.'</td><td>'.$subtotalAmount.'</td></tr>'; 
-           
-            }
-            
 
                                                                         
     }
     
     
-        if($remaningAmount!="" ){
+    
+        $tableHTML .= '<tr><td></td><td><strong style="font-style: italic;">Total</strong></td><td></td><td></td><td><strong style="font-style: italic;">'.$OrderTotal.'</strong</td></tr>'; 
            
-            $tableHTML .= '<tr><td></td><td><strong style="font-style: italic;">Total</strong></td><td></td><td></td><td><strong style="font-style: italic;">'.wc_price($remaningAmount).'</strong</td></tr></tbody></table>'; 
-        
-            
-        }else{
-            
-            $tableHTML .= '<tr><td></td><td><strong style="font-style: italic;">Total</strong></td><td></td><td></td><td><strong style="font-style: italic;">'.$OrderTotal.'</strong</td></tr></tbody></table>'; 
-        
-        }  
     
     echo json_encode($tableHTML);
     
@@ -351,15 +313,11 @@ function updateorderstatus($request){
     
     $OrderID = $request['orderID'];
     $status = $request['status'];
-    
-    
+
     $order = wc_get_order($OrderID);
     $order->update_status($status);
     
-    $Neworder = wc_get_order($OrderID);
-    
-    
-    
+  
     
    // $emails = WC_Emails::instance();
    // $emails->customer_invoice( wc_get_order( $OrderID ) );
@@ -847,8 +805,6 @@ function loadorderreport() {
         $columns_list_order_report_postmeta[4]['key'] = '_order_total';
         
         
-        
-          
          $columns_list_order_report_postmeta[5]['title'] = 'Products List';
         $columns_list_order_report_postmeta[5]['type'] = 'string';
         $columns_list_order_report_postmeta[5]['key'] = 'Productslistexcel';
@@ -978,6 +934,7 @@ function loadorderreport() {
         $columns_list_order_report_postmeta[29]['type'] = 'num-fmt';
         $columns_list_order_report_postmeta[29]['key'] = '_cart_discount';
 
+
         
        
 
@@ -1018,7 +975,6 @@ function loadorderreport() {
             
             
             $column_row;
-            $remaningAmount = "''";
             ksort($post_meta);
             foreach ($columns_list_order_report as $col_keys_index => $col_keys_title) {
                 
@@ -1068,14 +1024,14 @@ function loadorderreport() {
                         
                     }else if(esc_html( wc_get_order_status_name( $header_array[$columns_list_order_report[$col_keys_index]['key']])) == 'Pending Deposit Payment'){
                         
-                        $remaningAmount = round($post_meta['_order_total'][0]);
+                        
                         $column_row[$columns_list_order_report[$col_keys_index]['title']] =  'Balance Due';//esc_html( wc_get_order_status_name( $header_array[$columns_list_order_report[$col_keys_index]['key']]));
                  
                         
                     }else{
                         
                         $column_row[$columns_list_order_report[$col_keys_index]['title']] =  esc_html( wc_get_order_status_name( $header_array[$columns_list_order_report[$col_keys_index]['key']]));
-                        
+                 
                         
                     }
                     
@@ -1219,7 +1175,7 @@ function loadorderreport() {
                 $order_productsnames.= $productname->order_item_name.' (x'.$productname->Qty.')<br>';
             }
             $column_row['Products List'] = $order_productsnames;
-            $column_row['Product Details'] = '<a style="cursor: pointer;" onclick="getOrderproductdetail('.$header_array['ID'].','.$remaningAmount.')">Product Details</a>';//$order_productsnames;
+            $column_row['Product Details'] = '<a style="cursor: pointer;" onclick="getOrderproductdetail('.$header_array['ID'].')">Product Details</a>';//$order_productsnames;
             $column_row['Account Holder Email'] = $accountholder_email;
             array_push($columns_rows_data, $column_row);
         }
@@ -1341,7 +1297,15 @@ function manageproducts() {
             $colums_array_data['data'] = $columns_list_order_report[$col_keys]['title'];
             array_push($columns_headers, $colums_array_data);
         }
-
+//        foreach ($columns_list_order_report_postmeta as $col_keys => $col_keys_title) {
+//
+//
+//            $colums_array_data['title'] = $columns_list_order_report_postmeta[$col_keys]['title'];
+//            $colums_array_data['data'] = $columns_list_order_report_postmeta[$col_keys]['title'];
+//            $colums_array_data['type'] = $columns_list_order_report_postmeta[$col_keys]['type'];
+//
+//            array_push($columns_headers, $colums_array_data);
+//        }
         foreach ($all_products->products as $single_product) {
 
            
@@ -1456,9 +1420,7 @@ function addnewproducts($addnewproduct_data) {
         $depositstype = $addnewproduct_data['depositstype'];
         $depositsamount = $addnewproduct_data['depositsamount'];
         
-        $selectedtaskArray['visiblelevels'] = json_decode(stripslashes($_POST['visiblelevels']), true);
-        $selectedtaskArray['invisiblelevels'] = json_decode(stripslashes($_POST['invisiblelevels']), true);
-        $selectedtaskArray['listofuservisible'] = json_decode(stripslashes($_POST['listofuservisible']), true);
+      
        
         
         $url = get_site_url();
@@ -1542,34 +1504,15 @@ function addnewproducts($addnewproduct_data) {
           
                      $objProduct->update_meta_data('productlevel', $roleassign);
             
-                }else{
-                    
-                    $objProduct->update_meta_data('productlevel', "");
                 }
         
-        if(!empty($selectedtaskArray['visiblelevels'])){
-
-
-                      $objProduct->update_meta_data('_alg_wc_pvbur_visible', $selectedtaskArray['visiblelevels']);
-
-         }else{
-             
-             $objProduct->update_meta_data('_alg_wc_pvbur_visible', "");
-         }
-         
-         if(!empty($selectedtaskArray['listofuservisible'])){
-
-
-              $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', $selectedtaskArray['listofuservisible']);
-
-         }else{
-             
-              $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', "");
-         }
+       // $objProduct->set_tax_class($roleassign); 
         
         
         
         $objProduct->set_reviews_allowed(TRUE); //Set if reviews is allowed.                        | bool
+        
+                     
         
         $term_ids =[$addnewproduct_data['pcategories']];
         $objProduct->set_category_ids($term_ids); //Set the product categories.                   | array $term_ids List of terms IDs.
@@ -1577,7 +1520,6 @@ function addnewproducts($addnewproduct_data) {
         $objProduct->set_image_id($productpicrul); //Set main image ID.                                         | int|string $image_id Product image id.
         //Set gallery attachment ids.                       | array $image_ids List of image ids.
         $new_product_id = $objProduct->save(); //Saving the data to create new product, it will return product ID.
-        
         if(!empty($selectedtaskArray)){
             update_post_meta( $new_product_id, 'seletedtaskKeys', $selectedtaskArray );
         }
@@ -1610,11 +1552,6 @@ function updateproducts($updateproducts_data) {
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);
         $selectedtaskArray['selectedtasks'] = json_decode(stripslashes($_POST['selectedtaskvalues']), true);
-        
-        
-        $selectedtaskArray['visiblelevels'] = json_decode(stripslashes($_POST['visiblelevels']), true);
-        $selectedtaskArray['invisiblelevels'] = json_decode(stripslashes($_POST['invisiblelevels']), true);
-        $selectedtaskArray['listofuservisible'] = json_decode(stripslashes($_POST['listofuservisible']), true);
         
         
       
@@ -1665,8 +1602,7 @@ function updateproducts($updateproducts_data) {
         }else{
             $instock=false;
         }
-        
-        /*  $data = [
+      /*  $data = [
                 'title' => $updateproducts_data['ptitle'],
                 'manage_stock' => true,
                 'regular_price' => $price,
@@ -1694,12 +1630,14 @@ function updateproducts($updateproducts_data) {
             'timeout' => 30,
             'ssl_verify' => false,
         ); */
-        //$objProduct = new WC_Product();
         
+              
+        //$objProduct = new WC_Product();
         $objProduct = wc_get_product( $productid );
        
         global $post;
         $terms = get_the_terms( $productid, 'product_cat' );
+        
         
         if($terms[0]->slug == 'booth'){
             
@@ -1712,7 +1650,9 @@ function updateproducts($updateproducts_data) {
             $objProduct->set_short_description($updateproducts_data['pshortdescrpition']); //Set product short description.
             $objProduct->set_stock_quantity($updateproducts_data['pquanitity']); //Set number of items available for sale.
             $objProduct->set_stock_status($instock); 
-            $objProduct->set_menu_order($menu_order);
+            $objProduct->set_menu_order($menu_order); 
+       
+        
             
         }
         
@@ -1748,32 +1688,9 @@ function updateproducts($updateproducts_data) {
         if(!empty($roleassign)){
             
           
-            $objProduct->update_meta_data('productlevel', $roleassign);
+                     $objProduct->update_meta_data('productlevel', $roleassign);
             
-        }else{
-            
-            $objProduct->update_meta_data('productlevel', "");
         }
-        if(!empty($selectedtaskArray['visiblelevels'])){
-            
-          
-            $objProduct->update_meta_data('_alg_wc_pvbur_visible', $selectedtaskArray['visiblelevels']);
-            
-        }else{
-            
-            $objProduct->update_meta_data('_alg_wc_pvbur_visible', "");
-        }
-        
-        if(!empty($selectedtaskArray['listofuservisible'])){
-            
-          
-            $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', $selectedtaskArray['listofuservisible']);
-            
-        }else{
-            
-            $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', "");
-        }
-        
         $new_product_id = $objProduct->save();
         
         
@@ -1815,27 +1732,24 @@ function deleteproduct($deletproductid) {
         
         $postid = $deletproductid['postid'];
         
-        $Responce = wp_trash_post($postid);
-        contentmanagerlogging_file_upload ($lastInsertId,serialize($Responce));
         
+        $url = get_site_url();
+        $options = array(
+            'debug' => true,
+            'return_as_array' => false,
+            'validate_url' => false,
+            'timeout' => 30,
+            'ssl_verify' => false,
+        );
         
-//        $url = get_site_url();
-//        $options = array(
-//            'debug' => true,
-//            'return_as_array' => false,
-//            'validate_url' => false,
-//            'timeout' => 30,
-//            'ssl_verify' => false,
-//        );
-//        
-//        $woocommerce_rest_api_keys = get_option( 'ContenteManager_Settings' );
-//        $wooconsumerkey = $woocommerce_rest_api_keys['ContentManager']['wooconsumerkey'];
-//        $wooseceretkey = $woocommerce_rest_api_keys['ContentManager']['wooseceretkey'];
-//        $woocommerce_object = new WC_API_Client( $url, $wooconsumerkey, $wooseceretkey, $options );
-//        
-//        $result = $woocommerce_object->products->delete( $postid, true );
+        $woocommerce_rest_api_keys = get_option( 'ContenteManager_Settings' );
+        $wooconsumerkey = $woocommerce_rest_api_keys['ContentManager']['wooconsumerkey'];
+        $wooseceretkey = $woocommerce_rest_api_keys['ContentManager']['wooseceretkey'];
+        $woocommerce_object = new WC_API_Client( $url, $wooconsumerkey, $wooseceretkey, $options );
+        
+        $result = $woocommerce_object->products->delete( $postid, true );
             
-     //   contentmanagerlogging_file_upload($lastInsertId, serialize($result));
+        contentmanagerlogging_file_upload($lastInsertId, serialize($result));
         echo 'successfully Delete';
 
         
@@ -1891,31 +1805,6 @@ function productclone($productcloneid) {
         
         $get_deposit_type = get_post_meta($postid, "_wc_deposit_type",true);
         $get_deposit_amount = get_post_meta($postid, "_wc_deposit_amount",true);
-        
-        
-        $alg_wc_pvbur_visible = get_post_meta($postid, "_alg_wc_pvbur_visible",true);
-        $alg_wc_pvbur_uservisible = get_post_meta($postid, "_alg_wc_pvbur_uservisible",true);
-        
-        if(!empty($alg_wc_pvbur_visible)){
-            
-          
-            $objProduct->update_meta_data('_alg_wc_pvbur_visible', $alg_wc_pvbur_visible);
-            
-        }else{
-            
-            $objProduct->update_meta_data('_alg_wc_pvbur_visible', "");
-        }
-        
-        if(!empty($alg_wc_pvbur_uservisible)){
-            
-          
-            $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', $alg_wc_pvbur_uservisible);
-            
-        }else{
-            
-            $objProduct->update_meta_data('_alg_wc_pvbur_uservisible', "");
-        }
-        
         
         if(!empty($get_deposit_type) && !empty($get_deposit_amount)){
             

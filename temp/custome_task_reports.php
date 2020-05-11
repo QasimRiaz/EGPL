@@ -10,7 +10,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
   //  print_r($get_all_roles);exit;
     
     
-    $user_reportsaved_list = get_option('ContenteManager_usersreport_settings');
+    $user_reportsaved_list = get_option('ContenteManager_userstasksreport_settings');
     
    //    echo '<pre>';
   // print_r($user_reportsaved_list);exit;
@@ -37,12 +37,9 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 	'post_status'      => 'draft',
 	
         );
+    
     $result_task_array_list = get_posts( $args );
-    
-    
     $userreportcontent =   stripslashes($oldvalues['ContentManager']['userreportcontent']);
-    
-    
     
     include 'cm_header.php'; 
     include 'cm_left_menu_bar.php';
@@ -64,8 +61,12 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
    if($_GET['report'] != 'run' ){ 
         
         $loadreportname = $_GET['report'];
+       // echo $loadreportname;
         $get_report_detial = $user_reportsaved_list[$loadreportname];
-       
+        
+       // echo '<pre>';
+       // print_r($get_report_detial);exit;
+        
         $queryfilter = json_decode($get_report_detial[0]);
         $querybuilderfilter = htmlentities(stripslashes(json_encode($queryfilter->rules)));
         $showcolonreport = htmlentities(stripslashes($get_report_detial[1]));
@@ -106,7 +107,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                 <div class="tbl">
                     <div class="tbl-row">
                         <div class="tbl-cell">
-                            <h3>Tasks Report</h3>
+                            <h3>Task Report</h3>
 
                         </div>
                     </div>
@@ -161,7 +162,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#tabs-1-tab-2" role="tab" onclick="get_bulk_email_address()" data-toggle="tab">
+                                <a class="nav-link" href="#tabs-1-tab-2" role="tab" onclick="get_bulk_email_address_tasks()" data-toggle="tab">
                                     <span class="nav-link-in">
                                          <i class="fa fa-mail-forward"></i>
                                         
@@ -268,8 +269,8 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                     <span class="label label-pill label-danger" id="newbulkemailcounter">0</span>
                                                 </button>
                                                 <div class="dropdown-menu">
-                                                    <a class="dropdown-item" onclick="get_bulk_email_address()"><i class="fa fa-mail-forward"></i> Bulk Email</a>
-                                                    <a class="dropdown-item" onclick="sendwelcomemsg()"><i class="fa fa-paper-plane"></i> Welcome Email</a>
+                                                    <a class="dropdown-item" onclick="get_bulk_email_address_tasks()"><i class="fa fa-mail-forward"></i> Bulk Email</a>
+<!--                                                    <a class="dropdown-item" onclick="sendwelcomemsg()"><i class="fa fa-paper-plane"></i> Welcome Email</a>-->
                                                     <a class="dropdown-item" onclick="reportbulkdownload()"><i class="fa fa-download"></i> Bulk Download</a>
                                                     
                                                     
@@ -386,7 +387,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 			</section><!--.faq-page-->
                         <div class="bulkemail_status"></div>
                         <div class="box-typical box-typical-padding sendbulkemailbox">
-                            <form method="post" action="javascript:void(0);" onSubmit="bulkemail_preview()">
+                            <form method="post" action="javascript:void(0);" onSubmit="bulkemail_preview_tasks_report()">
                                  <div class="form-group row">
                                     <label class="col-sm-2 form-control-label">From <strong>*</strong></label>
                                     <div class="col-sm-3">
@@ -481,7 +482,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     <?php
     include 'cm_footer.php';
     ?>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/custome_tasks_report.js?v=2.36"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/custome_tasks_report.js?v=2.60"></script>
 
     <?php
 }else{

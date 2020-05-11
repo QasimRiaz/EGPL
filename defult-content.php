@@ -510,6 +510,17 @@
                 $create_pages_list[54]['name']  = 'manage-bulk-products';
                 $create_pages_list[54]['temp']  = 'temp/bulk_edit_product.php';
                 $create_pages_list[54]['catname']  = false;
+                
+                
+                $create_pages_list[55]['title'] = 'Custome Task Reprot';
+                $create_pages_list[55]['name']  = 'custom_task_report';
+                $create_pages_list[55]['temp']  = 'temp/custome_task_reports.php';
+                $create_pages_list[55]['catname']  = false;
+                
+                 $create_pages_list[56]['title'] = 'Task Reprot Filters';
+                $create_pages_list[56]['name']  = 'task-report-filters';
+                $create_pages_list[56]['temp']  = 'temp/custome_tasks_report_filters.php';
+                $create_pages_list[56]['catname']  = false;
               
                 
 

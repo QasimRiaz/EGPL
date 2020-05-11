@@ -429,14 +429,18 @@ function add_new_sponsor(){
 				});
                                 
                 }else{
-                    
-                          
-                  
+                    var ErrorMsg = message.msg ;
+                    if(message.msg == "<strong>ERROR</strong>: The email address isn&#8217;t correct."){
+                        
+                        ErrorMsg = ErrorMsg+'<br><p>*Be sure to check for additional spaces before or after the email.</p>' 
+                        
+                    }      
+                            
                     jQuery( "#sponsor-status" ).empty();
                     jQuery( "#sponsor-status" ).append( '<div class="fusion-alert alert error alert-dismissable alert-danger alert-shadow"><span class="alert-icon"><i class="fa fa-lg fa-exclamation-triangle"></i></span>User already exists</div><div class="fusion-clearfix"></div>' );
                      swal({
 					title: "Error",
-					text: message.msg,
+					text: ErrorMsg,
 					type: "error",
                                         html:true,
 					confirmButtonClass: "btn-danger",
@@ -1650,13 +1654,13 @@ function changeuseremailaddress(){
                         if(finalresult.msg == 'update'){
                         swal({
                                 title: "Success!",
-                                text: 'The email and login name for the user has been changed to ' + newemailaddress,
+                                text: 'The email and login name for the user has been changed to '+newemailaddress+'. To change any of the other attributes to the user, be sure to make those changes and click "Update".',
                                 type: "success",
                                 confirmButtonClass: "btn-success"
                             },
                                     function (isConfirm) {
-
-                                        location.reload();
+                                         jQuery("#Semail").val(newemailaddress);
+                                        //location.reload();
                                     }
 
                             );

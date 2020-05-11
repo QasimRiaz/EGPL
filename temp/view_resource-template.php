@@ -107,7 +107,14 @@
 		
    }else{
        
+       $actual_link = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
+
+       echo $actual_link ;exit;
        $redirect = get_site_url();
+       $_SESSION['requested_url'] = $actual_link;
+
+
+
        wp_redirect( $redirect );exit;
    
    }

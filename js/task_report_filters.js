@@ -338,7 +338,7 @@ jQuery('.backtofilter').on('click', function () {
 });
 
 
-function user_report_savefilters() {
+function user_taskreport_savefilters() {
 
     var url = currentsiteurl+'/';
     var getdataselectedarray =  jQuery('#userreportcolumns').select2('data');
@@ -355,7 +355,7 @@ function user_report_savefilters() {
     
     var userbycolname = jQuery('#userbycolumnsname').select2("val");
     var userbytype = jQuery('#sortingtype').select2("val");
-    var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=user_report_savefilters';
+    var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=user_taskreport_savefilters';
     var data = new FormData();
     var userreportname = jQuery("#userreportname").val();
     var userreportfiltersdata = jQuery('#builder').queryBuilder('getRules');
@@ -394,7 +394,7 @@ function user_report_savefilters() {
 
             swal({
                 title: "Success",
-                text: "User Report Saved Successfully",
+                text: "Task Report Saved Successfully",
                 type: "success",
                 confirmButtonClass: "btn-success"
             });
@@ -453,7 +453,7 @@ function removeeuserreport() {
 function confrimremoveuserreport(userreportname) {
 
     var url = currentsiteurl+'/';
-    var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=user_report_removefilter';
+    var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=user_taskreport_removefilter';
     var data = new FormData();
 
 
@@ -495,7 +495,7 @@ function loaduserreport() {
         jQuery("#userreportname").val(dropdownvalue);
 
         var url = currentsiteurl+'/';
-        var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=get_userreport_detail';
+        var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=get_usertaskreport_detail';
         var data = new FormData();
         data.append('reportname', dropdownvalue);
 

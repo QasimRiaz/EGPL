@@ -311,6 +311,8 @@ function savebulktask_update($request){
             update_post_meta( $tasksID, 'key', $taskObject->key );
             update_post_meta( $tasksID, 'SystemTask', $taskObject->SystemTask  );
             update_post_meta( $tasksID, 'taskCode', $taskObject->taskCode );
+            update_post_meta( $tasksID, 'emailnotification', $taskObject->emailnotification );
+            update_post_meta( $tasksID, 'emailnotificationaddress', $taskObject->emailnotificationaddress );
             
             
             

@@ -169,10 +169,11 @@ function update_user_meta_custome(elem) {
     var statusvalue ;
     var value = statusid.replace('_status', '');
     var elementType = jQuery("#my" + value).is("input[type='file']"); //jQuery(this).prev().prop('tagName');
-    
+    var curdate = new Date();
+    var usertimezone = curdate.getTimezoneOffset()/60;
     if (elementType == false) {
         
-        var pattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/g;
+        var pattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,15}(:[0-9]{1,5})?(\/.*)?$/g;
         var GetFieldurlValue = jQuery("#" + value).is("input[type='url']");
        
         
@@ -205,14 +206,14 @@ function update_user_meta_custome(elem) {
                     statusvalue = 'Pending';
                 }
 
-
+        
 
         jQuery.ajax({url: url + 'wp-content/plugins/EGPL/usertask_update.php?usertask_update=update_user_meta_custome',
-            data: {action: value, updatevalue: metaupdate, status: statusvalue,sponsorid:sponsorid},
+            data: {action: value, updatevalue: metaupdate, status: statusvalue,sponsorid:sponsorid,usertimezone:usertimezone},
             type: 'post',
             success: function(output) {
-				console.log("Hello world 1");
-             alert("Hello! I am an alert box!!");
+				//console.log("Hello world 1");
+             //alert("Hello! I am an alert box!!");
                filestatus=true;
                jQuery("body").css({'cursor':'default'});
                if(metaupdate !=""){
@@ -274,7 +275,7 @@ function update_user_meta_custome(elem) {
 
 
         jQuery.ajax({url: url + 'wp-content/plugins/EGPL/usertask_update.php?usertask_update=update_user_meta_custome',
-            data: {action: value, updatevalue: metaupdate, status: statusvalue,sponsorid:sponsorid},
+            data: {action: value, updatevalue: metaupdate, status: statusvalue,sponsorid:sponsorid,usertimezone:usertimezone},
             type: 'post',
             success: function(output) {
              console.log("Hello world 2 " + metaupdate);
@@ -362,6 +363,8 @@ function update_user_meta_custome(elem) {
         data.append('status', statusvalue);
         data.append('lastvalue', lastvalue);
         data.append('sponsorid',sponsorid);
+        data.append('usertimezone',usertimezone);
+        
         var urlnew = url + 'wp-content/plugins/EGPL/usertask_update.php?usertask_update=user_file_upload';
 
 
@@ -559,6 +562,9 @@ function remove_task_value_readyfornew(e){
      var task_name_key = jQuery(e).attr('name');
      var url = currentsiteurl+'/';
      var elementType = jQuery("#my" + task_name_key).is("input[type='file']");
+     var curdate = new Date();
+        var usertimezone = curdate.getTimezoneOffset()/60;
+      
      var tasktype='';
      if (elementType == false) {
          
@@ -695,8 +701,12 @@ function update_task_submission_status(submissiontaskstatuskey,tasktype){
     var url = currentsiteurl+'/';
     var urlnew = url + 'wp-content/plugins/EGPL/usertask_update.php?usertask_update=update_submission_status';
     var data = new FormData();
+    
+    var curdate = new Date();
+        var usertimezone = curdate.getTimezoneOffset()/60;
     data.append('sponsorid',   sponsorid);
     data.append('tasktype',   tasktype);
+    data.append('usertimezone',usertimezone);
     data.append('submissiontaskstatuskey',   submissiontaskstatuskey);
     jQuery.ajax({
             url: urlnew,

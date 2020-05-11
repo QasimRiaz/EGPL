@@ -9,7 +9,7 @@
      $eventdate = $oldvalues['ContentManager']['eventdate'];
      $mainheaderbackground = $oldvalues['ContentManager']['mainheader'];
      $mainheaderlogo = $oldvalues['ContentManager']['mainheaderlogo'];
-     
+     $applicationmoderationstatus = $oldvalues['ContentManager']['applicationmoderationstatus'];
      //echo $mainheader;exit;
      
      $formemail = $oldvalues['ContentManager']['formemail'];
@@ -17,9 +17,10 @@
      $infocontent = $oldvalues['ContentManager']['infocontent'];
      $addresspoints = $oldvalues['ContentManager']['addresspoints'];
      
-        include 'cm_header.php';
+       include 'cm_header.php';
        include 'cm_left_menu_bar.php';
-                ?>
+                
+       ?>
         <div class="page-content">
         <div class="container-fluid">
             <header class="section-header">
@@ -46,8 +47,6 @@
                             $style ="";
                   } ?>
                  
-                  
-                  
                 <div class="form-group row">
                     <div class="col-sm-5"><label class=" form-control-label">Header Image </label><p style="font-size: 16px;margin-left: 12px;">(Recommended size (Pixels) - w:1260 x h:230)</p></div>
                         <div class="col-sm-7">
@@ -96,21 +95,38 @@
                                     </div>
                     </div>
                   <?php } ?>
-                   <h5 class="m-t-lg with-border"></h5>
-                  <div class="form-group row">
-                      <div class="col-sm-4"><label class="form-control-label">Event Date <strong>*</strong></label></div>
-                          <div class="col-sm-8">
+                  
+                  
+                              <input type="hidden"  class="form-control" id="eventdate" value ="" >
 
-                              <input type="date"  class="form-control" id="eventdate" value ="<?php echo $eventdate; ?>" required>
-
-
-                          </div>
+                            <hr>
+                            <br>
+                  
+                  
+                    <div class="form-group row">
+                      <div class="col-sm-12">
+                          <h3>User Application Settings</h3> 
+                      </div>
+                      
                   </div>
-                  
-                  
-                  
-
-                  
+                <div class="form-group row">
+                    <div class="col-sm-8"><label class=" form-control-label">Enable/Disable Application Moderation </label></div>
+                        <div class="col-sm-4">
+                            
+                            <input type="checkbox" class="toggle-one" id="applicationmoderationstatus" data-toggle="toggle" <?php echo $applicationmoderationstatus;?>>
+                            
+                        </div>
+                    
+                </div> 
+                  <div class="from-group row">
+                      
+                      
+                      <div class="col-sm-12"><p style="font-size: 20px;margin-left: 12px;">Enable this setting if you want to moderate user applications before they gain access into this event portal. If this is disabled, when a user completes the form the system will immediately create an account for that user and send them the Welcome Email with login credentials.</p></div>
+                      
+                  </div>
+               
+                  <br>
+                  <br>
                   
                
                   <div class="form-group row">

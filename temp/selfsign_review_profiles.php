@@ -95,12 +95,18 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     }
                                 ?>
                                <?php }?>
+                            
+                             <th>Application Submission Date</th>
                         </tr>
                 </thead>
                 <tbody>
                        <?php  foreach ($authors as $aid) {
                            
                             $user_data = get_userdata($aid->ID);
+                            
+                            //echo '<pre>';
+                            //print_r($user_data->user_registered);exit;
+                            
                             $all_meta_for_user = get_user_meta($aid->ID);
                             $user_blogs = get_blogs_of_user( $aid->ID );
                             $usergetaccessforthisblog = 'notactive';
@@ -171,7 +177,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                                
                                                 
                                             }else{
-                                                
+                                                 
                                                  echo '<td>'.$all_meta_for_user[$site_prefix.$additionalfieldkey][0].'</td>';
                                             }
                                              
@@ -182,7 +188,13 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                                     ?>
                                 
                             <?php }?>
+                            <td><?php 
                             
+                                    $registerdatearray = explode(" ",$user_data->user_registered);
+                                    $registerdate = strtotime($registerdatearray[0]);
+                            
+                            
+                            echo date('M d Y', $registerdate);?></td>
                         </tr>
                         
                         <?php } }?>

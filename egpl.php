@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.81
+ * Version:           3.90
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -1513,7 +1513,7 @@ try {
                        
                    
                         
-                       if (!empty($all_meta_for_user[$keyvalue_subject][0])) {
+                       if ($all_meta_for_user[$keyvalue_subject][0] !="") {
                            
                            $result = multidimensional_search($colsdatatype, array('colkey' => $keyvalue_subject)); // 1 
                            $getfieldType = getcustomefieldKeyValue($keyvalue_subject,"fieldType");
@@ -1606,7 +1606,7 @@ try {
                        
                        
                         
-                       if (!empty($all_meta_for_user[$keyvalue][0])) {
+                       if ($all_meta_for_user[$keyvalue][0] !="") {
                            
                            $result = multidimensional_search($colsdatatype, array('colkey' => $keyvalue)); // 1 
                            $getfieldType = getcustomefieldKeyValue($keyvalue,"fieldType");
@@ -1651,58 +1651,7 @@ try {
        
       
    $bcc_array = $bcc;
-   //$cc_array = explode(',',$cc);
    
-   
-   
-//   if(sizeof($bcc_array) > 1){
-//       
-//       foreach($bcc_array as $key=>$value){
-//           
-//           
-//        $to_message_array[]=array('email'=>$value,'name'=>'','type'=>'bcc');
-//           
-//           
-//           
-//       }
-//       
-//       
-//       
-//   }else{
-//       
-//       if(!empty($bcc_array)){
-//           
-//           $to_message_array[]=array('email'=>$bcc_array[0],'name'=>'','type'=>'bcc');
-//       }
-//   }
-//   if(sizeof($cc_array) > 1){
-//       
-//       foreach($cc_array as $key=>$value){
-//           
-//           
-//           
-//         $to_message_array[]=array('email'=>$value,'name'=>'','type'=>'cc');
-//           
-//           
-//       }
-//       
-//       
-//       
-//   }else{
-//     if(!empty($cc_array)){
-//          
-//           $to_message_array[]=array('email'=>$cc_array[0],'name'=>'','type'=>'cc');
-//       }  
-//   }
-   
-       
-       //$result = send_email($to,$subject,$body_message);
-
-    
-  
-   
-  
- //  print_r($bcc);exit;
    $get_currentsiteURl = get_site_url();
    $message = array(
         
@@ -1727,6 +1676,317 @@ try {
     // exit;
        
     $lastInsertId = contentmanagerlogging('Bulk Email',"Admin Action",serialize($message),$user_ID,$user_info->user_email,"pre_action_data");
+     
+    $async = false;
+    $ip_pool = 'Main Pool';
+   // $send_at = 'example send_at';
+    $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at);
+    contentmanagerlogging_file_upload($lastInsertId,serialize($result));
+    echo 'successfully send';
+   
+    
+}catch(Mandrill_Error $e) {
+    // Mandrill errors are thrown as exceptions
+    $error_msg = 'A mandrill error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
+    // A mandrill error occurred: Mandrill_Unknown_Subaccount - No subaccount exists with the id 'customer-123'
+    
+ 
+    contentmanagerlogging_file_upload($lastInsertId,$error_msg);
+     echo   $e->getMessage();
+    //throw $e;
+}
+ die();
+}else if ($_GET['contentManagerRequest'] == 'sendbulkemailtasksreport') {
+    
+    require_once('../../../wp-load.php');
+    require_once 'Mandrill.php';
+   
+try { 
+    
+    
+     $oldvalues = get_option( 'ContenteManager_Settings' );
+     $mandrill = $oldvalues['ContentManager']['mandrill'];
+    
+    $mandrill = new Mandrill($mandrill);
+    
+    
+    $subject =$_POST['emailSubject'];
+    $body=stripslashes ($_POST['emailBody']);
+    
+    $user_ID = get_current_user_id();
+    $user_info = get_userdata($user_ID);
+    $attendeefields_data=json_decode(stripslashes($_POST['attendeeallfields']), true);
+    
+    
+   
+    
+    $field_key_string = getInbetweenStrings('{', '}', $body);
+    $field_key_string_subject = getInbetweenStrings('{', '}', $subject);
+    
+   
+    
+    
+    $oldvalues = get_option( 'ContenteManager_Settings' );
+    $formemail = $oldvalues['ContentManager']['formemail'];
+    if(empty($formemail)){
+        $formemail = 'noreply@expo-genie.com';
+        
+    }
+    
+   $bcc = $_POST['BCC'];
+   $cc  = $_POST['CC'];
+  
+   
+   
+   
+   $replytoEmail = $_POST['RTO'];
+   $fromname = $_POST['fromname'];
+  
+
+    
+    
+    $site_url = get_option('siteurl' );
+    $login_url = get_option('siteurl' );
+    $admin_email= get_option('admin_email');
+    $data=  date("Y-m-d");
+    $time=  date('H:i:s');
+    $sitetitle = get_bloginfo( 'name' );
+    if(empty($fromname)){
+        $fromname = get_bloginfo( 'name' );
+    }
+   // $body = str_replace('[site_url]', $site_url, $body);
+   // $body = str_replace('[login_url]', $site_url, $body);
+   // $body = str_replace('[admin_email]', $admin_email, $body);
+    $subject = str_replace('{', '*|', $subject);
+    $subject = str_replace('}', '|*', $subject);
+    $body = str_replace('{', '*|', $body);
+    $body = str_replace('}', '|*', $body);
+    $goble_data_array =array(
+        array('name'=>'date','content'=>$data),
+        array('name'=>'time','content'=>$time),
+        array('name'=>'site_url','content'=>$site_url),
+        array('name'=>'site_title','content'=>$sitetitle)
+        );
+    $body_message =    $body ;
+    global $wpdb;
+    $site_prefix = $wpdb->get_blog_prefix();
+     
+       foreach($attendeefields_data as $key=>$Onerowvalue){
+        
+            $data_field_array= array();
+            
+            
+            $userdata = get_user_by_email($Onerowvalue);
+            $email_address = $Onerowvalue;
+            
+            $all_meta_for_user = get_user_meta($userdata->ID);
+            $first_name = $all_meta_for_user[$site_prefix.'first_name'][0];
+            
+            
+            foreach($field_key_subject as $index_subject=>$keyvalue_subject){
+                  
+                      if($keyvalue_subject == 'Role' || $keyvalue_subject == 'site_title' || $keyvalue_subject == 'date' || $keyvalue_subject == 'time' || $keyvalue_subject == 'site_url' || $keyvalue_subject == 'user_pass'|| $keyvalue_subject == 'user_login'){
+                      
+                       
+                      if($keyvalue_subject == 'user_pass'){
+                          
+                            
+                            $user_id = $userdata->ID;
+                            $plaintext_pass=wp_generate_password( 8, false, false );
+                            wp_set_password( $plaintext_pass, $user_id );
+                            $data_field_array[] = array('name'=>$index_subject,'content'=>$plaintext_pass);  
+                          
+                      }elseif($keyvalue_subject == 'user_login'){
+                          
+                         $data_field_array[] = array('name'=>$index_subject,'content'=>$userdata->user_login); 
+                         
+                      }elseif($keyvalue_subject == 'Role'){
+                          
+                          $user_id = $userdata->ID;
+                          $getcurrentuserdata = get_userdata( $user_id );
+                          $blog_id = get_current_blog_id();
+                          $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+                          $get_all_roles = get_option($get_all_roles_array);
+                          foreach ($get_all_roles as $key => $name) {
+                              
+                              if(implode(', ', $getcurrentuserdata->roles) == $key){
+                                  
+                                  $currentuserRole = $name['name'];
+                              }
+                           }
+                          
+                          
+                          $data_field_array[] = array('name'=>$index_subject,'content'=>$currentuserRole); 
+                      }
+                      
+                      
+                      
+                   }else{
+                       
+                       if ($all_meta_for_user[$keyvalue_subject][0]!="") {
+                           
+                           $result = multidimensional_search($colsdatatype, array('colkey' => $keyvalue_subject)); // 1 
+                           $getfieldType = getcustomefieldKeyValue($keyvalue_subject,"fieldType");
+                           
+                        if($getfieldType == 'date') {
+                            
+                            
+                          
+                          $date_value =   date('d-m-Y' , intval($all_meta_for_user[$keyvalue_subject][0])/1000);
+                          $data_field_array[] = array('name'=>$index_subject,'content'=>$date_value);
+                          
+                        } else{
+                             
+                                 
+                                 
+                                $data_field_array[] = array('name'=>$index_subject,'content'=>$all_meta_for_user[$keyvalue_subject][0]);  
+                             
+                        }
+                       }else{
+                           
+                                $data_field_array[] = array('name'=>$index_subject,'content'=>''); 
+                          
+                       }
+                   
+                      
+                      
+                      
+                      
+                  }
+                 
+                 
+                 
+             }
+            foreach($field_key_string as $index=>$keyvalue){
+                
+                        
+                     
+                      
+                      if($keyvalue == 'wp_user_id' || $keyvalue == 'Semail' || $keyvalue == 'Role' || $keyvalue == 'site_title' || $keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'site_url' || $keyvalue == 'user_pass'|| $keyvalue == 'user_login'){
+                      
+                          
+                      if($keyvalue == 'user_pass'){
+                          
+                           
+                            $user_id = $userdata->ID;
+                            $plaintext_pass=wp_generate_password( 8, false, false );
+                            wp_set_password( $plaintext_pass, $user_id );
+                            $data_field_array[] = array('name'=>$index,'content'=>$plaintext_pass);  
+                          
+                      }elseif($keyvalue == 'user_login'){
+                          
+                       
+                          $data_field_array[] = array('name'=>$index,'content'=>$userdata->user_login);  
+                          
+                         
+                          
+                      }elseif($keyvalue == 'Role'){
+                          
+                        
+                          $user_id = $userdata->ID;
+                          $getcurrentuserdata = get_userdata( $user_id );
+                          $blog_id = get_current_blog_id();
+                          $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+                          $get_all_roles = get_option($get_all_roles_array);
+                          foreach ($get_all_roles as $key => $name) {
+                              
+                              if(implode(', ', $getcurrentuserdata->roles) == $key){
+                                  
+                                  $currentuserRole = $name['name'];
+                              }
+                          }
+                          $data_field_array[] = array('name'=>$index,'content'=>$currentuserRole); 
+                      }elseif($keyvalue == 'Semail'){
+                          
+                        
+                          $data_field_array[] = array('name'=>$index,'content'=>$email_address); 
+                      }elseif($keyvalue == 'wp_user_id'){
+                          
+                        
+                          $data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
+                      }elseif($keyvalue == 'wp_user_id'){
+                          
+                        
+                          $data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
+                      }
+                      
+                      
+                      
+                   }else{
+                       
+                       
+                       
+                        
+                       if ($all_meta_for_user[$keyvalue][0]!="") {
+                           
+                           $result = multidimensional_search($colsdatatype, array('colkey' => $keyvalue)); // 1 
+                           $getfieldType = getcustomefieldKeyValue($keyvalue,"fieldType");
+                          
+                        if($getfieldType == 'date') {
+                            
+                          $date_value =   date('d-m-Y', intval($all_meta_for_user[$keyvalue][0]/1000));
+                          $data_field_array[] = array('name'=>$index,'content'=>$date_value);
+                          
+                        } else{
+                             
+                                 
+                                $data_field_array[] = array('name'=>$index,'content'=> $all_meta_for_user[$keyvalue][0]);  
+                             
+                        }
+                       }else{
+                           
+                                $data_field_array[] = array('name'=>$index,'content'=>''); 
+                          
+                       }
+                  
+                      
+                      
+                      
+                      
+                  }
+                 
+                 
+                 
+             }
+              
+          
+              
+                
+           $to_message_array[]=array('email'=>$email_address,'name'=>$first_name,'type'=>'to');
+           $user_data_array[] =array(
+                'rcpt'=>$email_address,
+                'vars'=>$data_field_array
+           );
+ 
+        }
+       
+      
+   $bcc_array = $bcc;
+   
+   $get_currentsiteURl = get_site_url();
+   $message = array(
+        
+        'html' => $body,
+        'text' => '',
+        'subject' => $subject,
+        'from_email' => $formemail,
+        'from_name' => $fromname,
+        'to' => $to_message_array,
+        'headers' => array('Reply-To' => $replytoEmail),
+        'bcc_address'=>$bcc_array,
+        'track_opens' => true,
+        'track_clicks' => true,
+        'merge' => true,
+        'merge_language' => 'mailchimp',
+        'global_merge_vars' => $goble_data_array,
+        'merge_vars' => $user_data_array,
+         "tags" => [$get_currentsiteURl]
+        
+    );
+   
+    // exit;
+       
+    $lastInsertId = contentmanagerlogging('Tasks Bulk Email',"Admin Action",serialize($message),$user_ID,$user_info->user_email,"pre_action_data");
      
     $async = false;
     $ip_pool = 'Main Pool';
@@ -2292,6 +2552,7 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
     
     $filedataurl = $_POST['oldheaderbannerurl'];
     $headerlogourl = $_POST['oldheaderlogourl'];
+    
     if(empty($_POST['oldheaderbannerurl'])){
         
         $filedata =  $_FILES['uploadedfile'];
@@ -3773,7 +4034,7 @@ function getReportsdatanew($report_name,$usertimezone){
 
 add_action('wp_enqueue_scripts', 'add_contentmanager_js');
 function add_contentmanager_js(){
-      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'3.8.0', true);
+      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'4.0.0', true);
     
      wp_enqueue_script( 'jquery.alerts', plugins_url() . '/EGPL/js/jquery.alerts.js', array(), '1.1.0', true );
      wp_enqueue_script( 'boot-date-picker', plugins_url() . '/EGPL/js/bootstrap-datepicker.js', array(), '1.2.0', true );
@@ -3795,7 +4056,7 @@ function add_contentmanager_js(){
       
      wp_enqueue_script('select2', plugins_url('/cmtemplate/js/lib/select2/select2.full.js', __FILE__), array('jquery'));
     
-     wp_enqueue_script( 'order-history', plugins_url('/EGPL/js/orderhistory.js'), array(), '1.4.0', true );
+     wp_enqueue_script( 'order-history', plugins_url('/EGPL/js/orderhistory.js'), array(), '1.6.0', true );
      wp_enqueue_script( 'Egpl-filters', plugins_url('/EGPL/js/egplfilters.js'), array(), '1.2.6', true );
      
    
@@ -4188,12 +4449,14 @@ function updateadmin_frontend_settings($object_data,$filedataurl){
       
     
     $eventdate = $object_data['eventdate'];
+    $applicationmoderationstatus = $object_data['applicationmoderationstatus'];
     $oldvalues = get_option( 'ContenteManager_Settings' );
     
     $oldvalues['ContentManager']['eventdate']=$eventdate;
     $oldvalues['ContentManager']['mainheader']=$filedataurl;
     $oldvalues['ContentManager']['mainheaderlogo']='';
-     
+    $oldvalues['ContentManager']['applicationmoderationstatus']=$applicationmoderationstatus;
+    
     $result=update_option('ContenteManager_Settings', $oldvalues);
     
     contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
@@ -5024,7 +5287,7 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
                        
                        
                        
-                    if(!empty($get_meta_value)){
+                    if($get_meta_value!=""){
                         
                        
                         $getfieldType = getcustomefieldKeyValue($keyvalue_subject,"fieldType");
@@ -5107,7 +5370,7 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
 
 
                        $get_meta_value = get_user_meta_merger_field_value($user_id,$keyvalue);
-                       if(!empty($get_meta_value)){
+                       if($get_meta_value!=""){
 
                             $getfieldType = getcustomefieldKeyValue($keyvalue,"fieldType");
 
@@ -7302,9 +7565,7 @@ function checkloginuserstatus_fun() {
                                    if($actual_link != "https://" . $_SERVER['SERVER_NAME'].'/home/'){
                                        if (strpos($actual_link, 'task-list/') !== false || strpos($actual_link, 'home/') !== false  || strpos($actual_link, 'resources/') !== false || strpos($actual_link, 'registration-codes/') !== false) {
 
-
-
-                                            echo '<script type="text/javascript">swal({title: "Welcome!", type: "success", html:true,showConfirmButton:false,text: "<p>This will serve as your portal for managing all of your pre-show logistics. Click \'Next\' below to view your exhibit/sponsor options.</p><p style=\'margin-top:18px\'><a href='.$redirectURL.' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Next</a></p>"});</script>';
+                                        echo '<script type="text/javascript">swal({title: "Welcome!", type: "success", html:true,showConfirmButton:false,text: "<p>This will serve as your portal for managing all of your pre-show logistics. Click \'Next\' below to view your exhibit/sponsor options.</p><p style=\'margin-top:18px\'><a href='.$redirectURL.' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Next</a></p>"});</script>';
 
                                        }
                                     }
@@ -7555,11 +7816,15 @@ function getuserfields(){
                 $requiredStatus = $value['fieldrequriedstatus'];
                 if($requiredStatus == "checked"){
                     
-                   $columns_list_attitional[$index_count]['required']  = true; 
+                   $columns_list_attitional['users'][$index_count]['required']  = true; 
+                }else{
+                    
+                   $columns_list_attitional['users'][$index_count]['required']  = false;  
                 }
-                $columns_list_attitional[$index_count]['key']  = $site_prefix.$value['fielduniquekey'];
-                $columns_list_attitional[$index_count]['type']= $value['fieldType'];
-                $columns_list_attitional[$index_count]['label']= $value['fieldName'];
+                $columns_list_attitional['users'][$index_count]['name']  = $site_prefix.$value['fielduniquekey'];
+                $columns_list_attitional['users'][$index_count]['type']= 'text';//$value['fieldType'];
+                $columns_list_attitional['users'][$index_count]['label']= $value['fieldName'];
+                
                
                 
                 $index_count++;
@@ -8141,8 +8406,8 @@ function UpdateNewUser($updateContactUserData){
                         //echo $result_update;
                         //echo  "UPDATE ".$tablename." SET user_login=".$newemail.",user_email=".$newemail." WHERE ID=".$userid."";
                         
-                        $t = time();
-                        update_user_option($user_id, 'profile_updated', $t*1000);
+                       // $t = time();
+                       // update_user_option($user_id, 'profile_updated', $t*1000);
 
                     }
 
@@ -8156,7 +8421,7 @@ function UpdateNewUser($updateContactUserData){
                 
                 
             }
-            update_user_option($user_id, 'profile_updated', $t*1000);
+            //update_user_option($user_id, 'profile_updated', $t*1000);
             updateregistredUserMeta($user_id,$updateContactUserData,$role);
             
             $responce['id'] = time()*1000;
@@ -8191,6 +8456,15 @@ function CreateNewUser($newContactUserData){
     $user_id = username_exists($newContactUserData->username);
     $role = $newContactUserData->Role;
     $email = $newContactUserData->username;
+    
+//    $message['message'] =  $role;
+//    $message['message1'] =  $email;
+//    $message['message2'] =  $newContactUserData->Semail;
+//    $message['message3'] =  $newContactUserData->Semail;
+//    $message['message4'] =  $newContactUserData->Semail;
+//    
+//      echo json_encode($message);
+//    exit;
     $roleKeyValue = "";
             if (is_multisite()) {
                 $blog_id = get_current_blog_id();
@@ -8292,7 +8566,7 @@ function CreateNewUser($newContactUserData){
                     $useremail='';
                    // custome_email_send($user_id,$email,"welcome_email_template");
                    // $t=time();
-                    update_user_option($user_id, 'profile_updated', $t*1000);
+                   // update_user_option($user_id, 'profile_updated', $t*1000);
                     updateregistredUserMeta($user_id,$newContactUserData,$role);
                 
                 $message['message'] =  'User added to this blog.';
@@ -8351,10 +8625,95 @@ function updatetask(){
         
         $newContactUserData =  json_decode(file_get_contents('php://input')) ;
         
+        $mainfinalArray = [];
+        
         $taskkey = $newContactUserData->taskkey;
-        $getkeyinformation  = gettasktype($taskkey);
+        $userfields = $newContactUserData->userfieds;
         
+        if (strpos($taskkey, ',') !== false) {
+            
+            $taskkeyArray =  explode(",",$taskkey);
+            foreach ($taskkeyArray as $keys=>$keystitle) {
+                
+                $taskdataArray = gettaskdatabyarray($keystitle);
+                
+                if(!empty($taskdataArray)){
+                    
+                   
+                    $mainfinalArray = array_merge_recursive($mainfinalArray,$taskdataArray);
+                   
+                   
+                    
+                }
+               
+                
+            }
+            
+        }else{
+            
+            
+          $taskdataArray = gettaskdatabyarray($taskkey);
+          if(!empty($taskdataArray)){
+                    
+                   
+                    $mainfinalArray = array_merge_recursive($mainfinalArray,$taskdataArray);
+                   
+                   
+                    
+                }
+        }
+       
         
+        if(!empty($userfields)){
+            
+            if (strpos($userfields, ',') !== false) {
+            
+                $userfieldsArray =  explode(",",$userfields);
+                foreach ($userfieldsArray as $keys=>$keystitle) {
+                
+                    $userfieldsArray = gettaskdatabyarray($keystitle);
+                    if(!empty($userfieldsArray)){
+                         
+                          $mainfinalArray = array_merge_recursive($mainfinalArray,$userfieldsArray);
+                         
+                     }
+                }
+                
+            }else{
+            
+                $userfieldsArray = gettaskdatabyarray($userfields);
+                if(!empty($userfieldsArray)){
+                         
+                          $mainfinalArray = array_merge_recursive($mainfinalArray,$userfieldsArray);
+                         
+                     }
+            }
+            
+        }
+        
+       // print_r($mainfinalArray);
+        $result_final_array =  json_encode($mainfinalArray);
+        
+        echo $result_final_array;
+        
+        die();
+        
+    }catch (Exception $e) {
+
+        contentmanagerlogging_file_upload($lastInsertId, serialize($e));
+
+        return $e;
+    }
+
+ 
+    
+       
+    
+}
+
+
+function gettaskdatabyarray($taskkey){
+    
         global $wpdb;
         
         $site_prefix = $wpdb->get_blog_prefix();
@@ -8365,19 +8724,21 @@ function updatetask(){
         $mainArrayIndex = 0;
         $contactIDkey = $site_prefix."external_reference_id_zapier";
                     
-                    $arrayMonth['JAN']='01';
-                    $arrayMonth['Feb']='02';
-                    $arrayMonth['MAR']='03';
-                    $arrayMonth['APR']='04';
-                    $arrayMonth['MAY']='05';
-                    $arrayMonth['JUN']='06';
-                    $arrayMonth['JUL']='07';
-                    $arrayMonth['AUG']='08';
-                    $arrayMonth['SEP']='09';
-                    $arrayMonth['OCT']='10';
-                    $arrayMonth['Nov']='11';
-                    $arrayMonth['DEC']='12';
-                    
+        $arrayMonth['JAN']='01';
+        $arrayMonth['Feb']='02';
+        $arrayMonth['MAR']='03';
+        $arrayMonth['APR']='04';
+        $arrayMonth['MAY']='05';
+        $arrayMonth['JUN']='06';
+        $arrayMonth['JUL']='07';
+        $arrayMonth['AUG']='08';
+        $arrayMonth['SEP']='09';
+        $arrayMonth['OCT']='10';
+        $arrayMonth['Nov']='11';
+        $arrayMonth['DEC']='12';
+        
+        $getkeyinformation  = gettasktype($taskkey);
+        
         if($getkeyinformation['responce'] != "invaild"){
         foreach ($authors as $userKey=>$aid) {
              
@@ -8407,7 +8768,8 @@ function updatetask(){
                  if(!empty($file_info)&& !empty($all_meta_for_user[$contactIDkey][0])){
                      
                      $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$createuniqueKey;
-                     $columns_rows_dataFinalData[$mainArrayIndex][$fiekldlable] = $file_info['url'];
+                     $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = $file_info['url'];
+                     $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
                      $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
                      $columns_rows_dataFinalData[$mainArrayIndex]['date-time'] = date('d-M-Y H:i:s', $dataandtime);;
                      $mainArrayIndex++;
@@ -8421,7 +8783,8 @@ function updatetask(){
                             $createuniqueKey = date('YmdHis', $dataandtime);
                             
                             $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$createuniqueKey;
-                            $columns_rows_dataFinalData[$mainArrayIndex][$fiekldlable] = $all_meta_for_user[$getkeyinformation['key']][0];
+                            $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                            $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = $all_meta_for_user[$getkeyinformation['key']][0];
                             $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
                             $columns_rows_dataFinalData[$mainArrayIndex]['date-time'] = date('d-M-Y H:i:s', $dataandtime);
                             $mainArrayIndex++;
@@ -8446,7 +8809,8 @@ function updatetask(){
                       if (!empty($file_info)&& !empty($all_meta_for_user[$contactIDkey][0])) {
                           
                            $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$updateDateformat;
-                           $columns_rows_dataFinalData[$mainArrayIndex][$fiekldlable] = $file_info['url'];
+                           $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                           $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = $file_info['url'];
                            $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
                            $columns_rows_dataFinalData[$mainArrayIndex]['date-time'] = $dateandtime;
                            $mainArrayIndex++;
@@ -8466,7 +8830,8 @@ function updatetask(){
                         $updateDateformat = $dateData2[2].$arrayMonth[$dateData2[1]].$dateData2[0].$dateData3[0].$dateData3[1]."15";
 
                         $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$updateDateformat;
-                        $columns_rows_dataFinalData[$mainArrayIndex][$fiekldlable] = $all_meta_for_user[$getkeyinformation['key']][0];
+                        $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                        $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = $all_meta_for_user[$getkeyinformation['key']][0];
                         $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
                         $columns_rows_dataFinalData[$mainArrayIndex]['date-time'] = $dateandtime;
                         $mainArrayIndex++;
@@ -8477,34 +8842,25 @@ function updatetask(){
         
         if(empty($columns_rows_dataFinalData)){
             
-              $resutl ="[]";
-              echo $resutl;
+              $resutl =array();
+              //echo $resutl;
         }else{
-            
-            $resutl =  json_encode($columns_rows_dataFinalData);
-            echo $resutl;
+          //  $columns_rows_dataFinalData =  (object) $columns_rows_dataFinalData;
+            $resutl =  $columns_rows_dataFinalData;
+          
         }
         
         }else{
             
-            $resutl ="[]";
-            echo $resutl;
+             $resutl =array();
+            //echo $resutl;
            
         }
-        die();
         
-    }catch (Exception $e) {
-
-        contentmanagerlogging_file_upload($lastInsertId, serialize($e));
-
-        return $e;
-    }
-
- 
-    
-       
+        return $resutl;
     
 }
+
 
 function gettasktype($taskkey){
     

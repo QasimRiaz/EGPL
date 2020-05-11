@@ -77,8 +77,8 @@ $blog_id2 = get_current_blog_id();
                                             <span class="lbl">Add New Admin</span>
                                         </a>
                                         <a class="dropdown-item" href="<?php echo $site_url; ?>/admin-settings/">
-                                            <i class="font-icon fa fa-image"></i>
-                                            <span class="lbl">Header</span>
+                                            <i class="font-icon fa fa-cogs"></i>
+                                            <span class="lbl">Settings</span>
                                         </a>
                                         <a class="dropdown-item" href="<?php echo $site_url; ?>/change-password/">
                                             <i class="font-icon fa fa-lock"></i>
@@ -178,6 +178,14 @@ $blog_id2 = get_current_blog_id();
 	                <span class="lbl">Reports</span>
 	            </span>
 	            <ul class="mynav">
+                        
+                        <li class="mythemestyle">
+	                <a href="<?php echo $site_url; ?>/custom_task_report/">
+	                   <i class="font-icon fa fa-th-list"></i>
+	                    <span class="lbl menumargine">Task Report</span>
+	                </a>
+	            </li>
+                        
 	                <li class="mythemestyle">
                              <a href="<?php echo $site_url; ?>/user-report-result/">
                                <span class="glyphicon glyphicon-th"></span>
@@ -185,13 +193,14 @@ $blog_id2 = get_current_blog_id();
                             </a>
                             
                         </li>
+                    
 	            <li class="mythemestyle">
 	                <a href="<?php echo $site_url; ?>/order-report/">
 	                   <i class="font-icon fa fa-shopping-cart"></i>
 	                    <span class="lbl menumargine">Orders Report</span>
 	                </a>
 	            </li>
-                   
+                    
 	            </ul>
 	        </li>
             <li class="mythemestyle with-sub">

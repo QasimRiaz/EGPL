@@ -7,7 +7,8 @@ if ($_GET['usertask_update'] == "update_submission_status") {
     $submissiontaskstatuskey=$_POST['submissiontaskstatuskey'];
     $tasktype=$_POST['tasktype'];
     $status = 'Pending';
-    update_submission_status($sponsorid,$submissiontaskstatuskey,$status,$tasktype);
+    $timezone = json_decode(stripslashes($_POST['usertimezone']));
+    update_submission_status($sponsorid,$submissiontaskstatuskey,$status,$tasktype,$timezone);
     die();
 }else if ($_GET['usertask_update'] == "update_user_meta_custome") {
 
@@ -20,7 +21,8 @@ if ($_GET['usertask_update'] == "update_submission_status") {
     $reg_value = $updatevalue;
     $status=$_POST['status'];
     $sponsorid=$_POST['sponsorid'];
-    update_user_meta_custome($keyvalue,$reg_value,$status,$sponsorid,$_POST);
+    $timezone = json_decode(stripslashes($_POST['usertimezone']));
+    update_user_meta_custome($keyvalue,$reg_value,$status,$sponsorid,$_POST,$timezone);
     
      
     
@@ -35,12 +37,21 @@ if ($_GET['usertask_update'] == "update_submission_status") {
     
     
     $keyvalue = $_POST['action'];
-    $updatevalue=$_FILES['file'];
+    
+    
+    if(!empty($_FILES)){
+        
+       $updatevalue=$_FILES['file']; 
+    }else{
+        
+       $filestatus = "emptyfile"; 
+    }
+    
     $status=$_POST['status'];
     $oldvalue=$_POST['lastvalue'];
     $sponsorid=$_POST['sponsorid'];
     $updatevalue['post_request']=$_POST;
-	
+	$timezone = json_decode(stripslashes($_POST['usertimezone']));
 	$postid = get_current_user_id();
 	if($sponsorid !='undefined'){
             $postid = $sponsorid;
@@ -58,7 +69,7 @@ if ($_GET['usertask_update'] == "update_submission_status") {
        
       
        $updatevalue['name']=$company_name.'_'.$updatevalue['name'];
-       user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$lastInsertId);
+       user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$lastInsertId,$filestatus,$timezone);
       
     
 }
@@ -70,9 +81,6 @@ function updatetocvent($postid,$updatevalue,$keyvalue){
      $cventAccountNo = $oldvalues['ContentManager']['cventaccountname'];
      $cventUsername = $oldvalues['ContentManager']['cventusername'];
      $cventAPiName = $oldvalues['ContentManager']['cventapipassword'];
-     
-    
-     
      
      
     if(!empty($cventAccountNo) && !empty($cventUsername) && !empty($cventAPiName)){
@@ -142,7 +150,7 @@ function updatetocvent($postid,$updatevalue,$keyvalue){
     
 }
 }
-function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$lastInsertId) {
+function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$lastInsertId,$filestatus,$timezone) {
     
     //$key = $_POST['value'];
     
@@ -150,9 +158,12 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
     $user_info = get_userdata($postid);
     $old_meta_value=get_user_meta($postid, $keyvalue); 
     
+    global  $wpdb;
+       $site_prefix = $wpdb->get_blog_prefix();
    
-   
-    if(!empty($updatevalue)){
+    if($filestatus !="emptyfile"){
+         
+        
     if ( ! function_exists( 'wp_handle_upload' ) ) require_once( ABSPATH . 'wp-admin/includes/file.php' );
     //$upload_overrides = array( 'test_form' => false, 'mimes' => array('eps'=>'application/postscript','ai' => 'application/postscript','jpg|jpeg|jpe' => 'image/jpeg','gif' => 'image/gif','png' => 'image/png','bmp' => 'image/bmp','pdf'=>'text/pdf','doc'=>'application/msword','docx'=>'application/msword','xlsx'=>'application/msexcel') );
     $mime_type = array(
@@ -264,7 +275,10 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
     
     $date = new DateTime();
     $datetime = $date->format('d-M-Y H:i:A');
-   if ( $movefile && !isset( $movefile['error'] ) ) {
+    
+   $PreviousSubmissionDate = get_user_meta($postid, $keyvalue.'_datetime',true);
+    
+   if($movefile && !isset( $movefile['error'])) {
        
             $date = new DateTime();
     $datetime = $date->format('d-M-Y H:i:A');
@@ -313,11 +327,59 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
     $email_body_message_for_admin['Task Status']= $status;
     $email_body_message_for_admin['Task Update Date']=$datetime;
     $email_body_message_for_admin['ErrorMsg']=$movefile;
-    
-    $headers[] = 'Cc: Qasim Riaz <qasim.riaz@e2esp.com>';
     $site_url = get_option('siteurl');
    
-   
+    $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+    );
+    
+    $listOFtaskArray = get_posts( $args );
+    foreach($listOFtaskArray as $taskKey=>$tasksObject){
+            $tasksID = $tasksObject->ID;
+            $tasksKey = get_post_meta( $tasksID, 'key' , true);
+            if($tasksKey == $keyvalue){
+                $tasklabel= get_post_meta( $tasksID, 'label' , true);
+                $checkemailnotification = get_post_meta( $tasksID, 'emailnotification' , true);
+                if($checkemailnotification == "checked"){
+                    
+                    $EmailsListnotifications = rtrim(get_post_meta( $tasksID, 'emailnotificationaddress' , true), ',');
+                }
+            }
+          
+    }
+    $blog_title = get_bloginfo('name'); 
+    global $wpdb;
+    $companyname = get_user_meta($postid, $site_prefix.'company_name',true);
+     $current_date_time = date('d-M-Y H:i:s');
+     if ($timezone > 0) {
+
+            $login_date_time = (new DateTime($current_date_time))->sub(new DateInterval('PT' . abs($timezone) . 'H'))->format('d-M-Y H:i:s');
+        } else {
+
+            $login_date_time = (new DateTime($current_date_time))->add(new DateInterval('PT' . abs($timezone) . 'H'))->format('d-M-Y H:i:s');
+        }
+       $emailBoday ='<p>This is an automatic notification letting you know that a user in your event portal <a href="'.get_site_url().'" >'.$blog_title.'</a> has completed the following task:</p></br><table>
+        <tr><td><strong>Event Name:</strong></td><td><a href="'.get_site_url().'" >'.$blog_title.'</a></td></tr>
+        <tr><td><strong>Task Name:</strong></td><td>'.$tasklabel.'</td></tr>
+        <tr><td><strong>Company:</strong></td><td>'.$companyname.'</td></tr>
+        <tr><td><strong>Submitter Email:</strong></td><td>'.$user_info->user_email.'</td></tr>
+        <tr><td><strong>Submission Value:</strong></td><td>'.$movefile['url'].'</td></tr>
+        <tr><td><strong>Submission Date:</strong></td><td>'.$login_date_time.'</td></tr>
+        </table>';
+    
+    if($checkemailnotification == "checked"){
+        $subject = "Notification - New User Task Submission";
+        
+        if($EmailsListnotifications !=""){
+            $sendTaskSubmissionEmail = sendtasksubmissionEmail($emailBoday,$subject,$EmailsListnotifications);
+        }
+        
+    }
     
     contentmanagerlogging_file_upload ($lastInsertId,serialize($email_body_message_for_admin));
     updatetocvent($postid,$movefile['url'],$keyvalue);
@@ -336,33 +398,66 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
 }
 
 
-function update_user_meta_custome($keyvalue,$updatevalue,$status,$sponsorid,$log_obj) {
+function update_user_meta_custome($keyvalue,$updatevalue,$status,$sponsorid,$log_obj,$timezone) {
     //$key = $_POST['value'];
   try{  
     $date = new DateTime();
+    $blog_title = get_bloginfo('name'); 
+    global $wpdb;
+    $site_prefix = $wpdb->get_blog_prefix();
     $datetime = $date->format('d-M-Y H:i:A');
+    
+     
     $request_value.="Task Name : " . $keyvalue. "\n";
     $request_value.="Requested Value : " . $updatevalue. "\n";
     $request_value.="Task Status : " . $status. "\n";
     $request_value.="Task Update Date : " . $datetime. "\n";
-    
-    
+    $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+    );
+    $listOFtaskArray = get_posts( $args );
+    foreach($listOFtaskArray as $taskKey=>$tasksObject){
+            $tasksID = $tasksObject->ID;
+            $tasksKey = get_post_meta( $tasksID, 'key' , true);
+            if($tasksKey == $keyvalue){
+                $tasklabel= get_post_meta( $tasksID, 'label' , true);
+                $checkemailnotification = get_post_meta( $tasksID, 'emailnotification' , true);
+                if($checkemailnotification == "checked"){
+                    
+                    $EmailsListnotifications = rtrim(get_post_meta( $tasksID, 'emailnotificationaddress' , true), ',');
+                }
+            }
+          
+     }
     
    if(!empty($sponsorid)){
-         $postid = $sponsorid;
-     
+         
+       $postid = $sponsorid;
+   
+   }else{
         
-    }else{
-          $postid = get_current_user_id();
-    }
-     $user_info = get_userdata($postid);
+       $postid = get_current_user_id();
+   }
+    
+    $user_info = get_userdata($postid);
     
     
     
-     $lastInsertId = contentmanagerlogging('Save Task',"User Action",serialize($request_value),$postid,$user_info->user_email,"pre_action_data");
-       
+    $lastInsertId = contentmanagerlogging('Save Task',"User Action",serialize($request_value),$postid,$user_info->user_email,"pre_action_data");
     
+    
+    
+    $PreviousSubmissionDate = get_user_meta($postid, $keyvalue.'_datetime',true);
+    
+    
+    $companyname = get_user_meta($postid, $site_prefix.'company_name',true);  
     $old_meta_value=get_user_meta($postid, $keyvalue, $single); 
+    
     if($old_meta_value[0] != $updatevalue){
         $result = update_user_meta($postid, $keyvalue, $updatevalue);
     }
@@ -370,21 +465,37 @@ function update_user_meta_custome($keyvalue,$updatevalue,$status,$sponsorid,$log
     if($status == "Complete"){
          $result = update_user_meta($postid, $keyvalue.'_datetime', $datetime);
     }
-    $email_body_message_for_admin.="Task Name : " . $keyvalue. "\n";
-    $email_body_message_for_admin.="Old Value : " . $old_meta_value[0]. "\n";
-    $email_body_message_for_admin.="Updated Value : " . $updatevalue. "\n";
-    $email_body_message_for_admin.="Task Status : " . $status. "\n";
-    $email_body_message_for_admin.="Task Update Date : " . $datetime. "\n";
-    $site_url = get_option('siteurl');
-     $to = "azhar.ghias@e2esp.com";
-       $headers[] = 'Cc: Qasim Riaz <qasim.riaz@e2esp.com>';
-    $subject = $postid . ' <' . $site_url . '>';
     
-     contentmanagerlogging_file_upload ($lastInsertId,serialize($email_body_message_for_admin));
-    // contentmanagerlogging ('Save Task',"User Action",serialize($log_obj),$postid,$user_info->user_email,$result);
-    //wp_mail($to, $subject, $email_body_message_for_admin,$headers);
- 
-     updatetocvent($postid,$updatevalue,$keyvalue);
+     $current_date_time = date('d-M-Y H:i:s');
+     if ($timezone > 0) {
+
+            $login_date_time = (new DateTime($current_date_time))->sub(new DateInterval('PT' . abs($timezone) . 'H'))->format('d-M-Y H:i:s');
+        } else {
+
+            $login_date_time = (new DateTime($current_date_time))->add(new DateInterval('PT' . abs($timezone) . 'H'))->format('d-M-Y H:i:s');
+        }
+
+        $emailBoday .='<p>This is an automatic notification letting you know that a user in your event portal <a href="'.get_site_url().'" >'.$blog_title.'</a> has completed the following task:</p></br><table><tr><td><strong>Event Name:</strong></td><td><a href="'.get_site_url().'" >'.$blog_title.'</a></td></tr>
+    <tr><td><strong>Task Name:</strong></td><td>'.$tasklabel.'</td></tr>
+    <tr><td><strong>Company:</strong></td><td>'.$companyname.'</td></tr>
+    <tr><td><strong>Submitter Email:</strong></td><td>'.$user_info->user_email.'</td></tr>
+  
+    <tr><td><strong>Submission Value:</strong></td><td>'.$updatevalue.'</td></tr>
+    <tr><td><strong>Submission Date:</strong></td><td>'.$login_date_time.'</td></tr>
+    </table>';
+    
+    if($checkemailnotification == "checked"){
+        $subject = "Notification - New User Task Submission";
+        
+        if($EmailsListnotifications !=""){
+            $sendTaskSubmissionEmail = sendtasksubmissionEmail($emailBoday,$subject,$EmailsListnotifications);
+        }
+        
+    }
+    
+    
+    contentmanagerlogging_file_upload ($lastInsertId,serialize($email_body_message_for_admin));
+    updatetocvent($postid,$updatevalue,$keyvalue);
      
      
      
@@ -399,10 +510,40 @@ function update_user_meta_custome($keyvalue,$updatevalue,$status,$sponsorid,$log
     die();
 }
 
-function update_submission_status($sponsorid,$submissiontaskstatuskey,$status,$tasktype) {
+function update_submission_status($sponsorid,$submissiontaskstatuskey,$status,$tasktype,$timezone) {
     //$key = $_POST['value'];
   try{  
    
+      
+      //echo $status;exit;
+    $date = new DateTime();
+    $blog_title = get_bloginfo('name'); 
+    global $wpdb;
+    $site_prefix = $wpdb->get_blog_prefix();
+    $datetime = $date->format('d-M-Y H:i:A');
+    
+     $args = array(
+	'posts_per_page'   => -1,
+	'orderby'          => 'date',
+	'order'            => 'DESC',
+	'post_type'        => 'egpl_custome_tasks',
+	'post_status'      => 'draft',
+	
+    );
+    $listOFtaskArray = get_posts( $args );
+    foreach($listOFtaskArray as $taskKey=>$tasksObject){
+            $tasksID = $tasksObject->ID;
+            $tasksKey = get_post_meta( $tasksID, 'key' , true);
+            if($tasksKey == $submissiontaskstatuskey){
+                $tasklabel= get_post_meta( $tasksID, 'label' , true);
+                $checkemailnotification = get_post_meta( $tasksID, 'emailnotification' , true);
+                if($checkemailnotification == "checked"){
+                    
+                    $EmailsListnotifications = rtrim(get_post_meta( $tasksID, 'emailnotificationaddress' , true), ',');
+                }
+            }
+          
+     }
     if($sponsorid != 'undefined'){
          $postid = $sponsorid;
      
@@ -416,7 +557,47 @@ function update_submission_status($sponsorid,$submissiontaskstatuskey,$status,$t
     
      $lastInsertId = contentmanagerlogging('Remove Task Status',"User Action",serialize($submissiontaskstatuskey),$postid,$user_info->user_email,"pre_action_data");
        
+    $old_meta_value=get_user_meta($postid, $submissiontaskstatuskey, true); 
+    $companyname = get_user_meta($postid, $site_prefix.'company_name',true); 
     
+    if(is_array($old_meta_value)){
+        
+        $old_value = $old_meta_value['url'];
+        
+    }else{
+        
+        $old_value = $old_meta_value;
+    }
+    $current_date_time = date('d-M-Y H:i:s');
+     if ($timezone > 0) {
+
+            $login_date_time = (new DateTime($current_date_time))->sub(new DateInterval('PT' . abs($timezone) . 'H'))->format('d-M-Y H:i:s');
+        } else {
+
+            $login_date_time = (new DateTime($current_date_time))->add(new DateInterval('PT' . abs($timezone) . 'H'))->format('d-M-Y H:i:s');
+        }
+       $emailBoday ='<p>This is an automatic notification letting you know that a user in your event portal <a href="'.get_site_url().'" >'.$blog_title.'</a> has removed a previously submitted value from the task below:</p></br><table>
+    <tr><td><strong>Event Name:</strong></td><td><a href="'.get_site_url().'" >'.$blog_title.'</a></td></tr>
+    <tr><td><strong>Task Name:</strong></td><td>'.$tasklabel.'</td></tr>
+    <tr><td><strong>Company:</strong></td><td>'.$companyname.'</td></tr>
+    <tr><td><strong>Email:</strong></td><td>'.$user_info->user_email.'</td></tr>
+  
+    <tr><td><strong>Removed Submission:</strong></td><td>'.$old_value.'</td></tr>
+    <tr><td><strong>Removed Submission Date:</strong></td><td>'.$login_date_time.'</td></tr>
+    </table>';
+    
+    if($checkemailnotification == "checked"){
+        $subject = "Notification - Task Submission Removed";
+        
+        if($EmailsListnotifications !=""){
+            $sendTaskSubmissionEmail = sendtasksubmissionEmail($emailBoday,$subject,$EmailsListnotifications);
+        }
+        
+    }
+     
+     
+     
+     
     $old_meta_value=get_user_meta($postid, $keyvalue, $single); 
     if(!empty($tasktype)){
         update_user_meta($postid, $submissiontaskstatuskey, '');
@@ -444,7 +625,75 @@ function update_submission_status($sponsorid,$submissiontaskstatuskey,$status,$t
     die();
 }
 
-
+function sendtasksubmissionEmail($emailBoday,$subject,$EmailsListnotifications){
+    
+    require_once('../../../wp-load.php');
+    require_once 'Mandrill.php';
+   
+    try {
+        
+        $get_currentsiteURl = get_site_url();
+        $sitetitle = get_bloginfo( 'name' );
+        $oldvalues = get_option( 'ContenteManager_Settings' );
+        $formemail = $oldvalues['ContentManager']['formemail'];
+        $mandrill = $oldvalues['ContentManager']['mandrill'];
+        $mandrill = new Mandrill($mandrill);
+        
+        if(empty($formemail)){
+            $formemail = 'events@expo-genie.com';
+        }
+        if (strpos($EmailsListnotifications, ',') !== false) {
+            
+            $emailaddressArray = explode(",",$EmailsListnotifications);
+            foreach($emailaddressArray as $key=>$email){
+                
+                 $to_message_array[]=array('email'=>$email,'name'=>'','type'=>'to');
+            }
+            
+        }else{
+            
+            $to_message_array[]=array('email'=>$EmailsListnotifications,'name'=>'','type'=>'to');
+            
+        }
+        
+        $message = array(
+        
+        'html' => $emailBoday,
+        'text' => '',
+        'subject' => $subject,
+        'from_email' => $formemail,
+        'from_name' => $sitetitle,
+        'to' => $to_message_array,
+        'track_opens' => true,
+        'track_clicks' => true,
+        'merge' => true,
+        'merge_language' => 'mailchimp',
+        
+         "tags" => [$get_currentsiteURl]
+        
+        );
+        
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID);
+        $lastInsertId = contentmanagerlogging('Task Submission Notification',"User Action",serialize($message),$user_ID,$user_info->user_email,"pre_action_data");
+     
+        $async = false;
+        $ip_pool = 'Main Pool';
+       // $send_at = 'example send_at';
+        $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at);
+        contentmanagerlogging_file_upload($lastInsertId,serialize($result));
+        
+        
+    } catch (Exception $e) {
+       
+         //contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+         return $e;
+    }
+    
+    die();
+    
+    
+}
 
 
 

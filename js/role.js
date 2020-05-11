@@ -237,6 +237,12 @@ function update_admin_settings(){
      data.append('oldheaderbannerurl', oldheaderbannerurl);
      data.append('eventdate', eventdate);
      
+     if(jQuery('#applicationmoderationstatus').is(':checked')){
+            data.append('applicationmoderationstatus', 'checked');
+     }else{
+            data.append('applicationmoderationstatus', '');
+        }
+     
     // data.append('formemail', formemail);
    
      

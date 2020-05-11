@@ -481,7 +481,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     <?php
     include 'cm_footer.php';
     ?>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report_result.js?v=2.53"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/newuser_report_result.js?v=2.52"></script>
 
     <?php
 }else{

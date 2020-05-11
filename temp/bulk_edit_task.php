@@ -241,6 +241,8 @@ height: 50% !important;
                                     
                                     $value_taskCode = get_post_meta( $tasksID, 'taskCode', true);
                                     $value_systaskstatus = get_post_meta( $tasksID, 'SystemTask', true);
+                                    $value_emailnotification = get_post_meta( $tasksID, 'emailnotification', true);
+                                    $value_emailnotificationaddress = get_post_meta( $tasksID, 'emailnotificationaddress', true);
                                     
                                     $value['SystemTask'] =$value_systaskstatus;
                                     $value['taskCode'] =$value_taskCode;
@@ -266,6 +268,10 @@ height: 50% !important;
                                     $value['roles'] =$value_roles[0];
                                     $value['usersids'] =$value_usersids[0];
                                     $value['descrpition'] =$value_descrpition[0];
+                                    $value['emailnotification'] =$value_emailnotification;
+                                    $value['emailnotificationaddress'] =$value_emailnotificationaddress;
+                                    
+                                    
                                     if($value['type'] == "select-2"){
                                         
                                             $getarraysValue = get_post_meta( $tasksID, 'options', false);
@@ -301,11 +307,13 @@ height: 50% !important;
                                             </div> </td>
                                         <td><input <?php if($value['SystemTask'] == "checked") {echo 'readonly="true" title="This is a system task. Changing its title is not allowed"';}else{echo 'title="Title"';} ?> type="text" style="margin-top: 10px;margin-bottom: 10px;" id="row-<?php echo $task_code; ?>-title" class="form-control" name="tasklabel" placeholder="Title" data-toggle="tooltip" title="Title" value="<?php echo $value['label']; ?>" required> 
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-key"  value="<?php echo $key; ?>" ></span>
-                                            <span><input type="hidden" id="row-<?php echo $task_code; ?>-attribute"  value="<?php echo $value['taskattrs']; ?>" ></span>
+                                            <span><input <?php if($value['taskCode'] == "COL") { echo "value='accept=.png'";}else{echo "value='".$value['taskattrs']."'";}?>type="hidden" id="row-<?php echo $task_code; ?>-attribute"   ></span>
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-taskMWC"  value="<?php  if(isset($value['taskMWC'])){ echo $value['taskMWC']; }?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-taskMWDDP"  value="<?php if(isset($value['taskMWDDP'])){ echo $value['taskMWDDP'];} ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-taskCode"  value="<?php  if(isset($value['taskCode'])){ echo $value['taskCode']; }?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-SystemTask"  value="<?php if(isset($value['SystemTask'])){ echo $value['SystemTask'];} ?>" ></span>
+                                            <span><input type="hidden" id="row-<?php echo $task_code; ?>-emailnotification"  value="<?php if(isset($value['emailnotification'])){ echo $value['emailnotification'];} ?>" ></span>
+                                            <span><input type="hidden" id="row-<?php echo $task_code; ?>-emailnotificationaddress"  value="<?php if(isset($value['emailnotificationaddress'])){ echo $value['emailnotificationaddress'];} ?>" ></span>
                                             
                                             
                                             
@@ -441,7 +449,7 @@ height: 50% !important;
         include 'cm_footer.php';
         ?>
             
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=2.95"></script>    
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=3.15"></script>    
             
         <?php
         

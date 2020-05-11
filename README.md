@@ -1,4 +1,4 @@
-~Current Version:3.81~
+~Current Version:3.90~
 
 
 -------------------27-09-2019---Main release 3.40--------------
@@ -58,13 +58,25 @@ Release Items
 1. Fixed bug saved reports missing filter columns
 2. Search users missing data
 
+-------------------11-05-2020---Main release 3.90--------------
+Release Items
 
--------------------14-02-2020---Short Release--------------
-
-1. Welcome Pop-Up Content Correction
-2. Hide related products
-3. Upload Tasks not providing hyperlink in export
-4. Upload link should be URL, not zip
-5. After log-in redirect to requested URL
-6. Update Zapier Number Field Values
+1.Success Content when changing email
+2.Default Order History Tables to Expand
+3.Expo Hall Hours Name Update
+4.Update Shop Content
+5.Add .svg file type to Task File Uploads
+6.Additional Email Error Text
+7.Change "Active" content in Legend Labels
+8.Update "Lost Password" content
+9.Order History Page Content Changes
+10.Remove "Status" from Task reporting
+11.Prevent 'Please wait' Popup on FLoor plan
+12.Task Notifications for Admins
+13.Migrate to Integromat
+14.Update Open Orders Product Details
+15.Lock File Type for Company Logo System Task
+16.Ability to Disable Application Moderation
+17.Task Report
+18.
 
