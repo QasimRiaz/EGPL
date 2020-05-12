@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.92
+ * Version:           3.93
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -7779,6 +7779,10 @@ add_action('rest_api_init', function() {
 		'methods' => 'POST',
 		'callback' => 'updateuser',
 	]);
+         register_rest_route('w1/v1', 'updatetasksdata', [
+		'methods' => 'POST',
+		'callback' => 'updatetasksdata',
+	]);
         
         register_rest_route('w1/v1', 'updatetask', [
 		'methods' => 'POST',
@@ -7789,6 +7793,10 @@ add_action('rest_api_init', function() {
 		'methods' => 'GET',
 		'callback' => 'getuserfields',
 	]);
+        register_rest_route('w1/v1', 'getuserfieldsdata', [
+		'methods' => 'GET',
+		'callback' => 'getuserfieldsdata',
+	]);
         
         register_rest_route('w1/v1', 'getorders', [
 		'methods' => 'GET',
@@ -7797,6 +7805,57 @@ add_action('rest_api_init', function() {
 	
 });
 function getuserfields(){
+    
+    
+    try {
+    
+        require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/egpl-custome-functions.php';
+        $GetAllcustomefields = new EGPLCustomeFunctions();
+        $additional_fields = $GetAllcustomefields->getAllcustomefields();
+        usort($additional_fields, 'sortByOrder');
+    
+        $index_count=0;
+        foreach ($additional_fields as $key=>$value){
+            
+           
+            if($value['fieldType']!="html" && $value['SystemfieldInternal']!="checked"){
+                
+                
+                $requiredStatus = $value['fieldrequriedstatus'];
+                if($requiredStatus == "checked"){
+                    
+                   $columns_list_attitional[$index_count]['required']  = true; 
+                }
+                $columns_list_attitional[$index_count]['key']  = $site_prefix.$value['fielduniquekey'];
+                $columns_list_attitional[$index_count]['type']= $value['fieldType'];
+                $columns_list_attitional[$index_count]['label']= $value['fieldName'];
+               
+                
+                $index_count++;
+            }
+            
+        }
+     
+        
+    
+    
+    
+     
+     echo json_encode($columns_list_attitional);
+     die();
+    }catch (Exception $e) {
+
+      
+
+        return $e;
+    }
+    
+    
+    
+    
+}
+
+function getuserfieldsdata(){
     
     
     try {
@@ -7850,8 +7909,6 @@ function getuserfields(){
     
     
 }
-
-
 
 function getorders(){
     
@@ -8421,6 +8478,7 @@ function UpdateNewUser($updateContactUserData){
                 
                 
             }
+            //$t = time();
             //update_user_option($user_id, 'profile_updated', $t*1000);
             updateregistredUserMeta($user_id,$updateContactUserData,$role);
             
@@ -8456,15 +8514,7 @@ function CreateNewUser($newContactUserData){
     $user_id = username_exists($newContactUserData->username);
     $role = $newContactUserData->Role;
     $email = $newContactUserData->username;
-    
-//    $message['message'] =  $role;
-//    $message['message1'] =  $email;
-//    $message['message2'] =  $newContactUserData->Semail;
-//    $message['message3'] =  $newContactUserData->Semail;
-//    $message['message4'] =  $newContactUserData->Semail;
-//    
-//      echo json_encode($message);
-//    exit;
+    $t=time();
     $roleKeyValue = "";
             if (is_multisite()) {
                 $blog_id = get_current_blog_id();
@@ -8499,8 +8549,8 @@ function CreateNewUser($newContactUserData){
 
         $useremail='';
         // custome_email_send($user_id,$newContactUserData->Semail,"welcome_email_template");
-        // $t=time();
-         update_user_option($user_id, 'profile_updated', $t*1000);
+         
+        // update_user_option($user_id, 'profile_updated', $t*1000);
          updateregistredUserMeta($user_id,$newContactUserData,$role);
          if (add_user_to_blog($blogid, $user_id, $role)) {
 
@@ -8565,8 +8615,8 @@ function CreateNewUser($newContactUserData){
                
                     $useremail='';
                    // custome_email_send($user_id,$email,"welcome_email_template");
-                   // $t=time();
-                   // update_user_option($user_id, 'profile_updated', $t*1000);
+                    //$t=time();
+                    //update_user_option($user_id, 'profile_updated', $t*1000);
                     updateregistredUserMeta($user_id,$newContactUserData,$role);
                 
                 $message['message'] =  'User added to this blog.';
@@ -8622,6 +8672,168 @@ function updatetask(){
     
     try {
             
+       
+       // $newContactUserData =  $_POST['taskename'];//json_decode(file_get_contents('php://input')) ;
+  $newContactUserData =  json_decode(file_get_contents('php://input')) ;       
+        $taskkey = $newContactUserData->taskkey;
+        $getkeyinformation  = gettasktype($taskkey);
+        
+        
+        global $wpdb;
+        
+        $site_prefix = $wpdb->get_blog_prefix();
+        $user_query = new WP_User_Query( array( 'role__not_in' => 'Administrator' ) );
+        $authors = $user_query->get_results();
+        
+        
+        $mainArrayIndex = 0;
+        $contactIDkey = $site_prefix."external_reference_id_zapier";
+                    
+                    $arrayMonth['JAN']='01';
+                    $arrayMonth['Feb']='02';
+                    $arrayMonth['MAR']='03';
+                    $arrayMonth['APR']='04';
+                    $arrayMonth['MAY']='05';
+                    $arrayMonth['JUN']='06';
+                    $arrayMonth['JUL']='07';
+                    $arrayMonth['AUG']='08';
+                    $arrayMonth['SEP']='09';
+                    $arrayMonth['OCT']='10';
+                    $arrayMonth['Nov']='11';
+                    $arrayMonth['DEC']='12';
+                    
+        if($getkeyinformation['responce'] != "invaild"){
+        foreach ($authors as $userKey=>$aid) {
+             
+            
+             $user_data = get_userdata($aid->ID);
+             $all_meta_for_user = get_user_meta($aid->ID);
+             $fiekldlable = str_replace(' ', '-', strtolower($taskkey));
+            
+                   
+             if($getkeyinformation['fieldtype'] == 'customfield'){
+                 
+                $dataandtime = $all_meta_for_user[$site_prefix.'profile_updated'][0]/1000;
+               
+                
+                $createuniqueKey = date('YmdHis', $dataandtime);
+              
+               
+                
+             if($getkeyinformation['type'] == 'fileupload'){
+                 
+                 $file_info   = unserialize($all_meta_for_user[$getkeyinformation['key']][0]);
+                
+                
+                 
+                
+                 
+                 if(!empty($file_info)&& !empty($all_meta_for_user[$contactIDkey][0])){
+                     
+                     $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$createuniqueKey;
+                     $columns_rows_dataFinalData[$mainArrayIndex][$fiekldlable] = $file_info['url'];
+                     $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
+                     $columns_rows_dataFinalData[$mainArrayIndex]['date-time'] = date('d-M-Y H:i:s', $dataandtime);;
+                     $mainArrayIndex++;
+                 }
+                 
+                }else{
+                    
+                        if(!empty($dataandtime) && !empty($all_meta_for_user[$contactIDkey][0])){
+                            
+                            $dataandtime = $all_meta_for_user[$site_prefix.'profile_updated'][0]/1000;
+                            $createuniqueKey = date('YmdHis', $dataandtime);
+                            
+                            $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$createuniqueKey;
+                            $columns_rows_dataFinalData[$mainArrayIndex][$fiekldlable] = $all_meta_for_user[$getkeyinformation['key']][0];
+                            $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
+                            $columns_rows_dataFinalData[$mainArrayIndex]['date-time'] = date('d-M-Y H:i:s', $dataandtime);
+                            $mainArrayIndex++;
+                        }
+                 
+                 
+                }
+             }else{
+                 
+                  if($getkeyinformation['type'] == 'color'){
+                      
+                      
+                      
+                      
+                      $file_info = unserialize($all_meta_for_user[$getkeyinformation['key']][0]);
+                      $dateandtime =$all_meta_for_user[$getkeyinformation['key'].'_datetime'][0];
+                      $dateData1 = explode(" ",$dateandtime);
+                      $dateData2 = explode("-",$dateData1[0]);
+                      $dateData3 = explode(":",$dateData1[1]);
+                      $updateDateformat = $dateData2[2].$arrayMonth[$dateData2[1]].$dateData2[0].$dateData3[0].$dateData3[1]."15";
+                      
+                      if (!empty($file_info)&& !empty($all_meta_for_user[$contactIDkey][0])) {
+                          
+                           $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$updateDateformat;
+                           $columns_rows_dataFinalData[$mainArrayIndex][$fiekldlable] = $file_info['url'];
+                           $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
+                           $columns_rows_dataFinalData[$mainArrayIndex]['date-time'] = $dateandtime;
+                           $mainArrayIndex++;
+                          
+                      }
+                      
+                      
+                  }else{
+                      
+                     $dateandtime =$all_meta_for_user[$getkeyinformation['key'].'_datetime'][0];
+                     $createuniqueKey = strtotime($dataandtime);
+                     if(!empty($dateandtime) && !empty($all_meta_for_user[$contactIDkey][0])){
+                         
+                        $dateData1 = explode(" ",$dateandtime);
+                        $dateData2 = explode("-",$dateData1[0]);
+                        $dateData3 = explode(":",$dateData1[1]);
+                        $updateDateformat = $dateData2[2].$arrayMonth[$dateData2[1]].$dateData2[0].$dateData3[0].$dateData3[1]."15";
+
+                        $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$updateDateformat;
+                        $columns_rows_dataFinalData[$mainArrayIndex][$fiekldlable] = $all_meta_for_user[$getkeyinformation['key']][0];
+                        $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
+                        $columns_rows_dataFinalData[$mainArrayIndex]['date-time'] = $dateandtime;
+                        $mainArrayIndex++;
+                     }
+                    }
+                }
+            }
+        
+        if(empty($columns_rows_dataFinalData)){
+            
+              $resutl ="[]";
+              echo $resutl;
+        }else{
+            
+            $resutl =  json_encode($columns_rows_dataFinalData);
+            echo $resutl;
+        }
+        
+        }else{
+            
+            $resutl ="[]";
+            echo $resutl;
+           
+        }
+        die();
+        
+    }catch (Exception $e) {
+
+        contentmanagerlogging_file_upload($lastInsertId, serialize($e));
+
+        return $e;
+    }
+
+ 
+    
+       
+    
+}
+
+function updatetasksdata(){
+    
+    try {
+            
         
         $newContactUserData =  json_decode(file_get_contents('php://input')) ;
         
@@ -8629,6 +8841,10 @@ function updatetask(){
         
         $taskkey = $newContactUserData->taskkey;
         $userfields = $newContactUserData->userfieds;
+        
+        //$taskkey = "Company Description,Company Logo,Company Name for Print,Company Website";//$newContactUserData->taskkey;
+        //$userfields = "Does NOT receive attendee list,Do NOT List as Sponsor,Booth";//$newContactUserData->userfieds;
+        
         
         if (strpos($taskkey, ',') !== false) {
             
@@ -8711,7 +8927,6 @@ function updatetask(){
     
 }
 
-
 function gettaskdatabyarray($taskkey){
     
         global $wpdb;
@@ -8724,18 +8939,18 @@ function gettaskdatabyarray($taskkey){
         $mainArrayIndex = 0;
         $contactIDkey = $site_prefix."external_reference_id_zapier";
                     
-        $arrayMonth['JAN']='01';
+        $arrayMonth['Jan']='01';
         $arrayMonth['Feb']='02';
-        $arrayMonth['MAR']='03';
-        $arrayMonth['APR']='04';
-        $arrayMonth['MAY']='05';
-        $arrayMonth['JUN']='06';
-        $arrayMonth['JUL']='07';
-        $arrayMonth['AUG']='08';
-        $arrayMonth['SEP']='09';
-        $arrayMonth['OCT']='10';
+        $arrayMonth['Mar']='03';
+        $arrayMonth['Apr']='04';
+        $arrayMonth['May']='05';
+        $arrayMonth['Jun']='06';
+        $arrayMonth['Jul']='07';
+        $arrayMonth['Aug']='08';
+        $arrayMonth['Sep']='09';
+        $arrayMonth['Oct']='10';
         $arrayMonth['Nov']='11';
-        $arrayMonth['DEC']='12';
+        $arrayMonth['Dec']='12';
         
         $getkeyinformation  = gettasktype($taskkey);
         
@@ -8770,8 +8985,9 @@ function gettaskdatabyarray($taskkey){
                      $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$createuniqueKey;
                      $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = $file_info['url'];
                      $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                     $columns_rows_dataFinalData[$mainArrayIndex]['label'] = $taskkey.' - '.date("Y-m-d", $dataandtime).' - '.$all_meta_for_user[$contactIDkey][0];
                      $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
-                     $columns_rows_dataFinalData[$mainArrayIndex]['date-time'] = date('d-M-Y H:i:s', $dataandtime);;
+                     $columns_rows_dataFinalData[$mainArrayIndex]['created'] =  date("Y-m-d H:i:s", $dataandtime);//date('d-M-Y H:i:s', $dataandtime);
                      $mainArrayIndex++;
                  }
                  
@@ -8784,9 +9000,11 @@ function gettaskdatabyarray($taskkey){
                             
                             $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$createuniqueKey;
                             $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                            $columns_rows_dataFinalData[$mainArrayIndex]['label'] = $taskkey.' - '.date("Y-m-d", $dataandtime).' - '.$all_meta_for_user[$contactIDkey][0];
+                    
                             $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = $all_meta_for_user[$getkeyinformation['key']][0];
                             $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
-                            $columns_rows_dataFinalData[$mainArrayIndex]['date-time'] = date('d-M-Y H:i:s', $dataandtime);
+                            $columns_rows_dataFinalData[$mainArrayIndex]['created'] = date("Y-m-d H:i:s", $dataandtime);//date('d-M-Y H:i:s', $dataandtime);
                             $mainArrayIndex++;
                         }
                  
@@ -8804,15 +9022,27 @@ function gettaskdatabyarray($taskkey){
                       $dateData1 = explode(" ",$dateandtime);
                       $dateData2 = explode("-",$dateData1[0]);
                       $dateData3 = explode(":",$dateData1[1]);
+                      
+                     
+                      
+                    //  $stortnewdatetime = $arrayMonth[$dateData2[1]]
+                    //  echo $stortnewdatetime;
+                      
                       $updateDateformat = $dateData2[2].$arrayMonth[$dateData2[1]].$dateData2[0].$dateData3[0].$dateData3[1]."15";
                       
                       if (!empty($file_info)&& !empty($all_meta_for_user[$contactIDkey][0])) {
                           
+                          
+                         
+                          
+                           $stortnewdatetime = $dateData2[2].'-'.$arrayMonth[$dateData2[1]].'-'.$dateData2[0].' '.$dateData3[0].':'.$dateData3[1].':00';
                            $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$updateDateformat;
                            $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                           $columns_rows_dataFinalData[$mainArrayIndex]['label'] = $taskkey.' - '.date("Y-m-d", strtotime($stortnewdatetime)).' - '.$all_meta_for_user[$contactIDkey][0];
+                    
                            $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = $file_info['url'];
                            $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
-                           $columns_rows_dataFinalData[$mainArrayIndex]['date-time'] = $dateandtime;
+                           $columns_rows_dataFinalData[$mainArrayIndex]['created'] = date("Y-m-d H:i:s", strtotime($stortnewdatetime));//$dateandtime;
                            $mainArrayIndex++;
                           
                       }
@@ -8821,19 +9051,32 @@ function gettaskdatabyarray($taskkey){
                   }else{
                       
                      $dateandtime =$all_meta_for_user[$getkeyinformation['key'].'_datetime'][0];
+                   
                      $createuniqueKey = strtotime($dataandtime);
                      if(!empty($dateandtime) && !empty($all_meta_for_user[$contactIDkey][0])){
                          
                         $dateData1 = explode(" ",$dateandtime);
                         $dateData2 = explode("-",$dateData1[0]);
                         $dateData3 = explode(":",$dateData1[1]);
+                        
+                        
+                        
+                        //echo $dateandtime.'<br>';
+                       $stortnewdatetime = $dateData2[2].'-'.$arrayMonth[$dateData2[1]].'-'.$dateData2[0].' '.$dateData3[0].':'.$dateData3[1].':00';
+                       // echo $stortnewdatetime.'<br>';
+                        //echo strtotime($stortnewdatetime).'<br>';
+                        //echo date("Y-m-d H:i:s", strtotime($stortnewdatetime)).'<br>';
+                        
+                        
                         $updateDateformat = $dateData2[2].$arrayMonth[$dateData2[1]].$dateData2[0].$dateData3[0].$dateData3[1]."15";
 
                         $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$updateDateformat;
                         $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                        $columns_rows_dataFinalData[$mainArrayIndex]['label'] = $taskkey.' - '.date("Y-m-d", strtotime($stortnewdatetime)).' - '.$all_meta_for_user[$contactIDkey][0];
+                    
                         $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = $all_meta_for_user[$getkeyinformation['key']][0];
                         $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
-                        $columns_rows_dataFinalData[$mainArrayIndex]['date-time'] = $dateandtime;
+                        $columns_rows_dataFinalData[$mainArrayIndex]['created'] = date("Y-m-d H:i:s", strtotime($stortnewdatetime));
                         $mainArrayIndex++;
                      }
                     }
@@ -8860,8 +9103,6 @@ function gettaskdatabyarray($taskkey){
         return $resutl;
     
 }
-
-
 function gettasktype($taskkey){
     
         
@@ -8925,6 +9166,9 @@ function gettasktype($taskkey){
     }
     return $getOrginalData;
 }
+
+
+///-----------------Expogenie API Endpoints ---------------------///
 
 //[siturl]
 function currentsiteurl_func( $atts ){
