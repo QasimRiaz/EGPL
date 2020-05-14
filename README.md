@@ -1,4 +1,4 @@
-~Current Version:3.94~
+~Current Version:3.95~
 
 
 -------------------27-09-2019---Main release 3.40--------------
