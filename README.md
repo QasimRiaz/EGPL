@@ -1,4 +1,4 @@
-~Current Version:3.93~
+~Current Version:3.94~
 
 
 -------------------27-09-2019---Main release 3.40--------------
@@ -80,3 +80,5 @@ Release Items
 17.Task Report
 18.
 
+-------------------14-05-2020--- Bug Fix 3.94--------------
+Bulk Download Files Bug fix

@@ -27,7 +27,7 @@
 
         
         
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/reportsfield.js?v=2.95"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/reportsfield.js?v=2.97"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/lodash.js?v=2.95"></script>
         
         
