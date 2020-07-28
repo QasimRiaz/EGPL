@@ -169,6 +169,7 @@ height: 50% !important;
                                     <th >Action</th>
                                     <th >Field Name</th>
                                     <th >Type</th>
+                                    <th >Display</th>
                                     <th >Description</th>
 
                                 </tr>
@@ -250,7 +251,17 @@ height: 50% !important;
 
                                         </td>
                                         
-                                     
+                                        <td><p>Display on Application Form 
+                                            
+                                            <?php if($value['displayonapplicationform'] == "checked"){
+                                            
+                                            echo '<input type="checkbox" id="row-'.$value["fieldID"].'-fieldstatusshowonregform" class="form-control" checked="true">';
+                                            
+                                            }else{
+                                                
+                                             echo '<input id="row-'.$value["fieldID"].'-fieldstatusshowonregform" type="checkbox" class="form-control" >';
+                                            }?>
+                                            </p></td>
                                         
                                         <td>
                                             <p style="margin-top: 5px;"><i class="font-icon fa fa-edit" id='taskdiscrpition_<?php echo $value['fieldID']; ?>'title="Edit your fileld description" data-toggle="tooltip" style="cursor: pointer;color: #0082ff;"onclick="bulkfield_descripiton(this)"></i>
@@ -303,7 +314,6 @@ height: 50% !important;
                                             <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-Systemfield"  value="<?php if(isset($value['fieldsystemtask'])){ echo $value['fieldsystemtask'];} ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-fieldtooltip"  value="<?php if(isset($value['fieldtooltiptext'])){ echo $value['fieldtooltiptext'];} ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-fieldstatusrequried"  value="<?php if(isset($value['fieldrequriedstatus'])){ echo $value['fieldrequriedstatus'];} ?>" ></span>
-                                            <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-fieldstatusshowonregform"  value="<?php if(isset($value['displayonapplicationform'])){ echo $value['displayonapplicationform'];} ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-fieldplaceholder"  value="<?php if(isset($value['fieldplaceholder'])){ echo $value['fieldplaceholder'];} ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-attribute"  value="<?php if(isset($value['attribute'])){ echo $value['attribute'];} ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $value['fieldID']; ?>-SystemfieldInternal"  value="<?php if(isset($value['SystemfieldInternal'])){ echo $value['SystemfieldInternal'];} ?>" ></span>
@@ -345,7 +355,17 @@ height: 50% !important;
 
                                         </td>
                                         
-                                     
+                                        <td><p style="margin-top: 10px;">Display on Application Form 
+                                            
+                                            <?php if($value['displayonapplicationform'] == "checked"){
+                                            
+                                            echo '<input style="margin-left: 116px;margin-top: -17px;"type="checkbox" id="row-'.$value["fieldID"].'-fieldstatusshowonregform" class="form-control" checked="true">';
+                                            
+                                            }else{
+                                                
+                                             echo '<input style="margin-left: 116px;margin-top: -17px;" id="row-'.$value["fieldID"].'-fieldstatusshowonregform" type="checkbox" class="form-control" >';
+                                            }?>
+                                            </p></td>
                                         
                                         <td>
                                             <p style="margin-top: 5px;"><i class="font-icon fa fa-edit" id='taskdiscrpition_<?php echo $value['fieldID']; ?>'title="Edit your fileld description" data-toggle="tooltip" style="cursor: pointer;color: #0082ff;"onclick="bulkfield_descripiton(this)"></i>
@@ -391,7 +411,7 @@ height: 50% !important;
 
    
  <script type="text/javascript" src="https://mpryvkin.github.io/jquery-datatables-row-reordering/1.2.3/jquery.dataTables.rowReordering.js"></script>    
- <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_fields.js?v=4.18"></script>    
+ <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_fields.js?v=4.21"></script>    
 
  
 <?php 

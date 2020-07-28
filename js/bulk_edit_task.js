@@ -109,7 +109,7 @@ jQuery(window).load(function() {
          var taskuseriddata = jQuery('.addnewtaskdata-userid').html();
         
         var col1 = '<div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"><i class="hi-icon fa fa-clone saveeverything" id="'+uniquecode+'" title="Create a clone" onclick="clonebulk_task(this)" style="color:#262626;cursor: pointer;" data-toggle="tooltip" aria-hidden="true"></i> <i data-toggle="tooltip" title="Advanced" name="'+uniquecode+'" onclick="bulktasksettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i><i name="'+uniquecode+'" data-toggle="tooltip" style=" cursor: pointer;margin-left: 10px;" onclick="removebulk_task(this)" title="Remove this task" class="hi-icon fusion-li-icon fa fa-times-circle " style="color:#262626;"></i></div>';
-        var col2 = '<input data-toggle="tooltip" placeholder="Title" title="Title" id="row-'+uniquecode+'-title" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control" name="tasklabel" >  <input type="hidden" id="row-'+uniquecode+'-key" value=""><input type="hidden" id="row-'+uniquecode+'-attribute"  value="" ><input type="hidden" id="row-'+uniquecode+'-emailnotification"  value="" ><input type="hidden" id="row-'+uniquecode+'-emailnotificationaddress"  value="" > <input type="hidden" id="row-'+uniquecode+'-taskMWC"  value="" ><input type="hidden" id="row-'+uniquecode+'-taskMWDDP"  value="" ><input type="hidden" id="row-'+uniquecode+'-taskCode"  value="" ><input type="hidden" id="row-'+uniquecode+'-SystemTask"  value="" > ';
+        var col2 = '<input data-toggle="tooltip" placeholder="Title" title="Title" id="row-'+uniquecode+'-title" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control" name="tasklabel" >  <input type="hidden" id="row-'+uniquecode+'-key" value=""><input type="hidden" id="row-'+uniquecode+'-attribute"  value="" ><input type="hidden" id="row-'+uniquecode+'-emailnotification"  value="" ><input type="hidden" id="row-'+uniquecode+'-multiselectstatus"  value="" ><input type="hidden" id="row-'+uniquecode+'-emailnotificationaddress"  value="" ><input type="hidden" id="row-'+uniquecode+'-multivaluetasklimit"  value="" > <input type="hidden" id="row-'+uniquecode+'-taskMWC"  value="" ><input type="hidden" id="row-'+uniquecode+'-taskMWDDP"  value="" ><input type="hidden" id="row-'+uniquecode+'-taskCode"  value="" ><input type="hidden" id="row-'+uniquecode+'-SystemTask"  value="" > ';
         var col3 = '<div class="topmarrginebulkedit"><select  data-toggle="tooltip" title="Select Type" class="select2 bulktasktypedrop" id="bulktasktype_'+uniquecode+'" data-placeholder="Select Type" data-allow-clear="true">'+tasktypedata+'</select></div><div class="bulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" ><input type="text"  class="form-control" name="linkurl" placeholder="Link URL" title="Link URL"id="row-'+uniquecode+'-linkurl" ><br><input type="text"  class="form-control" name="linkname" placeholder="Link Name" title="Link Name" id="row-'+uniquecode+'-linkname"></div><div class="dbulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" > <input type="text"  class="form-control" name="dropdownvalues" placeholder="Comma separated list of values" title="Comma separated list of values"  id="row-'+uniquecode+'-dropdownvlaues" ></div>';
         var col4 = '<input  data-toggle="tooltip" title="Due Date" placeholder="Due Date" id="row-'+uniquecode+'-duedate" style="padding-left: 13px;margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control datepicker" name="datepicker" >';
         var col5 = '<div class="addscrol topmarrginebulkedit"><select data-toggle="tooltip" class="select2" id="row-'+uniquecode+'-levels" data-placeholder="Select Levels" title="Select Levels" data-allow-clear="true"  multiple="multiple">'+taskroledata+'</select><br><select data-placeholder="Select Users" title="Select Users" id="row-'+uniquecode+'-userid" data-allow-clear="true"  class="select2" multiple="multiple">'+taskuseriddata+'</select> <br></div>';
@@ -139,7 +139,7 @@ jQuery(window).load(function() {
             var className = jQuery(this).attr('id');
 
             console.log(selectedtype);
-            if (selectedtype == 'select-2') {
+            if (selectedtype == 'select-2' || selectedtype == 'multiselect') {
 
                 jQuery('.d' + className).show();
                 jQuery('.' + className).hide();
@@ -232,7 +232,7 @@ $eventSelect.on("select2:select", function (e) {
      var className = jQuery(this).attr('id');
      
     
-     if (selectedtype == 'select-2') {
+     if (selectedtype == 'select-2' || selectedtype == 'multiselect') {
 
                 jQuery('.d' + className).show();
                 jQuery('.' + className).hide();
@@ -307,14 +307,51 @@ function bulktask_descripiton(e){
         var updatedescripiton = jQuery.confirm({
             
         title: 'Task Specifications',
-        content: '<textarea name="taskdescrpition" class="taskdescrpition"  >'+descrpition+'</textarea>',
+        content: '<textarea name="taskdescrpition" class="taskdescrpition"  >'+descrpition+'</textarea><div class="showallmergefields" style="display:none;margin-top: 11px;"></div><hr><p style="margin-bottom: -69px !important;"><button type="button" title="Select Merge Fields" class="btn mycustomwidth btn-inline btn-primary mergefield">Select Merge Fields</button></p>',
         confirmButton: 'Update',
         cancelButton: 'Close',
+       
         confirmButtonClass: 'btn mycustomwidth btn-lg btn-primary mysubmitemailbutton',
         cancelButtonClass: 'btn mycustomwidth btn-lg btn-danger',
         columnClass: 'jconfirm-box-container-special',
-         closeIcon: true,
-        confirm: function () {
+        closeIcon: true,
+        onOpen: function() {
+                                               
+                    this.$b.find('button.mergefield').click(function() {
+                                                jQuery("body").css({'cursor':'wait'});
+                                                var url = currentsiteurl+'/';
+                                                var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getavailablemergefields';
+                                                var data = new FormData();
+                                                jQuery.ajax({
+                                                        url: urlnew,
+                                                        data: data,
+                                                        cache: false,
+                                                        contentType: false,
+                                                        processData: false,
+                                                        type: 'POST',
+                                                        success: function(data) {
+                
+                                                        var keyslist = jQuery.parseJSON(data);
+                                                        var welcomedatafieldskeys = "";
+                                                        var areaId = "taskdescrpition";
+                                                        jQuery.each( keyslist, function( i, item ) {  
+
+                                                          var keyvalue = '{'+item+'}';
+                                                          welcomedatafieldskeys+='<a style="margin-right: 5px;cursor: pointer;" onclick=\'insertAtCaret("'+areaId+'","'+keyvalue+'")\' > '+keyvalue+'</a>';  
+
+                                                        });
+                                                        
+                                                        jQuery(".showallmergefields").empty();
+                                                        jQuery(".showallmergefields").append(welcomedatafieldskeys);
+                                                        jQuery(".showallmergefields").show();
+                                                        jQuery('body').css('cursor', 'default');
+                                                   }
+                                               });
+                                                
+                    });
+                                                
+    },
+    confirm: function () {
             
             
             jQuery(".edit"+classname).empty();
@@ -329,6 +366,7 @@ function bulktask_descripiton(e){
                 jQuery("#desplaceholder-"+desplaceholder[1]).hide();
             }
         }
+       
 
         });
         
@@ -424,7 +462,7 @@ function clonebulk_task(e){
             var className = jQuery(this).attr('id');
 
             console.log(selectedtype);
-            if (selectedtype == 'select-2') {
+            if (selectedtype == 'select-2' || selectedtype == 'multiselect') {
 
                 jQuery('.d' + className).show();
                 jQuery('.' + className).hide();
@@ -669,11 +707,16 @@ function saveallbulktask(){
         singletaskarray['emailnotificationaddress'] = jQuery( '#row-'+taskid+'-emailnotificationaddress' ).val();
         
         
+        singletaskarray['multivaluetasklimit'] = jQuery( '#row-'+taskid+'-multivaluetasklimit' ).val();
+        singletaskarray['multiselectstatus'] = jQuery( '#row-'+taskid+'-multiselectstatus' ).val();
+        
         singletaskarray['key'] = uniqueKey;
+      
         
         
-          //task action array 
-      if(jQuery('#bulktasktype_'+taskid).val() == 'select-2'){
+        
+          //task action array || selectedtype == 'multiselect'
+      if(jQuery('#bulktasktype_'+taskid).val() == 'select-2' || jQuery('#bulktasktype_'+taskid).val() == 'multiselect'){
           
           var dropdownvalues =jQuery('#row-'+taskid+'-dropdownvlaues').val().split(',');
           var specialindexforoptions = 1;
@@ -846,6 +889,11 @@ function bulktasksettings(e){
   var task_attribute_value = jQuery('#row-'+task_code+'-attribute').val();
   var taskcode = jQuery('#row-'+task_code+'-taskCode').val();
   var selectedtasktype = jQuery( '#bulktasktype_'+task_code ).val();
+  
+  var multivaluetasklimit = jQuery('#row-'+task_code+'-multivaluetasklimit').val();
+  var multiselectdropdownstats = jQuery('#row-'+task_code+'-multiselectstatus').val();
+  
+  
   var trvalue='';
   if(selectedtasktype == 'color'){
      var attributes_file = task_attribute_value.replace('accept=','');
@@ -862,6 +910,16 @@ function bulktasksettings(e){
   }else if(selectedtasktype == 'textarea'){
        var attributes_file = task_attribute_value.replace('maxlength=','');
        trvalue = '<td ><strong>Max Length</strong><br>(Number of characters allowed)</td><td ><input name="attribure"  placeholder="200" id="confrim_attributes"  class="form-control"  value="'+attributes_file+'" ></td>';
+      
+  }else if(selectedtasktype == 'multivaluedtask'){
+      
+      trvalue = '<td ><strong>Maximum Inputs</td><td ><input name="attribure"  id="multivaluetasklimit"  class="form-control"  value="'+multivaluetasklimit+'" ></td>';
+      
+      
+  }else if(selectedtasktype == 'select-2'){
+      
+      trvalue = '<td ><strong>Multi Select</strong></td><td ><input '+multiselectdropdownstats+' type="checkbox" class="toggle-one" id="multiselectdropdownstats" data-toggle="toggle"></td>';
+      
       
   }else{
       
@@ -929,6 +987,9 @@ function bulktasksettings(e){
                 if(jQuery('#confrim_attributes').val() !=""){
                 attributes+='maxlength='+jQuery('#confrim_attributes').val();
                 }
+            }else if(selectedtasktype == 'multivaluedtask'){
+                
+                 jQuery('#row-'+task_code+'-multivaluetasklimit').val(jQuery('#multivaluetasklimit').val());
             }
             jQuery('#row-'+task_code+'-attribute').val(attributes);
             
@@ -948,7 +1009,11 @@ function bulktasksettings(e){
               jQuery('#row-'+task_code+'-emailnotification').val(''); 
            }
            
-           
+           if(jQuery('#multiselectdropdownstats').is(':checked')){
+                jQuery('#row-'+task_code+'-multiselectstatus').val('checked');
+           }else{
+              jQuery('#row-'+task_code+'-multiselectstatus').val(''); 
+           }
            
            
            if(jQuery('#confrim_systaskstatus').is(':checked')){
@@ -958,6 +1023,7 @@ function bulktasksettings(e){
            }
            
            jQuery('#row-'+task_code+'-taskCode').val(jQuery('#confrim_taskCode').val());
+          
            
            if(jQuery('#confrim_taskMWDDP').is(':checked')){
                 jQuery('#row-'+task_code+'-taskMWDDP').val('checked');
@@ -972,5 +1038,37 @@ function bulktasksettings(e){
         }
 
         });
+    
+}
+
+function getallmergefieldsfortask(){
+    
+    var url = currentsiteurl+'/';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getavailablemergefields';
+    var data = new FormData();
+    jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                
+                var keyslist = jQuery.parseJSON(data);
+                var welcomedatafieldskeys = "";
+                var areaId = "taskdescrpition";
+                jQuery.each( keyslist, function( i, item ) {
+                    
+                  var keyvalue = '{'+item+'}';
+                  welcomedatafieldskeys+='<a style="cursor: pointer;" onclick=\'insertAtCaret("'+areaId+'","'+keyvalue+'")\' > '+keyvalue+'</a><br>';  
+                    
+                });
+                console.log(welcomedatafieldskeys);
+                return welcomedatafieldskeys;
+               
+           }
+       });
+    
     
 }

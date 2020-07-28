@@ -219,6 +219,7 @@ function update_admin_settings(){
      var eventdate = jQuery('#eventdate').val();
      var data = new FormData();
      var oldheaderbannerurl = jQuery('#headerbannerurl').val();
+     var getemailaddress = jQuery('#registration_notificationemails').val();
     
      
      
@@ -243,7 +244,7 @@ function update_admin_settings(){
             data.append('applicationmoderationstatus', '');
         }
      
-    // data.append('formemail', formemail);
+     data.append('registration_notificationemails', getemailaddress);
    
      
       jQuery.ajax({

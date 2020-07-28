@@ -2,7 +2,7 @@
 // Silence is golden.
    if (current_user_can('administrator') || current_user_can('contentmanager') ) {
        
-  
+    //role.js 
 		
       
      $oldvalues = get_option( 'ContenteManager_Settings' );
@@ -10,6 +10,16 @@
      $mainheaderbackground = $oldvalues['ContentManager']['mainheader'];
      $mainheaderlogo = $oldvalues['ContentManager']['mainheaderlogo'];
      $applicationmoderationstatus = $oldvalues['ContentManager']['applicationmoderationstatus'];
+     
+     $welcomememailreplayto = get_option('AR_Contentmanager_Email_Template_welcome');
+     $replaytoemailadd = $welcomememailreplayto['welcome_email_template']['replaytoemailadd'];
+     $registration_notificationemails = $oldvalues['ContentManager']['registration_notificationemails'];
+     
+     if(empty($registration_notificationemails)){
+         
+         $registration_notificationemails  = $replaytoemailadd;
+     }
+     
      //echo $mainheader;exit;
      
      $formemail = $oldvalues['ContentManager']['formemail'];
@@ -127,8 +137,19 @@
                
                   <br>
                   <br>
-                  
-               
+                   <div class="form-group row">
+                    <div class="col-sm-5"><label class=" form-control-label">Registration Notification Emails </label><p style="font-size: 16px;margin-left: 12px;">(Comma separated list of email addresses that should receive submission notifications)</p></div>
+                        <div class="col-sm-7">
+                            
+                            
+                            
+                            <textarea id="registration_notificationemails" class="form-control mymetakey" ><?php echo $registration_notificationemails;?></textarea> 
+                            
+                        </div>
+
+                 </div>
+               <br>
+                  <br>
                   <div class="form-group row">
                                     <label class="col-sm-4 form-control-label"></label>
                                     <div class="col-sm-8">

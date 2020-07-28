@@ -192,7 +192,7 @@ function getOrderProductsdetails($request){
         
     $user_ID = get_current_user_id();
     $user_info = get_userdata($user_ID);  
-    $lastInsertId = floorplan_contentmanagerlogging('GetProduct Detail',"User Action",serialize($request),$user_ID,$user_info->user_email,"");
+    $lastInsertId = floorplan_contentmanagerlogging('Get Product Detail',"User Action",serialize($request),$user_ID,$user_info->user_email,"");
      
     
     $OrderID = $request['ID'];

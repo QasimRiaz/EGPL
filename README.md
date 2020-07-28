@@ -1,4 +1,4 @@
-~Current Version:3.95~
+~Current Version:4.01~
 
 
 -------------------27-09-2019---Main release 3.40--------------
@@ -82,3 +82,16 @@ Release Items
 
 -------------------14-05-2020--- Bug Fix 3.94--------------
 Bulk Download Files Bug fix
+
+-------------------28-07-2020--- New Release 4.01 --------------
+
+Release Item
+
+    1.Multi-Select Task Type
+    2.Task Parent-Child Relationships
+    3.Merge Fields in Task Specifications
+    4.Notification Center (RavenHub)
+    5.Registration Date on Review Applicants
+    6.Release Notes Page
+    7.Display on Application Form Option
+    8.Grammer issue on task submission content

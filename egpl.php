@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.95
+ * Version:           4.01
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -1675,7 +1675,7 @@ try {
    
     // exit;
        
-    $lastInsertId = contentmanagerlogging('Bulk Email',"Admin Action",serialize($message),$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Send Bulk Email',"Admin Action",serialize($message),$user_ID,$user_info->user_email,"pre_action_data");
      
     $async = false;
     $ip_pool = 'Main Pool';
@@ -2552,6 +2552,7 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
     
     $filedataurl = $_POST['oldheaderbannerurl'];
     $headerlogourl = $_POST['oldheaderlogourl'];
+    $registration_notificationemails = $_POST['registration_notificationemails'];
     
     if(empty($_POST['oldheaderbannerurl'])){
         
@@ -2628,7 +2629,7 @@ function updateadminemailtemplate($data_array,$email_template_name){
     
     $data_submit['data_array']=$data_array;
     $data_submit['template_name']=$email_template_name;
-    $lastInsertId = contentmanagerlogging('Updated Report Template',"Admin Action",serialize($data_submit),$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Update Report Template',"Admin Action",serialize($data_submit),$user_ID,$user_info->user_email,"pre_action_data");
        
       $settitng_key='AR_Contentmanager_Email_Template';
       $sponsor_info = get_option($settitng_key);
@@ -4034,7 +4035,7 @@ function getReportsdatanew($report_name,$usertimezone){
 
 add_action('wp_enqueue_scripts', 'add_contentmanager_js');
 function add_contentmanager_js(){
-      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'4.0.0', true);
+      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'4.4.9', true);
     
      wp_enqueue_script( 'jquery.alerts', plugins_url() . '/EGPL/js/jquery.alerts.js', array(), '1.1.0', true );
      wp_enqueue_script( 'boot-date-picker', plugins_url() . '/EGPL/js/bootstrap-datepicker.js', array(), '1.2.0', true );
@@ -4398,6 +4399,8 @@ function updatecmanagersettings($object_data){
         $updatetasktypes[10]['lable'] = "Display Coming soon";
         $updatetasktypes[10]['type'] = "comingsoon";
         
+        
+        
        
         $oldvalues['ContentManager']['taskmanager']['input_type']=$updatetasktypes;
         
@@ -4444,6 +4447,7 @@ function updateadmin_frontend_settings($object_data,$filedataurl){
     $user_info = get_userdata($user_ID); 
     $object_data['headerbannerimage'] = $filedataurl;
    
+    $registration_notificationemails = $object_data['registration_notificationemails'];
     
     $lastInsertId = contentmanagerlogging('Update Contentmanager Settings Front End',"Admin Action",serialize($object_data),$user_ID,$user_info->user_email,"pre_action_data");
       
@@ -4456,6 +4460,8 @@ function updateadmin_frontend_settings($object_data,$filedataurl){
     $oldvalues['ContentManager']['mainheader']=$filedataurl;
     $oldvalues['ContentManager']['mainheaderlogo']='';
     $oldvalues['ContentManager']['applicationmoderationstatus']=$applicationmoderationstatus;
+    $oldvalues['ContentManager']['registration_notificationemails']=$registration_notificationemails;
+    
     
     $result=update_option('ContenteManager_Settings', $oldvalues);
     
@@ -4761,7 +4767,8 @@ class PageTemplater {
                         'temp/scriptrunnerfixedpatch.php'=>'Task Fixed Patch',
                         'temp/bulk_manage_custom_fields.php'=>'User Fields',
                         'temp/custome_task_reports.php'=>'Task Report',
-                        'temp/custome_tasks_report_filters.php'=>'Task Report Filters'
+                        'temp/custome_tasks_report_filters.php'=>'Task Report Filters',
+                        'temp/expo-genie-log-template.php'=>'Expo Genie Logs'
                        
                         
                      
@@ -6775,7 +6782,7 @@ function checkwelcomealreadysend($request){
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);
         
-        $lastInsertId = contentmanagerlogging('Check Welcome Email Send',"Admin Action",serialize($request),''.$user_ID,$user_info->user_email,"pre_action_data");
+        $lastInsertId = contentmanagerlogging('Check Welcome Email Already Sent',"Admin Action",serialize($request),''.$user_ID,$user_info->user_email,"pre_action_data");
         $emailaddress_array=explode(",", $request['emailAddress']);
         $usertimezone=intval($request['usertimezone']);
         foreach($emailaddress_array as $key=>$emailaddress){
@@ -6847,6 +6854,37 @@ function exp_autocomplete_all_orders($order_id) {
         $order = wc_get_order($order_id);
         $user_ID = get_current_user_id();
         $payment_method = get_post_meta($order->id, '_payment_method', true);
+        
+        
+        
+        //ravenhub additional code -- 01-06-2020////
+        
+        global  $wpdb;
+        $site_prefix = $wpdb->get_blog_prefix();
+	$postid = get_current_user_id();
+	$data = array();                                                                    
+        $getsiteurl = get_site_url();
+        $companyname = get_user_meta($postid, $site_prefix.'company_name',true);
+        
+        
+        $ordersreporturl =  $getsiteurl.'/order-reporting/';
+        $getcodeuro = str_replace("https://","",$getsiteurl);
+        $subscribersID = str_replace("/","-",$getcodeuro);
+        $tasknotificationurl = "https://api.ravenhub.io/company/ahWkagLbTC/subscribers/".$subscribersID."/events/kyVFhfWFtB" ;//$sponsor_info['ContentManager']['ravenhuburls']['tasknotificationtemplates']['url'];
+        $data = array("company_name" => $companyname,"ordersreporturl"=>$ordersreporturl); 
+        $parameter_json = json_encode($data);
+        require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/ravenhub_api_request.php';
+        $ravenhubapirequest = new Revenhubapi();
+        $result_send_notification = $ravenhubapirequest->sendnotifaciton($tasknotificationurl,$parameter_json);
+        
+        $email_body_message_for_admin['ravenhub']['responce'] = $result_send_notification;
+        $email_body_message_for_admin['ravenhub']['requestdata'] = $parameter_json;
+        $email_body_message_for_admin['ravenhub']['requestedurl'] = $tasknotificationurl;
+        
+        
+        //ravenhub additional code -- 01-06-2020////
+        
+        
         
         foreach( $order->get_items() as $item ) {
                       
@@ -7040,7 +7078,6 @@ function exp_autocomplete_all_orders($order_id) {
             
             
         }
-        
         
         if($payment_method == 'cheque'){
                   
@@ -9048,6 +9085,100 @@ function gettaskdatabyarray($taskkey){
                       }
                       
                       
+                  }else if($getkeyinformation['type'] == 'select-2'){
+                      
+                      $dateandtime =$all_meta_for_user[$getkeyinformation['key'].'_datetime'][0];
+                   
+                     $createuniqueKey = strtotime($dataandtime);
+                     if(!empty($dateandtime) && !empty($all_meta_for_user[$contactIDkey][0])){
+                         
+                        $dateData1 = explode(" ",$dateandtime);
+                        $dateData2 = explode("-",$dateData1[0]);
+                        $dateData3 = explode(":",$dateData1[1]);
+                        
+                        
+                        
+                        //echo $dateandtime.'<br>';
+                       $stortnewdatetime = $dateData2[2].'-'.$arrayMonth[$dateData2[1]].'-'.$dateData2[0].' '.$dateData3[0].':'.$dateData3[1].':00';
+                       // echo $stortnewdatetime.'<br>';
+                        //echo strtotime($stortnewdatetime).'<br>';
+                        //echo date("Y-m-d H:i:s", strtotime($stortnewdatetime)).'<br>';
+                        
+                        
+                        $updateDateformat = $dateData2[2].$arrayMonth[$dateData2[1]].$dateData2[0].$dateData3[0].$dateData3[1]."15";
+
+                        $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$updateDateformat;
+                        $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                        $columns_rows_dataFinalData[$mainArrayIndex]['label'] = $taskkey.' - '.date("Y-m-d", strtotime($stortnewdatetime)).' - '.$all_meta_for_user[$contactIDkey][0];
+                        
+                        
+                        if($getkeyinformation['additional_attribute'] == "checked" ){
+                            
+                            
+                            $arraysofmultiselect =  unserialize($all_meta_for_user[$getkeyinformation['key']][0]); 
+                           
+                              foreach ($arraysofmultiselect as $multivalueIndex=>$multivalue){
+                               $mutivalues .=$arraysofmultiselect[$multivalueIndex].',';
+                               
+                               
+                           }
+                            
+                            
+                        }else{
+                            
+                            $mutivalues =  $all_meta_for_user[$getkeyinformation['key']][0]; 
+                            
+                        }
+                        
+                        
+                        
+                        $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = rtrim($mutivalues,',');
+                        $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
+                        $columns_rows_dataFinalData[$mainArrayIndex]['created'] = date("Y-m-d H:i:s", strtotime($stortnewdatetime));
+                        $mainArrayIndex++;
+                     }
+                      
+                      
+                  }else if($getkeyinformation['type'] == 'multivaluedtask'){
+                      
+                      $dateandtime =$all_meta_for_user[$getkeyinformation['key'].'_datetime'][0];
+                   
+                     $createuniqueKey = strtotime($dataandtime);
+                     if(!empty($dateandtime) && !empty($all_meta_for_user[$contactIDkey][0])){
+                         
+                        $dateData1 = explode(" ",$dateandtime);
+                        $dateData2 = explode("-",$dateData1[0]);
+                        $dateData3 = explode(":",$dateData1[1]);
+                        
+                        
+                        
+                        //echo $dateandtime.'<br>';
+                       $stortnewdatetime = $dateData2[2].'-'.$arrayMonth[$dateData2[1]].'-'.$dateData2[0].' '.$dateData3[0].':'.$dateData3[1].':00';
+                       // echo $stortnewdatetime.'<br>';
+                        //echo strtotime($stortnewdatetime).'<br>';
+                        //echo date("Y-m-d H:i:s", strtotime($stortnewdatetime)).'<br>';
+                        
+                        
+                        $updateDateformat = $dateData2[2].$arrayMonth[$dateData2[1]].$dateData2[0].$dateData3[0].$dateData3[1]."15";
+
+                        $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$updateDateformat;
+                        $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                        $columns_rows_dataFinalData[$mainArrayIndex]['label'] = $taskkey.' - '.date("Y-m-d", strtotime($stortnewdatetime)).' - '.$all_meta_for_user[$contactIDkey][0];
+                        
+                        $multivaluetaskarray = json_decode($all_meta_for_user[$getkeyinformation['key']][0]);
+                        foreach ($multivaluetaskarray as $multivalueIndex=>$multivalue){
+                                                        
+                            $multitaskvalues.=$multivaluetaskarray[$multivalueIndex].",";
+                        }
+                                                 
+                        
+                        $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = rtrim($multitaskvalues, ',');
+                        $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
+                        $columns_rows_dataFinalData[$mainArrayIndex]['created'] = date("Y-m-d H:i:s", strtotime($stortnewdatetime));
+                        $mainArrayIndex++;
+                     }
+                      
+                      
                   }else{
                       
                      $dateandtime =$all_meta_for_user[$getkeyinformation['key'].'_datetime'][0];
@@ -9150,12 +9281,13 @@ function gettasktype($taskkey){
             $value_type = get_post_meta( $tasksID, 'type' , true);
             $value_key = get_post_meta( $tasksID, 'key', true);
             $label = get_post_meta( $tasksID, 'label', true);
-            
+            $additional_attribute = get_post_meta( $tasksID, 'multiselectstatus', true);
             if($label == $taskkey){
                 
                 $getOrginalData['key'] = $value_key;
                 $getOrginalData['type'] = $value_type;
                 $getOrginalData['fieldtype'] = 'task';
+                $getOrginalData['additional_attribute'] = $additional_attribute;
                 $getOrginalData['responce'] = "ok";
                 
             }

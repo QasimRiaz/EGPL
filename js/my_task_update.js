@@ -158,7 +158,7 @@ jQuery(function() {
 var erroralert;
 var  filestatus;
 var erroralert;
-function update_user_meta_custome(elem) {
+function update_user_meta_custome(elem,typeoftask) {
     
     jQuery("body").css({'cursor':'wait'})
     var id = jQuery(elem).attr("id");
@@ -263,6 +263,7 @@ function update_user_meta_custome(elem) {
         }else{
             
              var metaupdate = jQuery('#' + value).val();
+             var mutiselecterrocontroll = "clear";
              if(metaupdate !=""){
 
                 statusvalue = 'Complete';
@@ -272,13 +273,45 @@ function update_user_meta_custome(elem) {
                 statusvalue = 'Pending';
              }
 
-
-
+        if(typeoftask == "multivaluedtask"){
+             
+            var filedname = 'input[name="'+value+'[]"]';
+             console.log(filedname);
+            
+            var alltaskvalues = jQuery(filedname).map(function () {
+                
+                    console.log(this.value);
+                    if(this.value == ""){
+                         mutiselecterrocontroll = "errorEmpty";
+                         filestatus=true;
+                         jQuery("body").css({'cursor':'default'});
+                          swal({
+                                 title: "Empty Field",
+                                 text: "There is one or more empty fields. Please either enter a value or remove them.",
+                                 type: "error",
+                                 confirmButtonClass: "btn-danger",
+                                 confirmButtonText: "Ok"
+                             });
+                        return false;
+                    }else{
+                       
+                     return this.value; // $(this).val()
+                        
+                    }    
+                       
+            }).get();
+            if(mutiselecterrocontroll !="errorEmpty"){
+                 jQuery(".speicaltaskmulittask_"+value).attr("disabled","disabled");
+            }
+            metaupdate = JSON.stringify(alltaskvalues);
+            
+        }
+          if(mutiselecterrocontroll !="errorEmpty"){
         jQuery.ajax({url: url + 'wp-content/plugins/EGPL/usertask_update.php?usertask_update=update_user_meta_custome',
-            data: {action: value, updatevalue: metaupdate, status: statusvalue,sponsorid:sponsorid,usertimezone:usertimezone},
+            data: {action: value, updatevalue: metaupdate, status: statusvalue,sponsorid:sponsorid,usertimezone:usertimezone,typeoftask:typeoftask},
             type: 'post',
             success: function(output) {
-             console.log("Hello world 2 " + metaupdate);
+            
                filestatus=true;
                jQuery("body").css({'cursor':'default'});
                if(metaupdate !=""){
@@ -319,7 +352,7 @@ function update_user_meta_custome(elem) {
             }     
         });
             
-            
+          }
             
             
         }
@@ -555,7 +588,7 @@ jQuery(document).ready(function() {
 });
 
 
-function remove_task_value_readyfornew(e){
+function remove_task_value_readyfornew(e,typeoftask){
     
     
      var removebuttonid = jQuery(e).attr('id');
@@ -563,8 +596,8 @@ function remove_task_value_readyfornew(e){
      var url = currentsiteurl+'/';
      var elementType = jQuery("#my" + task_name_key).is("input[type='file']");
      var curdate = new Date();
-        var usertimezone = curdate.getTimezoneOffset()/60;
-      
+     var usertimezone = curdate.getTimezoneOffset()/60;
+     console.log(typeoftask) ;
      var tasktype='';
      if (elementType == false) {
          
@@ -588,18 +621,29 @@ function remove_task_value_readyfornew(e){
                     if (isConfirm) {
                        
                         update_task_submission_status(task_name_key,tasktype);
-                        jQuery("." + task_name_key+'_submissionstatus').removeAttr('style');
-                   
-                   
- 
-                        jQuery("#" + task_name_key).prop("disabled", false);
-                        jQuery('#' + removebuttonid).removeClass('specialremoveiconenable');
-                        jQuery('#' + removebuttonid).addClass('specialremoveicondisable');
-                        jQuery('#update_' + task_name_key + '_status').children('.content').text('Submit');
-                        jQuery('#update_' + task_name_key + '_status').removeClass('disableremovebutton');
+                        console.log(typeoftask) ;
+                        if(typeoftask == "multivaluedtask"){
+                            
+                            
+                            jQuery(".speicaltaskmulittask_" + task_name_key).prop("disabled", false);
+                            
+                        }else{
+                            
+                            
+                            jQuery("#" + task_name_key).prop("disabled", false);
+                            
+                            
+                            
+                        }
+                            jQuery("." + task_name_key+'_submissionstatus').removeAttr('style');
+                            jQuery('#' + removebuttonid).removeClass('specialremoveiconenable');
+                            jQuery('#' + removebuttonid).addClass('specialremoveicondisable');
+                            jQuery('#update_' + task_name_key + '_status').children('.content').text('Submit');
+                            jQuery('#update_' + task_name_key + '_status').removeClass('disableremovebutton');
+                        
                         swal({
                             title: "Removed!",
-                            text: "Submission remove Successfully",
+                            text: "Submission successfully removed.",
                             type: "success",
                             confirmButtonClass: "btn-success"
                         }, function () {
@@ -730,15 +774,38 @@ function update_task_submission_status(submissiontaskstatuskey,tasktype){
 }
 
 
-// Bind normal buttons
+function addnewmultivalueinput(taskid,limit){
+    
+    
+    var countlimit =  jQuery(".specialcountclass_"+taskid).length;
+    console.log(countlimit);
+    if(limit == ""){
+        
+        
+        var r = "'"+Math.random().toString(36).substring(7)+"'";
+        var arrayvalue  = taskid+"[]";
+        var appendhtml = '<p id='+r+'><input style="width: 80% !important;margin-top: 1px;"  class="myclass specialcountclass_'+taskid+'  speicaltaskmulittask_'+taskid+'" type="text" name="' + arrayvalue+'" /> <button style="width: 17%;" class="speicaltaskmulittask_'+taskid+' btn btn-danger btn-small" onclick="removethisvaluetask('+r+')" title="Delete"><i class="fas fa-trash"></i></button></p>';
+        jQuery(".multivaluetask_"+taskid).append(appendhtml);
+        console.log(countlimit);
+        
+    }else{
+    if(countlimit == limit || countlimit > limit ){
+        
+       //jQuery(".disableclassbutton_"+taskid).attr("disabled",true);
+        
+    }else{
+        
+        var r = "'"+Math.random().toString(36).substring(7)+"'";
+        var arrayvalue  = taskid+"[]";
+        var appendhtml = '<p id='+r+'><input style="width: 80% !important;margin-top: 1px;"  class="myclass specialcountclass_'+taskid+' speicaltaskmulittask_'+taskid+'" type="text" name="' + arrayvalue+'" /> <button style="width: 17%;" class="speicaltaskmulittask_'+taskid+' btn btn-danger btn-small" onclick="removethisvaluetask('+r+')" title="Delete"><i class="fas fa-trash"></i></button></p>';
+        jQuery(".multivaluetask_"+taskid).append(appendhtml);
+    }}
+    
+}
 
-
-// You can control loading explicitly using the JavaScript API
-// as outlined below:
-
-// var l = Ladda.create( document.querySelector( 'button' ) );
-// l.start();
-// l.stop();
-// l.toggle();
-// l.isLoading();
-// l.setProgress( 0-1 );
+function removethisvaluetask(r){
+    
+    jQuery("#"+r).remove();
+    //jQuery(".disableclassbutton_"+taskid).attr("disabled",false);
+    
+}

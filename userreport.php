@@ -1,67 +1,49 @@
 <?php
-
-
-if ($_GET['contentManagerRequest'] == 'getcurrentuserdata') {
+if ($_GET['contentManagerRequest'] == 'getexpologsentries') {
     
     require_once('../../../wp-load.php');
-    
-    
-    getcurrentuserdata($_POST);
+    getexpologsentries($_POST);
     die();
     
-  
-     
+}else if ($_GET['contentManagerRequest'] == 'getcurrentuserdata') {
+    
+    require_once('../../../wp-load.php');
+    getcurrentuserdata($_POST);
+    die();
     
 }else if ($_GET['contentManagerRequest'] == 'updateuserforthissite') {
     
     require_once('../../../wp-load.php');
-    
-    
     updateuserforthissite($_POST);
     die();
-    
-  
-     
+
     
 }else if ($_GET['contentManagerRequest'] == 'checkuseralreadyexist') {
     
     require_once('../../../wp-load.php');
-    
-    
     check_useremail_exist($_POST);
     die();
-    
-  
-     
     
 }else if ($_GET['contentManagerRequest'] == 'get_all_selected_users_files') {
     
     require_once('../../../wp-load.php');
-    
-    
     selecteduser_getuploadfiles_download($_POST);
     die();
-    
-  
-     
     
 }else if ($_GET['contentManagerRequest'] == 'approve_selfsign_user') {
     
     require_once('../../../wp-load.php');
     
-     $user_id = $_POST['id'];
-     $user_role_assignment = $_POST['userassignrole'];
-  
-     approve_selfsign_user($user_id,$user_role_assignment);
+    $user_id = $_POST['id'];
+    $user_role_assignment = $_POST['userassignrole'];
+    approve_selfsign_user($user_id,$user_role_assignment);
      
     
 }else if ($_GET['contentManagerRequest'] == 'decline_selfsign_user') {
     
     require_once('../../../wp-load.php');
-    
-     $user_id = $_POST['id'];
-  
-     decline_selfsignuser_metas($user_id);
+    $user_id = $_POST['id'];
+    decline_selfsignuser_metas($user_id);
      
     
 }else if ($_GET['contentManagerRequest'] == 'selfsignadd_new_sponsor_metafields') {
@@ -148,19 +130,44 @@ if ($_GET['contentManagerRequest'] == 'getcurrentuserdata') {
        
        if($applicationmoderationstatus != 'checked'){
            
-            custome_email_send($user_id,$email,'welcome_email_template');
+            custome_email_sendc_applicationregistration($user_id,$email,'welcome_email_template');
             $result = update_user_option($user_id, 'selfsignupstatus',  'Approved');
             $message['showmsg'] = 'Thank you for your submission, your account has been created. You will receive a Welcome Email shortly to the email address you provided in this form.';
+       
+            
        }else{
           
-          $send_email_type = 'selfsignuprequest';
-          $responce = selfsign_registration_emails($user_id,$send_email_type); 
-          $message['showmsg'] = 'Your submission has been received and is being reviewed';
+            $send_email_type = 'selfsignuprequest';
+            $responce = selfsign_registration_emails($user_id,$send_email_type); 
+            $message['showmsg'] = 'Your submission has been received and is being reviewed';
            
        }
        
        
-       
+       //ravenhub additional code -- 01-06-2020////
+        
+        global  $wpdb;
+        $site_prefix = $wpdb->get_blog_prefix();
+	$postid = $user_id;
+	$data = array();                                                                    
+        $getsiteurl = get_site_url();
+        $companyname = get_user_meta($postid, $site_prefix.'company_name',true);
+        $applicanturl = $getsiteurl.'/review-registration/';
+        $getcodeuro = str_replace("https://","",$getsiteurl);
+        $subscribersID = str_replace("/","-",$getcodeuro);
+        $tasknotificationurl = "https://api.ravenhub.io/company/ahWkagLbTC/subscribers/".$subscribersID."/events/h7LMhgeZ3c" ;//$sponsor_info['ContentManager']['ravenhuburls']['tasknotificationtemplates']['url'];
+        $data = array("company_name" => $companyname,"applicantsurl"=>$applicanturl); 
+        $parameter_json = json_encode($data);
+        require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/ravenhub_api_request.php';
+        $ravenhubapirequest = new Revenhubapi();
+        $result_send_notification = $ravenhubapirequest->sendnotifaciton($tasknotificationurl,$parameter_json);
+        
+        $message['ravenhub']['responce'] = $result_send_notification;
+        $message['ravenhub']['requestdata'] = $parameter_json;
+        $message['ravenhub']['requestedurl'] = $tasknotificationurl;
+        
+        
+        //ravenhub additional code -- 01-06-2020////
        
             
              
@@ -205,7 +212,7 @@ if ($_GET['contentManagerRequest'] == 'getcurrentuserdata') {
                 
                 if($applicationmoderationstatus != 'checked'){
            
-                    custome_email_send($user_id,$email,'welcome_email_template');
+                    custome_email_sendc_applicationregistration($user_id,$email,'welcome_email_template');
                     $result = update_user_option($user_id, 'selfsignupstatus',  'Approved');
                     $message['showmsg'] = 'Thank you for your submission, your account has been created. You will receive a Welcome Email shortly to the email address you provided in this form.';
                     
@@ -217,7 +224,30 @@ if ($_GET['contentManagerRequest'] == 'getcurrentuserdata') {
 
                }
                 
-                
+                //ravenhub additional code -- 01-06-2020////
+        
+                    global  $wpdb;
+                    $site_prefix = $wpdb->get_blog_prefix();
+                    $postid = $user_id;
+                    $data = array();                                                                    
+                    $getsiteurl = get_site_url();
+                    $companyname = get_user_meta($postid, $site_prefix.'company_name',true);
+                   $applicanturl = $getsiteurl.'/review-registration/';
+                    $getcodeuro = str_replace("https://","",$getsiteurl);
+                    $subscribersID = str_replace("/","-",$getcodeuro);
+                    $tasknotificationurl = "https://api.ravenhub.io/company/ahWkagLbTC/subscribers/".$subscribersID."/events/h7LMhgeZ3c" ;//$sponsor_info['ContentManager']['ravenhuburls']['tasknotificationtemplates']['url'];
+                    $data = array("company_name" => $companyname,"applicantsurl"=>$applicanturl);  
+                    $parameter_json = json_encode($data);
+                    require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/ravenhub_api_request.php';
+                    $ravenhubapirequest = new Revenhubapi();
+                    $result_send_notification = $ravenhubapirequest->sendnotifaciton($tasknotificationurl,$parameter_json);
+
+                    $message['ravenhub']['responce'] = $result_send_notification;
+                    $message['ravenhub']['requestdata'] = $parameter_json;
+                    $message['ravenhub']['requestedurl'] = $tasknotificationurl;
+
+
+                    //ravenhub additional code -- 01-06-2020////
                 $message['msg'] = 'User created';
               //  $message['showmsg'] =  'Your submission has been received and is being reviewed.';
                 
@@ -1458,6 +1488,8 @@ function custometasksreport() {
                 $profile_field_settings['type'] = $value_type[0];
                 $value_label = get_post_meta($tasksID, 'label', true);
                 $taskduedate = get_post_meta($tasksID, 'duedate', true);
+                $attri = get_post_meta($tasksID, 'multiselectstatus', true);
+                
                 
                 $taskduedataupdated = strtotime($taskduedate);
                 
@@ -1508,7 +1540,7 @@ function custometasksreport() {
                    if($compare_operator_name && $compare_operator_date){
                         
                        
-                        $columns_rows_data = getusersData($authors,$columns_rows_data,$profile_field_settings['type'],$value_label,$taskduedate,$value_key,$taskfiltersubmitteddata,$search_filter_usertimezone);
+                        $columns_rows_data = getusersData($authors,$columns_rows_data,$profile_field_settings['type'],$value_label,$taskduedate,$value_key,$taskfiltersubmitteddata,$search_filter_usertimezone,$attri);
                    
                    }
                     
@@ -1516,7 +1548,7 @@ function custometasksreport() {
                     
                     if($compare_operator_name){
                         
-                         $columns_rows_data = getusersData($authors,$columns_rows_data,$profile_field_settings['type'],$value_label,$taskduedate,$value_key,$taskfiltersubmitteddata,$search_filter_usertimezone);
+                         $columns_rows_data = getusersData($authors,$columns_rows_data,$profile_field_settings['type'],$value_label,$taskduedate,$value_key,$taskfiltersubmitteddata,$search_filter_usertimezone,$attri);
                     }
                     
                 }else if(empty($taskfilterName) && !empty($taskfilterduedate)){
@@ -1524,12 +1556,12 @@ function custometasksreport() {
                     if($compare_operator_date){
                         
                        
-                         $columns_rows_data = getusersData($authors,$columns_rows_data,$profile_field_settings['type'],$value_label,$taskduedate,$value_key,$taskfiltersubmitteddata,$search_filter_usertimezone);
+                         $columns_rows_data = getusersData($authors,$columns_rows_data,$profile_field_settings['type'],$value_label,$taskduedate,$value_key,$taskfiltersubmitteddata,$search_filter_usertimezone,$attri);
                    }
                     
                 }else{
                     
-                    $columns_rows_data = getusersData($authors,$columns_rows_data,$profile_field_settings['type'],$value_label,$taskduedate,$value_key,$taskfiltersubmitteddata,$search_filter_usertimezone);
+                    $columns_rows_data = getusersData($authors,$columns_rows_data,$profile_field_settings['type'],$value_label,$taskduedate,$value_key,$taskfiltersubmitteddata,$search_filter_usertimezone,$attri);
                 }
             }
           }
@@ -2856,7 +2888,8 @@ function userreportresultdraw() {
                                     $value_linkname = get_post_meta( $tasksID, 'linkname', false);
                                     $value_attr = get_post_meta( $tasksID, 'duedate', false);
                                     
-                                   
+                                   $value_multiselectstatus = get_post_meta( $tasksID, 'multiselectstatus', false);
+                                    $value_multivaluetasklimit = get_post_meta( $tasksID, 'multivaluetasklimit', false);
                                     
                                     
                                     $value_taskattrs = get_post_meta( $tasksID, 'taskattrs', false);
@@ -2887,8 +2920,11 @@ function userreportresultdraw() {
                                     $profile_field_settings['usersids'] =$value_usersids[0];
                                     $profile_field_settings['descrpition'] =$value_descrpition[0];
                                     
-                                  
                                     
+                                    $profile_field_settings['multiselectstatus'] =$value_multiselectstatus[0];
+                                    $profile_field_settings['multivaluetasklimit'] =$value_multivaluetasklimit[0];
+                                    
+                                  
                                     
                                     if($profile_field_settings['type'] == "select-2"){
                                         
@@ -2998,7 +3034,102 @@ function userreportresultdraw() {
                        
 
                        
-                    }  else if ($profile_field_settings['type'] == 'select') {
+                    }  else if ($profile_field_settings['type'] == 'multivaluedtask') {
+                            
+                        
+                            $multivaluetaskarray = json_decode($all_meta_for_user[$profile_field_name][0]);
+                            $randomnumbervalues = "";
+                            foreach ($multivaluetaskarray as $multivalueIndex=>$multivalue){
+                               $randomnumbervalues .=$multivaluetaskarray[$multivalueIndex].',';
+                               
+                               
+                           }
+                            $column_row[$profile_field_settings['label']] =  rtrim($randomnumbervalues,",");
+                          
+                           if (!empty($all_meta_for_user[$profile_field_name . '_datetime'][0])) {
+                        if (strpos($all_meta_for_user[$profile_field_name . '_datetime'][0], 'AM') !== false) {
+                            
+
+                            $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            } else {
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                            
+                            
+                        } else {
+                            $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            } else {
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                        }
+                            } else {
+                                $datemy = "";
+                            }
+                            $column_row[$profile_field_settings['label'].' Datetime'] =$datemy;
+                            $column_row[$profile_field_settings['label'].' Status'] = $all_meta_for_user[$profile_field_name.'_status'][0];
+                          
+                        }else if ($profile_field_settings['type'] == 'select-2') {
+                            $mutivalues = "";
+                            if($profile_field_settings['multiselectstatus'] == "checked"){
+                                
+                                 $arraysofmultiselect =  unserialize($all_meta_for_user[$profile_field_name][0]); 
+                                 
+                              foreach ($arraysofmultiselect as $multivalueIndex=>$multivalue){
+                               $mutivalues .=$arraysofmultiselect[$multivalueIndex].',';
+                               
+                               
+                                }
+                            
+                                
+                            }else{
+                                
+                                $mutivalues =  $all_meta_for_user[$profile_field_name][0]; 
+                            }
+                           
+                            $column_row[$profile_field_settings['label']] =  rtrim($mutivalues,',');
+                           if (!empty($all_meta_for_user[$profile_field_name . '_datetime'][0])) {
+                        if (strpos($all_meta_for_user[$profile_field_name . '_datetime'][0], 'AM') !== false) {
+                            
+
+                            $datevalue = str_replace(":AM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            } else {
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                            
+                            
+                        } else {
+                            $datevalue = str_replace(":PM", "", $all_meta_for_user[$profile_field_name . '_datetime'][0]);
+                            $register_date = date('d-M-Y H:i:s', strtotime($datevalue));
+                            if ($usertimezone > 0) {
+                                $login_date_time = (new DateTime($register_date))->sub(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            } else {
+                                $login_date_time = (new DateTime($register_date))->add(new DateInterval('PT' . abs($usertimezone) . 'H'))->format('d-M-Y H:i:s');
+                            }
+                            
+                            $datemy = strtotime($login_date_time) * 1000;
+                        }
+                            } else {
+                                $datemy = "";
+                            }
+                            $column_row[$profile_field_settings['label'].' Datetime'] =$datemy;
+                            $column_row[$profile_field_settings['label'].' Status'] = $all_meta_for_user[$profile_field_name.'_status'][0];
+                          
+                        }else if ($profile_field_settings['type'] == 'select') {
 
                             $column_row[$profile_field_settings['label']] =  $all_meta_for_user[$profile_field_name][0];
                           
@@ -3189,7 +3320,7 @@ function approve_selfsign_user($user_id,$user_assignrole){
     $mapsecretkey = $floorplan_keys['ContentManager']['mapsecretkey'];
     
     
-    $lastInsertId = contentmanagerlogging('Approved Self Signed User',"Admin Action",serialize($all_meta_for_user),$user_ID,$user_info->user_email,"Declined");
+    $lastInsertId = contentmanagerlogging('Approve Self Signed User',"Admin Action",serialize($all_meta_for_user),$user_ID,$user_info->user_email,"Declined");
     update_user_option(  $user_id ,'selfsignupstatus','Approved');
     
    
@@ -3243,7 +3374,7 @@ function approve_selfsign_user($user_id,$user_assignrole){
            $mapdynamicsstatus = '';
            
        }
-    custome_email_send($user_id,$user_info_approved->user_email);
+    custome_email_sendc_applicationregistration($user_id,$user_info_approved->user_email);
     //send Approved email user;
     //send sync call
     echo $mapdynamicsstatus;
@@ -3309,10 +3440,37 @@ function selfsign_registration_emails($user_id,$send_email_type){
           
         $welcomememailreplayto = get_option('AR_Contentmanager_Email_Template_welcome');
         $replaytoemailadd = $welcomememailreplayto['welcome_email_template']['replaytoemailadd'];
+        
+       
+        
         $oldvalues = get_option( 'ContenteManager_Settings' );
+        
+        
         $mandrillKeys = $oldvalues['ContentManager']['mandrill'];
         $to_message_array[]=array('email'=>$email,'name'=>$all_meta_for_user[$site_prefix.'first_name'][0],'type'=>'to');
-      
+       
+        $registration_notificationemails = $oldvalues['ContentManager']['registration_notificationemails'];
+        
+        if(!empty($registration_notificationemails)){
+            
+            
+            
+            
+            
+            $getemailsaddress = explode(",",$registration_notificationemails);
+            
+            
+            
+            foreach($getemailsaddress as $emailsindex=>$emailaddress){
+                
+                $to_message_array[]=array('email'=>trim($emailaddress," "),'name'=>"",'type'=>'bcc');
+                
+            }
+            
+            
+          
+            
+        }
      
         $mandrill = new Mandrill($mandrillKeys);
         
@@ -3509,7 +3667,7 @@ function updateuserforthissite($userinfo){
         $mapdynamicsstatus['useradded'] ="updated successfully";
         add_user_to_blog($current_blog_id, $user_data->ID, $userrole);
         if($welcome_email_status == 'checked'){
-                    custome_email_send($user_data->ID,$user_data->user_email,$welcome_selected_email_template);
+                    custome_email_sendc_applicationregistration($user_data->ID,$user_data->user_email,$welcome_selected_email_template);
         }
         contentmanagerlogging_file_upload ($lastInsertId,serialize('updated successfully'));
         
@@ -3570,7 +3728,7 @@ function checktheopratertype($type,$value,$currentvalue){
     
 }
 
-function getusersData($userArray,$columns_rows_data, $type,$value_label,$taskduedate,$value_key,$taskfiltersubmitteddata,$search_filter_usertimezone) {
+function getusersData($userArray,$columns_rows_data, $type,$value_label,$taskduedate,$value_key,$taskfiltersubmitteddata,$search_filter_usertimezone,$attri) {
    
     require_once('../../../wp-load.php');
     global $wpdb;
@@ -3648,11 +3806,42 @@ function getusersData($userArray,$columns_rows_data, $type,$value_label,$taskdue
                                                       
                                                       $column_row['Submission'] ='';
                                                   }
-                                              } else {
+                                              } else if($type == "multivaluedtask"){
+                                                  
+                                                  
+                                                 
+                                                  $multitaskvalues ="";
+                                                  $multivaluetaskarray = json_decode($all_meta_for_user[$value_key][0]);
+                                                  
+                                                  
+                                                  foreach ($multivaluetaskarray as $multivalueIndex=>$multivalue){
+                                                        
+                                                    $multitaskvalues.=$multivaluetaskarray[$multivalueIndex].",";
+                                                  }
+                                                  $column_row['Submission'] = rtrim($multitaskvalues, ',');
+                                                   
+                                              }else if($type == "select-2"){
+                                                  
+                                                        $mutivalues = "";    
+                                                  	if($attri == "checked"){
+                                
+                                                              $arraysofmultiselect =  unserialize($all_meta_for_user[$value_key][0]);
+                                                              
+                                                            foreach ($arraysofmultiselect as $multivalueIndex => $multivalue) {
+                                                                $mutivalues .= $arraysofmultiselect[$multivalueIndex] . ',';
+                                                            }
+                                                        } else {
 
+                                                            $mutivalues = $all_meta_for_user[$value_key][0];
+                                                        }
+
+           
+                                                  $column_row['Submission'] = rtrim($mutivalues, ',');
+                                                  
+                                              }else{
                                                   
                                                   $column_row['Submission'] =$all_meta_for_user[$value_key][0];
-                                              }
+                                                }
                                               
                                               
                                               if (!empty($all_meta_for_user[$value_key . '_datetime'][0])) {
@@ -3776,4 +3965,472 @@ function getusersData($userArray,$columns_rows_data, $type,$value_label,$taskdue
                                           }
             return $columns_rows_data;
 
+}
+
+function getexpologsentries($requestdata){
+    
+    
+    
+    $actionanme = $requestdata['actionname'];
+    $postid = $requestdata['postid'];
+    
+    $preactiondata = get_post_meta( $postid, 'preactiondata', true );
+    $currentinfo = get_post_meta( $postid, 'currentuserinfo', true );
+    $browseragent = get_post_meta( $postid, 'browseragent', true );
+    $finalresut = get_post_meta( $postid, 'result', true );
+    
+    if(empty($preactiondata)){
+        $preactiondata = get_post_meta( $postid, 'pre-action-data', true );
+    }
+     if(empty($currentinfo)){
+        $currentinfo = get_post_meta( $postid, 'current-user-info', true );
+     }
+     if(empty($browseragent)){
+        $browseragent = get_post_meta( $postid, 'browser-agent', true );
+     }
+       if(empty($finalresut)){
+    $finalresut = get_post_meta( $postid, 'final-result', true );
+       }
+    
+    
+   
+    
+    if($actionanme == "preactiondata"){
+        
+         echo json_encode($preactiondata);
+        
+    }else if($actionanme == "postactiondata"){
+        
+         echo json_encode($finalresut);
+        
+         
+    }else if($actionanme == "browseragent"){
+        
+        echo json_encode($browseragent);
+        
+        
+    }else if($actionanme == "userinfo"){
+        
+       echo json_encode($currentinfo);
+        
+    }
+    
+    die();
+    
+    
+    
+}
+
+function custome_email_sendc_applicationregistration($user_id,$userlogin='',$welcomeemailtemplatename=''){
+    
+//    require_once('../../../wp-load.php');
+    require_once 'Mandrill.php';
+    
+    
+ try {
+
+    global $wpdb, $wp_hasher;
+    $site_prefix = $wpdb->get_blog_prefix();
+    $oldvalues = get_option( 'ContenteManager_Settings' );
+    $mandrill = $oldvalues['ContentManager']['mandrill'];
+    $mandrill = new Mandrill($mandrill);
+    
+   
+    
+        $user = get_userdata($user_id);
+        
+        if(empty($userlogin)){
+            
+          $user_login = stripslashes($user->user_login);
+          $user_email = stripslashes($user->user_email);
+          
+        }else{
+            
+            $user_email = $userlogin;
+            $user_login = $userlogin;
+        }
+        if(empty($welcomeemailtemplatename)){
+            
+           $welcomeemailtemplatename = "welcome_email_template"; 
+            
+        }
+        
+        //$plaintext_pass=wp_generate_password( 8, false, false );
+        //wp_set_password( $plaintext_pass, $user_id );
+        
+        $settitng_key='AR_Contentmanager_Email_Template_welcome';
+        $sponsor_info = get_option($settitng_key);
+        $site_url = get_option('siteurl' );
+        $data=  date("Y-m-d");
+        $time=  date('H:i:s');
+        $site_title=get_option( 'blogname' );
+        $oldvalues = get_option( 'ContenteManager_Settings' );
+        $formemail = $oldvalues['ContentManager']['formemail'];
+        if(empty($formemail)){
+            $formemail = 'noreply@expo-genie.com';
+        
+        }
+        
+       
+      
+        $formemail = $oldvalues['ContentManager']['formemail'];
+        $fromname = stripslashes ($sponsor_info[$welcomeemailtemplatename]['fromname']);
+        if(empty($formemail)){
+
+            $formemail = 'noreply@expo-genie.com';
+
+        }
+        
+        $subject = $sponsor_info[$welcomeemailtemplatename]['welcomesubject'];
+	$bcc =  $sponsor_info[$welcomeemailtemplatename]['BCC'];
+       // $cc =  $sponsor_info[$welcomeemailtemplatename]['CC'];
+	$formname = $sponsor_info[$welcomeemailtemplatename]['fromname'];
+        $replaytoemailadd = $sponsor_info[$welcomeemailtemplatename]['replaytoemailadd'];
+        $bcc_array = $bcc;
+      //  $cc_array = explode(',',$cc);
+        
+       
+
+    $subject = $sponsor_info[$welcomeemailtemplatename]['welcomesubject'];
+    $body=stripslashes ($sponsor_info[$welcomeemailtemplatename]['welcomeboday']);
+   
+    $user_ID = get_current_user_id();
+    $user_info = get_userdata($user_ID);
+    
+    $field_key_string =  getInbetweenStrings('{', '}', $body);
+    $field_key_subject = getInbetweenStrings('{', '}', $subject);
+    
+  
+    $site_url = get_option('siteurl' );
+
+    $login_url = get_option('siteurl' );
+    $admin_email= get_option('admin_email');
+    $data=  date("Y-m-d");
+    $time=  date('H:i:s');
+    $sitetitle = get_bloginfo( 'name' );
+    if(empty($fromname)){
+        $fromname = get_bloginfo( 'name' );
+    }
+   // $body = str_replace('[site_url]', $site_url, $body);
+   // $body = str_replace('[login_url]', $site_url, $body);
+   // $body = str_replace('[admin_email]', $admin_email, $body);
+    $subject = str_replace('{', '*|', $subject);
+    $subject = str_replace('}', '|*', $subject);
+    $body = str_replace('{', '*|', $body);
+    $body = str_replace('}', '|*', $body);
+    
+    
+
+    $goble_data_array =array(
+        array('name'=>'date','content'=>$data),
+        array('name'=>'time','content'=>$time),
+        array('name'=>'site_url','content'=>$site_url),
+        array('name'=>'site_title','content'=>$sitetitle)
+        );
+
+  
+
+       
+       $data_field_array= array();
+       $t=time();
+       update_user_option($user_id, 'convo_welcomeemail_datetime', $t*1000);
+       
+       foreach($field_key_subject as $index_subject=>$keyvalue_subject){
+
+                      if($keyvalue_subject == 'wp_user_id' ||$keyvalue_subject == 'Role' || $keyvalue_subject == 'site_title' || $keyvalue_subject == 'date' || $keyvalue_subject == 'time' || $keyvalue_subject == 'site_url' || $keyvalue_subject == 'user_pass'|| $keyvalue_subject == 'user_login'){
+
+
+                      if($keyvalue_subject == 'user_pass'){
+
+
+                            
+                            $plaintext_pass=wp_generate_password( 8, false, false );
+                            wp_set_password( $plaintext_pass, $user_id );
+                            $data_field_array[] = array('name'=>$index_subject,'content'=>$plaintext_pass);
+
+                      }else if($keyvalue_subject == 'user_login'){
+
+                          $data_field_array[] = array('name'=>$index_subject,'content'=>$user->user_login);
+                      }else if($keyvalue_subject == 'Role'){
+
+                         
+                          $getcurrentuserdata = get_userdata( $user_id );
+                          $blog_id = get_current_blog_id();
+                          $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+                          $get_all_roles = get_option($get_all_roles_array);
+                          foreach ($get_all_roles as $key => $name) {
+
+                              if(implode(', ', $getcurrentuserdata->roles) == $key){
+
+                                  $currentuserRole = $name['name'];
+
+
+                              }
+
+
+
+                          }
+
+
+                          $data_field_array[] = array('name'=>$index_subject,'content'=>$currentuserRole);
+                      }elseif($keyvalue_subject == 'wp_user_id'){
+                          
+                          $data_field_array[] = array('name'=>$index_subject,'content'=>$user_id);
+                          
+                      }
+
+
+
+                   }else{
+
+
+                       $get_meta_value = get_user_meta_merger_field_value($user_id,$keyvalue_subject);
+                       
+                       
+                       
+                       
+                    if($get_meta_value!=""){
+                        
+                       
+                        $getfieldType = getcustomefieldKeyValue($keyvalue_subject,"fieldType");
+                        
+                       if($getfieldType == "date"){
+                            
+                            $date_value =   date('d-m-Y' , intval($all_meta_for_user[$keyvalue_subject][0])/1000);
+                            $data_field_array[] = array('name'=>$index_subject,'content'=>$date_value);
+                           
+                       }else{
+                           
+                            $data_field_array[] = array('name'=>$index_subject,'content'=>$get_meta_value);
+                           
+                       }
+                             
+                      
+                             
+                        
+                       
+                   }else{
+                       
+                       $data_field_array[] = array('name'=>$index_subject,'content'=>'');
+                   }
+
+
+
+
+                  }
+
+
+
+             }
+       foreach($field_key_string as $index=>$keyvalue){
+
+                      if($keyvalue == 'wp_user_id' || $keyvalue == 'Role' || $keyvalue == 'site_title' || $keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'site_url' || $keyvalue == 'user_pass'|| $keyvalue == 'user_login'){
+
+
+                      if($keyvalue == 'user_pass'){
+
+
+                            
+                            $plaintext_pass=wp_generate_password( 8, false, false );
+                            wp_set_password( $plaintext_pass, $user_id );
+                            $data_field_array[] = array('name'=>$index,'content'=>$plaintext_pass);
+
+                      }else if($keyvalue == 'user_login'){
+
+                          $data_field_array[] = array('name'=>$index,'content'=>$user->user_login);
+                      }else if($keyvalue == 'Role'){
+
+                         
+                          $getcurrentuserdata = get_userdata( $user_id );
+                          $blog_id = get_current_blog_id();
+                          $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+                          $get_all_roles = get_option($get_all_roles_array);
+                          foreach ($get_all_roles as $key => $name) {
+
+                              if(implode(', ', $getcurrentuserdata->roles) == $key){
+
+                                  $currentuserRole = $name['name'];
+
+
+                              }
+
+
+
+                          }
+
+
+                          $data_field_array[] = array('name'=>$index,'content'=>$currentuserRole);
+                      }elseif($keyvalue == 'wp_user_id'){
+                          
+                          $data_field_array[] = array('name'=>$index,'content'=>$user_id);
+                          
+                      }
+
+
+
+                   }else{
+
+
+                       $get_meta_value = get_user_meta_merger_field_value($user_id,$keyvalue);
+                       if($get_meta_value!=""){
+
+                            $getfieldType = getcustomefieldKeyValue($keyvalue,"fieldType");
+
+                           if($getfieldType == "date"){
+
+                                $date_value =   date('d-m-Y' , intval($get_meta_value)/1000);
+                                $data_field_array[] = array('name'=>$index,'content'=>$date_value);
+
+                           }else{
+
+                                $data_field_array[] = array('name'=>$index,'content'=>$get_meta_value);
+
+                           }
+
+
+
+
+
+                       }else{
+
+                           $data_field_array[] = array('name'=>$index,'content'=>'');
+                       }
+
+
+
+
+                  }
+
+
+
+             }
+       $to_message_array[]=array('email'=>$user_email,'name'=>$first_name,'type'=>'to');
+           $user_data_array[] =array(
+                'rcpt'=>$user_email,
+                'vars'=>$data_field_array
+           );
+
+       
+        $registration_notificationemails = $oldvalues['ContentManager']['registration_notificationemails'];
+        if(!empty($registration_notificationemails)){
+            
+            $getemailsaddress = explode(",",$registration_notificationemails);
+            
+            
+            
+            
+            
+            foreach($getemailsaddress as $emailsindex=>$emailaddress){
+                
+                $to_message_array[]=array('email'=>trim($emailaddress," "),'name'=>"",'type'=>'bcc');
+                
+                $user_data_array[] =array(
+                    'rcpt'=>$emailaddress,
+                    'vars'=>$data_field_array
+                );
+                
+            }
+            
+            
+          
+            
+        }
+
+        
+        $mainheaderbackground = $oldvalues['ContentManager']['mainheader'];
+        $mainheaderlogo = $oldvalues['ContentManager']['mainheaderlogo'];
+        
+       
+        
+        $logourl = '';
+
+        if(!empty($mainheaderlogo)){
+
+            $logourl = '<img style="margin-top: 16px;" src="'.$mainheaderlogo.'" alt="" width="250" />';
+
+        }else if(!empty($mainheaderbackground)){
+
+            $logourl = '<img style="margin-top: 16px;" src="'.$mainheaderbackground.'" alt="" height="100" />';
+
+
+        }
+
+        $html_body_message = '<table width="600" cellspacing="0" cellpadding="0" align="center" bgcolor="#ffffff">
+<tbody>
+<tr>
+<td align="left">
+<div style="border: solid 1px #d9d9d9;">
+<table id="header" style="line-height: 1.6;" border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+<tbody>
+<tr>
+<td style="text-align: center;">'.$logourl.'</td>
+</tr>
+</tbody>
+</table>
+<table id="content" style="padding-right: 30px;padding-left: 30px;" border="0" width="100%" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+<tbody>
+<tr>
+<td style="border-top: solid 1px #d9d9d9;" colspan="2">
+<div style="padding: 1em 0;">
+'.$body.'
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>';
+
+
+       
+        
+   $get_currentsiteURl = get_site_url();
+   $message = array(
+
+        'html' => $html_body_message,
+        'text' => '',
+        'subject' => $subject,
+        'from_email' => $formemail,
+        'from_name' => $fromname,
+        'to' => $to_message_array,
+        'headers' => array('Reply-To' => $replaytoemailadd),
+        'bcc_address'=>$bcc_array,
+        'track_opens' => true,
+        'track_clicks' => true,
+         
+        'merge' => true,
+        'merge_language' => 'mailchimp',
+        'global_merge_vars' => $goble_data_array,
+        'merge_vars' => $user_data_array,
+        "tags" => [$get_currentsiteURl]
+
+    );
+
+    // exit;
+
+    $lastInsertId = contentmanagerlogging('Welcome Email',"Admin Action",serialize($message),$user_id,$user_info->user_email,"pre_action_data");
+
+    $async = false;
+    $ip_pool = 'Main Pool';
+   // $send_at = 'example send_at';
+    $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at);
+    contentmanagerlogging_file_upload($lastInsertId,serialize($result));
+   
+
+
+}catch(Mandrill_Error $e) {
+    // Mandrill errors are thrown as exceptions
+    $error_msg = 'A mandrill error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
+    // A mandrill error occurred: Mandrill_Unknown_Subaccount - No subaccount exists with the id 'customer-123'
+
+
+    contentmanagerlogging_file_upload($lastInsertId,$error_msg);
+     echo   $e->getMessage();
+    //throw $e;
+}
+    
 }

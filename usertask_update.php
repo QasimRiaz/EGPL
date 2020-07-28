@@ -22,6 +22,16 @@ if ($_GET['usertask_update'] == "update_submission_status") {
     $status=$_POST['status'];
     $sponsorid=$_POST['sponsorid'];
     $timezone = json_decode(stripslashes($_POST['usertimezone']));
+    $type = $_POST['typeoftask'];
+    
+   
+    
+    if($type == "multivaluedtask"){
+        
+        $reg_value =  json_decode(stripslashes($updatevalue));
+        $reg_value = json_encode($reg_value);
+    }
+    
     update_user_meta_custome($keyvalue,$reg_value,$status,$sponsorid,$_POST,$timezone);
     
      
@@ -65,7 +75,7 @@ if ($_GET['usertask_update'] == "update_submission_status") {
       
        
        $user_info = get_userdata($postid);
-       $lastInsertId = contentmanagerlogging('Save Task File',"User Action",serialize($updatevalue),$postid,$user_info->user_email,"pre_action_data");
+       $lastInsertId = contentmanagerlogging('Save Task Uploaded File',"User Action",serialize($updatevalue),$postid,$user_info->user_email,"pre_action_data");
        
       
        $updatevalue['name']=$company_name.'_'.$updatevalue['name'];
@@ -363,6 +373,26 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
 
             $login_date_time = (new DateTime($current_date_time))->add(new DateInterval('PT' . abs($timezone) . 'H'))->format('d-M-Y H:i:s');
         }
+        
+        $data = array();                                                                    
+        $getsiteurl = get_site_url();
+        
+        $getcodeuro = str_replace("https://","",$getsiteurl);
+        $subscribersID = str_replace("/","-",$getcodeuro);
+        
+        $taskreporturl = $getsiteurl.'/custom_task_report/';
+         
+        $tasknotificationurl = "https://api.ravenhub.io/company/ahWkagLbTC/subscribers/".$subscribersID."/events/8K5E67vhBe" ;//$sponsor_info['ContentManager']['ravenhuburls']['tasknotificationtemplates']['url'];
+        $data = array("company_name" => $companyname, "task_label" => $tasklabel,"taskreporturl"=>$taskreporturl); 
+        $parameter_json = json_encode($data);
+        require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/ravenhub_api_request.php';
+        $ravenhubapirequest = new Revenhubapi();
+        $result_send_notification = $ravenhubapirequest->sendnotifaciton($tasknotificationurl,$parameter_json);
+        
+        $email_body_message_for_admin['ravenhub']['responce'] = $result_send_notification;
+        $email_body_message_for_admin['ravenhub']['requestdata'] = $parameter_json;
+        $email_body_message_for_admin['ravenhub']['requestedurl'] = $tasknotificationurl;
+        
        $emailBoday ='<p>This is an automatic notification letting you know that a user in your event portal <a href="'.get_site_url().'" >'.$blog_title.'</a> has completed the following task:</p></br><table>
         <tr><td><strong>Event Name:</strong></td><td><a href="'.get_site_url().'" >'.$blog_title.'</a></td></tr>
         <tr><td><strong>Task Name:</strong></td><td>'.$tasklabel.'</td></tr>
@@ -380,6 +410,11 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
         }
         
     }
+    
+   
+       
+        
+   
     
     contentmanagerlogging_file_upload ($lastInsertId,serialize($email_body_message_for_admin));
     updatetocvent($postid,$movefile['url'],$keyvalue);
@@ -399,6 +434,9 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
 
 
 function update_user_meta_custome($keyvalue,$updatevalue,$status,$sponsorid,$log_obj,$timezone) {
+    
+   
+    
     //$key = $_POST['value'];
   try{  
     $date = new DateTime();
@@ -465,7 +503,7 @@ function update_user_meta_custome($keyvalue,$updatevalue,$status,$sponsorid,$log
     if($status == "Complete"){
          $result = update_user_meta($postid, $keyvalue.'_datetime', $datetime);
     }
-    
+     
      $current_date_time = date('d-M-Y H:i:s');
      if ($timezone > 0) {
 
@@ -475,6 +513,25 @@ function update_user_meta_custome($keyvalue,$updatevalue,$status,$sponsorid,$log
             $login_date_time = (new DateTime($current_date_time))->add(new DateInterval('PT' . abs($timezone) . 'H'))->format('d-M-Y H:i:s');
         }
 
+        $getsiteurl = get_site_url();
+        $getcodeuro = str_replace("https://","",$getsiteurl);
+        $subscribersID = str_replace("/","-",$getcodeuro);
+      
+         $taskreporturl = $getsiteurl.'/custom_task_report/';
+        
+        
+        $tasknotificationurl = "https://api.ravenhub.io/company/ahWkagLbTC/subscribers/".$subscribersID."/events/8K5E67vhBe" ;//$sponsor_info['ContentManager']['ravenhuburls']['tasknotificationtemplates']['url'];
+        $data = array("company_name" => $companyname, "task_label" => $tasklabel,"taskreporturl"=>$taskreporturl); 
+        $parameter_json = json_encode($data);
+        require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/ravenhub_api_request.php';
+        $ravenhubapirequest = new Revenhubapi();
+        $result_send_notification = $ravenhubapirequest->sendnotifaciton($tasknotificationurl,$parameter_json);
+        
+        $email_body_message_for_admin['ravenhub']['responce'] = $result_send_notification;
+        $email_body_message_for_admin['ravenhub']['requestdata'] = $parameter_json;
+        $email_body_message_for_admin['ravenhub']['requestedurl'] = $tasknotificationurl;
+        
+        
         $emailBoday .='<p>This is an automatic notification letting you know that a user in your event portal <a href="'.get_site_url().'" >'.$blog_title.'</a> has completed the following task:</p></br><table><tr><td><strong>Event Name:</strong></td><td><a href="'.get_site_url().'" >'.$blog_title.'</a></td></tr>
     <tr><td><strong>Task Name:</strong></td><td>'.$tasklabel.'</td></tr>
     <tr><td><strong>Company:</strong></td><td>'.$companyname.'</td></tr>
@@ -492,7 +549,9 @@ function update_user_meta_custome($keyvalue,$updatevalue,$status,$sponsorid,$log
         }
         
     }
-    
+   
+        
+       
     
     contentmanagerlogging_file_upload ($lastInsertId,serialize($email_body_message_for_admin));
     updatetocvent($postid,$updatevalue,$keyvalue);
@@ -694,6 +753,7 @@ function sendtasksubmissionEmail($emailBoday,$subject,$EmailsListnotifications){
     
     
 }
+
 
 
 
