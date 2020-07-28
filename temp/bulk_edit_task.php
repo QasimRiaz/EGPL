@@ -468,7 +468,7 @@ height: 50% !important;
         include 'cm_footer.php';
         ?>
             
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=3.35"></script>    
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=3.36"></script>    
             
         <?php
         

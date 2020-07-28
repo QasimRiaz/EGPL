@@ -52,8 +52,8 @@
     }
 
     return $string;
-}
-      
+    }
+//      
      ?>
           <script>
         
@@ -270,23 +270,14 @@
                       if($keyvalue == 'wp_user_id' || $keyvalue == 'Semail' || $keyvalue == 'Role' || $keyvalue == 'site_title' || $keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'site_url' || $keyvalue == 'user_pass'|| $keyvalue == 'user_login'){
                       
                           
-                      if($keyvalue == 'user_pass'){
-                          
-                           
-                            $user_id = $userdata->ID;
-                            $plaintext_pass=wp_generate_password( 8, false, false );
-                            wp_set_password( $plaintext_pass, $user_id );
-                            $taskdescription = str_replace("{user_pass}",$plaintext_pass,$taskdescription);
-                            
-                          
-                      }elseif($keyvalue == 'user_login'){
+                     if($keyvalue == 'user_login'){
                           
                        
                            
                           $taskdescription = str_replace("{user_login}",$userdata->user_login,$taskdescription);
                          
                           
-                      }elseif($keyvalue == 'level'){
+                      }elseif($keyvalue == 'Role'){
                           
                         
                           $user_id = $userdata->ID;
@@ -306,10 +297,10 @@
                           }
                          // $data_field_array[] = array('name'=>$index,'content'=>$currentuserRole); 
                           
-                          $taskdescription = str_replace("{Role}",$currentuserRole,$taskdescription);
+                          $taskdescription = str_replace("{level}",$currentuserRole,$taskdescription);
                       }elseif($keyvalue == 'Semail'){
                           
-                           $taskdescription = str_replace("{Semail}",$userdata->user_email ,$taskdescription);
+                           $taskdescription = str_replace("{email}",$userdata->user_email ,$taskdescription);
                          // $data_field_array[] = array('name'=>$index,'content'=>$email_address); 
                       }elseif($keyvalue == 'wp_user_id'){
                           

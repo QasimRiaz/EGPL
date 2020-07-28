@@ -336,9 +336,11 @@ function bulktask_descripiton(e){
                                                         var areaId = "taskdescrpition";
                                                         jQuery.each( keyslist, function( i, item ) {  
 
-                                                          var keyvalue = '{'+item+'}';
-                                                          welcomedatafieldskeys+='<a style="margin-right: 5px;cursor: pointer;" onclick=\'insertAtCaret("'+areaId+'","'+keyvalue+'")\' > '+keyvalue+'</a>';  
-
+                                                          
+                                                         if(item !="user_pass"){   
+                                                            var keyvalue = '{'+item+'}';
+                                                            welcomedatafieldskeys+='<a style="margin-right: 5px;cursor: pointer;" onclick=\'insertAtCaret("'+areaId+'","'+keyvalue+'")\' > '+keyvalue+'</a>';  
+                                                            }
                                                         });
                                                         
                                                         jQuery(".showallmergefields").empty();
