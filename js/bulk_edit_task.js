@@ -337,7 +337,7 @@ function bulktask_descripiton(e){
                                                         jQuery.each( keyslist, function( i, item ) {  
 
                                                           
-                                                         if(item !="user_pass"){   
+                                                         if(item !="user_pass" && item !="status" ){   
                                                             var keyvalue = '{'+item+'}';
                                                             welcomedatafieldskeys+='<a style="margin-right: 5px;cursor: pointer;" onclick=\'insertAtCaret("'+areaId+'","'+keyvalue+'")\' > '+keyvalue+'</a>';  
                                                             }
