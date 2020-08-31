@@ -5,7 +5,6 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           4.04
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -6849,6 +6848,21 @@ function exp_autocomplete_all_orders($order_id) {
         
         if (!$order_id)
                 return;
+        
+        
+        global $wpdb;
+        $site_prefix = $wpdb->get_blog_prefix();
+        
+        
+        
+        $get_items_sql =  "SELECT * FROM ".$site_prefix."woocommerce_order_itemmeta where meta_key = '_remaining_balance_order_id' and meta_value=".$order_id;
+        //$myrows = $wpdb->get_results( "SELECT * FROM ".$site_prefix."'woocommerce_order_itemmeta' where meta_key = '_remaining_balance_order_id' and meta_value=".$order_id );
+         
+        $products = $wpdb->get_results($get_items_sql);
+        
+        if(!empty($products))
+            return;
+        
         $orderstatus = "completed";
         //$order = new WC_Order($order_id);
         $order = wc_get_order($order_id);
@@ -6859,8 +6873,8 @@ function exp_autocomplete_all_orders($order_id) {
         
         //ravenhub additional code -- 01-06-2020////
         
-        global  $wpdb;
-        $site_prefix = $wpdb->get_blog_prefix();
+        
+        
 	$postid = get_current_user_id();
 	$data = array();                                                                    
         $getsiteurl = get_site_url();
