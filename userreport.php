@@ -494,7 +494,7 @@ function gettasksreport($data) {
          $columns_headers[4]['type'] = 'date';
          $columns_headers[4]['title'] = 'Submitted On';
          
-         $columns_headers[5]['key'] = $site_prefix.'company_name';
+         $columns_headers[5]['key'] = $site_prefix.'compnay_name';
          $columns_headers[5]['type'] = 'string';
          $columns_headers[5]['title'] = 'Company';
          
@@ -1228,7 +1228,7 @@ function custometasksreport() {
        
         foreach($search_filter_array as $filter){
             
-            if($filter->id == $site_prefix."company_name" ){
+            if($filter->id == $site_prefix."compnay_name" ){
                 
                
                 $taskcompanyname['value'] = $filter->value;
@@ -1292,7 +1292,7 @@ function custometasksreport() {
         
       
         
-        $args['meta_query']['relation']= 'OR';
+        $args['meta_query']['relation']= 'AND';
         foreach($search_filter_array as $filter){
             
            if($filter->id !="task_name" && $filter->id !="task_due_date" && $filter->id !="task_date" && $filter->id !="task_value"){
@@ -1362,7 +1362,7 @@ function custometasksreport() {
                 
                 $filter_apply_array['key']=$filter->id;
                 $filter_apply_array['value']=$filter->value;
-               // $filter_apply_array['type']='CHAR';
+                $filter_apply_array['type']='CHAR';
                 $filter_apply_array['compare']=$compare_operator;
             }
         }   
@@ -1371,7 +1371,8 @@ function custometasksreport() {
         }}
     }
  }
-       
+ 
+ 
         $user_query = new WP_User_Query( $args );
         $authors = $user_query->get_results();
         
@@ -1429,7 +1430,7 @@ function custometasksreport() {
          $columns_list_defult_user_report[0]['type'] = 'display';
          $columns_list_defult_user_report[0]['title'] = 'Action';
          
-          $columns_list_defult_user_report[1]['key'] = $site_prefix.'company_name';
+          $columns_list_defult_user_report[1]['key'] = $site_prefix.'compnay_name';
          $columns_list_defult_user_report[1]['type'] = 'string';
          $columns_list_defult_user_report[1]['title'] = 'Company';
          
@@ -1498,18 +1499,18 @@ function custometasksreport() {
                     $compare_operator_name = checktheopratertype($taskfilterName['operator'],$value_label,$taskfilterName['value']);
                 }
                 
-//                if(!empty($taskcompanyname)){
-//                    
-//                    $compare_operator_name = checktheopratertype($taskcompanyname['operator'],$value_label,$taskcompanyname['value']);
-//                }
-//                if(!empty($tasklastname)){
-//                    
-//                    $compare_operator_name = checktheopratertype($tasklastname['operator'],$value_label,$tasklastname['value']);
-//                }
-//                if(!empty($taskfirstname)){
-//                    
-//                    $compare_operator_name = checktheopratertype($taskfirstname['operator'],$value_label,$taskfirstname['value']);
-//                }
+                if(!empty($taskcompanyname)){
+                    
+                    $compare_operator_name = checktheopratertype($taskcompanyname['operator'],$value_label,$taskcompanyname['value']);
+                }
+                if(!empty($tasklastname)){
+                    
+                    $compare_operator_name = checktheopratertype($tasklastname['operator'],$value_label,$tasklastname['value']);
+                }
+                if(!empty($taskfirstname)){
+                    
+                    $compare_operator_name = checktheopratertype($taskfirstname['operator'],$value_label,$taskfirstname['value']);
+                }
                 
              
                 
@@ -3723,7 +3724,7 @@ function checktheopratertype($type,$value,$currentvalue){
                         $compare_operator = ($value >= $currentvalue[0] && $value <= $currentvalue[1]);
                     }
                     
-    return $compare_operator;
+   // return $compare_operator;
     
 }
 
