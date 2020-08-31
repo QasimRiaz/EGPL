@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           3.81
+ * Version:           4.05
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -1513,7 +1513,7 @@ try {
                        
                    
                         
-                       if (!empty($all_meta_for_user[$keyvalue_subject][0])) {
+                       if ($all_meta_for_user[$keyvalue_subject][0] !="") {
                            
                            $result = multidimensional_search($colsdatatype, array('colkey' => $keyvalue_subject)); // 1 
                            $getfieldType = getcustomefieldKeyValue($keyvalue_subject,"fieldType");
@@ -1606,7 +1606,7 @@ try {
                        
                        
                         
-                       if (!empty($all_meta_for_user[$keyvalue][0])) {
+                       if ($all_meta_for_user[$keyvalue][0] !="") {
                            
                            $result = multidimensional_search($colsdatatype, array('colkey' => $keyvalue)); // 1 
                            $getfieldType = getcustomefieldKeyValue($keyvalue,"fieldType");
@@ -1651,58 +1651,7 @@ try {
        
       
    $bcc_array = $bcc;
-   //$cc_array = explode(',',$cc);
    
-   
-   
-//   if(sizeof($bcc_array) > 1){
-//       
-//       foreach($bcc_array as $key=>$value){
-//           
-//           
-//        $to_message_array[]=array('email'=>$value,'name'=>'','type'=>'bcc');
-//           
-//           
-//           
-//       }
-//       
-//       
-//       
-//   }else{
-//       
-//       if(!empty($bcc_array)){
-//           
-//           $to_message_array[]=array('email'=>$bcc_array[0],'name'=>'','type'=>'bcc');
-//       }
-//   }
-//   if(sizeof($cc_array) > 1){
-//       
-//       foreach($cc_array as $key=>$value){
-//           
-//           
-//           
-//         $to_message_array[]=array('email'=>$value,'name'=>'','type'=>'cc');
-//           
-//           
-//       }
-//       
-//       
-//       
-//   }else{
-//     if(!empty($cc_array)){
-//          
-//           $to_message_array[]=array('email'=>$cc_array[0],'name'=>'','type'=>'cc');
-//       }  
-//   }
-   
-       
-       //$result = send_email($to,$subject,$body_message);
-
-    
-  
-   
-  
- //  print_r($bcc);exit;
    $get_currentsiteURl = get_site_url();
    $message = array(
         
@@ -1726,7 +1675,318 @@ try {
    
     // exit;
        
-    $lastInsertId = contentmanagerlogging('Bulk Email',"Admin Action",serialize($message),$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Send Bulk Email',"Admin Action",serialize($message),$user_ID,$user_info->user_email,"pre_action_data");
+     
+    $async = false;
+    $ip_pool = 'Main Pool';
+   // $send_at = 'example send_at';
+    $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at);
+    contentmanagerlogging_file_upload($lastInsertId,serialize($result));
+    echo 'successfully send';
+   
+    
+}catch(Mandrill_Error $e) {
+    // Mandrill errors are thrown as exceptions
+    $error_msg = 'A mandrill error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
+    // A mandrill error occurred: Mandrill_Unknown_Subaccount - No subaccount exists with the id 'customer-123'
+    
+ 
+    contentmanagerlogging_file_upload($lastInsertId,$error_msg);
+     echo   $e->getMessage();
+    //throw $e;
+}
+ die();
+}else if ($_GET['contentManagerRequest'] == 'sendbulkemailtasksreport') {
+    
+    require_once('../../../wp-load.php');
+    require_once 'Mandrill.php';
+   
+try { 
+    
+    
+     $oldvalues = get_option( 'ContenteManager_Settings' );
+     $mandrill = $oldvalues['ContentManager']['mandrill'];
+    
+    $mandrill = new Mandrill($mandrill);
+    
+    
+    $subject =$_POST['emailSubject'];
+    $body=stripslashes ($_POST['emailBody']);
+    
+    $user_ID = get_current_user_id();
+    $user_info = get_userdata($user_ID);
+    $attendeefields_data=json_decode(stripslashes($_POST['attendeeallfields']), true);
+    
+    
+   
+    
+    $field_key_string = getInbetweenStrings('{', '}', $body);
+    $field_key_string_subject = getInbetweenStrings('{', '}', $subject);
+    
+   
+    
+    
+    $oldvalues = get_option( 'ContenteManager_Settings' );
+    $formemail = $oldvalues['ContentManager']['formemail'];
+    if(empty($formemail)){
+        $formemail = 'noreply@expo-genie.com';
+        
+    }
+    
+   $bcc = $_POST['BCC'];
+   $cc  = $_POST['CC'];
+  
+   
+   
+   
+   $replytoEmail = $_POST['RTO'];
+   $fromname = $_POST['fromname'];
+  
+
+    
+    
+    $site_url = get_option('siteurl' );
+    $login_url = get_option('siteurl' );
+    $admin_email= get_option('admin_email');
+    $data=  date("Y-m-d");
+    $time=  date('H:i:s');
+    $sitetitle = get_bloginfo( 'name' );
+    if(empty($fromname)){
+        $fromname = get_bloginfo( 'name' );
+    }
+   // $body = str_replace('[site_url]', $site_url, $body);
+   // $body = str_replace('[login_url]', $site_url, $body);
+   // $body = str_replace('[admin_email]', $admin_email, $body);
+    $subject = str_replace('{', '*|', $subject);
+    $subject = str_replace('}', '|*', $subject);
+    $body = str_replace('{', '*|', $body);
+    $body = str_replace('}', '|*', $body);
+    $goble_data_array =array(
+        array('name'=>'date','content'=>$data),
+        array('name'=>'time','content'=>$time),
+        array('name'=>'site_url','content'=>$site_url),
+        array('name'=>'site_title','content'=>$sitetitle)
+        );
+    $body_message =    $body ;
+    global $wpdb;
+    $site_prefix = $wpdb->get_blog_prefix();
+     
+       foreach($attendeefields_data as $key=>$Onerowvalue){
+        
+            $data_field_array= array();
+            
+            
+            $userdata = get_user_by_email($Onerowvalue);
+            $email_address = $Onerowvalue;
+            
+            $all_meta_for_user = get_user_meta($userdata->ID);
+            $first_name = $all_meta_for_user[$site_prefix.'first_name'][0];
+            
+            
+            foreach($field_key_subject as $index_subject=>$keyvalue_subject){
+                  
+                      if($keyvalue_subject == 'Role' || $keyvalue_subject == 'site_title' || $keyvalue_subject == 'date' || $keyvalue_subject == 'time' || $keyvalue_subject == 'site_url' || $keyvalue_subject == 'user_pass'|| $keyvalue_subject == 'user_login'){
+                      
+                       
+                      if($keyvalue_subject == 'user_pass'){
+                          
+                            
+                            $user_id = $userdata->ID;
+                            $plaintext_pass=wp_generate_password( 8, false, false );
+                            wp_set_password( $plaintext_pass, $user_id );
+                            $data_field_array[] = array('name'=>$index_subject,'content'=>$plaintext_pass);  
+                          
+                      }elseif($keyvalue_subject == 'user_login'){
+                          
+                         $data_field_array[] = array('name'=>$index_subject,'content'=>$userdata->user_login); 
+                         
+                      }elseif($keyvalue_subject == 'Role'){
+                          
+                          $user_id = $userdata->ID;
+                          $getcurrentuserdata = get_userdata( $user_id );
+                          $blog_id = get_current_blog_id();
+                          $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+                          $get_all_roles = get_option($get_all_roles_array);
+                          foreach ($get_all_roles as $key => $name) {
+                              
+                              if(implode(', ', $getcurrentuserdata->roles) == $key){
+                                  
+                                  $currentuserRole = $name['name'];
+                              }
+                           }
+                          
+                          
+                          $data_field_array[] = array('name'=>$index_subject,'content'=>$currentuserRole); 
+                      }
+                      
+                      
+                      
+                   }else{
+                       
+                       if ($all_meta_for_user[$keyvalue_subject][0]!="") {
+                           
+                           $result = multidimensional_search($colsdatatype, array('colkey' => $keyvalue_subject)); // 1 
+                           $getfieldType = getcustomefieldKeyValue($keyvalue_subject,"fieldType");
+                           
+                        if($getfieldType == 'date') {
+                            
+                            
+                          
+                          $date_value =   date('d-m-Y' , intval($all_meta_for_user[$keyvalue_subject][0])/1000);
+                          $data_field_array[] = array('name'=>$index_subject,'content'=>$date_value);
+                          
+                        } else{
+                             
+                                 
+                                 
+                                $data_field_array[] = array('name'=>$index_subject,'content'=>$all_meta_for_user[$keyvalue_subject][0]);  
+                             
+                        }
+                       }else{
+                           
+                                $data_field_array[] = array('name'=>$index_subject,'content'=>''); 
+                          
+                       }
+                   
+                      
+                      
+                      
+                      
+                  }
+                 
+                 
+                 
+             }
+            foreach($field_key_string as $index=>$keyvalue){
+                
+                        
+                     
+                      
+                      if($keyvalue == 'wp_user_id' || $keyvalue == 'Semail' || $keyvalue == 'Role' || $keyvalue == 'site_title' || $keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'site_url' || $keyvalue == 'user_pass'|| $keyvalue == 'user_login'){
+                      
+                          
+                      if($keyvalue == 'user_pass'){
+                          
+                           
+                            $user_id = $userdata->ID;
+                            $plaintext_pass=wp_generate_password( 8, false, false );
+                            wp_set_password( $plaintext_pass, $user_id );
+                            $data_field_array[] = array('name'=>$index,'content'=>$plaintext_pass);  
+                          
+                      }elseif($keyvalue == 'user_login'){
+                          
+                       
+                          $data_field_array[] = array('name'=>$index,'content'=>$userdata->user_login);  
+                          
+                         
+                          
+                      }elseif($keyvalue == 'Role'){
+                          
+                        
+                          $user_id = $userdata->ID;
+                          $getcurrentuserdata = get_userdata( $user_id );
+                          $blog_id = get_current_blog_id();
+                          $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+                          $get_all_roles = get_option($get_all_roles_array);
+                          foreach ($get_all_roles as $key => $name) {
+                              
+                              if(implode(', ', $getcurrentuserdata->roles) == $key){
+                                  
+                                  $currentuserRole = $name['name'];
+                              }
+                          }
+                          $data_field_array[] = array('name'=>$index,'content'=>$currentuserRole); 
+                      }elseif($keyvalue == 'Semail'){
+                          
+                        
+                          $data_field_array[] = array('name'=>$index,'content'=>$email_address); 
+                      }elseif($keyvalue == 'wp_user_id'){
+                          
+                        
+                          $data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
+                      }elseif($keyvalue == 'wp_user_id'){
+                          
+                        
+                          $data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
+                      }
+                      
+                      
+                      
+                   }else{
+                       
+                       
+                       
+                        
+                       if ($all_meta_for_user[$keyvalue][0]!="") {
+                           
+                           $result = multidimensional_search($colsdatatype, array('colkey' => $keyvalue)); // 1 
+                           $getfieldType = getcustomefieldKeyValue($keyvalue,"fieldType");
+                          
+                        if($getfieldType == 'date') {
+                            
+                          $date_value =   date('d-m-Y', intval($all_meta_for_user[$keyvalue][0]/1000));
+                          $data_field_array[] = array('name'=>$index,'content'=>$date_value);
+                          
+                        } else{
+                             
+                                 
+                                $data_field_array[] = array('name'=>$index,'content'=> $all_meta_for_user[$keyvalue][0]);  
+                             
+                        }
+                       }else{
+                           
+                                $data_field_array[] = array('name'=>$index,'content'=>''); 
+                          
+                       }
+                  
+                      
+                      
+                      
+                      
+                  }
+                 
+                 
+                 
+             }
+              
+          
+              
+                
+           $to_message_array[]=array('email'=>$email_address,'name'=>$first_name,'type'=>'to');
+           $user_data_array[] =array(
+                'rcpt'=>$email_address,
+                'vars'=>$data_field_array
+           );
+ 
+        }
+       
+      
+   $bcc_array = $bcc;
+   
+   $get_currentsiteURl = get_site_url();
+   $message = array(
+        
+        'html' => $body,
+        'text' => '',
+        'subject' => $subject,
+        'from_email' => $formemail,
+        'from_name' => $fromname,
+        'to' => $to_message_array,
+        'headers' => array('Reply-To' => $replytoEmail),
+        'bcc_address'=>$bcc_array,
+        'track_opens' => true,
+        'track_clicks' => true,
+        'merge' => true,
+        'merge_language' => 'mailchimp',
+        'global_merge_vars' => $goble_data_array,
+        'merge_vars' => $user_data_array,
+         "tags" => [$get_currentsiteURl]
+        
+    );
+   
+    // exit;
+       
+    $lastInsertId = contentmanagerlogging('Tasks Bulk Email',"Admin Action",serialize($message),$user_ID,$user_info->user_email,"pre_action_data");
      
     $async = false;
     $ip_pool = 'Main Pool';
@@ -2292,6 +2552,8 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
     
     $filedataurl = $_POST['oldheaderbannerurl'];
     $headerlogourl = $_POST['oldheaderlogourl'];
+    $registration_notificationemails = $_POST['registration_notificationemails'];
+    
     if(empty($_POST['oldheaderbannerurl'])){
         
         $filedata =  $_FILES['uploadedfile'];
@@ -2367,7 +2629,7 @@ function updateadminemailtemplate($data_array,$email_template_name){
     
     $data_submit['data_array']=$data_array;
     $data_submit['template_name']=$email_template_name;
-    $lastInsertId = contentmanagerlogging('Updated Report Template',"Admin Action",serialize($data_submit),$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Update Report Template',"Admin Action",serialize($data_submit),$user_ID,$user_info->user_email,"pre_action_data");
        
       $settitng_key='AR_Contentmanager_Email_Template';
       $sponsor_info = get_option($settitng_key);
@@ -3773,7 +4035,7 @@ function getReportsdatanew($report_name,$usertimezone){
 
 add_action('wp_enqueue_scripts', 'add_contentmanager_js');
 function add_contentmanager_js(){
-      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'3.8.0', true);
+      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'4.4.9', true);
     
      wp_enqueue_script( 'jquery.alerts', plugins_url() . '/EGPL/js/jquery.alerts.js', array(), '1.1.0', true );
      wp_enqueue_script( 'boot-date-picker', plugins_url() . '/EGPL/js/bootstrap-datepicker.js', array(), '1.2.0', true );
@@ -3795,7 +4057,7 @@ function add_contentmanager_js(){
       
      wp_enqueue_script('select2', plugins_url('/cmtemplate/js/lib/select2/select2.full.js', __FILE__), array('jquery'));
     
-     wp_enqueue_script( 'order-history', plugins_url('/EGPL/js/orderhistory.js'), array(), '1.4.0', true );
+     wp_enqueue_script( 'order-history', plugins_url('/EGPL/js/orderhistory.js'), array(), '1.6.0', true );
      wp_enqueue_script( 'Egpl-filters', plugins_url('/EGPL/js/egplfilters.js'), array(), '1.2.6', true );
      
    
@@ -4137,6 +4399,8 @@ function updatecmanagersettings($object_data){
         $updatetasktypes[10]['lable'] = "Display Coming soon";
         $updatetasktypes[10]['type'] = "comingsoon";
         
+        
+        
        
         $oldvalues['ContentManager']['taskmanager']['input_type']=$updatetasktypes;
         
@@ -4183,17 +4447,22 @@ function updateadmin_frontend_settings($object_data,$filedataurl){
     $user_info = get_userdata($user_ID); 
     $object_data['headerbannerimage'] = $filedataurl;
    
+    $registration_notificationemails = $object_data['registration_notificationemails'];
     
     $lastInsertId = contentmanagerlogging('Update Contentmanager Settings Front End',"Admin Action",serialize($object_data),$user_ID,$user_info->user_email,"pre_action_data");
       
     
     $eventdate = $object_data['eventdate'];
+    $applicationmoderationstatus = $object_data['applicationmoderationstatus'];
     $oldvalues = get_option( 'ContenteManager_Settings' );
     
     $oldvalues['ContentManager']['eventdate']=$eventdate;
     $oldvalues['ContentManager']['mainheader']=$filedataurl;
     $oldvalues['ContentManager']['mainheaderlogo']='';
-     
+    $oldvalues['ContentManager']['applicationmoderationstatus']=$applicationmoderationstatus;
+    $oldvalues['ContentManager']['registration_notificationemails']=$registration_notificationemails;
+    
+    
     $result=update_option('ContenteManager_Settings', $oldvalues);
     
     contentmanagerlogging_file_upload ($lastInsertId,serialize($result));
@@ -4498,7 +4767,8 @@ class PageTemplater {
                         'temp/scriptrunnerfixedpatch.php'=>'Task Fixed Patch',
                         'temp/bulk_manage_custom_fields.php'=>'User Fields',
                         'temp/custome_task_reports.php'=>'Task Report',
-                        'temp/custome_tasks_report_filters.php'=>'Task Report Filters'
+                        'temp/custome_tasks_report_filters.php'=>'Task Report Filters',
+                        'temp/expo-genie-log-template.php'=>'Expo Genie Logs'
                        
                         
                      
@@ -5024,7 +5294,7 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
                        
                        
                        
-                    if(!empty($get_meta_value)){
+                    if($get_meta_value!=""){
                         
                        
                         $getfieldType = getcustomefieldKeyValue($keyvalue_subject,"fieldType");
@@ -5107,7 +5377,7 @@ function custome_email_send($user_id,$userlogin='',$welcomeemailtemplatename='')
 
 
                        $get_meta_value = get_user_meta_merger_field_value($user_id,$keyvalue);
-                       if(!empty($get_meta_value)){
+                       if($get_meta_value!=""){
 
                             $getfieldType = getcustomefieldKeyValue($keyvalue,"fieldType");
 
@@ -6512,7 +6782,7 @@ function checkwelcomealreadysend($request){
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);
         
-        $lastInsertId = contentmanagerlogging('Check Welcome Email Send',"Admin Action",serialize($request),''.$user_ID,$user_info->user_email,"pre_action_data");
+        $lastInsertId = contentmanagerlogging('Check Welcome Email Already Sent',"Admin Action",serialize($request),''.$user_ID,$user_info->user_email,"pre_action_data");
         $emailaddress_array=explode(",", $request['emailAddress']);
         $usertimezone=intval($request['usertimezone']);
         foreach($emailaddress_array as $key=>$emailaddress){
@@ -6579,11 +6849,57 @@ function exp_autocomplete_all_orders($order_id) {
         
         if (!$order_id)
                 return;
+        
+        
+        global $wpdb;
+        $site_prefix = $wpdb->get_blog_prefix();
+        
+        
+        
+        $get_items_sql =  "SELECT * FROM ".$site_prefix."woocommerce_order_itemmeta where meta_key = '_remaining_balance_order_id' and meta_value=".$order_id;
+        //$myrows = $wpdb->get_results( "SELECT * FROM ".$site_prefix."'woocommerce_order_itemmeta' where meta_key = '_remaining_balance_order_id' and meta_value=".$order_id );
+         
+        $products = $wpdb->get_results($get_items_sql);
+        
+        if(!empty($products))
+            return;
+        
         $orderstatus = "completed";
         //$order = new WC_Order($order_id);
         $order = wc_get_order($order_id);
         $user_ID = get_current_user_id();
         $payment_method = get_post_meta($order->id, '_payment_method', true);
+        
+        
+        
+        //ravenhub additional code -- 01-06-2020////
+        
+        
+        
+	$postid = get_current_user_id();
+	$data = array();                                                                    
+        $getsiteurl = get_site_url();
+        $companyname = get_user_meta($postid, $site_prefix.'company_name',true);
+        
+        
+        $ordersreporturl =  $getsiteurl.'/order-reporting/';
+        $getcodeuro = str_replace("https://","",$getsiteurl);
+        $subscribersID = str_replace("/","-",$getcodeuro);
+        $tasknotificationurl = "https://api.ravenhub.io/company/ahWkagLbTC/subscribers/".$subscribersID."/events/kyVFhfWFtB" ;//$sponsor_info['ContentManager']['ravenhuburls']['tasknotificationtemplates']['url'];
+        $data = array("company_name" => $companyname,"ordersreporturl"=>$ordersreporturl); 
+        $parameter_json = json_encode($data);
+        require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/ravenhub_api_request.php';
+        $ravenhubapirequest = new Revenhubapi();
+        $result_send_notification = $ravenhubapirequest->sendnotifaciton($tasknotificationurl,$parameter_json);
+        
+        $email_body_message_for_admin['ravenhub']['responce'] = $result_send_notification;
+        $email_body_message_for_admin['ravenhub']['requestdata'] = $parameter_json;
+        $email_body_message_for_admin['ravenhub']['requestedurl'] = $tasknotificationurl;
+        
+        
+        //ravenhub additional code -- 01-06-2020////
+        
+        
         
         foreach( $order->get_items() as $item ) {
                       
@@ -6777,7 +7093,6 @@ function exp_autocomplete_all_orders($order_id) {
             
             
         }
-        
         
         if($payment_method == 'cheque'){
                   
@@ -7302,9 +7617,7 @@ function checkloginuserstatus_fun() {
                                    if($actual_link != "https://" . $_SERVER['SERVER_NAME'].'/home/'){
                                        if (strpos($actual_link, 'task-list/') !== false || strpos($actual_link, 'home/') !== false  || strpos($actual_link, 'resources/') !== false || strpos($actual_link, 'registration-codes/') !== false) {
 
-
-
-                                            echo '<script type="text/javascript">swal({title: "Welcome!", type: "success", html:true,showConfirmButton:false,text: "<p>This will serve as your portal for managing all of your pre-show logistics. Click \'Next\' below to view your exhibit/sponsor options.</p><p style=\'margin-top:18px\'><a href='.$redirectURL.' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Next</a></p>"});</script>';
+                                        echo '<script type="text/javascript">swal({title: "Welcome!", type: "success", html:true,showConfirmButton:false,text: "<p>This will serve as your portal for managing all of your pre-show logistics. Click \'Next\' below to view your exhibit/sponsor options.</p><p style=\'margin-top:18px\'><a href='.$redirectURL.' class=\'fusion-button fusion-button-default fusion-button-large fusion-button-round fusion-button-flat\'>Next</a></p>"});</script>';
 
                                        }
                                     }
@@ -7518,6 +7831,10 @@ add_action('rest_api_init', function() {
 		'methods' => 'POST',
 		'callback' => 'updateuser',
 	]);
+         register_rest_route('w1/v1', 'updatetasksdata', [
+		'methods' => 'POST',
+		'callback' => 'updatetasksdata',
+	]);
         
         register_rest_route('w1/v1', 'updatetask', [
 		'methods' => 'POST',
@@ -7527,6 +7844,10 @@ add_action('rest_api_init', function() {
         register_rest_route('w1/v1', 'getuserfields', [
 		'methods' => 'GET',
 		'callback' => 'getuserfields',
+	]);
+        register_rest_route('w1/v1', 'getuserfieldsdata', [
+		'methods' => 'GET',
+		'callback' => 'getuserfieldsdata',
 	]);
         
         register_rest_route('w1/v1', 'getorders', [
@@ -7586,7 +7907,60 @@ function getuserfields(){
     
 }
 
+function getuserfieldsdata(){
+    
+    
+    try {
+    
+        require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/egpl-custome-functions.php';
+        $GetAllcustomefields = new EGPLCustomeFunctions();
+        $additional_fields = $GetAllcustomefields->getAllcustomefields();
+        usort($additional_fields, 'sortByOrder');
+    
+        $index_count=0;
+        foreach ($additional_fields as $key=>$value){
+            
+           
+            if($value['fieldType']!="html" && $value['SystemfieldInternal']!="checked"){
+                
+                
+                $requiredStatus = $value['fieldrequriedstatus'];
+                if($requiredStatus == "checked"){
+                    
+                   $columns_list_attitional['users'][$index_count]['required']  = true; 
+                }else{
+                    
+                   $columns_list_attitional['users'][$index_count]['required']  = false;  
+                }
+                $columns_list_attitional['users'][$index_count]['name']  = $site_prefix.$value['fielduniquekey'];
+                $columns_list_attitional['users'][$index_count]['type']= 'text';//$value['fieldType'];
+                $columns_list_attitional['users'][$index_count]['label']= $value['fieldName'];
+                
+               
+                
+                $index_count++;
+            }
+            
+        }
+     
+        
+    
+    
+    
+     
+     echo json_encode($columns_list_attitional);
+     die();
+    }catch (Exception $e) {
 
+      
+
+        return $e;
+    }
+    
+    
+    
+    
+}
 
 function getorders(){
     
@@ -8141,8 +8515,8 @@ function UpdateNewUser($updateContactUserData){
                         //echo $result_update;
                         //echo  "UPDATE ".$tablename." SET user_login=".$newemail.",user_email=".$newemail." WHERE ID=".$userid."";
                         
-                        $t = time();
-                        update_user_option($user_id, 'profile_updated', $t*1000);
+                       // $t = time();
+                       // update_user_option($user_id, 'profile_updated', $t*1000);
 
                     }
 
@@ -8156,7 +8530,8 @@ function UpdateNewUser($updateContactUserData){
                 
                 
             }
-            update_user_option($user_id, 'profile_updated', $t*1000);
+            //$t = time();
+            //update_user_option($user_id, 'profile_updated', $t*1000);
             updateregistredUserMeta($user_id,$updateContactUserData,$role);
             
             $responce['id'] = time()*1000;
@@ -8191,6 +8566,7 @@ function CreateNewUser($newContactUserData){
     $user_id = username_exists($newContactUserData->username);
     $role = $newContactUserData->Role;
     $email = $newContactUserData->username;
+    $t=time();
     $roleKeyValue = "";
             if (is_multisite()) {
                 $blog_id = get_current_blog_id();
@@ -8225,8 +8601,8 @@ function CreateNewUser($newContactUserData){
 
         $useremail='';
         // custome_email_send($user_id,$newContactUserData->Semail,"welcome_email_template");
-        // $t=time();
-         update_user_option($user_id, 'profile_updated', $t*1000);
+         
+        // update_user_option($user_id, 'profile_updated', $t*1000);
          updateregistredUserMeta($user_id,$newContactUserData,$role);
          if (add_user_to_blog($blogid, $user_id, $role)) {
 
@@ -8291,8 +8667,8 @@ function CreateNewUser($newContactUserData){
                
                     $useremail='';
                    // custome_email_send($user_id,$email,"welcome_email_template");
-                   // $t=time();
-                    update_user_option($user_id, 'profile_updated', $t*1000);
+                    //$t=time();
+                    //update_user_option($user_id, 'profile_updated', $t*1000);
                     updateregistredUserMeta($user_id,$newContactUserData,$role);
                 
                 $message['message'] =  'User added to this blog.';
@@ -8348,9 +8724,9 @@ function updatetask(){
     
     try {
             
-        
-        $newContactUserData =  json_decode(file_get_contents('php://input')) ;
-        
+       
+       // $newContactUserData =  $_POST['taskename'];//json_decode(file_get_contents('php://input')) ;
+  $newContactUserData =  json_decode(file_get_contents('php://input')) ;       
         $taskkey = $newContactUserData->taskkey;
         $getkeyinformation  = gettasktype($taskkey);
         
@@ -8506,6 +8882,373 @@ function updatetask(){
     
 }
 
+function updatetasksdata(){
+    
+    try {
+            
+        
+        $newContactUserData =  json_decode(file_get_contents('php://input')) ;
+        
+        $mainfinalArray = [];
+        
+        $taskkey = $newContactUserData->taskkey;
+        $userfields = $newContactUserData->userfieds;
+        
+        //$taskkey = "Company Description,Company Logo,Company Name for Print,Company Website";//$newContactUserData->taskkey;
+        //$userfields = "Does NOT receive attendee list,Do NOT List as Sponsor,Booth";//$newContactUserData->userfieds;
+        
+        
+        if (strpos($taskkey, ',') !== false) {
+            
+            $taskkeyArray =  explode(",",$taskkey);
+            foreach ($taskkeyArray as $keys=>$keystitle) {
+                
+                $taskdataArray = gettaskdatabyarray($keystitle);
+                
+                if(!empty($taskdataArray)){
+                    
+                   
+                    $mainfinalArray = array_merge_recursive($mainfinalArray,$taskdataArray);
+                   
+                   
+                    
+                }
+               
+                
+            }
+            
+        }else{
+            
+            
+          $taskdataArray = gettaskdatabyarray($taskkey);
+          if(!empty($taskdataArray)){
+                    
+                   
+                    $mainfinalArray = array_merge_recursive($mainfinalArray,$taskdataArray);
+                   
+                   
+                    
+                }
+        }
+       
+        
+        if(!empty($userfields)){
+            
+            if (strpos($userfields, ',') !== false) {
+            
+                $userfieldsArray =  explode(",",$userfields);
+                foreach ($userfieldsArray as $keys=>$keystitle) {
+                
+                    $userfieldsArray = gettaskdatabyarray($keystitle);
+                    if(!empty($userfieldsArray)){
+                         
+                          $mainfinalArray = array_merge_recursive($mainfinalArray,$userfieldsArray);
+                         
+                     }
+                }
+                
+            }else{
+            
+                $userfieldsArray = gettaskdatabyarray($userfields);
+                if(!empty($userfieldsArray)){
+                         
+                          $mainfinalArray = array_merge_recursive($mainfinalArray,$userfieldsArray);
+                         
+                     }
+            }
+            
+        }
+        
+       // print_r($mainfinalArray);
+        $result_final_array =  json_encode($mainfinalArray);
+        
+        echo $result_final_array;
+        
+        die();
+        
+    }catch (Exception $e) {
+
+        contentmanagerlogging_file_upload($lastInsertId, serialize($e));
+
+        return $e;
+    }
+
+ 
+    
+       
+    
+}
+
+function gettaskdatabyarray($taskkey){
+    
+        global $wpdb;
+        
+        $site_prefix = $wpdb->get_blog_prefix();
+        $user_query = new WP_User_Query( array( 'role__not_in' => 'Administrator' ) );
+        $authors = $user_query->get_results();
+        
+        
+        $mainArrayIndex = 0;
+        $contactIDkey = $site_prefix."external_reference_id_zapier";
+                    
+        $arrayMonth['Jan']='01';
+        $arrayMonth['Feb']='02';
+        $arrayMonth['Mar']='03';
+        $arrayMonth['Apr']='04';
+        $arrayMonth['May']='05';
+        $arrayMonth['Jun']='06';
+        $arrayMonth['Jul']='07';
+        $arrayMonth['Aug']='08';
+        $arrayMonth['Sep']='09';
+        $arrayMonth['Oct']='10';
+        $arrayMonth['Nov']='11';
+        $arrayMonth['Dec']='12';
+        
+        $getkeyinformation  = gettasktype($taskkey);
+        
+        if($getkeyinformation['responce'] != "invaild"){
+        foreach ($authors as $userKey=>$aid) {
+             
+            
+             $user_data = get_userdata($aid->ID);
+             $all_meta_for_user = get_user_meta($aid->ID);
+             $fiekldlable = str_replace(' ', '-', strtolower($taskkey));
+            
+                   
+             if($getkeyinformation['fieldtype'] == 'customfield'){
+                 
+                $dataandtime = $all_meta_for_user[$site_prefix.'profile_updated'][0]/1000;
+               
+                
+                $createuniqueKey = date('YmdHis', $dataandtime);
+              
+               
+                
+             if($getkeyinformation['type'] == 'fileupload'){
+                 
+                 $file_info   = unserialize($all_meta_for_user[$getkeyinformation['key']][0]);
+                
+                
+                 
+                
+                 
+                 if(!empty($file_info)&& !empty($all_meta_for_user[$contactIDkey][0])){
+                     
+                     $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$createuniqueKey;
+                     $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = $file_info['url'];
+                     $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                     $columns_rows_dataFinalData[$mainArrayIndex]['label'] = $taskkey.' - '.date("Y-m-d", $dataandtime).' - '.$all_meta_for_user[$contactIDkey][0];
+                     $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
+                     $columns_rows_dataFinalData[$mainArrayIndex]['created'] =  date("Y-m-d H:i:s", $dataandtime);//date('d-M-Y H:i:s', $dataandtime);
+                     $mainArrayIndex++;
+                 }
+                 
+                }else{
+                    
+                        if(!empty($dataandtime) && !empty($all_meta_for_user[$contactIDkey][0])){
+                            
+                            $dataandtime = $all_meta_for_user[$site_prefix.'profile_updated'][0]/1000;
+                            $createuniqueKey = date('YmdHis', $dataandtime);
+                            
+                            $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$createuniqueKey;
+                            $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                            $columns_rows_dataFinalData[$mainArrayIndex]['label'] = $taskkey.' - '.date("Y-m-d", $dataandtime).' - '.$all_meta_for_user[$contactIDkey][0];
+                    
+                            $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = $all_meta_for_user[$getkeyinformation['key']][0];
+                            $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
+                            $columns_rows_dataFinalData[$mainArrayIndex]['created'] = date("Y-m-d H:i:s", $dataandtime);//date('d-M-Y H:i:s', $dataandtime);
+                            $mainArrayIndex++;
+                        }
+                 
+                 
+                }
+             }else{
+                 
+                  if($getkeyinformation['type'] == 'color'){
+                      
+                      
+                      
+                      
+                      $file_info = unserialize($all_meta_for_user[$getkeyinformation['key']][0]);
+                      $dateandtime =$all_meta_for_user[$getkeyinformation['key'].'_datetime'][0];
+                      $dateData1 = explode(" ",$dateandtime);
+                      $dateData2 = explode("-",$dateData1[0]);
+                      $dateData3 = explode(":",$dateData1[1]);
+                      
+                     
+                      
+                    //  $stortnewdatetime = $arrayMonth[$dateData2[1]]
+                    //  echo $stortnewdatetime;
+                      
+                      $updateDateformat = $dateData2[2].$arrayMonth[$dateData2[1]].$dateData2[0].$dateData3[0].$dateData3[1]."15";
+                      
+                      if (!empty($file_info)&& !empty($all_meta_for_user[$contactIDkey][0])) {
+                          
+                          
+                         
+                          
+                           $stortnewdatetime = $dateData2[2].'-'.$arrayMonth[$dateData2[1]].'-'.$dateData2[0].' '.$dateData3[0].':'.$dateData3[1].':00';
+                           $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$updateDateformat;
+                           $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                           $columns_rows_dataFinalData[$mainArrayIndex]['label'] = $taskkey.' - '.date("Y-m-d", strtotime($stortnewdatetime)).' - '.$all_meta_for_user[$contactIDkey][0];
+                    
+                           $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = $file_info['url'];
+                           $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
+                           $columns_rows_dataFinalData[$mainArrayIndex]['created'] = date("Y-m-d H:i:s", strtotime($stortnewdatetime));//$dateandtime;
+                           $mainArrayIndex++;
+                          
+                      }
+                      
+                      
+                  }else if($getkeyinformation['type'] == 'select-2'){
+                      
+                      $dateandtime =$all_meta_for_user[$getkeyinformation['key'].'_datetime'][0];
+                   
+                     $createuniqueKey = strtotime($dataandtime);
+                     if(!empty($dateandtime) && !empty($all_meta_for_user[$contactIDkey][0])){
+                         
+                        $dateData1 = explode(" ",$dateandtime);
+                        $dateData2 = explode("-",$dateData1[0]);
+                        $dateData3 = explode(":",$dateData1[1]);
+                        
+                        
+                        
+                        //echo $dateandtime.'<br>';
+                       $stortnewdatetime = $dateData2[2].'-'.$arrayMonth[$dateData2[1]].'-'.$dateData2[0].' '.$dateData3[0].':'.$dateData3[1].':00';
+                       // echo $stortnewdatetime.'<br>';
+                        //echo strtotime($stortnewdatetime).'<br>';
+                        //echo date("Y-m-d H:i:s", strtotime($stortnewdatetime)).'<br>';
+                        
+                        
+                        $updateDateformat = $dateData2[2].$arrayMonth[$dateData2[1]].$dateData2[0].$dateData3[0].$dateData3[1]."15";
+
+                        $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$updateDateformat;
+                        $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                        $columns_rows_dataFinalData[$mainArrayIndex]['label'] = $taskkey.' - '.date("Y-m-d", strtotime($stortnewdatetime)).' - '.$all_meta_for_user[$contactIDkey][0];
+                        
+                        
+                        if($getkeyinformation['additional_attribute'] == "checked" ){
+                            
+                            
+                            $arraysofmultiselect =  unserialize($all_meta_for_user[$getkeyinformation['key']][0]); 
+                           
+                              foreach ($arraysofmultiselect as $multivalueIndex=>$multivalue){
+                               $mutivalues .=$arraysofmultiselect[$multivalueIndex].',';
+                               
+                               
+                           }
+                            
+                            
+                        }else{
+                            
+                            $mutivalues =  $all_meta_for_user[$getkeyinformation['key']][0]; 
+                            
+                        }
+                        
+                        
+                        
+                        $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = rtrim($mutivalues,',');
+                        $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
+                        $columns_rows_dataFinalData[$mainArrayIndex]['created'] = date("Y-m-d H:i:s", strtotime($stortnewdatetime));
+                        $mainArrayIndex++;
+                     }
+                      
+                      
+                  }else if($getkeyinformation['type'] == 'multivaluedtask'){
+                      
+                      $dateandtime =$all_meta_for_user[$getkeyinformation['key'].'_datetime'][0];
+                   
+                     $createuniqueKey = strtotime($dataandtime);
+                     if(!empty($dateandtime) && !empty($all_meta_for_user[$contactIDkey][0])){
+                         
+                        $dateData1 = explode(" ",$dateandtime);
+                        $dateData2 = explode("-",$dateData1[0]);
+                        $dateData3 = explode(":",$dateData1[1]);
+                        
+                        
+                        
+                        //echo $dateandtime.'<br>';
+                       $stortnewdatetime = $dateData2[2].'-'.$arrayMonth[$dateData2[1]].'-'.$dateData2[0].' '.$dateData3[0].':'.$dateData3[1].':00';
+                       // echo $stortnewdatetime.'<br>';
+                        //echo strtotime($stortnewdatetime).'<br>';
+                        //echo date("Y-m-d H:i:s", strtotime($stortnewdatetime)).'<br>';
+                        
+                        
+                        $updateDateformat = $dateData2[2].$arrayMonth[$dateData2[1]].$dateData2[0].$dateData3[0].$dateData3[1]."15";
+
+                        $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$updateDateformat;
+                        $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                        $columns_rows_dataFinalData[$mainArrayIndex]['label'] = $taskkey.' - '.date("Y-m-d", strtotime($stortnewdatetime)).' - '.$all_meta_for_user[$contactIDkey][0];
+                        
+                        $multivaluetaskarray = json_decode($all_meta_for_user[$getkeyinformation['key']][0]);
+                        foreach ($multivaluetaskarray as $multivalueIndex=>$multivalue){
+                                                        
+                            $multitaskvalues.=$multivaluetaskarray[$multivalueIndex].",";
+                        }
+                                                 
+                        
+                        $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = rtrim($multitaskvalues, ',');
+                        $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
+                        $columns_rows_dataFinalData[$mainArrayIndex]['created'] = date("Y-m-d H:i:s", strtotime($stortnewdatetime));
+                        $mainArrayIndex++;
+                     }
+                      
+                      
+                  }else{
+                      
+                     $dateandtime =$all_meta_for_user[$getkeyinformation['key'].'_datetime'][0];
+                   
+                     $createuniqueKey = strtotime($dataandtime);
+                     if(!empty($dateandtime) && !empty($all_meta_for_user[$contactIDkey][0])){
+                         
+                        $dateData1 = explode(" ",$dateandtime);
+                        $dateData2 = explode("-",$dateData1[0]);
+                        $dateData3 = explode(":",$dateData1[1]);
+                        
+                        
+                        
+                        //echo $dateandtime.'<br>';
+                       $stortnewdatetime = $dateData2[2].'-'.$arrayMonth[$dateData2[1]].'-'.$dateData2[0].' '.$dateData3[0].':'.$dateData3[1].':00';
+                       // echo $stortnewdatetime.'<br>';
+                        //echo strtotime($stortnewdatetime).'<br>';
+                        //echo date("Y-m-d H:i:s", strtotime($stortnewdatetime)).'<br>';
+                        
+                        
+                        $updateDateformat = $dateData2[2].$arrayMonth[$dateData2[1]].$dateData2[0].$dateData3[0].$dateData3[1]."15";
+
+                        $columns_rows_dataFinalData[$mainArrayIndex]['id'] = $aid->ID.$updateDateformat;
+                        $columns_rows_dataFinalData[$mainArrayIndex]['taskname'] = $taskkey;
+                        $columns_rows_dataFinalData[$mainArrayIndex]['label'] = $taskkey.' - '.date("Y-m-d", strtotime($stortnewdatetime)).' - '.$all_meta_for_user[$contactIDkey][0];
+                    
+                        $columns_rows_dataFinalData[$mainArrayIndex]['taskvalue'] = $all_meta_for_user[$getkeyinformation['key']][0];
+                        $columns_rows_dataFinalData[$mainArrayIndex]['external_reference_id_zapier'] = $all_meta_for_user[$contactIDkey][0];
+                        $columns_rows_dataFinalData[$mainArrayIndex]['created'] = date("Y-m-d H:i:s", strtotime($stortnewdatetime));
+                        $mainArrayIndex++;
+                     }
+                    }
+                }
+            }
+        
+        if(empty($columns_rows_dataFinalData)){
+            
+              $resutl =array();
+              //echo $resutl;
+        }else{
+          //  $columns_rows_dataFinalData =  (object) $columns_rows_dataFinalData;
+            $resutl =  $columns_rows_dataFinalData;
+          
+        }
+        
+        }else{
+            
+             $resutl =array();
+            //echo $resutl;
+           
+        }
+        
+        return $resutl;
+    
+}
 function gettasktype($taskkey){
     
         
@@ -8553,12 +9296,13 @@ function gettasktype($taskkey){
             $value_type = get_post_meta( $tasksID, 'type' , true);
             $value_key = get_post_meta( $tasksID, 'key', true);
             $label = get_post_meta( $tasksID, 'label', true);
-            
+            $additional_attribute = get_post_meta( $tasksID, 'multiselectstatus', true);
             if($label == $taskkey){
                 
                 $getOrginalData['key'] = $value_key;
                 $getOrginalData['type'] = $value_type;
                 $getOrginalData['fieldtype'] = 'task';
+                $getOrginalData['additional_attribute'] = $additional_attribute;
                 $getOrginalData['responce'] = "ok";
                 
             }
@@ -8569,6 +9313,9 @@ function gettasktype($taskkey){
     }
     return $getOrginalData;
 }
+
+
+///-----------------Expogenie API Endpoints ---------------------///
 
 //[siturl]
 function currentsiteurl_func( $atts ){

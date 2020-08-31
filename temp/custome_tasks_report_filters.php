@@ -2,7 +2,7 @@
 // Template Name: Bulk Edit Task 
 if (current_user_can('administrator') || current_user_can('contentmanager')) {
     
-    $user_reportsaved_list = get_option('ContenteManager_usersreport_settings');
+    $user_reportsaved_list = get_option('ContenteManager_userstasksreport_settings');
     $get_email_template='AR_Contentmanager_Email_Template';
     $email_template_data = get_option($get_email_template);
     $content = "";
@@ -64,7 +64,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                 
                 
             <?php } ?>
-                <form action="<?php echo $base_url;?>/custome_task_report/?report=run" method="post"  id="runreportresult"  >
+                <form action="<?php echo $base_url;?>/custom_task_report/?report=run" method="post"  id="runreportresult"  >
                     
                     <input type="hidden" id='usertimezone-hiddenfield' name='usertimezone-hiddenfield' value='' > 
                     <input type="hidden" id='filterdata-hiddenfield' name='filterdata-hiddenfield'value="" > 
@@ -109,7 +109,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
 
                                         <div class="col-md-6">
 
-                                            <form method="post" action="javascript:void(0);" onSubmit="user_report_savefilters()">    	
+                                            <form method="post" action="javascript:void(0);" onSubmit="user_taskreport_savefilters()">    	
                                                 <div class="form-group">
                                                     <div class="input-group">
                                                         <input style="height: 38px;" placeholder="Report Name" id="userreportname" type="text" class="form-control" required>
@@ -214,7 +214,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     <script type="text/javascript" src="/wp-content/plugins/EGPL/js/query-builder.js?v=2.19"></script>
 
 
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/task_report_filters.js?v=2.37"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/task_report_filters.js?v=2.41"></script>
 
     <?php
 } else {

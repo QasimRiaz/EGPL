@@ -2,7 +2,7 @@
 // Template Name: Sponsor Task Update 
  
    
-      get_header();
+    get_header();
 		
      
      $sponsor_id = get_current_user_id(); 
@@ -42,6 +42,18 @@
       global $wp_roles;
       $site_url  = get_site_url();
       $all_roles = $wp_roles->get_names();
+      
+      function getRandomString($length = 8) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $string = '';
+
+    for ($i = 0; $i < $length; $i++) {
+        $string .= $characters[mt_rand(0, strlen($characters) - 1)];
+    }
+
+    return $string;
+    }
+//      
      ?>
           <script>
         
@@ -51,7 +63,7 @@
         
         
     </script> 
-    
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .content{
             
@@ -60,7 +72,14 @@
             color:#fff !important;
             padding:0px !important;
         }
-        
+        .select2-container--default .select2-results__option {
+    
+            color: #333 !important;
+        }
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            border: solid #d2d2d2 1px !important;
+          
+        }
     </style>    
 <div id="content" class="full-width">
 
@@ -112,7 +131,7 @@
                                     $value_lin_url = get_post_meta( $tasksID, 'link_url' , false);
                                     $value_linkname = get_post_meta( $tasksID, 'linkname', false);
                                     $value_attr = get_post_meta( $tasksID, 'duedate', false);
-                                    
+                                    $multivaluetasklimit = get_post_meta( $tasksID, 'multivaluetasklimit', true);
                                    
                                     
                                     
@@ -122,6 +141,7 @@
                                     $value_roles = get_post_meta( $tasksID, 'roles' , false);
                                     $value_usersids = get_post_meta( $tasksID, 'usersids' , false);
                                     $value_descrpition = get_post_meta( $tasksID, 'descrpition', false);
+                                    $value_multiselectstatus = get_post_meta( $tasksID, 'multiselectstatus', false);
                                     $value_key = get_post_meta( $tasksID, 'key', false);
                                     $profile_field_name  = $value_key[0];
                                     $profile_field_settings['value'] = $value_value[0];
@@ -143,11 +163,11 @@
                                     $profile_field_settings['roles'] =$value_roles[0];
                                     $profile_field_settings['usersids'] =$value_usersids[0];
                                     $profile_field_settings['descrpition'] =$value_descrpition[0];
-                                    
+                                    $profile_field_settings['multiselectstatus'] =$value_multiselectstatus[0];
                                   
                                     
                                     
-                                    if($profile_field_settings['type'] == "select-2"){
+                                    if($profile_field_settings['type'] == "select-2" || $profile_field_settings['type'] == "multiselect"){
                                         
                                             $getarraysValue = get_post_meta( $tasksID, 'options', false);
                                             
@@ -228,18 +248,144 @@
                    }
                    
                   
+                   
+                   $taskdescription = stripslashes($profile_field_settings['descrpition']);
+                   $field_key_string =  getInbetweenStrings('{', '}', $taskdescription);
+                   $all_meta_for_user = get_user_meta($sponsor_id);
+                   
+                   $site_url = get_option('siteurl' );
+                    $login_url = get_option('siteurl' );
+                    $admin_email= get_option('admin_email');
+                    $datetest=  date("Y-m-d");
+                    $timetest=  date('H:i:s');
+                    $sitetitle = get_bloginfo( 'name' );
+                   $userdata = get_userdata($sponsor_id);
+                   
+                   
+                   foreach($field_key_string as $index=>$keyvalue){
+                
+                        
+                     
+                      
+                      if($keyvalue == 'wp_user_id' || $keyvalue == 'Semail' || $keyvalue == 'Role' || $keyvalue == 'site_title' || $keyvalue == 'date' || $keyvalue == 'time' || $keyvalue == 'site_url' || $keyvalue == 'user_pass'|| $keyvalue == 'user_login'){
+                      
+                          
+                     if($keyvalue == 'user_login'){
+                          
+                       
+                           
+                          $taskdescription = str_replace("{user_login}",$userdata->user_login,$taskdescription);
+                         
+                          
+                      }elseif($keyvalue == 'Role'){
+                          
+                        
+                          $user_id = $userdata->ID;
+                          $getcurrentuserdata = get_userdata( $user_id );
+                          $blog_id = get_current_blog_id();
+                          $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+                          $get_all_roles = get_option($get_all_roles_array);
+                          
+                         
+                          
+                          foreach ($get_all_roles as $key => $name) {
+                              
+                              if(implode(', ', $getcurrentuserdata->roles) == $key){
+                                  
+                                  $currentuserRole = $name['name'];
+                              }
+                          }
+                         // $data_field_array[] = array('name'=>$index,'content'=>$currentuserRole); 
+                          
+                          $taskdescription = str_replace("{level}",$currentuserRole,$taskdescription);
+                      }elseif($keyvalue == 'Semail'){
+                          
+                           $taskdescription = str_replace("{email}",$userdata->user_email ,$taskdescription);
+                         // $data_field_array[] = array('name'=>$index,'content'=>$email_address); 
+                      }elseif($keyvalue == 'wp_user_id'){
+                          
+                           $taskdescription = str_replace("{user_id}",$userdata->ID,$taskdescription);
+                          //$data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
+                      }elseif($keyvalue == 'date'){
+                          
+                           $taskdescription = str_replace("{date}",$datetest,$taskdescription);
+                          //$data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
+                      }elseif($keyvalue == 'time'){
+                          
+                           $taskdescription = str_replace("{time}",$timetest,$taskdescription);
+                          //$data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
+                      }elseif($keyvalue == 'site_title'){
+                          
+                           $taskdescription = str_replace("{site_title}",$sitetitle,$taskdescription);
+                          //$data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
+                      }elseif($keyvalue == 'site_url'){
+                          
+                           $taskdescription = str_replace("{site_url}",$site_url,$taskdescription);
+                          //$data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
+                      }
+                      
+                      
+                      
+                   }else{
+                       
+                       
+                      
+                       
+                       $keyvalueforadd = "{".$index."}";
+                     
+                       
+                       if (!empty($all_meta_for_user[$keyvalue][0])) {
+                           
+                          
+                          $getfieldType = getcustomefieldKeyValue($keyvalue,"fieldType");
+                        
+                          
+                          
+                        if($getfieldType == 'date') {
+                            
+                          $date_value =   date('d-m-Y', intval($all_meta_for_user[$keyvalue][0]/1000));
+                          //$data_field_array[] = array('name'=>$index,'content'=>$date_value);
+                          $taskdescription = str_replace($keyvalueforadd,$date_value,$taskdescription);
+                        } else{
+                             
+                                 
+                               // $data_field_array[] = array('name'=>$index,'content'=> $all_meta_for_user[$keyvalue][0]);  
+                                
+                            
+                                $taskdescription = str_replace($keyvalueforadd,$all_meta_for_user[$keyvalue][0],$taskdescription);
+                        }
+                       }else{
+                           
+                                $taskdescription = str_replace($keyvalueforadd,"",$taskdescription);
+                          
+                       }
+                  
+                      
+                     
+                      
+                      
+                     
+                   
+                 
+                 
+                 
+                   }}
+                       
+                   
+                    
+                   
                    if ($result_date <= 0) {
 
-                       $duedate_html = '<td class="duedate"  data-order="' . $timestamp_task_data . '" >' . $profile_field_settings['attrs'] . '</td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . stripslashes($profile_field_settings['descrpition']) . '</td>';
+                       $duedate_html = '<td class="duedate"  data-order="' . $timestamp_task_data . '" >' . $profile_field_settings['attrs'] . '</td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . $taskdescription . '</td>';
                    
                        
                    } else {
                      
-                       $duedate_html = '<tr class="overdue"><td  data-order="' . $timestamp_task_data . '" class="duedate ' . $profile_field_name . '_status">' . $profile_field_settings['attrs'] . ' <span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-flag" style="color:#5D5858;"></i></span></td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . stripslashes($profile_field_settings['descrpition']) . '</td>';
+                       $duedate_html = '<tr class="overdue"><td  data-order="' . $timestamp_task_data . '" class="duedate ' . $profile_field_name . '_status">' . $profile_field_settings['attrs'] . ' <span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-flag" style="color:#5D5858;"></i></span></td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . $taskdescription . '</td>';
                        
                        
                    }
-                   
+                  
                     switch ($profile_field_settings['type']) {
                         
                         
@@ -321,12 +467,19 @@
                            $multi = ((isset($profile_field_settings['allow_multi']) && $profile_field_settings['allow_multi'] == 'yes') || ($mode == 'adduser')) ? '[]' : '';
                            $multiple = (isset($profile_field_settings['allow_multi']) && $profile_field_settings['allow_multi'] == 'yes') ? ' multiple="multiple"' : '';
                            $size = (!isset($profile_field_settings['size']) || $profile_field_settings['size'] < 1) ? ' size="1"' : ' size="' . $profile_field_settings['size'] . '"';
-                           $action_col .= '<select '.$fields_staus_type.' name="' . $profile_field_name . $multi . '" id="' . $profile_field_name . $multi . '" class="selectclass"';
+                           $action_col .= '<select style="width: 100% !important;height:36px !important;" '.$fields_staus_type.' name="' . $profile_field_name . $multi . '" id="' . $profile_field_name . $multi . '" class="selectclass egpl_single_select2"';
                           
                            if ($profile_field_settings['required'] == 'yes')
                                $field_html .= ' required="required"';
                            if (!empty($profile_field_settings['attrs']))
                            //$field_html .= ' ' . stripslashes(htmlspecialchars_decode($profile_field_settings['attrs']));
+                               
+                            if($profile_field_settings['multiselectstatus'] == "checked"){
+                                
+                                $action_col .= 'multiple="multiple"';
+                                
+                            }   
+                               
                                $action_col .= $multiple . $size . $form_tag . '>' . "\n";
                            foreach ($profile_field_settings['options'] as $option => $option_settings):
                                if (!empty($option_settings->label)):
@@ -340,6 +493,58 @@
 
                            $action_col .= "</select>\n";
                            break;
+                     case 'multiselect':
+                                      
+                           $action_col .= '<select style="width: 100% !important;" class="egpl_single_select2" '.$fields_staus_type.' name="' . $profile_field_name . $multi . '" id="' . $profile_field_name . '" multiple="multiple"';
+                          
+                           
+                               $action_col .=  '>' . "\n";
+                           foreach ($profile_field_settings['options'] as $option => $option_settings):
+                               if (!empty($option_settings->label)):
+                                   $action_col .= '<option value="' . htmlspecialchars(stripslashes($option_settings->value)) . '"';
+                                   if ((!is_array($value) && $option_settings->value == $value) || (is_array($value) && in_array($option_settings->value, $value)) || (($mode == 'register' || $mode == 'adduser') && ($option_settings->state == 'checked')))
+                                       $action_col .= ' selected="selected"';
+                                   $action_col .= '>' . stripslashes($option_settings->label) . '</option>';
+        
+                               endif;
+                           endforeach;
+
+                           $action_col .= "</select>\n";
+                           break;
+                     case 'multivaluedtask':
+                           $profile_field_nameArray = $profile_field_name."[]";
+                           $profile_field_namespecial = "'".$profile_field_name."'";
+                           $multivaluetasklimit =  "'".$multivaluetasklimit."'";
+                           $randomnumber =getRandomString(8);
+                           $multivaluetaskarray = json_decode($value);
+                           
+                           $action_col .= '<div class="multivaluetask_'.$profile_field_name.'">';
+                            //unset($multivaluetaskarray[0]);
+                           if(sizeof($multivaluetaskarray) >0){
+                           foreach ($multivaluetaskarray as $multivalueIndex=>$multivalue){
+                               $randomnumber ="'".getRandomString(8)."'";
+                               $action_col .= '<p id='.$randomnumber.'><input '.$fields_staus_type.' value="'.htmlspecialchars($multivaluetaskarray[$multivalueIndex]).'" style="width: 80% !important;margin-top: 1px;"  class="myclass specialcountclass_'.$profile_field_name.'  speicaltaskmulittask_'.$profile_field_name.'" type="text" name="' . $profile_field_nameArray.'" /> <button '.$fields_staus_type.' style="width: 17%;" class="speicaltaskmulittask_'.$profile_field_name.' btn btn-danger btn-small" onclick="removethisvaluetask('.$randomnumber.')" title="Delete"><i class="fas fa-trash"></i></button></p>';
+    
+                               
+                           }
+                           
+                           
+                           }else{
+                               
+                               $baseurl ="'bassfieldtype'";
+                               $action_col .= '<p id='.$baseurl.'><input '.$fields_staus_type.' style="width: 80% !important;margin-top: 1px;"  class="myclass specialcountclass_'.$profile_field_name.' speicaltaskmulittask_'.$profile_field_name.' " type="text" name="' . $profile_field_nameArray;
+                               $action_col .= '" value="'.htmlspecialchars($multivaluetaskarray[0]).'" ><button '.$fields_staus_type.' style="width: 17%;" class="speicaltaskmulittask_'.$profile_field_name.' btn btn-danger btn-small" onclick="removethisvaluetask('.$baseurl.')" title="Delete"><i class="fas fa-trash"></i></button></p>';
+                               
+                               
+                           }
+                            $action_col .="</div>";
+                           $action_col .= '<p><button '.$fields_staus_type.' style="width: 27%;float: right;" class="speicaltaskmulittask_'.$profile_field_name.' disableclassbutton_'.$profile_field_name.' btn btn-info btn-small" onclick="addnewmultivalueinput('.$profile_field_namespecial.','.$multivaluetasklimit.')" title="Add">Add <i class="fas fa-plus" ></i></button></p>'; 
+                           
+                          
+                           
+                          
+                           break;
+                       
                      case 'link':
                         // echo $profile_field_settings['lin_url'] ;exit;
                            $action_col .= '<a href="' . $profile_field_settings['lin_url'] . '"target="_blank" ';
@@ -353,7 +558,7 @@
                    
                     
                     
-                   
+                   $type = "'".$profile_field_settings['type']."'";
                    $background_color='';
                    if($status_value == 'Complete'){
                                 $special_check_buttons_status_remove = 'class="fusion-li-icon fa fa-times-circle fa-2x specialremoveiconenable" ';
@@ -375,8 +580,8 @@
                     }else{
                             
                             
-                            $status_col .= '<table><tr style="background-color: transparent;" ><td><button onclick="update_user_meta_custome(this)"  id="update_' . $profile_field_name . '_status" '.$special_check_buttons_status_submit.'  data-style="shrink" data-horizontal>'.$submit_button_text.'</button></td>';
-                            $status_col .= '<td><i  name="'.$profile_field_name.'" data-toggle="tooltip" title="Remove this task" onclick="remove_task_value_readyfornew(this)" name="'.$profile_field_name.'" '.$special_check_buttons_status_remove.' id="update_' . $profile_field_name . '_remove"   ></i><td></tr></table>';
+                            $status_col .= '<table><tr style="background-color: transparent;" ><td><button onclick="update_user_meta_custome(this,'.$type.')"  id="update_' . $profile_field_name . '_status" '.$special_check_buttons_status_submit.'  data-style="shrink" data-horizontal>'.$submit_button_text.'</button></td>';
+                            $status_col .= '<td><i  name="'.$profile_field_name.'" data-toggle="tooltip" title="Remove this task" onclick="remove_task_value_readyfornew(this,'.$type.')" name="'.$profile_field_name.'" '.$special_check_buttons_status_remove.' id="update_' . $profile_field_name . '_remove"   ></i><td></tr></table>';
                     
                             
                     }
@@ -415,3 +620,14 @@
     get_footer(); 
 
 ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    
+    <script>
+    
+    jQuery(document).ready(function() {
+    jQuery('.egpl_single_select2').select2();
+    });
+    
+    
+    </script>

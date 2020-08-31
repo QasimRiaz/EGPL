@@ -119,16 +119,20 @@ jQuery(window).load(function() {
           console.log(col01);
         var col1 = '<div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"><i class="hi-icon fa fa-clone saveeverything" id="'+uniquecode+'" title="Create a clone" onclick="clonebulk_fields(this)" style="color:#262626;cursor: pointer;" data-toggle="tooltip" aria-hidden="true"></i> <i data-toggle="tooltip" title="Field Settings" name="'+uniquecode+'" onclick="bulkfieldsettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i><i name="'+uniquecode+'" data-toggle="tooltip" style=" cursor: pointer;margin-left: 10px;" onclick="removebulk_fields(this)" title="Remove this field" class="hi-icon fusion-li-icon fa fa-times-circle " style="color:#262626;"></i></div>';
         
-        var col2 = '<input data-toggle="tooltip" placeholder="Title" title="Title" id="row-'+uniquecode+'-title" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control" name="tasklabel" >  <input type="hidden" id="row-'+uniquecode+'-fieldCode" value=""><input type="hidden" id="row-'+uniquecode+'-Systemfield"  value="" ><input type="hidden" id="row-'+uniquecode+'-fieldtooltip"  value="" > <input type="hidden" id="row-'+uniquecode+'-SystemfieldInternal"  value="" > <input type="hidden" id="row-'+uniquecode+'-fieldstatusrequried"  value="" ><input type="hidden" id="row-'+uniquecode+'-fieldstatusshowonregform"  value="" ><input type="hidden" id="row-'+uniquecode+'-fieldplaceholder"  value="" > <input type="hidden" id="row-'+uniquecode+'-attribute"  value="" ><input type="hidden" id="row-'+uniquecode+'-fielduniquekey"  value="" ><input type="hidden" id="row-'+uniquecode+'-linkurl"  value="" ><input type="hidden" id="row-'+uniquecode+'-linkname"  value="" ><input type="hidden" id="row-'+uniquecode+'-multiselect"  value="" > <input type="hidden" id="row-'+uniquecode+'-dropdownvlaues"  value="" >';
+        var col2 = '<input data-toggle="tooltip" placeholder="Title" title="Title" id="row-'+uniquecode+'-title" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control" name="tasklabel" >  <input type="hidden" id="row-'+uniquecode+'-fieldCode" value=""><input type="hidden" id="row-'+uniquecode+'-Systemfield"  value="" ><input type="hidden" id="row-'+uniquecode+'-fieldtooltip"  value="" > <input type="hidden" id="row-'+uniquecode+'-SystemfieldInternal"  value="" > <input type="hidden" id="row-'+uniquecode+'-fieldstatusrequried"  value="" ><input type="hidden" id="row-'+uniquecode+'-fieldplaceholder"  value="" > <input type="hidden" id="row-'+uniquecode+'-attribute"  value="" ><input type="hidden" id="row-'+uniquecode+'-fielduniquekey"  value="" ><input type="hidden" id="row-'+uniquecode+'-linkurl"  value="" ><input type="hidden" id="row-'+uniquecode+'-linkname"  value="" ><input type="hidden" id="row-'+uniquecode+'-multiselect"  value="" > <input type="hidden" id="row-'+uniquecode+'-dropdownvlaues"  value="" >';
         
         var col3 = '<div class="topmarrginebulkedit"><select  data-toggle="tooltip" title="Field Type" class="select2 bulktasktypedrop" id="bulktasktype_'+uniquecode+'" data-placeholder="Field Type" data-allow-clear="true">'+tasktypedata+'</select></div>'; //var col4 = '<br><div class="addscrol"><div id="row-'+uniquecode+'-descrpition" class="editfielddiscrpition_'+uniquecode+'"></div><p ><i class="font-icon fa fa-edit" id="fielddiscrpition_'+uniquecode+'" title="Edit your task description"style="cursor: pointer;color: #0082ff;"onclick="bulkfield_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Description</span></p></div></div>';
-        var col4 = '<p style="margin-top: 5px;"><i class="font-icon fa fa-edit" id="fielddiscrpition_'+uniquecode+'" title="Edit your field description"style="cursor: pointer;color: #0082ff;"onclick="bulkfield_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Description</span></p><div class="addscrolfield"><div id="row-'+uniquecode+'-descrpition" class="editfielddiscrpition_'+uniquecode+'"></div></div></div>';
+        var col4 = '<p style="margin-top: 10px;">Display on Application Form <input style="margin-left: 116px;margin-top: -17px;" id="row-'+uniquecode+'-fieldstatusshowonregform" type="checkbox" class="form-control" ></p>'; //var col4 = '<br><div class="addscrol"><div id="row-'+uniquecode+'-descrpition" class="editfielddiscrpition_'+uniquecode+'"></div><p ><i class="font-icon fa fa-edit" id="fielddiscrpition_'+uniquecode+'" title="Edit your task description"style="cursor: pointer;color: #0082ff;"onclick="bulkfield_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Description</span></p></div></div>';
+        
+        
+        var col5 = '<p style="margin-top: 5px;"><i class="font-icon fa fa-edit" id="fielddiscrpition_'+uniquecode+'" title="Edit your field description"style="cursor: pointer;color: #0082ff;"onclick="bulkfield_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Description</span></p><div class="addscrolfield"><div id="row-'+uniquecode+'-descrpition" class="editfielddiscrpition_'+uniquecode+'"></div></div></div>';
         t.row.add( [
             col01,
              col1,
              col2,
              col3,
-             col4
+             col4,
+             col5,
             
         ]).draw().nodes().to$().addClass("bulkaddnewtask");
         
@@ -664,12 +668,21 @@ function saveallbulkcustomefields(){
         singletaskarray['fieldtooltip'] = jQuery( '#row-'+taskid+'-fieldtooltip' ).val();
         singletaskarray['fieldstatusrequried'] = jQuery( '#row-'+taskid+'-fieldstatusrequried' ).val();
         singletaskarray['Systemfield'] = jQuery( '#row-'+taskid+'-Systemfield' ).val();
+        var displayonformstatus = "";
+        if(jQuery( '#row-'+taskid+'-fieldstatusshowonregform' ).is(':checked')){
+                
+                displayonformstatus = "checked";
+                
+           }
         
-        singletaskarray['fieldstatusshowonregform'] = jQuery( '#row-'+taskid+'-fieldstatusshowonregform' ).val();
+        singletaskarray['fieldstatusshowonregform'] = displayonformstatus;//jQuery( '#row-'+taskid+'-fieldstatusshowonregform' ).val();
         singletaskarray['fieldplaceholder'] = jQuery( '#row-'+taskid+'-fieldplaceholder' ).val();
         singletaskarray['attribute'] = jQuery( '#row-'+taskid+'-attribute' ).val();
         singletaskarray['SystemfieldInternal'] = jQuery( '#row-'+taskid+'-SystemfieldInternal' ).val();
         singletaskarray['multiselect'] = jQuery( '#row-'+taskid+'-multiselect' ).val();
+        
+        
+        
         
         
          singletaskarray['fielduniquekey'] = uniqueKey;
@@ -933,7 +946,7 @@ function bulkfieldsettings(e){
   var content='';
  
             
-  content='<table><tr><h5 style="margin-top: 2px;">'+field_title+'</h5><hr/></tr></table><table><tr><td><strong>Required?</strong></td><td><input '+fieldstatusrequried+' type="checkbox" class="toggle-one" id="confrim_fieldRequriedstatus" data-toggle="toggle"></td></tr><tr><td><strong>Display on Application Form?</strong></td><td><input '+fieldstatusshowonregform+' type="checkbox" class="toggle-one"  id="confrim_showonapplicationstatus" data-toggle="toggle"></td></tr><tr><td><strong>Placeholder Text</strong></td><td><input type="text" value="'+fieldplaceholder+'" id="confrim_placeholdertext" ></td></tr></tr><tr><td><strong>Help Text</strong></td><td><textarea  id="confrim_helptext">'+fieldtooltip+'</textarea></td></tr><tr>'+trvalue+'</tr>'+fielduniquekeyhtml+htmlcheckforinternaltasks+htmlforsystemtask+'</table>'; 
+  content='<table><tr><h5 style="margin-top: 2px;">'+field_title+'</h5><hr/></tr></table><table><tr><td><strong>Required?</strong></td><td><input '+fieldstatusrequried+' type="checkbox" class="toggle-one" id="confrim_fieldRequriedstatus" data-toggle="toggle"></td></tr><tr><td><strong>Placeholder Text</strong></td><td><input type="text" value="'+fieldplaceholder+'" id="confrim_placeholdertext" ></td></tr></tr><tr><td><strong>Help Text</strong></td><td><textarea  id="confrim_helptext">'+fieldtooltip+'</textarea></td></tr><tr>'+trvalue+'</tr>'+fielduniquekeyhtml+htmlcheckforinternaltasks+htmlforsystemtask+'</table>'; 
  
   jQuery.confirm({
             
@@ -949,10 +962,7 @@ function bulkfieldsettings(e){
             on: 'Yes',
             off: 'No'
           });
-          jQuery('#confrim_showonapplicationstatus').bootstrapToggle({
-            on: 'Yes',
-            off: 'No'
-          });   
+           
                  console.log(attributes_file);
 		 jQuery.each(attributes_file.split(","), function(i,e){
 		 jQuery(".select2 option[value='" + e + "']").prop("selected", true);
@@ -984,17 +994,7 @@ function bulkfieldsettings(e){
               jQuery('#row-'+task_code+'-fieldstatusrequried').val(''); 
            }
            
-           if(jQuery('#confrim_showonapplicationstatus').is(':checked')){
-                jQuery('#row-'+task_code+'-fieldstatusshowonregform').val('checked');
-           }else{
-              jQuery('#row-'+task_code+'-fieldstatusshowonregform').val(''); 
-           }
            
-           if(jQuery('#confrim_showonapplicationstatus').is(':checked')){
-                jQuery('#row-'+task_code+'-fieldstatusshowonregform').val('checked');
-           }else{
-              jQuery('#row-'+task_code+'-fieldstatusshowonregform').val(''); 
-           }
            
          
            if(jQuery('#confrim_multiselect').is(':checked')){

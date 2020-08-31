@@ -29,15 +29,6 @@ $base_url  = get_site_url();
 
 <link href="<?php echo $base_url;?>/wp-content/plugins/EGPL/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css" rel="stylesheet">
 <link href="<?php echo $base_url;?>/wp-content/plugins/EGPL/cmtemplate/js/lib/bootstrap-sweetalert/sweetalert.js" rel="stylesheet">    
-
-<style>
-    
-    .woocommerce-message:before{
-        
-        content:none !important;
-    }
-    
-</style>
 <?php 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -149,7 +140,7 @@ $getcancelledOrdersList['order-actions'] = "Action";
 								
                                                                     
                                                            
-                                                                   <a style="cursor: pointer;" onclick="getOrderproductdetail(<?php echo $order->get_order_number(); ?>,<?php echo $order->total; ?> )">Product Details</a>
+                                                                   <a style="cursor: pointer;" onclick="getOrderproductdetail(<?php echo $order->get_order_number(); ?>,<?php echo $order->get_formatted_order_total(); ?> )">Product Details</a>
 									
 								   
                                                                 
@@ -191,9 +182,9 @@ $getcancelledOrdersList['order-actions'] = "Action";
 <?php else : ?>
 	<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
 		<a class="woocommerce-Button button" href="<?php echo esc_url( apply_filters( 'woocommerce_return_to_shop_redirect', wc_get_page_permalink( 'shop' ) ) ); ?>">
-			<?php _e( 'Head to Shop', 'woocommerce' ); ?>
+			<?php _e( 'Go shop', 'woocommerce' ); ?>
 		</a>
-		<?php _e( 'No Open Order.', 'woocommerce' ); ?>
+		<?php _e( 'No order has been made yet.', 'woocommerce' ); ?>
 	</div>
 <?php endif; ?>
 
@@ -212,7 +203,7 @@ $getcancelledOrdersList['order-actions'] = "Action";
       </h2>
     </div>
 
-    <div id="collapseOne" class="collapse in paddingclasswctable" aria-labelledby="headingOne" data-parent="#accordionExample">
+    <div id="collapseOne" class="collapse paddingclasswctable" aria-labelledby="headingOne" data-parent="#accordionExample">
       <div class="card-body">
       <?php if ( $has_orders ) : 
         
@@ -332,9 +323,9 @@ $getcancelledOrdersList['order-actions'] = "Action";
 <?php else : ?>
 	<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
 		<a class="woocommerce-Button button" href="<?php echo esc_url( apply_filters( 'woocommerce_return_to_shop_redirect', wc_get_page_permalink( 'shop' ) ) ); ?>">
-			<?php _e( 'Head to Shop', 'woocommerce' ); ?>
+			<?php _e( 'Go shop', 'woocommerce' ); ?>
 		</a>
-		<?php _e( 'No Open Orders.', 'woocommerce' ); ?>
+		<?php _e( 'No order has been made yet.', 'woocommerce' ); ?>
 	</div>
 <?php endif; ?>
 

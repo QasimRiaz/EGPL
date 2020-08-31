@@ -7,7 +7,7 @@ var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun",
                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 jQuery(document).ready(function () {
 
- if ( window.location.href.indexOf("custome_task_report") > -1)
+ if ( window.location.href.indexOf("custom_task_report") > -1)
     {
        jQuery("body").css({'cursor': 'wait'}); 
         var data = new FormData();
@@ -15,7 +15,7 @@ jQuery(document).ready(function () {
         var usertimezone = curdate.getTimezoneOffset()/60;
          data.append('usertimezone', usertimezone);
          var url = currentsiteurl+'/';
-       if ( window.location.href.indexOf("custome_task_report/?report") > -1){
+       if ( window.location.href.indexOf("custom_task_report/?report") > -1){
            
            
        
@@ -46,10 +46,11 @@ jQuery(document).ready(function () {
        
        }else{
            
-        var showcollist = JSON.parse('["Action","Task Name","Submitted Value","Submitted On","Company Name","Email","Level"]');   
+        var showcollist = JSON.parse('["Action","Task Name","Due Date","Submission","Submitted On","Company","Level","First Name","Last Name","Email"]'); 
         var ordercolname = 'Company Name';
         var orderby = 'asc';
-       }
+       
+        }
        
       console.log(showcollist);
        var hideFromExport = [0,1];
@@ -88,7 +89,12 @@ jQuery(document).ready(function () {
                 }else if(newcolumsheader[nkey].type == 'date'){
                     
                     //danyal Update Date Formatting in Reports
+                    newcolumnsheaderarrayfortable.push({visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type, render: function (data) {if (data !== null && data !== "") {var javascriptDate = new Date(data);return formatAMPM(javascriptDate);} else {return "";} }});
+                }else if(newcolumsheader[nkey].type == 'duedate'){
+                    
+                    //danyal Update Date Formatting in Reports
                     newcolumnsheaderarrayfortable.push({visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type, render: function (data) {if (data !== null && data !== "") {var javascriptDate = new Date(data);javascriptDate =  months[javascriptDate.getMonth()] + " " + javascriptDate.getDate() + " " + javascriptDate.getFullYear();return javascriptDate;} else {return "";} }});
+                
                 }else {
                     if(newcolumsheader[nkey].title == 'Action' ){
                         newcolumnsheaderarrayfortable.push({class:'noExport noclick',visible:visiblestatus,sTitle:newcolumsheader[nkey].title,title: newcolumsheader[nkey].key, data: newcolumsheader[nkey].title, type: newcolumsheader[nkey].type});
@@ -120,22 +126,61 @@ jQuery(document).ready(function () {
                                                             extend: 'excelHtml5',
                                                             title: 'userreport_' + jQuery.now(),
                                                             exportOptions: {
-                                                                columns: "thead th:not(.noExport)"
+                                                                columns: "thead th:not(.noExport)",
+                                                                format: {
+                                                                body: function ( data, row, column, node ) {
+                                                                    
+                                                                    
+                                                                    
+                                                                    var href = jQuery('<div>').append(data).find('a:first').attr('href');
+                                                                    if(href !== undefined){
+                                                                         data = href;
+                                                                    }
+                                                                    return  data;
+                                                                    
+                                                                }
+        }
                                                             },
                                                         },
                                                         {
                                                             extend: 'csvHtml5',
                                                             title: 'userreport_' + jQuery.now(),
                                                             exportOptions: {
-                                                                columns: "thead th:not(.noExport)"
+                                                                columns: "thead th:not(.noExport)",
+                                                                format: {
+                                                                body: function ( data, row, column, node ) {
+                                                                    
+                                                                    
+                                                                    
+                                                                    var href = jQuery('<div>').append(data).find('a:first').attr('href');
+                                                                    if(href !== undefined){
+                                                                         data = href;
+                                                                    }
+                                                                    return  data;
+                                                                    
+                                                                }
+        }
                                                             },
                                                         },
 
                                                         {
                                                             extend: 'print',
                                                             exportOptions: {
-                                                                columns: "thead th:not(.noExport)"
-                                                            }
+                                                                columns: "thead th:not(.noExport)",
+                                                                format: {
+                                                                body: function ( data, row, column, node ) {
+                                                                    
+                                                                    
+                                                                    
+                                                                    var href = jQuery('<div>').append(data).find('a:first').attr('href');
+                                                                    if(href !== undefined){
+                                                                         data = href;
+                                                                    }
+                                                                    return  data;
+                                                                    
+                                                                }
+        }
+                                                            },
                                                         }
                                                     ]
            
@@ -243,65 +288,67 @@ if ( window.location.href.indexOf("user-report-result/?report=run") > -1)
     }
     });
     
-    function new_userview_profile(elem){
+    function new_userview_profile_task(elem){
     
-     var data = resultuserdatatable.row( jQuery(elem).parents('tr') ).data();
-     var tablesettings = jQuery('#customereports').DataTable().settings();
-     // console.log(data)
+     var userID = jQuery(elem).attr('id');
+     
+     
      var curr_dat ='';
      var tablehtml='';
      var monthnames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
      tablehtml  = '<table class="table table-striped table-bordered table-condensed" width="100%"><tbody>'; 
-   // console.log(tablesettings[0].aoColumns);
-     jQuery.each( data, function( i, l ){
-         
-       for (var counter = 0, iLen = tablesettings[0].aoColumns.length; counter < iLen; counter++)
-            {
-               
-     if(tablesettings[0].aoColumns[counter].sTitle == i){ 
-	//danyal    
-       if((i != 'Action') &&  (! ~i.indexOf(" Status")) &&  (! ~i.indexOf(" Datetime"))){
-       if(tablesettings[0].aoColumns[counter].type == 'date'){
-          // console.log(l)
-            if(l !="" && l != null ){
-                 var d = new Date(l);
-                var curr_date = d.getDate();
-                var curr_month = d.getMonth();
-                var curr_year = d.getFullYear();
-                var time = d.getHours() + "" + d.getMinutes();
-                //danyal Update Date Formatting in Reports
-                curr_dat = monthnames[curr_month]  + " " +  d.getDate()+ " " + d.getFullYear();
-            }else{
-                curr_dat ="";
-            }
-         tablehtml  +=  '<tr><td style="text-align:right;width:50%;"><b>'+i+'</b></td><td style="width:50%;">'+curr_dat+'</td></tr>';
-           
-       }else{
-        if(l == null){
-            l="";
-        }
-         tablehtml  +=  '<tr><td style="text-align:right;width:50%;"><b>'+i+'</b></td><td style="width:50%;">'+l+'</td></tr>';
-       }
-         }
-     }
-     }    
-       
-         
-     });
+   
      
-     tablehtml  +='</tbody></table>';
+    var data = new FormData();
+    var url = currentsiteurl+'/';
+    var urlnew = url + 'wp-content/plugins/EGPL/userreport.php?contentManagerRequest=getcurrentuserdata';
+    data.append('userid', userID);
+  
+    jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                
+               jQuery("body").css({'cursor':'default'});
+               
+               
+                 
+                 jQuery.each(jQuery.parseJSON(data), function(key, value) {
+                     
+                   if(value == null || value == ""){
+                       
+                       tablehtml  +=  '<tr><td style="text-align:right;width:50%;"><b>'+key+'</b></td><td style="width:50%;"></td></tr>';
+                    
+                   }else{
+                      tablehtml  +=  '<tr><td style="text-align:right;width:50%;"><b>'+key+'</b></td><td style="width:50%;">'+value+'</td></tr>';
+                     
+                       
+                   }
+                   
+                 });
+                 tablehtml  +='</tbody></table>';
+                jQuery.confirm({
+                    title: '<p style="text-align:center;">View</p>',
+                    content: tablehtml,
+                    confirmButtonClass: 'mycustomwidth',
+                    cancelButtonClass: 'customeclasshide',
+                    animation: 'rotateY',
+                    closeIcon: true,
+                    columnClass: 'jconfirm-box-container-special'
+            
+                });
+               
+            }
+        });
+     
+      
      //console.log(tablehtml);
      
-     jQuery.confirm({
-            title: '<p style="text-align:center;">View</p>',
-            content: tablehtml,
-            confirmButtonClass: 'mycustomwidth',
-            cancelButtonClass: 'customeclasshide',
-            animation: 'rotateY',
-            closeIcon: true,
-            columnClass: 'jconfirm-box-container-special'
-            
-         });
+     
                                     
 
     
@@ -357,8 +404,23 @@ function updateDataTableSelectAllCtrl(resultuserdatatable){
    }
   
    jQuery("#ntableselectedstatscount").append(datatable.rows( '.selected' ).count());
-   jQuery("#newbulkemailcounter").append(datatable.rows( '.selected' ).count());
-   jQuery("#selectedstatscountforbulk").append(datatable.rows( '.selected' ).count());
+   
+   var getselectedrows = datatable.rows( '.selected' ).data();
+   var Listofemails = []
+   jQuery.each(getselectedrows,function(key,Index){
+       var Emailvalue = Index.Email
+       
+       Listofemails.push(Emailvalue);
+       
+   });
+   
+   var unique = Listofemails.filter(function(itm, i, Listofemails) {
+        return i == Listofemails.indexOf(itm);
+   });
+   
+   
+   jQuery("#newbulkemailcounter").append(unique.length);
+   jQuery("#selectedstatscountforbulk").append(unique.length);
    
     if(datatable.rows( '.selected' ).count() > 0){
             
@@ -382,10 +444,10 @@ function customloaduserreport(){
     var url = currentsiteurl+'/';
     
     if(loadreportname == 'defult'){
-         window.location.href = url + "user-report-result/";
+         window.location.href = url + "custom_task_report/";
    
     }else{
-         window.location.href = url + "user-report-result/?report="+ encodeURI(loadreportname);
+         window.location.href = url + "custom_task_report/?report="+ encodeURI(loadreportname);
    
     }
     
@@ -491,4 +553,262 @@ function get_all_selected_users_files(selectedtaskkey) {
             }
         });
  
+}
+
+function get_bulk_email_address_tasks() {
+
+   jQuery('[href="#tabs-1-tab-2"]').tab('show');
+   var $table             = resultuserdatatable.table().node();
+   var $chkbox_checked    = jQuery('tbody input[type="checkbox"]:checked', $table);
+   
+  console.log($chkbox_checked.length);
+   if ($chkbox_checked.length <= 0) {
+        
+        jQuery(".sendbulkemailbox").hide();
+        jQuery('.bulkemail_status').empty();
+        jQuery('.bulkemail_status').append('<div class="fusion-alert alert error alert-dismissable alert-danger alert-shadow"> <button type="button" class="close toggle-alert" data-dismiss="alert" aria-hidden="true"><span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-times-circle" style="color:#262626;"></i></span></button> <span class="alert-icon"><i class="fa fa-lg fa-exclamation-triangle"></i></span>  No recipients selected. Please select atleast one from the Report.</div>');
+      
+    }else{
+        jQuery('.bulkemail_status').empty();
+        jQuery(".sendbulkemailbox").show();
+      
+    }
+   
+}
+
+function bulkemail_preview_tasks_report(){
+    var checkbccstatus = checkemailstatus();
+    if(checkbccstatus ==  false){
+            swal({
+                    title: "Error",
+                    text: "Invalid BCC email address. Please input a single valid email address.",
+                    type: "error",
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Ok"
+                });
+    }else{
+     var emailSubject =jQuery('#emailsubject').val();
+     var emailBody=tinymce.activeEditor.getContent();//jQuery('#bodytext').val();
+     
+      
+                                    bulkemailcontentbox =    jQuery.confirm({
+                                             title: 'Preview',
+                                             content: '<p id="success-msg-div"></p> <br> Subject : '+emailSubject+' <hr> '+emailBody+' <hr> <p style="margin-bottom: -60px !important;"><button type="button" title="Test email will be sent to '+currentAdminEmail+'" class="examplebutton btn mycustomwidth  btn-secondary">Send me a Test Email</button></p>',
+                                             confirmButton:'Send',
+                                             cancelButton:'Close',
+                                             testButton:'Send Test Email',
+                                             confirmButtonClass: 'btn mycustomwidth btn-lg btn-primary mysubmitemailbutton',
+                                             cancelButtonClass: 'btn mycustomwidth btn-lg btn-danger',
+                                             columnClass: 'jconfirm-box-container-special',
+                                             onOpen: function() {
+                                               
+                                                this.$b.find('button.examplebutton').click(function() {
+                                                 conform_send_test_email_for_admin_tasks_report();
+                                                jQuery( "#success-msg-div" ).append('<div class="alert wpb_content_element alert-success"><div class="messagebox_text"><p>we have send a test email on '+currentAdminEmail+' please check your mail.</p></div></div>');
+                                               setTimeout(function() {
+                                                jQuery( "#success-msg-div" ).empty();
+                                                }, 5000);
+                                                     
+                                              });
+    },
+                                          
+                                            confirm: function () {
+                                              conform_send_bulk_email_tasks_report();
+                                              
+                                               return true;
+                                            },
+                                            cancel: function () {
+                                              //  location.reload();
+                                            },
+                                            test: function () {
+                                               
+                                            }
+                                       
+                                        });
+                                    
+                                    
+                 
+                                    
+                                    
+    // jAlert( 'Subject : ' +emailSubject+ '<hr>'+
+            // emailBody+'<hr><p style="text-align: center;margin-right: 56px;"><a  class="btn btn-danger" id="popup_ok" onclick="conform_send_bulk_email()">Send</a><a id="popup_okk" class="btn btn-info" style="margin-left: 20px;">Cancel</a></p>'); 
+        }
+    
+    
+}
+
+function conform_send_bulk_email_tasks_report(){
+     
+     
+    var emailSubject =jQuery('#emailsubject').val();
+    var emailBody=tinymce.activeEditor.getContent();//jQuery('#bodytext').val();
+    var emailAddress=jQuery('#emailAddress').val();
+    var columnheaderdataarray=[];
+   
+    var tablesettings = jQuery('#customereports').DataTable();
+    var getselectedrows = tablesettings.rows( '.selected' ).data();
+    var Listofemails = []
+    jQuery.each(getselectedrows,function(key,Index){
+        var Emailvalue = Index.Email
+
+        Listofemails.push(Emailvalue);
+
+    });
+   
+    var arrData = Listofemails.filter(function(itm, i, Listofemails) {
+        return i == Listofemails.indexOf(itm);
+    });
+    
+   
+   
+    
+   
+    var BCC=jQuery('#BCC').val();
+//    var CC=jQuery('#CC').val();
+    var RTO=jQuery('#replaytoemailadd').val();
+    var fromname=jQuery('#fromname').val();
+     var statusmessage='';
+     var alertclass='';
+    
+    jQuery("body").css({'cursor':'wait'});
+    var url = currentsiteurl+'/';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=sendbulkemailtasksreport';
+    var data = new FormData();
+    data.append('emailSubject', emailSubject);
+    data.append('emailBody', emailBody);
+    data.append('emailAddress', emailAddress);
+    data.append('fromname', fromname);
+   
+    data.append('attendeeallfields',   JSON.stringify(arrData));
+    
+     data.append('BCC', BCC);
+     //data.append('CC', CC);
+     data.append('RTO', RTO);
+     jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                
+                 jQuery('body').css('cursor', 'default');
+                 
+                 if(data.indexOf("successfully") >-1){
+                      statusmessage ='Your message has been sent.';
+                      alertclass= 'alert-success';
+                       swal({
+					title: "Success",
+					text: "Your message has been sent.",
+					type: "success",
+					confirmButtonClass: "btn-success",
+					confirmButtonText: "Ok"
+				});
+                      
+                      
+                  }else{
+                       swal({
+					title: "Error",
+					text: data,
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				});
+                      statusmessage = data;
+                      alertclass= 'alert-danger';
+                  }
+                  
+                
+               /// bulkemailcontentbox.setContent('<div class="alert wpb_content_element '+alertclass+'"><div class="messagebox_text"><p>'+statusmessage+'</p></div></div>');
+                  
+                  
+                  
+                  
+                  jQuery('.mysubmitemailbutton').hide();
+                 //location.reload();
+                // jQuery( "#sponsor-status" ).append( '<div class="alert wpb_content_element alert-success"><div class="messagebox_text"><p>Resource deleted.</p></div></div>' );
+                // setTimeout(function() {
+                  //      jQuery( "#sponsor-status" ).empty();
+                // }, 2000); // <-- time in milliseconds
+                
+                
+            },error: function (xhr, ajaxOptions, thrownError) {
+                     swal({
+					title: "Error",
+					text: "There was an error during the requested operation. Please try again.",
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				});
+      }
+        });
+    
+    
+    
+    
+    
+}
+function conform_send_test_email_for_admin_tasks_report(){
+     
+     
+    var emailSubject =jQuery('#emailsubject').val();
+    var emailBody=tinymce.activeEditor.getContent();//jQuery('#bodytext').val();
+   
+     
+    jQuery("body").css({'cursor':'wait'});
+    var url = currentsiteurl+'/';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=sendadmintestemail';
+    var data = new FormData();
+    data.append('emailSubject', emailSubject);
+    data.append('emailBody', emailBody);
+  
+    
+     jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                
+                 jQuery('body').css('cursor', 'default');
+                 //location.reload();
+                // jQuery( "#sponsor-status" ).append( '<div class="alert wpb_content_element alert-success"><div class="messagebox_text"><p>Resource deleted.</p></div></div>' );
+                // setTimeout(function() {
+                  //      jQuery( "#sponsor-status" ).empty();
+                // }, 2000); // <-- time in milliseconds
+                
+                
+            },error: function (xhr, ajaxOptions, thrownError) {
+                    swal({
+					title: "Error",
+					text: "There was an error during the requested operation. Please try again.",
+					type: "error",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Ok"
+				});
+      }
+        });
+    
+    
+    
+    
+    
+}
+
+function formatAMPM(date) {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var month =  months[date.getMonth()];
+  var day =  date.getDate();
+  var year = date.getFullYear();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+ // hours = hours % 12;
+ // hours = hours ? hours : 12; // the hour '0' should be '12'
+    hours = hours < 10 ? '0'+hours : hours;
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+  var strTime = month + " " + day + " " + year+ " "+ hours + ':' + minutes;
+  return strTime;
 }

@@ -593,7 +593,7 @@ function get_all_files() {
              }else{
                  swal({
 									title: "Error",
-									text: "There was an error during the requested operation. Please try again.",
+									text: "There are no files uploaded for this selected task.",
 									type: "error",
 									confirmButtonClass: "btn-danger"
 								});

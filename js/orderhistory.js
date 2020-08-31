@@ -1,5 +1,5 @@
 
-function getOrderproductdetail(OrderID){
+function getOrderproductdetail(OrderID,remaningamount){
 
 
     jQuery("body").css("cursor", "progress");
@@ -15,6 +15,7 @@ function getOrderproductdetail(OrderID){
 
 
     data.append('ID', OrderID);
+    data.append('remaningamount', remaningamount);
     
     
     jQuery.ajax({
@@ -32,7 +33,7 @@ function getOrderproductdetail(OrderID){
         swal({
             
             title: 'Products in Order ID #'+OrderID,
-            text:'<table class="table myproductdetail"><thead><tr><td></td><td>Product</td><td>Price</td><td>Quantity</td><td>Paid Amount</td></tr></thead><tbody>'+message+'</tbody></table>',
+            text:message,
             confirmButtonText: "Close",
             customClass: "customewidthsweet",
             html:true

@@ -90,7 +90,7 @@
                                     <label class="col-sm-2 form-control-label">Email <strong>*</strong></label>
                                     <div class="col-sm-5">
                                         <div class="form-control-wrapper form-control-icon-left">     
-					<input type="text"  class="form-control" id="Semail" placeholder="Email" required>
+					<input type="email"  class="form-control" id="Semail" placeholder="Email" required>
                                           <i class="font-icon fa fa-envelope-o"></i>                     
                                         </div>
                                     </div>

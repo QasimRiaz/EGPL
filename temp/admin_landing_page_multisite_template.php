@@ -31,7 +31,12 @@
 <div id="content" class="full-width">
         <div class="page-content" style="max-width: 800px;margin-left: auto;margin-right: auto;">
         
-           <div class="box-typical box-typical-padding">
+           
+            
+            
+            
+          
+            <div class="box-typical box-typical-padding">
                 
                 <table class="table table-striped">
                     <tbody>

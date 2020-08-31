@@ -19,10 +19,22 @@ $user_blogs = get_blogs_of_user( $user_id );
 
 $blog_id2 = get_current_blog_id();
 
-
+$getsiteurl = get_site_url();
+        
+        $getcodeurl1 = str_replace("https://","",$getsiteurl);
+        $getcodeurl2 = str_replace("/","-",$getcodeurl1);
+        
 ?>
 
-
+<style>
+    
+    .unread-status{
+        
+        margin-top:-20px !important;
+    }
+    .feed-window div{ font-family: 'Proxima Nova' !important; }
+    
+</style>
 
 </head>
 <body class="with-side-menu theme-picton-blue">
@@ -66,7 +78,11 @@ $blog_id2 = get_current_blog_id();
 	                <div class="mobile-menu-right-overlay"></div>
 	                <div class="site-header-collapsed" >
 	                    <div class="site-header-collapsed-in">
-                              
+                              <div class="dropdown" style="margin-top: 10px;margin-left: 1%;">
+                                    
+                                   <notification-center appId="ahWkagLbTC" subscriberId="<?php echo $getcodeurl2;?>" />
+                                    
+                                </div>
                                 <div class="dropdown" style="margin-top: 10px;">
                                     <button class="btn btn-rounded dropdown-toggle" id="dd-header-add" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Admin
@@ -77,13 +93,19 @@ $blog_id2 = get_current_blog_id();
                                             <span class="lbl">Add New Admin</span>
                                         </a>
                                         <a class="dropdown-item" href="<?php echo $site_url; ?>/admin-settings/">
-                                            <i class="font-icon fa fa-image"></i>
-                                            <span class="lbl">Header</span>
+                                            <i class="font-icon fa fa-cogs"></i>
+                                            <span class="lbl">Settings</span>
                                         </a>
                                         <a class="dropdown-item" href="<?php echo $site_url; ?>/change-password/">
                                             <i class="font-icon fa fa-lock"></i>
                                             <span class="lbl">Change Password</span>
                                         </a>
+										
+										<a class="dropdown-item" target="_blank" href="https://expo-genie.com/release-notes/">
+                                            <i class="font-icon fa fa-sticky-note-o"></i>
+                                            <span class="lbl">Release Notes</span>
+                                        </a>
+										
                                         <div class="dropdown-divider"></div>
                                         
                                         <a class="dropdown-item" href="<?php echo $site_url; ?>/logout/">
@@ -93,6 +115,10 @@ $blog_id2 = get_current_blog_id();
                                         
                                     </div>
                                 </div>
+                                
+                                
+                              
+                                
                                  <div class="dropdown" style="margin-top: 10px;margin-right: 2%;">
                                     <button  class="btn btn-rounded dropdown-toggle" id="dd-header-add" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Sites
@@ -178,6 +204,14 @@ $blog_id2 = get_current_blog_id();
 	                <span class="lbl">Reports</span>
 	            </span>
 	            <ul class="mynav">
+                        
+                        <li class="mythemestyle">
+	                <a href="<?php echo $site_url; ?>/custom_task_report/">
+	                   <i class="font-icon fa fa-th-list"></i>
+	                    <span class="lbl menumargine">Task Report</span>
+	                </a>
+	            </li>
+                        
 	                <li class="mythemestyle">
                              <a href="<?php echo $site_url; ?>/user-report-result/">
                                <span class="glyphicon glyphicon-th"></span>
@@ -185,13 +219,14 @@ $blog_id2 = get_current_blog_id();
                             </a>
                             
                         </li>
+                    
 	            <li class="mythemestyle">
 	                <a href="<?php echo $site_url; ?>/order-report/">
 	                   <i class="font-icon fa fa-shopping-cart"></i>
 	                    <span class="lbl menumargine">Orders Report</span>
 	                </a>
 	            </li>
-                   
+                    
 	            </ul>
 	        </li>
             <li class="mythemestyle with-sub">
@@ -223,12 +258,7 @@ $blog_id2 = get_current_blog_id();
 	                    <span class="lbl menumargine">Review Applicants</span>
 	                </a>
 	            </li> 
-                    <li class="mythemestyle">
-	                <a href="<?php echo $site_url; ?>/user-fields/">
-	                  <i class="font-icon fa fa-wpforms"></i>
-	                    <span class="lbl menumargine">User Fields</span>
-	                </a>
-	            </li> 
+                    
                     
                     
                     
@@ -258,6 +288,12 @@ $blog_id2 = get_current_blog_id();
 	                    <span class="lbl menumargine">Header</span>
 	                </a>
 	            </li>
+                    <li class="mythemestyle">
+	                <a href="<?php echo $site_url; ?>/user-fields/">
+	                  <i class="font-icon fa fa-wpforms"></i>
+	                    <span class="lbl menumargine">User Fields</span>
+	                </a>
+	            </li> 
 <!--                    <a href="<?php //echo $site_url; ?>/admin-settings/">
 	                  <i class="font-icon fa fa-gears"></i>
 	                    <span class="lbl menumargine">Header Image</span>

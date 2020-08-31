@@ -27,13 +27,13 @@
 
         
         
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/reportsfield.js?v=2.95"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/reportsfield.js?v=2.97"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/lodash.js?v=2.95"></script>
         
         
         
 <!--        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/exporting.js?v=2.95"></script>-->
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/contentmanager.js?v=3.60"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/contentmanager.js?v=3.62"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.watable.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-datepicker.min.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-multiselect.js?v=2.95"></script>
@@ -41,11 +41,11 @@
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery-confirm.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/passwordstrength.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/taskmanager.js?v=2.95"></script>
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/role.js?v=2.97"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/role.js?v=2.99"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.fileDownload.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/admin-modernizr.custom.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/welcomeemail-content.js?v=2.95"></script>
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/orderhistory.js?v=2.6"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/orderhistory.js?v=2.7"></script>
         <script src="https://code.highcharts.com/highcharts.js"></script>
         <script src="https://code.highcharts.com/highcharts-more.js"></script>
         <script src="https://code.highcharts.com/modules/exporting.js"></script>
@@ -200,6 +200,10 @@ jQuery('#daterange3').daterangepicker({
  jQuery("#picktime").val(time);
  jQuery('.mycustomedropdown').select2(); 
 </script>
+
+
+
 <script src="/wp-content/plugins/EGPL/cmtemplate/js/app.js"></script>
+
 </body>
 </html>
