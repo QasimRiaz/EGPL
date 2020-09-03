@@ -1,7 +1,9 @@
 <?php
 // Template Name: Sponsor Edit Task Update 
- 
-   
+    
+    if ( is_user_logged_in() ) {    
+    if (current_user_can('administrator') || current_user_can('contentmanager') ){
+        
       get_header();
 		
      
@@ -106,7 +108,7 @@
     endwhile; //resetting the page loop
     
     
-    if ( is_user_logged_in() ) {    
+   
     
     ?>
 
@@ -627,7 +629,7 @@
  
 </div>              
 
-    <?php }
+    <?php 
     get_footer(); 
 
 ?>
@@ -642,3 +644,18 @@
     
     
     </script>
+    <?php }else{
+        
+         $redirect = get_site_url();
+        wp_redirect($redirect);
+        exit;
+        
+    }}else{
+        
+         $redirect = get_site_url();
+        wp_redirect($redirect);
+        exit;
+        
+        
+        
+    }?>
