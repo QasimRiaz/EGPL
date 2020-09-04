@@ -874,7 +874,7 @@ function getusersreport($data) {
     
      foreach ($columns_headers as $rows=>$row){
           
-             if ($row['title'] != 'Action' && $row['type'] != "html" ) {
+             if ($row['title'] != 'Action' && $row['type'] != "html" && $row['title'] != 'Booth Number' ) {
                  
                  
                 if ($row['title'] == 'User ID') {
