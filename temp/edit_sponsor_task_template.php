@@ -363,6 +363,15 @@
                           $date_value =   date('d-m-Y', intval($all_meta_for_user[$keyvalue][0]/1000));
                           //$data_field_array[] = array('name'=>$index,'content'=>$date_value);
                           $taskdescription = str_replace($keyvalueforadd,$date_value,$taskdescription);
+                        }else if($getfieldType == 'url'){
+                            
+                            $linktext = "<a href='".$all_meta_for_user[$keyvalue][0]."' target='_blank' >".$all_meta_for_user[$keyvalue][0]."</a>";
+                            $taskdescription = str_replace($keyvalueforadd,$linktext,$taskdescription);
+                            $tagvalue = $keyvalueforadd;
+                            $arrayurlsvalue[$tagvalue] = $all_meta_for_user[$keyvalue][0];
+                            
+                            
+                            
                         } else{
                              
                                  
@@ -559,8 +568,22 @@
                            break;
                        
                      case 'link':
+                         
+                                $linkname = $profile_field_settings['lin_url'];
+                               
+                               if(!empty($arrayurlsvalue[$linkname])){
+                                   
+                                   $currenturlvalueUpdate = $arrayurlsvalue[$linkname];
+                                   
+                               }else{
+                                   
+                                   $currenturlvalueUpdate = $profile_field_settings['lin_url'];
+                                   
+                               }
+                         
+                         
                         // echo $profile_field_settings['lin_url'] ;exit;
-                           $action_col .= '<a href="' . $profile_field_settings['lin_url'] . '"target="_blank" ';
+                           $action_col .= '<a href="' . $currenturlvalueUpdate . '"target="_blank" ';
                            if (!empty($profile_field_settings['taskattrs'])){
                                $action_col .= $profile_field_settings['taskattrs'];
                            }

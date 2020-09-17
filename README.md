@@ -1,4 +1,4 @@
-~Current Version:4.08~
+~Current Version:4.09~
 
 
 -------------------27-09-2019---Main release 3.40--------------
@@ -95,3 +95,7 @@ Release Item
     6.Release Notes Page
     7.Display on Application Form Option
     8.Grammer issue on task submission content
+
+-------------------17-09-2020--- New Release 4.09 --------------
+
+URL merge fields click able in task page

@@ -333,12 +333,12 @@
                        
                        $keyvalueforadd = "{".$index."}";
                      
-                       
+                      
                        if (!empty($all_meta_for_user[$keyvalue][0])) {
                            
                           
                           $getfieldType = getcustomefieldKeyValue($keyvalue,"fieldType");
-                        
+                          
                           
                           
                         if($getfieldType == 'date') {
@@ -346,7 +346,17 @@
                           $date_value =   date('d-m-Y', intval($all_meta_for_user[$keyvalue][0]/1000));
                           //$data_field_array[] = array('name'=>$index,'content'=>$date_value);
                           $taskdescription = str_replace($keyvalueforadd,$date_value,$taskdescription);
-                        } else{
+                          
+                        }else if($getfieldType == 'url'){
+                            
+                            $linktext = "<a href='".$all_meta_for_user[$keyvalue][0]."' target='_blank' >".$all_meta_for_user[$keyvalue][0]."</a>";
+                            $taskdescription = str_replace($keyvalueforadd,$linktext,$taskdescription);
+                            $tagvalue = $keyvalueforadd;
+                            $arrayurlsvalue[$tagvalue] = $all_meta_for_user[$keyvalue][0];
+                            
+                            
+                            
+                        }else{
                              
                                  
                                // $data_field_array[] = array('name'=>$index,'content'=> $all_meta_for_user[$keyvalue][0]);  
@@ -359,17 +369,7 @@
                                 $taskdescription = str_replace($keyvalueforadd,"",$taskdescription);
                           
                        }
-                  
-                      
-                     
-                      
-                      
-                     
-                   
-                 
-                 
-                 
-                   }}
+                  }}
                        
                    
                     
@@ -403,6 +403,8 @@
                            break;
                        
                        case 'url':
+                           
+                           
                            
                            $action_col .= '<input '.$fields_staus_type.' class="myclass" type="url" id="' . $profile_field_name;
                            $action_col .= '" value="'.htmlspecialchars($value).'" >';  
@@ -547,7 +549,25 @@
                        
                      case 'link':
                         // echo $profile_field_settings['lin_url'] ;exit;
-                           $action_col .= '<a href="' . $profile_field_settings['lin_url'] . '"target="_blank" ';
+                                
+                         
+                               
+                               $linkname = $profile_field_settings['lin_url'];
+                               
+                               if(!empty($arrayurlsvalue[$linkname])){
+                                   
+                                   $currenturlvalueUpdate = $arrayurlsvalue[$linkname];
+                                   
+                               }else{
+                                   
+                                   $currenturlvalueUpdate = $profile_field_settings['lin_url'];
+                                   
+                               }
+                               
+                          
+                         
+                         
+                           $action_col .= '<a href="' . $currenturlvalueUpdate . '"target="_blank" ';
                            if (!empty($profile_field_settings['taskattrs'])){
                                $action_col .= $profile_field_settings['taskattrs'];
                            }
