@@ -335,8 +335,10 @@
                           //$data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
                       }elseif($keyvalue == 'site_url'){
                           
-                           $taskdescription = str_replace("{site_url}",$site_url,$taskdescription);
-                          //$data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
+                          $linktext = "<a href='".$site_url."' target='_blank' >".$site_url."</a>";
+                            $taskdescription = str_replace("{site_url}",$linktext,$taskdescription);
+                            $tagvalue = "{site_url}";
+                            $arrayurlsvalue[$tagvalue] = $site_url;
                       }
                       
                       
