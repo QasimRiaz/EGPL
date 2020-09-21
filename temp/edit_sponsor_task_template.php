@@ -416,7 +416,7 @@
                        case 'text':
                        case 'date':
                        case 'datetime':
-                       case 'number':
+                      
                        case 'email':
                       
                            //echo $value.'-----';
@@ -425,7 +425,14 @@
                            $action_col .= '<input '.$fields_staus_type.' class="myclass" type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name;
                            $action_col .= '" value="'.htmlspecialchars($value).'" >';  
                            break;
-                       
+                        case 'number':
+                      
+                           //echo $value.'-----';
+                           //echo htmlspecialchars($value);
+                           //exit;
+                           $action_col .= '<input '.$fields_staus_type.' class="quantitynumber myclass" type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name;
+                           $action_col .= '" value="'.htmlspecialchars($value).'" >';  
+                           break;
                        case 'url':
                            
                            $action_col .= '<input '.$fields_staus_type.' class="myclass" type="url" id="' . $profile_field_name;

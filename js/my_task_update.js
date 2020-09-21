@@ -8,7 +8,25 @@ jQuery(document).ready(function() {
     
     
 });
-
+jQuery(document).ready(function () {
+  //called when key is pressed in textbox
+  jQuery(".quantitynumber").keypress(function (e) {
+      
+     //if the letter is not digit then display error and don't type anything
+     
+     if (e.which != 8 && e.which != 0 && (e.which < 46 || e.which > 57)) {
+        //display error message
+                                swal({
+					title: "Warning",
+					text: "Please enter a valid number.",
+					type: "warning",
+					confirmButtonClass: "btn-warning",
+					confirmButtonText: "Ok"
+				});
+               return false;
+    }
+   });
+});
 
  function closeIFramemain(){
        var parentsitename = "https://"+window.name+'/home';
