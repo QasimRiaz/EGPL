@@ -1,4 +1,3 @@
-
  var t;
  var roleassignmenttable;
  var listview;
@@ -995,8 +994,11 @@ function bulktasksettings(e){
             }
             jQuery('#row-'+task_code+'-attribute').val(attributes);
             
-           if(jQuery('#notificationemails_taskMWC').val() !=""){
+                if(jQuery('#notificationemails_taskMWC').val() !=""){
                     jQuery('#row-'+task_code+'-emailnotificationaddress').val(jQuery('#notificationemails_taskMWC').val());
+                }else{
+                    
+                   jQuery('#row-'+task_code+'-emailnotificationaddress').val(""); 
                 }
           
            if(jQuery('#confrim_taskMWC').is(':checked')){

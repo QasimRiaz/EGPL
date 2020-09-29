@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           4.12
+ * Version:           4.13
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -397,6 +397,23 @@ if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {
     
     
     echo   json_encode($user_file_list);
+    
+ 
+   die();
+
+}else if ($_GET['contentManagerRequest'] == 'get_current_file_url') {
+    
+    require_once('../../../wp-load.php');
+    global $wpdb;
+    $zip_folder_name=$_POST['taskname'];
+    $userid=$_POST['userid'];
+    
+    
+    $user_last = get_user_meta($userid, $zip_folder_name);
+    $compnayName = get_user_option($userid, "company_name");
+    $download_array = $compnayName[0].'*'.$user_last[0]['file'];
+    
+    echo   json_encode($download_array);
     
  
    die();
@@ -3601,7 +3618,7 @@ function getReportsdatanew($report_name,$usertimezone){
         $column_name_uppercase = $showhideMYFieldsArray;//array_change_key_case($showhideMYFieldsArray, CASE_UPPER);
         $newStr = strtoupper($showhidefields);
         //print_r ($newStr);
-        $base_url = "http://" . $_SERVER['SERVER_NAME'];
+        $base_url = "https://" . $_SERVER['SERVER_NAME'];
         $result_user_id = $wpdb->get_results($query);
         $allMetaForAllUsers = array();
         $myNewArray = array();
@@ -4035,7 +4052,7 @@ function getReportsdatanew($report_name,$usertimezone){
 
 add_action('wp_enqueue_scripts', 'add_contentmanager_js');
 function add_contentmanager_js(){
-      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'4.6.0', true);
+      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'5.2.0', true);
     
      wp_enqueue_script( 'jquery.alerts', plugins_url() . '/EGPL/js/jquery.alerts.js', array(), '1.1.0', true );
      wp_enqueue_script( 'boot-date-picker', plugins_url() . '/EGPL/js/bootstrap-datepicker.js', array(), '1.2.0', true );

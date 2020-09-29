@@ -35,7 +35,7 @@
      $lockTWMduedate = $sponsor_info['ContentManager']['lockTWMduedate'];
      $current_user = get_userdata( $sponsor_id );
      $user_IDD = $sponsor_id;
-     $base_url = "http://" . $_SERVER['SERVER_NAME'];
+     $base_url = "https://" . $_SERVER['SERVER_NAME'];
      // echo '<pre>';
     // print_r($result );exit;
                        
@@ -99,7 +99,7 @@
     
     ?>
 
-   
+            <div id="hiddenform"></div>
             <table class="mytable table table-striped table-bordered table-condensed" >
                 <thead>
                     <tr class="text_th" >
@@ -406,7 +406,7 @@
                            $action_col .= '<input '.$fields_staus_type.' class="myclass" type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name;
                            $action_col .= '" value="'.htmlspecialchars($value).'" >';  
                            break;
-                        case 'number':
+                       case 'number':
                       
                            //echo $value.'-----';
                            //echo htmlspecialchars($value);
@@ -414,6 +414,7 @@
                            $action_col .= '<input '.$fields_staus_type.' class="quantitynumber myclass" type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name;
                            $action_col .= '" value="'.htmlspecialchars($value).'" >';  
                            break;
+                       
                        case 'url':
                            
                            
@@ -444,8 +445,8 @@
                                $action_col .= ' ';
                            $action_col .= $form_tag . " />";
                            if (!empty($value)) {
-                               
-                               $action_col .= "<div style='text-align: center;margin-top: 14px;' class='remove_" . $profile_field_name . "'><a href='" . $base_url . "/wp-content/plugins/EGPL/download-lib.php?userid=" . $user_IDD . "&fieldname=" . $profile_field_name . "' target='_blank' style='margin-right: 24px;'>Download File</a></div>";
+                               $profile_field_name_new = "'".$profile_field_name."'";
+                               $action_col .= '<div style="text-align: center;margin-top: 14px;" class="remove_' . $profile_field_name . '"><a  onclick="downloadfontendfile('.$profile_field_name_new.','.$user_IDD.')" style="cursor: pointer;margin-right: 24px;">Download File</a></div>';
                                    
                               
                                

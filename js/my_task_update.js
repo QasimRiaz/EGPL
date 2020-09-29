@@ -8,13 +8,14 @@ jQuery(document).ready(function() {
     
     
 });
+
 jQuery(document).ready(function () {
   //called when key is pressed in textbox
   jQuery(".quantitynumber").keypress(function (e) {
       
      //if the letter is not digit then display error and don't type anything
      
-     if (e.which != 8 && e.which != 0 && (e.which < 46 || e.which > 57|| e.which == 47)) {
+     if (e.which != 8 && e.which != 0 && (e.which < 46 || e.which > 57 || e.which == 47)) {
         //display error message
                                 swal({
 					title: "Warning",
@@ -826,4 +827,55 @@ function removethisvaluetask(r){
     jQuery("#"+r).remove();
     //jQuery(".disableclassbutton_"+taskid).attr("disabled",false);
     
+}
+
+function downloadfontendfile(taskname,userid) {
+
+    
+
+    
+
+        
+    var data = new FormData();
+    var url = currentsiteurl+'/';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=get_current_file_url';
+    data.append('taskname', taskname);
+    data.append('userid', userid);
+     jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(data) {
+                
+               jQuery('#hiddenform').empty();
+               if(jQuery.parseJSON(data) !=null){
+                   var imageurl = jQuery.parseJSON(data)
+                  
+               var hiddenformhtml ="";
+                 hiddenformhtml += '<form id="myform" action="'+url+'wp-content/plugins/EGPL/singlefile_download.php" method="post"><input type="hidden" name="zipfoldername" value="'+taskname+'">';
+                
+                 
+                   
+                     hiddenformhtml += '<input type="hidden" name="result[]" value="'+ imageurl+ '">';
+                
+                hiddenformhtml += '</form>' ;
+                
+                
+                jQuery( "#hiddenform" ).append(hiddenformhtml);
+                
+                 document.getElementById('myform').submit();
+             }else{
+                 swal({
+									title: "Error",
+									text: "There are no files uploaded for this selected task.",
+									type: "error",
+									confirmButtonClass: "btn-danger"
+								});
+             }
+            }
+        });
+        
 }

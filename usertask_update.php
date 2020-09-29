@@ -8,6 +8,8 @@ if ($_GET['usertask_update'] == "update_submission_status") {
     $tasktype=$_POST['tasktype'];
     $status = 'Pending';
     $timezone = json_decode(stripslashes($_POST['usertimezone']));
+    
+    
     update_submission_status($sponsorid,$submissiontaskstatuskey,$status,$tasktype,$timezone);
     die();
 }else if ($_GET['usertask_update'] == "update_user_meta_custome") {
@@ -627,6 +629,18 @@ function update_submission_status($sponsorid,$submissiontaskstatuskey,$status,$t
         
         $old_value = $old_meta_value;
     }
+    
+    $old_meta_value=get_user_meta($postid, $keyvalue, $single); 
+   
+    if(!empty($tasktype)){
+        
+       update_user_meta($postid, $submissiontaskstatuskey, '');
+    }
+    update_user_meta($postid, $submissiontaskstatuskey.'_status', $status);
+   
+    update_user_meta($postid, $submissiontaskstatuskey.'_datetime', '');
+    
+    
     $current_date_time = date('d-M-Y H:i:s');
      if ($timezone > 0) {
 
@@ -657,13 +671,7 @@ function update_submission_status($sponsorid,$submissiontaskstatuskey,$status,$t
      
      
      
-    $old_meta_value=get_user_meta($postid, $keyvalue, $single); 
-    if(!empty($tasktype)){
-        update_user_meta($postid, $submissiontaskstatuskey, '');
-    }
-    update_user_meta($postid, $submissiontaskstatuskey.'_status', $status);
-   
-    update_user_meta($postid, $submissiontaskstatuskey.'_datetime', '');
+    
    
     $email_body_message_for_admin.="Task Name : " . $keyvalue. "\n";
     $email_body_message_for_admin.="Old Value : " . $old_meta_value[0]. "\n";

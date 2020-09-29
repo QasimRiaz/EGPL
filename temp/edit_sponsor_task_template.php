@@ -11,6 +11,8 @@
           $sponsor_id=$_GET['sponsorid'];
           $meta_for_user = get_userdata( $sponsor_id );
           $all_meta_for_user = get_user_meta($sponsor_id );
+		  
+		  
          // echo '<pre>';
         //  print_r( $meta_for_user );
           
@@ -22,7 +24,9 @@
      $roles = wp_get_current_user()->roles;
      $check= array_key_exists("contentmanager",$roles);
      
-     
+     $blog_id = get_current_blog_id();
+                   
+                    $site_prefix = 'wp_' . $blog_id . '_';
      
      
      $args = array(
@@ -112,10 +116,10 @@
     
     ?>
 
-   
+   <div id="hiddenform"></div>
 <div style="padding-bottom: 10px;">
                     <h3 style="float:left;width:50%;"><?php echo $sponsor_name;?> Task</h3>
-                    <h3 style="float:right;margin-right: 20px;">For : <?php echo $meta_for_user->display_name; ?></h3>
+                    <h3 style="float:right;margin-right: 20px;">For : <?php echo $all_meta_for_user[$site_prefix.'first_name'][0] .' '.$all_meta_for_user[$site_prefix.'last_name'][0]; ?></h3>
                     </div>
             <table class="mytable table table-striped table-bordered table-condensed" >
                 <thead>
@@ -335,10 +339,8 @@
                           //$data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
                       }elseif($keyvalue == 'site_url'){
                           
-                          $linktext = "<a href='".$site_url."' target='_blank' >".$site_url."</a>";
-                            $taskdescription = str_replace("{site_url}",$linktext,$taskdescription);
-                            $tagvalue = "{site_url}";
-                            $arrayurlsvalue[$tagvalue] = $site_url;
+                           $taskdescription = str_replace("{site_url}",$site_url,$taskdescription);
+                          //$data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
                       }
                       
                       
@@ -365,15 +367,6 @@
                           $date_value =   date('d-m-Y', intval($all_meta_for_user[$keyvalue][0]/1000));
                           //$data_field_array[] = array('name'=>$index,'content'=>$date_value);
                           $taskdescription = str_replace($keyvalueforadd,$date_value,$taskdescription);
-                        }else if($getfieldType == 'url'){
-                            
-                            $linktext = "<a href='".$all_meta_for_user[$keyvalue][0]."' target='_blank' >".$all_meta_for_user[$keyvalue][0]."</a>";
-                            $taskdescription = str_replace($keyvalueforadd,$linktext,$taskdescription);
-                            $tagvalue = $keyvalueforadd;
-                            $arrayurlsvalue[$tagvalue] = $all_meta_for_user[$keyvalue][0];
-                            
-                            
-                            
                         } else{
                              
                                  
@@ -416,7 +409,7 @@
                        case 'text':
                        case 'date':
                        case 'datetime':
-                      
+                       case 'number':
                        case 'email':
                       
                            //echo $value.'-----';
@@ -425,14 +418,7 @@
                            $action_col .= '<input '.$fields_staus_type.' class="myclass" type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name;
                            $action_col .= '" value="'.htmlspecialchars($value).'" >';  
                            break;
-                        case 'number':
-                      
-                           //echo $value.'-----';
-                           //echo htmlspecialchars($value);
-                           //exit;
-                           $action_col .= '<input '.$fields_staus_type.' class="quantitynumber myclass" type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name;
-                           $action_col .= '" value="'.htmlspecialchars($value).'" >';  
-                           break;
+                       
                        case 'url':
                            
                            $action_col .= '<input '.$fields_staus_type.' class="myclass" type="url" id="' . $profile_field_name;
@@ -461,8 +447,8 @@
                                $action_col .= ' ';
                            $action_col .= $form_tag . " />";
                            if (!empty($value)) {
-                               
-                               $action_col .= "<div style='text-align: center;margin-top: 14px;' class='remove_" . $profile_field_name . "'><a href='" . $base_url . "/wp-content/plugins/EGPL/download-lib.php?userid=" . $user_IDD . "&fieldname=" . $profile_field_name . "' target='_blank' style='margin-right: 24px;'>Download File</a></div>";
+                               $profile_field_name_new = "'".$profile_field_name."'";
+                               $action_col .= '<div style="text-align: center;margin-top: 14px;" class="remove_' . $profile_field_name . '"><a  onclick="downloadfontendfile('.$profile_field_name_new.','.$user_IDD.')" style="margin-right: 24px;cursor: pointer;">Download File</a></div>';
                                    
                               
                                
@@ -577,22 +563,8 @@
                            break;
                        
                      case 'link':
-                         
-                                $linkname = $profile_field_settings['lin_url'];
-                               
-                               if(!empty($arrayurlsvalue[$linkname])){
-                                   
-                                   $currenturlvalueUpdate = $arrayurlsvalue[$linkname];
-                                   
-                               }else{
-                                   
-                                   $currenturlvalueUpdate = $profile_field_settings['lin_url'];
-                                   
-                               }
-                         
-                         
                         // echo $profile_field_settings['lin_url'] ;exit;
-                           $action_col .= '<a href="' . $currenturlvalueUpdate . '"target="_blank" ';
+                           $action_col .= '<a href="' . $profile_field_settings['lin_url'] . '"target="_blank" ';
                            if (!empty($profile_field_settings['taskattrs'])){
                                $action_col .= $profile_field_settings['taskattrs'];
                            }
