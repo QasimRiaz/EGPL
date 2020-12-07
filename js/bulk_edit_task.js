@@ -1,3 +1,4 @@
+
  var t;
  var roleassignmenttable;
  var listview;
@@ -102,7 +103,7 @@ jQuery(window).load(function() {
                 that.search(' ').draw();
             
         });
-         var uniquecode  = randomString(5, 'a#')+"_addnewtasks";
+         var uniquecode  = randomString(8, 'a#')+"_addnewtasks";
          var tasktypedata = jQuery('.addnewtaskdata-type').html();
          var taskroledata = jQuery('.addnewtaskdata-role').html();
          var taskuseriddata = jQuery('.addnewtaskdata-userid').html();
@@ -112,7 +113,7 @@ jQuery(window).load(function() {
         var col3 = '<div class="topmarrginebulkedit"><select  data-toggle="tooltip" title="Select Type" class="select2 bulktasktypedrop" id="bulktasktype_'+uniquecode+'" data-placeholder="Select Type" data-allow-clear="true">'+tasktypedata+'</select></div><div class="bulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" ><input type="text"  class="form-control" name="linkurl" placeholder="Link URL" title="Link URL"id="row-'+uniquecode+'-linkurl" ><br><input type="text"  class="form-control" name="linkname" placeholder="Link Name" title="Link Name" id="row-'+uniquecode+'-linkname"></div><div class="dbulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" > <input type="text"  class="form-control" name="dropdownvalues" placeholder="Comma separated list of values" title="Comma separated list of values"  id="row-'+uniquecode+'-dropdownvlaues" ></div>';
         var col4 = '<input  data-toggle="tooltip" title="Due Date" placeholder="Due Date" id="row-'+uniquecode+'-duedate" style="padding-left: 13px;margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control datepicker" name="datepicker" >';
         var col5 = '<div class="addscrol topmarrginebulkedit"><select data-toggle="tooltip" class="select2" id="row-'+uniquecode+'-levels" data-placeholder="Select Levels" title="Select Levels" data-allow-clear="true"  multiple="multiple">'+taskroledata+'</select><br><select data-placeholder="Select Users" title="Select Users" id="row-'+uniquecode+'-userid" data-allow-clear="true"  class="select2" multiple="multiple">'+taskuseriddata+'</select> <br></div>';
-        var col6 = '<br><div class="addscrol"><div id="row-'+uniquecode+'-descrpition" class="edittaskdiscrpition_'+uniquecode+'"></div><p ><i class="font-icon fa fa-edit" id="taskdiscrpition_'+uniquecode+'" title="Edit your task specifications"style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Specifications</span></p></div></div>';
+        var col6 = '<br><div class="addscrol"><div id="row-'+uniquecode+'-descrpition" name="taskdiscrpition_'+uniquecode+'" oncontextmenu="return false;" onclick="bulktask_descripiton(this)"></div><p ><i class="font-icon fa fa-edit" name="taskdiscrpition_'+uniquecode+'" title="Edit your task specifications"style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Specifications</span></p></div></div>';
                   
        t.row.add( [
             col1,
@@ -298,61 +299,22 @@ function bulktask_descripiton(e){
     
        
         
-         var classname = jQuery(e).attr("id");
-         var desplaceholder = jQuery(e).attr("id").split('_');
+         var classname = jQuery(e).attr("name");
+         var desplaceholder = jQuery(e).attr("name").split('_');
          var descrpition = jQuery(".edit"+classname).html();
       
       
         var updatedescripiton = jQuery.confirm({
             
         title: 'Task Specifications',
-        content: '<textarea name="taskdescrpition" class="taskdescrpition"  >'+descrpition+'</textarea><div class="showallmergefields" style="display:none;margin-top: 11px;"></div><hr><p style="margin-bottom: -69px !important;"><button type="button" title="Select Merge Fields" class="btn mycustomwidth btn-inline btn-primary mergefield">Select Merge Fields</button></p>',
+        content: '<textarea name="taskdescrpition" class="taskdescrpition"  >'+descrpition+'</textarea>',
         confirmButton: 'Update',
         cancelButton: 'Close',
-       
         confirmButtonClass: 'btn mycustomwidth btn-lg btn-primary mysubmitemailbutton',
         cancelButtonClass: 'btn mycustomwidth btn-lg btn-danger',
         columnClass: 'jconfirm-box-container-special',
-        closeIcon: true,
-        onOpen: function() {
-                                               
-                    this.$b.find('button.mergefield').click(function() {
-                                                jQuery("body").css({'cursor':'wait'});
-                                                var url = currentsiteurl+'/';
-                                                var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getavailablemergefields';
-                                                var data = new FormData();
-                                                jQuery.ajax({
-                                                        url: urlnew,
-                                                        data: data,
-                                                        cache: false,
-                                                        contentType: false,
-                                                        processData: false,
-                                                        type: 'POST',
-                                                        success: function(data) {
-                
-                                                        var keyslist = jQuery.parseJSON(data);
-                                                        var welcomedatafieldskeys = "";
-                                                        var areaId = "taskdescrpition";
-                                                        jQuery.each( keyslist, function( i, item ) {  
-
-                                                          
-                                                         if(item !="user_pass" && item !="status" ){   
-                                                            var keyvalue = '{'+item+'}';
-                                                            welcomedatafieldskeys+='<a style="margin-right: 5px;cursor: pointer;" onclick=\'insertAtCaret("'+areaId+'","'+keyvalue+'")\' > '+keyvalue+'</a>';  
-                                                            }
-                                                        });
-                                                        
-                                                        jQuery(".showallmergefields").empty();
-                                                        jQuery(".showallmergefields").append(welcomedatafieldskeys);
-                                                        jQuery(".showallmergefields").show();
-                                                        jQuery('body').css('cursor', 'default');
-                                                   }
-                                               });
-                                                
-                    });
-                                                
-    },
-    confirm: function () {
+         closeIcon: true,
+        confirm: function () {
             
             
             jQuery(".edit"+classname).empty();
@@ -367,7 +329,6 @@ function bulktask_descripiton(e){
                 jQuery("#desplaceholder-"+desplaceholder[1]).hide();
             }
         }
-       
 
         });
         
@@ -404,15 +365,12 @@ function clonebulk_task(e){
         jQuery("#customers_select_search").select2({ allowClear: true });
    
         t.columns().every( function () {
-        var that = this;
- 
-        
-           
-                that.search(' ').draw();
+            var that = this;
+            that.search(' ').draw();
             
         } );
         
-        var uniquecode  = randomString(5, 'a#')+"_addnewtasks";
+        var uniquecode  = randomString(8, 'a#')+"_addnewtasks";
         var currentclickid = jQuery(e).attr('id');
         var clonetask = jQuery('#'+currentclickid).parent('p').parent('td').parent('tr').addClass('clontrposition');
       
@@ -591,12 +549,8 @@ function saveallbulktask(){
    // t.search(' ').draw();
     t.columns().every( function () {
         var that = this;
- 
-        
-           
-                that.search(' ').draw();
-            
-        } );
+        that.search(' ').draw();
+    });
     jQuery("body").css({'cursor':'wait'});
     var taskdataupdate = {};
     var requeststatus = 'stop';
@@ -612,10 +566,8 @@ function saveallbulktask(){
         
         
          var taskid = jQuery( this ).attr('id');
-    var taskLabelcheck = jQuery( '#row-'+taskid+'-title' ).val();
-     
-     
-       var status = 'noduplicate';
+         var taskLabelcheck = jQuery( '#row-'+taskid+'-title' ).val();
+         var status = 'noduplicate';
        jQuery( ".saveeverything" ).each(function( index2 ) {
             
             var taskid2 = jQuery( this ).attr('id');
@@ -672,7 +624,7 @@ function saveallbulktask(){
             
               var taskLabel = jQuery( '#row-'+taskid+'-title' ).val();
               var uniqueKey = taskLabel.toLowerCase().replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, '_');
-              var uniquecode =randomString(5, 'a#');
+              var uniquecode =randomString(8, 'a#');
               uniqueKey ='task_'+uniqueKey+'_'+uniquecode;
             
             
@@ -994,11 +946,8 @@ function bulktasksettings(e){
             }
             jQuery('#row-'+task_code+'-attribute').val(attributes);
             
-                if(jQuery('#notificationemails_taskMWC').val() !=""){
+           if(jQuery('#notificationemails_taskMWC').val() !=""){
                     jQuery('#row-'+task_code+'-emailnotificationaddress').val(jQuery('#notificationemails_taskMWC').val());
-                }else{
-                    
-                   jQuery('#row-'+task_code+'-emailnotificationaddress').val(""); 
                 }
           
            if(jQuery('#confrim_taskMWC').is(':checked')){
@@ -1045,34 +994,3 @@ function bulktasksettings(e){
     
 }
 
-function getallmergefieldsfortask(){
-    
-    var url = currentsiteurl+'/';
-    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getavailablemergefields';
-    var data = new FormData();
-    jQuery.ajax({
-            url: urlnew,
-            data: data,
-            cache: false,
-            contentType: false,
-            processData: false,
-            type: 'POST',
-            success: function(data) {
-                
-                var keyslist = jQuery.parseJSON(data);
-                var welcomedatafieldskeys = "";
-                var areaId = "taskdescrpition";
-                jQuery.each( keyslist, function( i, item ) {
-                    
-                  var keyvalue = '{'+item+'}';
-                  welcomedatafieldskeys+='<a style="cursor: pointer;" onclick=\'insertAtCaret("'+areaId+'","'+keyvalue+'")\' > '+keyvalue+'</a><br>';  
-                    
-                });
-                console.log(welcomedatafieldskeys);
-                return welcomedatafieldskeys;
-               
-           }
-       });
-    
-    
-}

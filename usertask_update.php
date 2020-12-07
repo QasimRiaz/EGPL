@@ -302,7 +302,7 @@ function user_file_upload($keyvalue,$updatevalue,$status,$oldvalue,$postid,$last
            $fileurl['file'] =$utl_value ;
            $fileurl['type'] = $movefile['type'];
            $fileurl['user_id'] = $postid;
-           $fileurl['url'] = $movefile['url'];;
+           $fileurl['url'] = $movefile['url'];
            
            //var_dump($fileurl); exit;
          $result =  update_user_meta($postid, $keyvalue , $fileurl);

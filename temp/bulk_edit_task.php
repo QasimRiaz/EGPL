@@ -166,8 +166,8 @@ height: 50% !important;
                                 <?php foreach ($plug_in_settings['ContentManager']['taskmanager']['input_type'] as $val) { ?>
                                         <option value="<?php echo $val['type']; ?>" ><?php echo $val['lable']; ?></option>
                                 <?php } ?>
-                                
-                                <option value="multivaluedtask" >Multi Sub Values</option>
+                                <option value="multiselect" >Multi-Select</option>
+                                <option value="multivaluedtask" >Multi Value Task</option>
                             </select>
                             <select class="addnewtaskdata-role" style="display: none;" >
 
@@ -343,9 +343,9 @@ height: 50% !important;
                                                    
                                                             
                                                     <?php if ("multivaluedtask" == $value['type']) { ?>        
-                                                            <option value="multivaluedtask" selected="selected">Multi Sub Values</option>
+                                                            <option value="multivaluedtask" selected="selected">Multi Value Task</option>
                                                     <?php }else{?>
-                                                            <option value="multivaluedtask" >Multi Sub Values</option>
+                                                            <option value="multivaluedtask" >Multi Value Task</option>
                                                     <?php } ?>        
                                                             
                                                             
@@ -429,9 +429,9 @@ height: 50% !important;
                                         
                                         <td><br>
                                             <div class="addscrol">
-                                                <div id="row-<?php echo $task_code; ?>-descrpition" class='edittaskdiscrpition_<?php echo $task_code; ?>'><?php echo $value['descrpition']; ?></div>
+                                                <div id="row-<?php echo $task_code; ?>-descrpition" name="taskdiscrpition_<?php echo $task_code; ?>" oncontextmenu="return false;" class='edittaskdiscrpition_<?php echo $task_code; ?>' onclick="bulktask_descripiton(this)"><?php echo $value['descrpition']; ?></div>
 
-                                                <p ><i class="font-icon fa fa-edit" id='taskdiscrpition_<?php echo $task_code; ?>'title="Edit your task specifications" data-toggle="tooltip" style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i>
+                                                <p ><i class="font-icon fa fa-edit" name='taskdiscrpition_<?php echo $task_code; ?>'title="Edit your task specifications" data-toggle="tooltip" style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i>
         <?php if (!empty($value['descrpition'])) { ?>
 
                                                         <span id="desplaceholder-<?php echo $task_code; ?>" style="display:none;margin-left: 10px;color:gray;">Specifications</span>
@@ -468,7 +468,7 @@ height: 50% !important;
         include 'cm_footer.php';
         ?>
             
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=3.38"></script>    
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=3.45"></script>    
             
         <?php
         

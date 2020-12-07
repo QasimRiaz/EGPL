@@ -75,7 +75,7 @@
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/dashboardrequest.js?v=2.95"></script>
   
            <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.alerts.js?v=2.95"></script>
-<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+<script src="https://cdn.tiny.cloud/1/7sjeh9nrwq4lhsc48nnxfcx0ctkanr5e5ykokigve8ftjbcu/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
 jQuery(document).ready(function() {
     

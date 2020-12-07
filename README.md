@@ -1,4 +1,4 @@
-~Current Version:4.13~
+~Current Version:4.14~
 
 
 -------------------27-09-2019---Main release 3.40--------------
@@ -99,3 +99,15 @@ Release Item
 -------------------17-09-2020--- New Release 4.10 --------------
 
 URL merge fields click able in task page
+
+-------------------29-09-2020--- New Release 4.13 --------------
+
+Fixed Bug -- Task Page Files downloaded 
+Fixed File remove issue
+Fixed Admin Task Page settings Update
+Fixed Admin Edit Task Page User Name
+
+-------------------07-12-2020--- New Release 4.14 --------------
+
+Fixed bug task description issue copy with other task uniquer id
+Fixed tinmc editor issue
