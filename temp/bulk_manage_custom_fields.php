@@ -81,6 +81,7 @@ height: 50% !important;
 	background: #FFFFFF !important;
 	border: 1px solid #d7dee2 !important;
 }
+.jconfirm{z-index: 99 !important;}
 	</style>
 <!--   <div class="spoverlay overlay-hugeinc " id="loadingalert">
    <div class="sweet-alert showSweetAlert visible" data-custom-class="" data-has-cancel-button="false" data-has-confirm-button="true" data-allow-outside-click="false" data-has-done-function="false" data-animation="pop" data-timer="null" style="display:block;border: #b7b7b8 solid 1px;height: 329px;">

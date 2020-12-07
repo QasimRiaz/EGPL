@@ -1,4 +1,4 @@
-~Current Version:4.14~
+~Current Version:4.15~
 
 
 -------------------27-09-2019---Main release 3.40--------------
@@ -107,7 +107,7 @@ Fixed File remove issue
 Fixed Admin Task Page settings Update
 Fixed Admin Edit Task Page User Name
 
--------------------07-12-2020--- New Release 4.14 --------------
+-------------------07-12-2020--- New Release 4.15 --------------
 
 Fixed bug task description issue copy with other task uniquer id
 Fixed tinmc editor issue
