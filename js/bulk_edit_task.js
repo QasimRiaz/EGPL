@@ -113,7 +113,7 @@ jQuery(window).load(function() {
         var col3 = '<div class="topmarrginebulkedit"><select  data-toggle="tooltip" title="Select Type" class="select2 bulktasktypedrop" id="bulktasktype_'+uniquecode+'" data-placeholder="Select Type" data-allow-clear="true">'+tasktypedata+'</select></div><div class="bulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" ><input type="text"  class="form-control" name="linkurl" placeholder="Link URL" title="Link URL"id="row-'+uniquecode+'-linkurl" ><br><input type="text"  class="form-control" name="linkname" placeholder="Link Name" title="Link Name" id="row-'+uniquecode+'-linkname"></div><div class="dbulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" > <input type="text"  class="form-control" name="dropdownvalues" placeholder="Comma separated list of values" title="Comma separated list of values"  id="row-'+uniquecode+'-dropdownvlaues" ></div>';
         var col4 = '<input  data-toggle="tooltip" title="Due Date" placeholder="Due Date" id="row-'+uniquecode+'-duedate" style="padding-left: 13px;margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control datepicker" name="datepicker" >';
         var col5 = '<div class="addscrol topmarrginebulkedit"><select data-toggle="tooltip" class="select2" id="row-'+uniquecode+'-levels" data-placeholder="Select Levels" title="Select Levels" data-allow-clear="true"  multiple="multiple">'+taskroledata+'</select><br><select data-placeholder="Select Users" title="Select Users" id="row-'+uniquecode+'-userid" data-allow-clear="true"  class="select2" multiple="multiple">'+taskuseriddata+'</select> <br></div>';
-        var col6 = '<br><div class="addscrol"><div id="row-'+uniquecode+'-descrpition" name="taskdiscrpition_'+uniquecode+'" oncontextmenu="return false;" onclick="bulktask_descripiton(this)"></div><p ><i class="font-icon fa fa-edit" name="taskdiscrpition_'+uniquecode+'" title="Edit your task specifications"style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Specifications</span></p></div></div>';
+        var col6 = '<br><div class="addscrol"><div id="row-'+uniquecode+'-descrpition" name="taskdiscrpition_'+uniquecode+'" class="edittaskdiscrpition_'+uniquecode+'" oncontextmenu="return false;" onclick="bulktask_descripiton(this)"></div><p ><i class="font-icon fa fa-edit" name="taskdiscrpition_'+uniquecode+'" title="Edit your task specifications"style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Specifications</span></p></div></div>';
                   
        t.row.add( [
             col1,
@@ -302,7 +302,8 @@ function bulktask_descripiton(e){
          var classname = jQuery(e).attr("name");
          var desplaceholder = jQuery(e).attr("name").split('_');
          var descrpition = jQuery(".edit"+classname).html();
-      
+         console.log(classname);
+         console.log(descrpition)
       
         var updatedescripiton = jQuery.confirm({
             
