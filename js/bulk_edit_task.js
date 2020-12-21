@@ -308,7 +308,7 @@ function bulktask_descripiton(e){
         var updatedescripiton = jQuery.confirm({
             
         title: 'Task Specifications',
-        content: '<textarea name="taskdescrpition" class="taskdescrpition"  >'+descrpition+'</textarea>',
+        content: '<textarea name="taskdescrpition" class="taskdescrpition"  >'+descrpition+'</textarea><div class="showallmergefields" style="display:none;margin-top: 11px;"></div><hr><p style="margin-bottom: -69px !important;"><button type="button" title="Select Merge Fields" class="btn mycustomwidth btn-inline btn-primary mergefield">Select Merge Fields</button></p>',
         confirmButton: 'Update',
         cancelButton: 'Close',
         confirmButtonClass: 'btn mycustomwidth btn-lg btn-primary mysubmitemailbutton',
