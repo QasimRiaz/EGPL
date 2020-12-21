@@ -315,6 +315,44 @@ function bulktask_descripiton(e){
         cancelButtonClass: 'btn mycustomwidth btn-lg btn-danger',
         columnClass: 'jconfirm-box-container-special',
          closeIcon: true,
+		 onOpen: function() {
+                                               
+                    this.$b.find('button.mergefield').click(function() {
+                                                jQuery("body").css({'cursor':'wait'});
+                                                var url = currentsiteurl+'/';
+                                                var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=getavailablemergefields';
+                                                var data = new FormData();
+                                                jQuery.ajax({
+                                                        url: urlnew,
+                                                        data: data,
+                                                        cache: false,
+                                                        contentType: false,
+                                                        processData: false,
+                                                        type: 'POST',
+                                                        success: function(data) {
+                
+                                                        var keyslist = jQuery.parseJSON(data);
+                                                        var welcomedatafieldskeys = "";
+                                                        var areaId = "taskdescrpition";
+                                                        jQuery.each( keyslist, function( i, item ) {  
+
+                                                          
+                                                         if(item !="user_pass" && item !="status" ){   
+                                                            var keyvalue = '{'+item+'}';
+                                                            welcomedatafieldskeys+='<a style="margin-right: 5px;cursor: pointer;" onclick=\'insertAtCaret("'+areaId+'","'+keyvalue+'")\' > '+keyvalue+'</a>';  
+                                                            }
+                                                        });
+                                                        
+                                                        jQuery(".showallmergefields").empty();
+                                                        jQuery(".showallmergefields").append(welcomedatafieldskeys);
+                                                        jQuery(".showallmergefields").show();
+                                                        jQuery('body').css('cursor', 'default');
+                                                   }
+                                               });
+                                                
+                    });
+                                                
+    },
         confirm: function () {
             
             
