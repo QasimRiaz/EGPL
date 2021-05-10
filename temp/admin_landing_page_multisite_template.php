@@ -4,10 +4,10 @@
  $blog_list = get_blog_list( 0, 'all' );
  $current_user = wp_get_current_user();
  $roles = $current_user->roles;
- 
+ $site_url  = get_site_url();
  $user_id = get_current_user_id();
  $user_blogs = get_blogs_of_user( $user_id );
- 
+ $virtualpluginstatus = get_option('Activated_VirtualEGPL');
 
 ?>
 <div class="fusion-row">
@@ -41,8 +41,8 @@
                 <table class="table table-striped">
                     <tbody>
                         <tr>
-                            <td><strong>Event Name</strong></td>
-                            <td><strong>URL</strong></td>
+                            <td><strong>Event</strong></td>
+                            <td><strong></strong></td>
                             
                         </tr>
                         
@@ -50,15 +50,41 @@
                             
                             $sitename = $blog_id->blogname;
                             if($blog_id->userblog_id != 1){
-                            if($roles[0] == 'contentmanager' || $roles[0] == 'administrator' ){
                                 
-                                 echo '<tr><td>'.$sitename.'</td><td style="width:40%;"><a target="_blank" href="'.$blog_id->siteurl.'/" class="btn btn-info" >Visit Site</a><a href="'.$blog_id->siteurl.'/dashboard" style="margin-left: 9%;"  target="_blank" class="btn btn-info" >Admin Dashboard</a></td></tr>';
+                               
+                            if( $virtualpluginstatus == 'VirtualEGPL/virtualegpl.php'  && is_page( 'live' )) {
+                                
+                               if($roles[0] == 'contentmanager' || $roles[0] == 'administrator' ){
+
+                                    echo '<tr><td>'.$sitename.'</td><td style="width:40%;"><a target="_blank" href="'.$blog_id->siteurl.'/" class="btn btn-info eg-buttons" >Exhibitor  Portal</a><a target="_blank" href="'.$site_url.'/live" class="btn btn-info eg-buttons" >Virtual Event</a><a href="'.$blog_id->siteurl.'/dashboard" style="margin-left: 9%;"  target="_blank" class="btn btn-info eg-buttons" >Admin Dashboard</a></td></tr>';
+
+                               }else{
+                                    if(current_user_can('attendee')){
+                                          echo '<tr><td>'.$sitename.'</td><td style="width:40%;"><a target="_blank" href="'.$site_url.'/live" class="btn btn-info eg-buttons" >Virtual Event</a></td></tr>';
+
+                                    }else{
+                                         echo '<tr><td>'.$sitename.'</td><td style="width:40%;"><a  target="_blank" href="'.$blog_id->siteurl.'/" class="btn btn-info eg-buttons" >Exhibitor  Portal</a><a target="_blank" href="'.$site_url.'/live" class="btn btn-info eg-buttons" >Virtual Event</a></td></tr>';
+ 
+                                    }
+                                  
+                               }
+                                
+                                
                                 
                             }else{
-                               
-                                 echo '<tr><td>'.$sitename.'</td><td style="width:40%;"><a  target="_blank" href="'.$blog_id->siteurl.'/" class="btn btn-info" >Visit Site</a></td></tr>';
-                                 
+                                
+                               if($roles[0] == 'contentmanager' || $roles[0] == 'administrator' ){
+
+                                    echo '<tr><td>'.$sitename.'</td><td style="width:40%;"><a target="_blank" href="'.$blog_id->siteurl.'/" class="btn btn-info eg-buttons" >Exhibitor  Portal</a><a href="'.$blog_id->siteurl.'/dashboard" style="margin-left: 9%;"  target="_blank" class="btn btn-info eg-buttons" >Admin Dashboard</a></td></tr>';
+
+                               }else{
+
+                                    echo '<tr><td>'.$sitename.'</td><td style="width:40%;"><a  target="_blank" href="'.$blog_id->siteurl.'/" class="btn btn-info eg-buttons" >Exhibitor  Portal</a></td></tr>';
+
+                               } 
+                                
                             }
+                            
                             }
                            
                         }

@@ -1,5 +1,5 @@
 <?php
-                    
+                $siteurl = get_site_url();
                 $field_input_type[0]['lable'] = 'Line-Break Text';
                 $field_input_type[0]['type']  = 'display';
                 
@@ -293,7 +293,7 @@
 
                 $create_pages_list[16]['title'] = 'Tasks';
                 $create_pages_list[16]['name']  = 'task-list';
-                $create_pages_list[16]['temp']  = 'temp/sponsor-task-update-template.php';
+                $create_pages_list[16]['temp']  = 'metronictasks.php';
                 $create_pages_list[16]['catname']  = false;
                 
                 $create_pages_list[17]['title'] = 'Bulk Import Users';
@@ -350,150 +350,150 @@
                 
                 $create_pages_list[27]['title'] = 'My Sites';
                 $create_pages_list[27]['name']  = 'my-sites';
-                $create_pages_list[27]['temp']  = 'temp/admin_landing_page_multisite_template.php';
+                $create_pages_list[27]['temp']  = 'egpl_admin_landing_page_multisite_template.php';
                 $create_pages_list[27]['catname']  = false;
                 /// Fornt End Pages 
                 
                 $create_pages_list[28]['title'] = 'Agenda';
                 $create_pages_list[28]['name']  = 'agenda';
-                $create_pages_list[28]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[28]['temp']  = 'egpldefualttemplate.php';
                 $create_pages_list[28]['catname']  = true;
                 
                 
                 $create_pages_list[29]['title'] = 'Cart';
                 $create_pages_list[29]['name']  = 'cart';
-                $create_pages_list[29]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[29]['temp']  = 'egplcarttemplate.php';
                 $create_pages_list[29]['catname']  = false;
                 
                 
                 
                 $create_pages_list[30]['title'] = 'Checkout';
                 $create_pages_list[30]['name']  = 'checkout';
-                $create_pages_list[30]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[30]['temp']  = 'egplcheckouttemplate.php';
                 $create_pages_list[30]['catname']  = false;
                 
                 
                 $create_pages_list[31]['title'] = 'Event Overview';
                 $create_pages_list[31]['name']  = 'event-overview';
-                $create_pages_list[31]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[31]['temp']  = 'egpldefualttemplate.php';
                 $create_pages_list[31]['catname']  = true;
                 
                 
                 $create_pages_list[32]['title'] = 'FAQs Page';
                 $create_pages_list[32]['name']  = 'faqs-page';
-                $create_pages_list[32]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[32]['temp']  = 'egpldefualttemplate.php';
                 $create_pages_list[32]['catname']  = true;
                 
                 
                 $create_pages_list[33]['title'] = 'FAQs';
                 $create_pages_list[33]['name']  = 'faqs';
-                $create_pages_list[33]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[33]['temp']  = 'egplfaq.php';
                 $create_pages_list[33]['catname']  = false;
                 
 
-                $create_pages_list[34]['title'] = 'FLOOR PLAN';
-                $create_pages_list[34]['name']  = 'floor-plan';
-                $create_pages_list[34]['temp']  = 'temp/egpl_default_page_template.php';
-                $create_pages_list[34]['catname']  = false;
+//                $create_pages_list[34]['title'] = 'FLOOR PLAN';
+//                $create_pages_list[34]['name']  = 'floor-plan';
+//                $create_pages_list[34]['temp']  = 'temp/egpl_default_page_template.php';
+//                $create_pages_list[34]['catname']  = false;
                 
                     
                 $create_pages_list[35]['title'] = 'Floor Plan Page';
                 $create_pages_list[35]['name']  = 'floor-plan-page';
-                $create_pages_list[35]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[35]['temp']  = 'egpldefualttemplate.php';
                 $create_pages_list[35]['catname']  = true;
                 
                 
                 $create_pages_list[36]['title'] = 'Home';
                 $create_pages_list[36]['name']  = 'home';
-                $create_pages_list[36]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[36]['temp']  = 'egplhome.php';
                 $create_pages_list[36]['catname']  = false;
                 
                 
                 $create_pages_list[37]['title'] = 'Home Intro';
                 $create_pages_list[37]['name']  = 'home-intro';
-                $create_pages_list[37]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[37]['temp']  = 'egpldefualttemplate.php';
                 $create_pages_list[37]['catname']  = true;
                 
                 
                 $create_pages_list[38]['title'] = 'Landing Page Content';
                 $create_pages_list[38]['name']  = 'landing-page-content';
-                $create_pages_list[38]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[38]['temp']  = 'egpldefualttemplate.php';
                 $create_pages_list[38]['catname']  = true;
                 
                 
                 $create_pages_list[39]['title'] = 'Login';
                 $create_pages_list[39]['name']  = 'login';
-                $create_pages_list[39]['temp']  = 'temp/egpl_login.php';
+                $create_pages_list[39]['temp']  = 'metroniclogin.php';
                 $create_pages_list[39]['catname']  = false;
                 
                 
                 $create_pages_list[40]['title'] = 'Login Page';
                 $create_pages_list[40]['name']  = 'login-page';
-                $create_pages_list[40]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[40]['temp']  = 'egpldefualttemplate.php';
                 $create_pages_list[40]['catname']  = true;
                 
                 
                 $create_pages_list[41]['title'] = 'LogOut';
                 $create_pages_list[41]['name']  = 'logout';
-                $create_pages_list[41]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[41]['temp']  = 'egpldefualttemplate.php';
                 $create_pages_list[41]['catname']  = false;
                 
                 
                 
                 $create_pages_list[42]['title'] = 'My account';
                 $create_pages_list[42]['name']  = 'my-account';
-                $create_pages_list[42]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[42]['temp']  = 'egpldefualttemplate.php';
                 $create_pages_list[42]['catname']  = false;
                 
                 
                 $create_pages_list[43]['title'] = 'Registration Page Content';
                 $create_pages_list[43]['name']  = 'registration-page-content';
-                $create_pages_list[43]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[43]['temp']  = 'egpldefualttemplate.php';
                 $create_pages_list[43]['catname']  = true;
                 
                 
                 $create_pages_list[44]['title'] = 'Landing Page';
                 $create_pages_list[44]['name']  = 'landing-page';
-                $create_pages_list[44]['temp']  = 'temp/landing-page.php';
+                $create_pages_list[44]['temp']  = 'egpllandingpage.php';
                 $create_pages_list[44]['catname']  = false;
                 
                 
                 $create_pages_list[45]['title'] = 'Resources';
                 $create_pages_list[45]['name']  = 'resources';
-                $create_pages_list[45]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[45]['temp']  =  'egplresource.php';
                 $create_pages_list[45]['catname']  = false;
                 
                 
-                $create_pages_list[46]['title'] = 'Shop';
-                $create_pages_list[46]['name']  = 'shop';
-                $create_pages_list[46]['temp']  = 'temp/egpl_default_page_template.php';
-                $create_pages_list[46]['catname']  = false;
+                $create_pages_list[46]['title'] = 'Resources Content';
+                $create_pages_list[46]['name']  = 'resources-content';
+                $create_pages_list[46]['temp']  = 'egpldefualttemplate.php';
+                $create_pages_list[46]['catname']  = true;
                 
                 
                 $create_pages_list[47]['title'] = 'Task Page';
                 $create_pages_list[47]['name']  = 'task-page';
-                $create_pages_list[47]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[47]['temp']  =  'metronictasks.php';
                 $create_pages_list[47]['catname']  = true;
                 
                 
                 $create_pages_list[48]['title'] = 'TERMS AND CONDITIONS';
                 $create_pages_list[48]['name']  = 'terms-and-conditions';
-                $create_pages_list[48]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[48]['temp']  = 'egpldefualttemplate.php';
                 $create_pages_list[48]['catname']  = true;
                 
                 $create_pages_list[49]['title'] = 'Registration Codes';
                 $create_pages_list[49]['name']  = 'registration-codes';
-                $create_pages_list[49]['temp']  = 'temp/egpl_default_page_template.php';
+                $create_pages_list[49]['temp']  = 'egpldefualttemplate.php';
                 $create_pages_list[49]['catname']  = false;
                 
                 $create_pages_list[50]['title'] = 'Change Password';
                 $create_pages_list[50]['name']  = 'change-password-2';
-                $create_pages_list[50]['temp']  = 'temp/change_password_template.php';
+                $create_pages_list[50]['temp']  = 'egplchangepassword.php';
                 $create_pages_list[50]['catname']  = false;
                 
                 $create_pages_list[51]['title'] = 'Forgot Password';
                 $create_pages_list[51]['name']  = 'forgot-password';
-                $create_pages_list[51]['temp']  = 'temp/change_password_template.php';
+                $create_pages_list[51]['temp']  = 'metronicforgetpassword.php';
                 $create_pages_list[51]['catname']  = false;
                 
                 $create_pages_list[52]['title'] = 'Edit Sponsor Task';
@@ -522,8 +522,22 @@
                 $create_pages_list[56]['temp']  = 'temp/custome_tasks_report_filters.php';
                 $create_pages_list[56]['catname']  = false;
               
+                 $create_pages_list[57]['title'] = 'Floor Plan';
+                $create_pages_list[57]['name']  = 'floor-plan';
+                $create_pages_list[57]['temp']  =  'egplflooplantemplate.php';
+                $create_pages_list[57]['catname']  = false;
+              
+                $create_pages_list[57]['title'] = 'Floor Plan Content';
+                $create_pages_list[57]['name']  = 'floor-plan-page';
+                $create_pages_list[57]['temp']  = 'egpldefualttemplate.php';
+                $create_pages_list[57]['catname']  = true;
                 
-
+                $create_pages_list[57]['title'] = 'Floor Plan Viewer';
+                $create_pages_list[57]['name']  = 'floor-plan-viewer';
+                $create_pages_list[57]['temp']  = 'noheaderfooter.php';
+                $create_pages_list[57]['catname']  = false;
+                
+                
                 $all_pages_defult_content['create-user']='';
                 $all_pages_defult_content['user-report']='';
                 $all_pages_defult_content['edit-user']='';
@@ -621,7 +635,7 @@
                 <h1><strong>Is there a press list available?</strong>&nbsp;</h1>
                 <p>&nbsp;A list of current registered press will be uploaded to the Resources Tab the&nbsp;1st and 15th of each month.&nbsp;&nbsp;</p>';
                 $all_pages_defult_content['faqs']='';
-                $all_pages_defult_content['floor-plan']='';
+                $all_pages_defult_content['floor-plan']='<iframe id="floorplanviewer" allowfullscreen="allowfullscreen" src="'.$siteurl.'/floor-plan-viewer/" width="100%" height="800" scrolling="no"></iframe>';
                 $all_pages_defult_content['floor-plan-page']='<p>Coming Soon.</p>';
                 $all_pages_defult_content['home']='';
                 $all_pages_defult_content['home-intro']='<p>Welcome to the <strong>Event Name</strong> Exhibitor Resource Center. This is your one-stop resource for all of your exhibitor related needs. This portal provides you and your team with 24/7 access to the information and tools you need to manage, and take full advantage of your role for eTail West 2017.</p>

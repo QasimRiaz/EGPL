@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           4.20
+ * Version:           4.30
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -397,23 +397,6 @@ if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {
     
     
     echo   json_encode($user_file_list);
-    
- 
-   die();
-
-}else if ($_GET['contentManagerRequest'] == 'get_current_file_url') {
-    
-    require_once('../../../wp-load.php');
-    global $wpdb;
-    $zip_folder_name=$_POST['taskname'];
-    $userid=$_POST['userid'];
-    
-    
-    $user_last = get_user_meta($userid, $zip_folder_name);
-    $compnayName = get_user_option($userid, "company_name");
-    $download_array = $compnayName[0].'*'.$user_last[0]['file'];
-    
-    echo   json_encode($download_array);
     
  
    die();
@@ -1692,7 +1675,7 @@ try {
    
     // exit;
        
-    $lastInsertId = contentmanagerlogging('Send Bulk Email',"Admin Action",serialize($message),$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Bulk Email',"Admin Action",serialize($message),$user_ID,$user_info->user_email,"pre_action_data");
      
     $async = false;
     $ip_pool = 'Main Pool';
@@ -2563,6 +2546,70 @@ else if ($_GET['contentManagerRequest'] == 'removerole') {
  }
     die(); 
 
+}else if ($_GET['contentManagerRequest'] == 'portalsettingsupdate') {
+    
+    require_once('../../../wp-load.php');
+    $oldvalues = get_option( 'ContenteManager_Settings' );
+    
+    
+    if(!empty(isset($_REQUEST['getheaderlogo']))){
+        
+        $oldvalues['ContentManager']['headerlogo'] = $_REQUEST['getheaderlogo'];
+        
+    }
+    
+    if(!empty(isset($_REQUEST['getheaderfavicon']))){
+        
+        $oldvalues['ContentManager']['sitefavicon'] = $_REQUEST['getheaderfavicon'];
+        
+    }
+    
+    if(!empty(isset($_REQUEST['getheaderimage']))){
+        
+        $oldvalues['ContentManager']['mainheader'] = $_REQUEST['getheaderimage'];
+        
+    }
+    
+    
+   
+    
+    foreach($_REQUEST as $requestIndex=>$requestData){
+        
+        if($requestIndex !='getheaderimage' && $requestIndex !='getheaderimageType' && $requestIndex !='sitefavicon'&& $requestIndex !='sitefaviconURL'&& $requestIndex !='headerlogoURL'&& $requestIndex !='headerlogo'){
+            
+            $oldvalues['ContentManager'][$requestIndex] = $requestData;
+            
+        }
+        
+    }
+    
+    update_option('ContenteManager_Settings', $oldvalues);
+        
+    echo   json_encode('Successfullyupdated');
+    
+    die();
+   
+
+}else if ($_GET['contentManagerRequest'] == 'uploadbase64image') {
+    
+    require_once('../../../wp-load.php');
+    
+    
+    
+    if(!empty($_REQUEST['imagetype']) && !empty($_REQUEST['imagedata'])){
+        
+        $filedata =  $_REQUEST['imagedata'];
+        $filedataType =  $_REQUEST['imagetype'];
+        
+        $filedataurl = portalsettingheaderimage($filedata,'default-header-banner',$filedataType);
+        
+    }
+    
+    echo   json_encode($filedataurl); 
+    
+    die();
+   
+
 }else if ($_GET['contentManagerRequest'] == 'adminsettings') {
     
     require_once('../../../wp-load.php');
@@ -2646,7 +2693,7 @@ function updateadminemailtemplate($data_array,$email_template_name){
     
     $data_submit['data_array']=$data_array;
     $data_submit['template_name']=$email_template_name;
-    $lastInsertId = contentmanagerlogging('Update Report Template',"Admin Action",serialize($data_submit),$user_ID,$user_info->user_email,"pre_action_data");
+    $lastInsertId = contentmanagerlogging('Updated Report Template',"Admin Action",serialize($data_submit),$user_ID,$user_info->user_email,"pre_action_data");
        
       $settitng_key='AR_Contentmanager_Email_Template';
       $sponsor_info = get_option($settitng_key);
@@ -3618,7 +3665,7 @@ function getReportsdatanew($report_name,$usertimezone){
         $column_name_uppercase = $showhideMYFieldsArray;//array_change_key_case($showhideMYFieldsArray, CASE_UPPER);
         $newStr = strtoupper($showhidefields);
         //print_r ($newStr);
-        $base_url = "https://" . $_SERVER['SERVER_NAME'];
+        $base_url = "http://" . $_SERVER['SERVER_NAME'];
         $result_user_id = $wpdb->get_results($query);
         $allMetaForAllUsers = array();
         $myNewArray = array();
@@ -4052,27 +4099,27 @@ function getReportsdatanew($report_name,$usertimezone){
 
 add_action('wp_enqueue_scripts', 'add_contentmanager_js');
 function add_contentmanager_js(){
-      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'5.2.0', true);
+      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'5.2.1', true);
     
      wp_enqueue_script( 'jquery.alerts', plugins_url() . '/EGPL/js/jquery.alerts.js', array(), '1.1.0', true );
      wp_enqueue_script( 'boot-date-picker', plugins_url() . '/EGPL/js/bootstrap-datepicker.js', array(), '1.2.0', true );
-     wp_enqueue_script( 'jquerydatatable', plugins_url() . '/EGPL/js/jquery.dataTables.js', array(), '1.2.0', true );
-     wp_enqueue_script( 'shCore', plugins_url() . '/EGPL/js/shCore.js', array(), '1.2.0', true );
-     wp_enqueue_script( 'demo', plugins_url() . '/EGPL/js/demo.js', array(), '1.2.0', true );
-     wp_enqueue_script( 'bootstrap.min', plugins_url() . '/EGPL/js/bootstrap.min.js', array(), '1.2.0', true );
+     //wp_enqueue_script( 'jquerydatatable', plugins_url() . '/EGPL/js/jquery.dataTables.js', array(), '1.2.0', true );
+     //wp_enqueue_script( 'shCore', plugins_url() . '/EGPL/js/shCore.js', array(), '1.2.0', true );
+     //wp_enqueue_script( 'demo', plugins_url() . '/EGPL/js/demo.js', array(), '1.2.0', true );
+     //wp_enqueue_script( 'bootstrap.min', plugins_url() . '/EGPL/js/bootstrap.min.js', array(), '1.2.0', true );
     
-     wp_enqueue_script('safari1', plugins_url('/js/modernizr.custom.js', __FILE__), array('jquery'));
-     wp_enqueue_script('safari2', plugins_url('/js/classie.js', __FILE__), array('jquery'));
-     wp_enqueue_script('safari3', plugins_url('/js/progressButton.js', __FILE__), array('jquery'));
+     //wp_enqueue_script('safari1', plugins_url('/js/modernizr.custom.js', __FILE__), array('jquery'));
+     //wp_enqueue_script('safari2', plugins_url('/js/classie.js', __FILE__), array('jquery'));
+     //wp_enqueue_script('safari3', plugins_url('/js/progressButton.js', __FILE__), array('jquery'));
    
     // wp_enqueue_script('bulk-email', plugins_url('/js/bulk-email.js', __FILE__), array('jquery'));
-     wp_enqueue_script('sweetalert', plugins_url('/EGPL/cmtemplate/js/lib/bootstrap-sweetalert/sweetalert.min.js'), array('jquery'));
+     //wp_enqueue_script('sweetalert', plugins_url('/EGPL/cmtemplate/js/lib/bootstrap-sweetalert/sweetalert.min.js'), array('jquery'));
      wp_enqueue_script('password_strength_cal', plugins_url('/js/passwordstrength.js', __FILE__), array('jquery'));
      
      wp_enqueue_script( 'selfsignupjs', plugins_url('/EGPL/js/selfsignupjs.js'), array(), '1.3.7', true );
      wp_enqueue_script( 'jquery-confirm', plugins_url('/EGPL/js/jquery-confirm.js'), array(), '1.2.7', true );
       
-     wp_enqueue_script('select2', plugins_url('/cmtemplate/js/lib/select2/select2.full.js', __FILE__), array('jquery'));
+     //wp_enqueue_script('select2', plugins_url('/cmtemplate/js/lib/select2/select2.full.js', __FILE__), array('jquery'));
     
      wp_enqueue_script( 'order-history', plugins_url('/EGPL/js/orderhistory.js'), array(), '1.6.0', true );
      wp_enqueue_script( 'Egpl-filters', plugins_url('/EGPL/js/egplfilters.js'), array(), '1.2.6', true );
@@ -4083,20 +4130,20 @@ function add_contentmanager_js(){
 add_action('wp_enqueue_scripts', 'my_contentmanager_style');
 
 function my_contentmanager_style() {
-    wp_enqueue_style('my-mincss', plugins_url() .'/EGPL/css/bootstrap.min.css');
-    wp_enqueue_style('my-sweetalert', plugins_url() .'/EGPL/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css');
-    wp_enqueue_style('my-datepicker', plugins_url().'/EGPL/css/datepicker.css');
-    wp_enqueue_style('jquery.dataTables', plugins_url().'/EGPL/css/jquery.dataTables.css');
-    wp_enqueue_style('shCore', plugins_url().'/EGPL/css/shCore.css');
+    //wp_enqueue_style('my-mincss', plugins_url() .'/EGPL/css/bootstrap.min.css');
+    //wp_enqueue_style('my-sweetalert', plugins_url() .'/EGPL/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css');
+    //wp_enqueue_style('my-datepicker', plugins_url().'/EGPL/css/datepicker.css');
+    //wp_enqueue_style('jquery.dataTables', plugins_url().'/EGPL/css/jquery.dataTables.css');
+    //wp_enqueue_style('shCore', plugins_url().'/EGPL/css/shCore.css');
 
    // wp_enqueue_style('jquery-confirm-css', plugins_url() .'/EGPL/css/jquery-confirm.css',array(), '1.2', 'all');
    
   
-    wp_enqueue_style('my-datatable-tools', plugins_url().'/EGPL/css/dataTables.tableTools.css');
+    //wp_enqueue_style('my-datatable-tools', plugins_url().'/EGPL/css/dataTables.tableTools.css');
    // wp_enqueue_style('cleditor-css', plugins_url() .'/EGPL/css/jquery.cleditor.css');
    // wp_enqueue_style('contentmanager-css', plugins_url() .'/EGPL/css/forntend.css');
-    wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '2.56', 'all');
-    wp_enqueue_style('my-admin-theme', plugins_url('css/normalize.css', __FILE__));
+    //wp_enqueue_style('my-admin-theme1', plugins_url() .'/EGPL/css/component.css',array(), '2.58', 'all');
+    //wp_enqueue_style('my-admin-theme', plugins_url('css/normalize.css', __FILE__));
   
    
 }
@@ -4254,7 +4301,16 @@ function my_plugin_activate() {
 // Insert the post into the database
                         $returnpage_ID = wp_insert_post($my_post);
                         update_post_meta($returnpage_ID, '_wp_page_template', $create_pages_list[$key]['temp']);
-                    }
+                    }else{
+                    
+                  
+                        
+                        $pageID = $page->ID;
+                        
+                        update_post_meta($pageID, '_wp_page_template', $create_pages_list[$key]['temp']);
+                        
+                   
+                }
                 }
 
                
@@ -4774,6 +4830,7 @@ class PageTemplater {
                         'temp/landing-page.php'=>'Landing Page',
                         'temp/admin_landing_page_multisite_template.php'=>'Multi site Landing Page',
                         'temp/egpl_default_page_template.php'=>'EGPL Default Template',
+                        'temp/egpl-home-template.php'=>'EGPL Home 100%',
                         'temp/egpl_login.php'=>'Users Login',
                         'temp/egpl_resources_template.php'=>'Resources',
                         'temp/updateusersprefix.php'=>'Update User Meta',
@@ -4785,7 +4842,15 @@ class PageTemplater {
                         'temp/bulk_manage_custom_fields.php'=>'User Fields',
                         'temp/custome_task_reports.php'=>'Task Report',
                         'temp/custome_tasks_report_filters.php'=>'Task Report Filters',
-                        'temp/expo-genie-log-template.php'=>'Expo Genie Logs'
+                        'temp/expo-genie-log-template.php'=>'Expo Genie Logs',
+                        'temp/virtual-loby-template.php'=>'Virtual Lobby',
+                        'temp/virtual-auditorium-template.php'=>'Virtual Auditorium',
+                        'temp/virtual-booth-view-template.php'=>'Virtual Booth View',
+                        'temp/virtual-exhibitorhall-template.php'=>'Virtual Exhibit Hall',
+                        'temp/virtual-resourcenter-template.php'=>'Virtual Resource Center',
+                        'temp/virtual-breakouts-template.php'=>'Virtual Breakouts',
+                        'temp/virtual-breakouts-template.php'=>'Virtual Breakouts',
+                        'temp/virtual-networklounge-template.php'=>'Virtual Nerworking'
                        
                         
                      
@@ -6555,17 +6620,50 @@ try {
     
 }
 
+function portalsettingheaderimage( $base64_img, $title , $file_type ) {
+
+	// Upload dir.
+	$upload_dir  = wp_upload_dir();
+	$upload_path = str_replace( '/', DIRECTORY_SEPARATOR, $upload_dir['path'] ) . DIRECTORY_SEPARATOR;
+        
+        
+        $img = str_replace('data:image/png;base64,', '', $base64_img);
+        $img = str_replace('data:image/jpeg;base64,', '', $img);
+        $img = str_replace('data:image/jpg;base64,', '', $img);
+       
+	$img = str_replace(' ', '+', $img);
+	$data = base64_decode($img);
+        $fielname = uniqid();
+        
+	$file = $upload_path . $fielname . '.'.$file_type;
+	$success = file_put_contents($file, $data);
+	
+        
+        
+	$attachment = array(
+		'post_mime_type' => $file_type,
+		'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $fielname ) ),
+		'post_content'   => '',
+		'post_status'    => 'inherit',
+		'guid'           => $upload_dir['url'] . '/' . basename( $fielname )
+	);
+
+	$attach_id = wp_insert_attachment( $attachment, $upload_dir['path'] . '/' . $fielname.$file_type );
+        return $upload_dir['url'] . '/' . basename( $fielname ).'.'.$file_type;exit;
+}
+
+
 /// child theme code just like short code and hide menu bar 
 function theme_enqueue_styles() {
     wp_enqueue_style( 'avada-parent-stylesheet', get_template_directory_uri() . '/style.css' );
 }
-add_action( 'wp_enqueue_scripts', 'theme_enqueue_styles' );
+//add_action( 'wp_enqueue_scripts', 'theme_enqueue_styles' );
 
 function avada_lang_setup() {
 	$lang = get_stylesheet_directory() . '/languages';
 	load_child_theme_textdomain( 'Avada', $lang );
 }
-add_action( 'after_setup_theme', 'avada_lang_setup' );
+//add_action( 'after_setup_theme', 'avada_lang_setup' );
 
 
 add_action('after_setup_theme', 'remove_admin_bar');
@@ -6577,8 +6675,8 @@ function remove_admin_bar() {
 
 function no_admin_access()
 {
- if( !current_user_can( 'administrator' ) ) {
-     wp_redirect( home_url() );
+ if ( !defined( 'DOING_AJAX' ) && !current_user_can('administrator') ){
+     wp_redirect( site_url() );
      die();
   }
 }
@@ -6799,7 +6897,7 @@ function checkwelcomealreadysend($request){
         $user_ID = get_current_user_id();
         $user_info = get_userdata($user_ID);
         
-        $lastInsertId = contentmanagerlogging('Check Welcome Email Already Sent',"Admin Action",serialize($request),''.$user_ID,$user_info->user_email,"pre_action_data");
+        $lastInsertId = contentmanagerlogging('Check Welcome Email Send',"Admin Action",serialize($request),''.$user_ID,$user_info->user_email,"pre_action_data");
         $emailaddress_array=explode(",", $request['emailAddress']);
         $usertimezone=intval($request['usertimezone']);
         foreach($emailaddress_array as $key=>$emailaddress){
@@ -6866,21 +6964,6 @@ function exp_autocomplete_all_orders($order_id) {
         
         if (!$order_id)
                 return;
-        
-        
-        global $wpdb;
-        $site_prefix = $wpdb->get_blog_prefix();
-        
-        
-        
-        $get_items_sql =  "SELECT * FROM ".$site_prefix."woocommerce_order_itemmeta where meta_key = '_remaining_balance_order_id' and meta_value=".$order_id;
-        //$myrows = $wpdb->get_results( "SELECT * FROM ".$site_prefix."'woocommerce_order_itemmeta' where meta_key = '_remaining_balance_order_id' and meta_value=".$order_id );
-         
-        $products = $wpdb->get_results($get_items_sql);
-        
-        if(!empty($products))
-            return;
-        
         $orderstatus = "completed";
         //$order = new WC_Order($order_id);
         $order = wc_get_order($order_id);
@@ -6891,8 +6974,8 @@ function exp_autocomplete_all_orders($order_id) {
         
         //ravenhub additional code -- 01-06-2020////
         
-        
-        
+        global  $wpdb;
+        $site_prefix = $wpdb->get_blog_prefix();
 	$postid = get_current_user_id();
 	$data = array();                                                                    
         $getsiteurl = get_site_url();
@@ -7794,18 +7877,18 @@ function woocommerce_rename_coupon_field_on_cart( $translated_text, $text, $text
 }
 
 
-add_filter( 'woocommerce_coupon_error', 'rename_coupon_label', 10, 3 );
-add_filter('woocommerce_coupon_message', 'rename_coupon_label', 10, 3);
-add_filter('woocommerce_checkout_coupon_message', 'rename_coupon_label', 10, 3);
+//add_filter( 'woocommerce_coupon_error', 'rename_coupon_label', 10, 3 );
+//add_filter('woocommerce_coupon_message', 'rename_coupon_label', 10, 3);
+//add_filter('woocommerce_checkout_coupon_message', 'rename_coupon_label', 10, 3);
 
-function rename_coupon_label( $translated_text, $text, $text_domain ) {
+//function rename_coupon_label( $translated_text, $text, $text_domain ) {
 	
-	$text = str_replace("Coupon","Discount",$translated_text);
-        return  $text;
+	//$text = str_replace("Coupon","Discount",$translated_text);
+  //      return  $text;
         
         
         
-}
+//}
 
 
 function getcustomefieldKeyValue($fieldKey,$getKeyValue){
@@ -9553,6 +9636,66 @@ if ( ! function_exists( 'alg_wc_pvbur_get_invisible_products' ) ) {
 	 * @version 1.1.9
 	 * @since   1.1.9
 	 */
+        $actual_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                         
+        if (strpos($actual_link, 'product-category') !== false) {
+            
+            
+            
+        
+	function alg_wc_pvbur_get_invisible_products( $roles = array(),$current_user_ids="" ) {
+		$query = new WP_Query( alg_wc_pvbur_get_invisible_products_query_args( $roles,$current_user_ids ) );
+               return $query;
+	}
+       function alg_wc_pvbur_get_invisible_products_userlist( $roles = array(),$current_user_ids="" ) {
+		$query = new WP_Query( alg_wc_pvbur_get_invisible_products_query_args_onusersids( $roles,$current_user_ids ) );
+               
+                
+                
+
+		return $query;
+	}
+         function alg_wc_pvbur_get_invisible_products_userlist_views( $roles = array(),$current_user_ids="" ) {
+		$query = new WP_Query( alg_wc_pvbur_get_invisible_products_query_args_onusersids_views( $roles,$current_user_ids ) );
+                return $query;
+	}
+        
+        }else{
+           function alg_wc_pvbur_get_invisible_products( $roles = array(),$current_user_ids="" ) {
+		$query = "";//new WP_Query( alg_wc_pvbur_get_invisible_products_query_args( $roles,$current_user_ids ) );
+               
+                
+                
+
+		return $query;
+	}
+       function alg_wc_pvbur_get_invisible_products_userlist( $roles = array(),$current_user_ids="" ) {
+		$query = "";//new WP_Query( alg_wc_pvbur_get_invisible_products_query_args_onusersids( $roles,$current_user_ids ) );
+               
+                
+                
+
+		return $query;
+	}
+         function alg_wc_pvbur_get_invisible_products_userlist_views( $roles = array(),$current_user_ids="" ) {
+		$query = "";// new WP_Query( alg_wc_pvbur_get_invisible_products_query_args_onusersids_views( $roles,$current_user_ids ) );
+                return $query;
+	} 
+            
+            
+        }
+}
+
+//start 
+/*
+if ( ! function_exists( 'alg_wc_pvbur_get_invisible_products' ) ) {
+	/**
+	 * Get invisible products
+	 *
+	 * @version 1.1.9
+	 * @since   1.1.9
+	 */
+	 /*
 	function alg_wc_pvbur_get_invisible_products( $roles = array(),$current_user_ids="" ) {
 		$query = new WP_Query( alg_wc_pvbur_get_invisible_products_query_args( $roles,$current_user_ids ) );
                
@@ -9580,6 +9723,8 @@ if ( ! function_exists( 'alg_wc_pvbur_get_invisible_products' ) ) {
         
         
 }
+
+//end*/
 if ( ! function_exists( 'alg_wc_pvbur_get_invisible_products_query_args' ) ) {
 	/**
 	 * alg_wc_pvbur_get_invisible_products_query_args
@@ -9701,3 +9846,12 @@ if ( ! function_exists( 'alg_wc_pvbur_get_invisible_products_query_args' ) ) {
         
 }
 
+add_action( 'woocommerce_thankyou', 'adding_customers_details_to_thankyou', 10, 1 );
+function adding_customers_details_to_thankyou( $order_id ) {
+    // Only for non logged in users
+    if ( ! $order_id || is_user_logged_in() ) return;
+
+    $order = wc_get_order($order_id); // Get an instance of the WC_Order object
+
+    wc_get_template( 'order/order-details-customer.php', array('order' => $order ));
+}

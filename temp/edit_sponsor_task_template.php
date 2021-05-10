@@ -1,13 +1,19 @@
-<?php
-// Template Name: Sponsor Edit Task Update 
-    
-    if ( is_user_logged_in() ) {    
-    if (current_user_can('administrator') || current_user_can('contentmanager') ){
-        
-      get_header();
-		
-     
-      if(!empty($_GET['sponsorid'])){
+<?php /* 
+
+Template Name: Admin Edit Tasks */ 
+
+if ( is_user_logged_in() ) { 
+     if (current_user_can('administrator') || current_user_can('contentmanager') ){
+//wp_head();
+get_header();
+
+    global $wpdb, $wp_hasher;
+    $site_prefix = $wpdb->get_blog_prefix();
+
+     if(!empty($_GET['sponsorid'])){
+         
+         
+         
           $sponsor_id=$_GET['sponsorid'];
           $meta_for_user = get_userdata( $sponsor_id );
           $all_meta_for_user = get_user_meta($sponsor_id );
@@ -18,17 +24,9 @@
           
       }
 
-		
-     
-     
+     //$sponsor_id = get_current_user_id(); 
      $roles = wp_get_current_user()->roles;
      $check= array_key_exists("contentmanager",$roles);
-     
-     $blog_id = get_current_blog_id();
-                   
-                    $site_prefix = 'wp_' . $blog_id . '_';
-     
-     
      $args = array(
 	'posts_per_page'   => -1,
 	'orderby'          => 'date',
@@ -52,7 +50,7 @@
      $lockTWMduedate = $sponsor_info['ContentManager']['lockTWMduedate'];
      $current_user = get_userdata( $sponsor_id );
      $user_IDD = $sponsor_id;
-     $base_url = "http://" . $_SERVER['SERVER_NAME'];
+     $base_url = "https://" . $_SERVER['SERVER_NAME'];
      // echo '<pre>';
     // print_r($result );exit;
                        
@@ -61,77 +59,89 @@
       $all_roles = $wp_roles->get_names();
       
       function getRandomString($length = 8) {
-    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $string = '';
-
-    for ($i = 0; $i < $length; $i++) {
-        $string .= $characters[mt_rand(0, strlen($characters) - 1)];
-    }
-
-    return $string;
-}
-      
+            $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $string = '';
+            for ($i = 0; $i < $length; $i++) {
+                $string .= $characters[mt_rand(0, strlen($characters) - 1)];
+            }
+            return $string;
+        }
+//      
      ?>
-          <script>
+    <link href="/wp-content/plugins/EGPL/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css" rel="stylesheet" type="text/css" />	
+    <script>
         
             
         
         currentsiteurl = '<?php echo $site_url;?>';
         
         
-    </script> 
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-    <style>
-        .content{
-            
-            
-            font-size: 18px !important;
-            color:#fff !important;
-            padding:0px !important;
-        }
-        .select2-container--default .select2-results__option {
-    
-            color: #333 !important;
-        }
-        .select2-container--default.select2-container--focus .select2-selection--multiple {
-            border: solid #d2d2d2 1px !important;
-          
-        }
-    </style>    
+    </script>
+			
 <div id="content" class="full-width">
 
         <div id="sponsor-status"></div>
               <?php
-    // TO SHOW THE PAGE CONTENTS
-    while ( have_posts() ) : the_post(); ?> <!--Because the_content() works only inside a WP Loop -->
-        <div class="entry-content-page">
-            <?php the_content(); ?> <!-- Page Content -->
-        </div><!-- .entry-content-page -->
-
-    <?php
-    endwhile; //resetting the page loop
-    
-    
    
+    
+    
+    if ( is_user_logged_in() ) {    
     
     ?>
 
-   <div id="hiddenform"></div>
-<div style="padding-bottom: 10px;">
-                    <h3 style="float:left;width:50%;"><?php echo $sponsor_name;?> Task</h3>
-                    <h3 style="float:right;margin-right: 20px;">For : <?php echo $all_meta_for_user[$site_prefix.'first_name'][0] .' '.$all_meta_for_user[$site_prefix.'last_name'][0]; ?></h3>
-                    </div>
-            <table class="mytable table table-striped table-bordered table-condensed" >
-                <thead>
-                    <tr class="text_th" >
-                        <th class="duedate-bg">Due Date</th>
-                        <th id="task-bg">Task</th>
-                        <th id="spec-bg">Specifications</th>
-                        <th id="action-bg">Action</th>
-                        <th id="status-bg"></th>
-                    </tr></thead>
-                <tbody>
-           <?php
+
+			</div>
+            <div id="hiddenform"></div>
+          
+			
+			
+						<div class="container mb-8 mt-8">
+                                                    <div class="p-6"><div class="card card-custom gutter-b">
+                                                            
+                                                                        <div class="card-header">
+										<div class="card-title">
+											<span class="card-icon">
+												<i class="fa fa-tasks text-primary fa-lg"></i>
+											</span>
+                                                                                    <h4>Exhibitor Task List </h4>
+										</div>
+                                                                            <h4 style="margin-top: 20px;">For : <?php echo $all_meta_for_user[$site_prefix.'first_name'][0] .' '.$all_meta_for_user[$site_prefix.'last_name'][0]; ?></h4>
+									</div>
+									<div class="card-body">
+										<!--begin::Top-->
+										
+                                                                                
+										
+                                                                                
+                                                                                <div class="d-flex">
+                                                                                <?php // TO SHOW THE PAGE CONTENTS
+                                                                                while ( have_posts() ) : the_post(); ?> <!--Because the_content() works only inside a WP Loop -->
+                                                                                    <div class="entry-content-page">
+                                                                                        <?php the_content(); ?> <!-- Page Content -->
+                                                                                    </div><!-- .entry-content-page -->
+
+                                                                                <?php
+                                                                                endwhile; //resetting the page loop?>	
+										</div>
+										<!--end::Top-->
+										
+									</div>
+								</div></div>
+                                                    
+                                                    
+                                                    
+							<div class="">
+								<div class="">
+									<div class="p-6">
+										
+										
+										
+									
+	
+	
+	
+	
+	 <?php
            
          
            foreach ($result as $taskIndex => $taskObject){
@@ -281,6 +291,8 @@
                     $timetest=  date('H:i:s');
                     $sitetitle = get_bloginfo( 'name' );
                    $userdata = get_userdata($sponsor_id);
+                   
+                   
                    foreach($field_key_string as $index=>$keyvalue){
                 
                         
@@ -338,8 +350,13 @@
                            $taskdescription = str_replace("{site_title}",$sitetitle,$taskdescription);
                           //$data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
                       }elseif($keyvalue == 'site_url'){
-                          
-                           $taskdescription = str_replace("{site_url}",$site_url,$taskdescription);
+                            
+                            $linktext = "<a href='".$site_url."' target='_blank' >".$site_url."</a>";
+                            $taskdescription = str_replace("{site_url}",$linktext,$taskdescription);
+                            $tagvalue = "{site_url}";
+                            $arrayurlsvalue[$tagvalue] = $site_url;
+                            
+                           //$taskdescription = str_replace("{site_url}",$site_url,$taskdescription);
                           //$data_field_array[] = array('name'=>$index,'content'=>$userdata->ID); 
                       }
                       
@@ -352,22 +369,30 @@
                        
                        $keyvalueforadd = "{".$index."}";
                      
-                       
+                      
                        if (!empty($all_meta_for_user[$keyvalue][0])) {
                            
                           
                           $getfieldType = getcustomefieldKeyValue($keyvalue,"fieldType");
-                        
+                          
                           
                           
                         if($getfieldType == 'date') {
                             
-                            
-                         
                           $date_value =   date('d-m-Y', intval($all_meta_for_user[$keyvalue][0]/1000));
                           //$data_field_array[] = array('name'=>$index,'content'=>$date_value);
                           $taskdescription = str_replace($keyvalueforadd,$date_value,$taskdescription);
-                        } else{
+                          
+                        }else if($getfieldType == 'url'){
+                            
+                            $linktext = "<a href='".$all_meta_for_user[$keyvalue][0]."' target='_blank' >".$all_meta_for_user[$keyvalue][0]."</a>";
+                            $taskdescription = str_replace($keyvalueforadd,$linktext,$taskdescription);
+                            $tagvalue = $keyvalueforadd;
+                            $arrayurlsvalue[$tagvalue] = $all_meta_for_user[$keyvalue][0];
+                            
+                            
+                            
+                        }else{
                              
                                  
                                // $data_field_array[] = array('name'=>$index,'content'=> $all_meta_for_user[$keyvalue][0]);  
@@ -380,58 +405,86 @@
                                 $taskdescription = str_replace($keyvalueforadd,"",$taskdescription);
                           
                        }
-                  
-                      
-                     // echo $taskdescription;exit;
-                      
-                      
-                 
-                 
-                 
-                 
-                   }}
-                  
+                  }}
+                       
+                   
+                    
+                   $timestamp_task_data = date("M d, Y" ,$timestamp_task_data);
+                    
                    if ($result_date <= 0) {
 
-                       $duedate_html = '<td class="duedate"  data-order="' . $timestamp_task_data . '" >' . $profile_field_settings['attrs'] . '</td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . $taskdescription . '</td>';
-                   
+                       $timestamp_task_data_status_o = '<i class="flaticon-calendar-3 mr-2 font-size-lg" style="color:#000;"></i>'.$timestamp_task_data;
+                       $duedatebgcolor = "";
                        
                    } else {
                      
-                       $duedate_html = '<tr class="overdue"><td  data-order="' . $timestamp_task_data . '" class="duedate ' . $profile_field_name . '_status">' . $profile_field_settings['attrs'] . ' <span class="icon-wrapper circle-no"><i class="fusion-li-icon fa fa-flag" style="color:#5D5858;"></i></span></td><td class="checklist">' . $profile_field_settings['label'] . '</td><td class="descrpition">' . $taskdescription . '</td>';
-                       
-                       
+                       $timestamp_task_data_status_o = '<p style="color:#000;font-weight:600!important;"><i class="flaticon-calendar-3 mr-2 font-size-lg" style="color:#000;"></i>'.$timestamp_task_data.'</p>';
+                       $duedatebgcolor='style="background-color: #f1c8c8;"';
                    }
-                  
+				   
+				   ?>
+				   
+				   
+			
+				   
+				   
+				   <?php
+				   
+			
                     switch ($profile_field_settings['type']) {
                         
                         
-                       case 'text':
+                       
                        case 'date':
-                       case 'datetime':
-                       case 'number':
-                       case 'email':
-                      
-                           //echo $value.'-----';
+					    //echo $value.'-----';
                            //echo htmlspecialchars($value);
                            //exit;
-                           $action_col .= '<input '.$fields_staus_type.' class="myclass" type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name;
+                           $iconclass = "far fa-calendar-alt";
+                           
+                           $action_col .= '<input '.$fields_staus_type.' placeholder="Select date" class="myclass form-control kt_datepicker_1" type="text" readonly="readonly" id="' . $profile_field_name;
+                           $action_col .= '" value="'.htmlspecialchars($value).'" >';  
+                           break;
+						   
+                       case 'text':
+                           $iconclass = "fas fa-pencil-alt";
+                          
+                           $action_col .= '<input '.$fields_staus_type.' class="myclass form-control" type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name;
+                           $action_col .= '" value="'.htmlspecialchars($value).'" >';  
+                           break;
+                       case 'datetime':
+                           $iconclass = "fas fa-stopwatch";
+                           
+                           $action_col .= '<input '.$fields_staus_type.' class="myclass form-control" type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name;
+                           $action_col .= '" value="'.htmlspecialchars($value).'" >';  
+                           break;
+                       case 'email':
+                      
+                           $iconclass = "far fa-envelope";
+                           $action_col .= '<input '.$fields_staus_type.' class="myclass form-control" type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name;
+                           $action_col .= '" value="'.htmlspecialchars($value).'" >';  
+                           break;
+                       case 'number':
+                      
+                           $iconclass = "fas fa-hashtag";
+                           $action_col .= '<input '.$fields_staus_type.' class="quantitynumber myclass form-control" type="' . $profile_field_settings['type'] . '" id="' . $profile_field_name;
                            $action_col .= '" value="'.htmlspecialchars($value).'" >';  
                            break;
                        
                        case 'url':
                            
-                           $action_col .= '<input '.$fields_staus_type.' class="myclass" type="url" id="' . $profile_field_name;
+                           
+                           $iconclass = "fas fa-link";
+                           $action_col .= '<input '.$fields_staus_type.' class="myclass form-control" type="url" id="' . $profile_field_name;
                            $action_col .= '" value="'.htmlspecialchars($value).'" >';  
                            break;
                        case 'color':
                            
-
+                           $iconclass = "fas fa-file-upload";
                            if (!empty($value)) {
                                $action_col .='<div class="' . $profile_field_name . '" style="display:none;">';
                            }
 
-                           $action_col .= '<input '.$file_fields_staus_type.' class="uploadFileid"  id="display_my' . $profile_field_name . '" placeholder="Choose File" disabled="disabled" /><div class="fusion-button fusion-button-default fusion-button-medium fusion-button-round fusion-button-flat" '.$file_fields_staus_type.' id="fileUpload"><span>Browse</span><input '.$file_fields_staus_type.'  ' . $profile_field_settings['taskattrs'] . ' type="file" class ="upload myfileuploader" id="my' . $profile_field_name . '" name="my' . $profile_field_name . '" /></div>';
+                           $action_col .= '	<div class="dropzone dropzone-multi"><input '.$file_fields_staus_type.'  ' . $profile_field_settings['taskattrs'] . ' type="file" class ="upload myfileuploader dropzone-select btn btn-light-primary font-weight-bold btn-sm dz-clickable" id="my' . $profile_field_name . '" name="my' . $profile_field_name . '"></a><span class="form-text text-muted">File size must be less than 50MB.</span></div>';
                            if (!empty($value)) {
                                $action_col .='</div>';
                            }
@@ -448,7 +501,7 @@
                            $action_col .= $form_tag . " />";
                            if (!empty($value)) {
                                $profile_field_name_new = "'".$profile_field_name."'";
-                               $action_col .= '<div style="text-align: center;margin-top: 14px;" class="remove_' . $profile_field_name . '"><a  onclick="downloadfontendfile('.$profile_field_name_new.','.$user_IDD.')" style="margin-right: 24px;cursor: pointer;">Download File</a></div>';
+                               $action_col .= '<div style="text-align: center;margin-top: 14px;" class="remove_' . $profile_field_name . '"><a  class="btn btn-primary btn-shadow-hover font-weight-bold mr-2" onclick="downloadfontendfile('.$profile_field_name_new.','.$user_IDD.')" style="cursor: pointer;margin-right: 24px;">Download File</a></div>';
                                    
                               
                                
@@ -457,16 +510,19 @@
                    
                        //Modification by Qasim Riaz
                        case 'none':
+                           $iconclass = "";
                            $action_col .= '';
                            break;
                        case 'comingsoon':
+                           $iconclass = "fas fa-sign";
                            $action_col .= '<strong >Coming soon</strong>';
                            break;
                        //Modification by Qasim Riaz
                       
                       case 'textarea':
-                           
-                           $action_col .= '<textarea '.$fields_staus_type.' rows="5"  class="myclasstextarea" id="' . $profile_field_name . '" name="' . $profile_field_name;
+                          
+                           $iconclass = "fas fa-pencil-alt";
+                           $action_col .= '<textarea '.$fields_staus_type.' rows="5"  class="myclasstextarea form-control" id="' . $profile_field_name . '" name="' . $profile_field_name;
                            if ($mode == 'adduser')
                                $field_html .= '[]';
                            $action_col .= '" class="' . stripslashes(htmlspecialchars_decode($profile_field_settings['class'])) . $unique . '"';
@@ -477,15 +533,26 @@
                                $action_col .= $profile_field_settings['taskattrs'];
                            $action_col .= $form_tag . '>' . htmlspecialchars($value) . '</textarea>';
                            if (!empty($profile_field_settings['taskattrs']))
-                               $action_col .='<span style="font-size:10px;padding-top: 20px;padding-left: 4px;padding-right: 7px;" id="chars_' . $profile_field_name . '">' . str_replace("maxlength=", "", $profile_field_settings['taskattrs']) . '</span><span style="font-size:10px;">characters remaining</span>';
+                               $action_col .='<span style="font-size:10px;padding-right: 7px;" id="chars_' . $profile_field_name . '">' . str_replace("maxlength=", "", $profile_field_settings['taskattrs']) . '</span><span style="font-size:10px;">characters remaining</span>';
                            break;
                      case 'select-2':
-                                      
+                         
+                         
+                           $iconclass = "fas fa-list";           
                            $multi = ((isset($profile_field_settings['allow_multi']) && $profile_field_settings['allow_multi'] == 'yes') || ($mode == 'adduser')) ? '[]' : '';
                            $multiple = (isset($profile_field_settings['allow_multi']) && $profile_field_settings['allow_multi'] == 'yes') ? ' multiple="multiple"' : '';
                            $size = (!isset($profile_field_settings['size']) || $profile_field_settings['size'] < 1) ? ' size="1"' : ' size="' . $profile_field_settings['size'] . '"';
-                           $action_col .= '<select style="width: 100% !important;height:36px !important;" '.$fields_staus_type.' name="' . $profile_field_name . $multi . '" id="' . $profile_field_name . $multi . '" class="selectclass egpl_single_select2"';
-                          
+                           
+                           if($profile_field_settings['multiselectstatus'] == "checked"){
+                                
+                               $action_col .= '<select '.$fields_staus_type.' name="' . $profile_field_name . $multi . '" id="' . $profile_field_name . $multi . '" class="selectclass egpl_single_select2 form-control kt_select2_3"';
+                           
+                                
+                           }else{
+                               
+                               $action_col .= '<select '.$fields_staus_type.' name="' . $profile_field_name . $multi . '" id="' . $profile_field_name . $multi . '" class="selectclass egpl_single_select2 form-control"';
+ 
+                           }
                            if ($profile_field_settings['required'] == 'yes')
                                $field_html .= ' required="required"';
                            if (!empty($profile_field_settings['attrs']))
@@ -511,8 +578,8 @@
                            $action_col .= "</select>\n";
                            break;
                      case 'multiselect':
-                                      
-                           $action_col .= '<select style="width: 100% !important;" class="egpl_single_select2" '.$fields_staus_type.' name="' . $profile_field_name . $multi . '" id="' . $profile_field_name . '" multiple="multiple"';
+                           $iconclass = "fas fa-list";           
+                           $action_col .= '<select style="width: 100% !important;" class="egpl_single_select2 kt_select2_3" '.$fields_staus_type.' name="' . $profile_field_name . $multi . '" id="' . $profile_field_name . '" multiple="multiple"';
                           
                            
                                $action_col .=  '>' . "\n";
@@ -529,6 +596,8 @@
                            $action_col .= "</select>\n";
                            break;
                      case 'multivaluedtask':
+                            
+                           $iconclass = "fas fa-th-list";
                            $profile_field_nameArray = $profile_field_name."[]";
                            $profile_field_namespecial = "'".$profile_field_name."'";
                            $multivaluetasklimit =  "'".$multivaluetasklimit."'";
@@ -540,7 +609,7 @@
                            if(sizeof($multivaluetaskarray) >0){
                            foreach ($multivaluetaskarray as $multivalueIndex=>$multivalue){
                                $randomnumber ="'".getRandomString(8)."'";
-                               $action_col .= '<p id='.$randomnumber.'><input '.$fields_staus_type.' value="'.htmlspecialchars($multivaluetaskarray[$multivalueIndex]).'" style="width: 80% !important;margin-top: 1px;"  class="myclass specialcountclass_'.$profile_field_name.'  speicaltaskmulittask_'.$profile_field_name.'" type="text" name="' . $profile_field_nameArray.'" /> <button '.$fields_staus_type.' style="width: 17%;" class="speicaltaskmulittask_'.$profile_field_name.' btn btn-danger btn-small" onclick="removethisvaluetask('.$randomnumber.')" title="Delete"><i class="fas fa-trash"></i></button></p>';
+                               $action_col .= '<p id='.$randomnumber.' class="row"><input '.$fields_staus_type.' value="'.htmlspecialchars($multivaluetaskarray[$multivalueIndex]).'"   class="myclass form-control col-sm-10 specialcountclass_'.$profile_field_name.'  speicaltaskmulittask_'.$profile_field_name.'" type="text" name="' . $profile_field_nameArray.'" /> <button '.$fields_staus_type.' style="margin-left: 10px;" class="speicaltaskmulittask_'.$profile_field_name.' btn btn-icon btn-danger btn-circle btn-lg mr-4" onclick="removethisvaluetask('.$randomnumber.')" title="Delete"><i class="fas fa-trash"></i></button></p>';
     
                                
                            }
@@ -549,22 +618,40 @@
                            }else{
                                
                                $baseurl ="'bassfieldtype'";
-                               $action_col .= '<p id='.$baseurl.'><input '.$fields_staus_type.' style="width: 80% !important;margin-top: 1px;"  class="myclass specialcountclass_'.$profile_field_name.' speicaltaskmulittask_'.$profile_field_name.' " type="text" name="' . $profile_field_nameArray;
-                               $action_col .= '" value="'.htmlspecialchars($multivaluetaskarray[0]).'" ><button '.$fields_staus_type.' style="width: 17%;" class="speicaltaskmulittask_'.$profile_field_name.' btn btn-danger btn-small" onclick="removethisvaluetask('.$baseurl.')" title="Delete"><i class="fas fa-trash"></i></button></p>';
+                               $action_col .= '<p id='.$baseurl.' class="row"><input '.$fields_staus_type.'  class="myclass form-control col-sm-10 specialcountclass_'.$profile_field_name.' speicaltaskmulittask_'.$profile_field_name.' " type="text" name="' . $profile_field_nameArray;
+                               $action_col .= '" value="'.htmlspecialchars($multivaluetaskarray[0]).'" ><button '.$fields_staus_type.'  style="margin-left: 10px;" class="speicaltaskmulittask_'.$profile_field_name.' btn btn-icon btn-danger btn-circle btn-lg mr-4" onclick="removethisvaluetask('.$baseurl.')" title="Delete"><i class="fas fa-trash"></i></button></p>';
                                
                                
                            }
-                           $action_col .="</div>";
-                           $action_col .= '<p><button '.$fields_staus_type.' style="width: 27%;float: right;" class="speicaltaskmulittask_'.$profile_field_name.' disableclassbutton_'.$profile_field_name.' btn btn-info btn-small" onclick="addnewmultivalueinput('.$profile_field_namespecial.','.$multivaluetasklimit.')" title="Add">Add <i class="fas fa-plus" ></i></button></p>'; 
+                            $action_col .="</div>";
+                           $action_col .= '<p class="row"><span class="col-sm-10"></span><button '.$fields_staus_type.'  style="margin-left: 10px;margin-top: 6px;" class="speicaltaskmulittask_'.$profile_field_name.' disableclassbutton_'.$profile_field_name.' btn btn-icon btn-danger btn-circle btn-lg mr-4" onclick="addnewmultivalueinput('.$profile_field_namespecial.','.$multivaluetasklimit.')" title="Add"><i class="fas fa-plus" ></i></button></p>'; 
                            
                           
                            
-                           
+                          
                            break;
                        
                      case 'link':
                         // echo $profile_field_settings['lin_url'] ;exit;
-                           $action_col .= '<a href="' . $profile_field_settings['lin_url'] . '"target="_blank" ';
+                                
+                         
+                               $iconclass = "fas fa-external-link-square-alt";
+                               $linkname = $profile_field_settings['lin_url'];
+                               
+                               if(!empty($arrayurlsvalue[$linkname])){
+                                   
+                                   $currenturlvalueUpdate = $arrayurlsvalue[$linkname];
+                                   
+                               }else{
+                                   
+                                   $currenturlvalueUpdate = $profile_field_settings['lin_url'];
+                                   
+                               }
+                               
+                          
+                         
+                         
+                           $action_col .= '<a href="' . $currenturlvalueUpdate . '"target="_blank" ';
                            if (!empty($profile_field_settings['taskattrs'])){
                                $action_col .= $profile_field_settings['taskattrs'];
                            }
@@ -579,20 +666,21 @@
                    $background_color='';
                    if($status_value == 'Complete'){
                                 $special_check_buttons_status_remove = 'class="fusion-li-icon fa fa-times-circle fa-2x specialremoveiconenable" ';
-                                $special_check_buttons_status_submit = 'class="progress-button taskcustomesubmit disableremovebutton"';
+                                $special_check_buttons_status_submit = 'class="btnclick btn btn-success eg-buttons mr-2 disableremovebutton"';
                                 $submit_button_text = 'Submitted';
                                 $background_color = 'style="background-color:#d5f1d5;"';
+                                $duedatebgcolor='style="background-color: #d5f1d5;"';
                             }else{
                                 $special_check_buttons_status_remove = 'class="fusion-li-icon fa fa-times-circle fa-2x specialremoveicondisable" ';
-                                $special_check_buttons_status_submit = 'class="progress-button taskcustomesubmit" ';
+                                $special_check_buttons_status_submit = 'class="btnclick btn btn-light-success eg-buttons font-weight-bold mr-2 fixedwithclass" ';
                                 $submit_button_text = 'Submit';
                     }
                    if($lockdownstatus == 'checked' ){ 
                         
                             
-                            $status_col .= '<table><tr style="background-color: transparent;" ><td><button    class="progress-button taskcustomesubmit disableremovebutton" >'.$submit_button_text.'</button></td>';
+                            $status_col .= '<table><tr style="background-color: transparent;" ><td><button    class="btnclick btn btn-light-success eg-buttons font-weight-bold mr-2 fixedwithclass disableremovebutton taskcustomesubmit disableremovebutton" >'.$submit_button_text.'</button></td>';
                             $status_col .= '<td><i  name="'.$profile_field_name.'" data-toggle="tooltip" title="Remove this task"  name="'.$profile_field_name.'" class="fusion-li-icon fa fa-times-circle fa-2x specialremoveicondisable"   ></i><td></tr></table>';
-                    
+                            
                     
                     }else{
                             
@@ -603,15 +691,97 @@
                             
                     }
                    
+				   
+				 
+				   
                    
-                   
-                   
+                //   echo   $duedate_html = '<div class="card card-custom gutter-b"><div class="card-body border "><div class="d-flex"><div class="flex-grow-1"><div class="d-flex align-items-center justify-content-between flex-wrap mt-2"><div class="mr-3"><p class="d-flex align-items-center text-dark font-size-h5 font-weight-bold mr-3">' . $profile_field_settings["label"] . '</p></div><div class="my-lg-0 my-1"><div class="d-flex flex-wrap my-2"><p class="text-dark  font-weight-bold mr-lg-8 mr-5 mb-lg-0 mb-2"><i class="flaticon-calendar-3 mr-2 font-size-lg"></i>' . $timestamp_task_data . '</p></div><a href="#" class="btn btn-sm btn-success font-weight-bolder text-uppercase mr-3">Submit</a><a href="#" class="btn btn-sm btn-danger font-weight-bolder text-uppercase">Remove</a></div></div><div class="d-flex align-items-center flex-wrap">' . $taskdescription . '</div><div class="d-flex align-items-center flex-wrap justify-content-between mt-3"><div class="flex-grow-1 font-weight-bold text-dark-50 py-2 py-lg-2 mr-5 border-0">'.$action_col.'</div><div class="d-flex mt-4 mt-sm-0"><span class="font-weight-bold mr-4">Progress</span><div class="progress progress-xs mt-2 mb-2 flex-shrink-0 w-150px w-xl-250px"><div class="progress-bar bg-success" role="progressbar" style="width: 63%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div></div><span class="font-weight-bolder text-dark ml-4">78%</span></div></div></div></div><div class="separator separator-solid my-7"></div><div class="d-flex align-items-center flex-wrap">' . $taskdescription . '</div></div></div>';
+                    //    exit;
+                    
+                       // exit;
                    
                   
+				echo $duedate_html= '<div class="card card-custom gutter-b" id="'.$profile_field_name.'_taskboday" '.$duedatebgcolor.' >
+									<div class="card-body">
+										<!--begin::Top-->
+										<div class="d-flex">
+											<!--begin::Pic-->
+											<div class="flex-shrink-0 mr-7">
+												<div class="symbol symbol-50 symbol-lg-120">
+													<span class="mr-4">
+													<i class="'.$iconclass.' icon-2x eg-icon-color"></i>
+												</span>
+												</div>
+											</div>
+											<!--end::Pic-->
+											<!--begin: Info-->
+											<div class="flex-grow-1">
+												<!--begin::Title-->
+												<div class="d-flex align-items-center justify-content-between flex-wrap mt-2">
+													<!--begin::User-->
+													<div class="mr-3">
+														<!--begin::Name-->
+														<p  class="d-flex align-items-center text-dark  font-size-h5 font-weight-bold mr-3">'.$profile_field_settings["label"].'
+														</p>
+														<!--end::Name-->
+														<!--begin::Contacts-->
+														<div class="d-flex flex-wrap my-2">
+															
+														</div>
+														<!--end::Contacts-->
+													</div>
+													<!--begin::User-->
+													<!--begin::Actions-->
+													<div class="my-lg-0 my-1">
+													
+													<p  class="text-dark  font-weight-bold mr-lg-8 mr-5 mb-lg-0 mb-2" style="font-weight:600!important;">
+															' . $timestamp_task_data_status_o . '</p>
+													
+													</div>
+													<!--end::Actions-->
+												</div>
+												<!--end::Title-->
+												<!--begin::Content-->
+												<div class="d-flex align-items-center flex-wrap justify-content-between">
+													<!--begin::Description-->
+													<div class="flex-grow-1 font-weight-bold text-dark-50 py-2 py-lg-2 mr-5 taskdescription" >' . $taskdescription . '</div>
+													<!--end::Description-->
+													<!--begin::Progress-->
+													
+													<!--end::Progress-->
+												</div>
+												
+												
+												
+												<div class="">
+												<div class="row">
+												  <div class="col-sm-8"><div class="form-group">
+													'.$action_col.'
+													</div></div>
+												  <div class="col-sm-4"><div class="float-right">
+												  '.$status_col.'
+                                                                                                  
 
+												  </div>
+												  </div>
+												</div>
+												</div>
+												
+												
+												
+														
+														
+												<!--end::Content-->
+											</div>
+											<!--end::Info-->
+										</div>
+										<!--end::Top-->
+										
+									</div>
+								</div>';
                    
                    
-                  echo $duedate_html .= '<td class="content-vertical-middle">'.$action_col.'</td><td class="'.$profile_field_name.'_submissionstatus content-vertical-middle" '.$background_color.'>'.$status_col.'</td></tr>';
+               //   echo $duedate_html .= '<td class="content-vertical-middle">'.$action_col.'</td><td class="'.$profile_field_name.'_submissionstatus content-vertical-middle" '.$background_color.'>'.$status_col.'</td></tr>';
                 
                }  
                 
@@ -622,44 +792,109 @@
            
            ?>
            
-                   
-                    
-                </tbody>
-                    
-                </table>
-    
-    
-    
- 
-</div>              
+	     
 
-    <?php 
-    get_footer(); 
+	
+	 <?php }
+  //  get_footer(); 
 
 ?>
 
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+              
+								
+								
+								
+								
+								
+								
+								</div>
+								</div>
+							</div>
+						</div>
+						
+					</div>		
+						
+
+
+  
+			
+			
+	
+			
+			
+<?php
+
+
+
+//wp_footer();
+get_footer();
+?>
+  <script src="/wp-content/themes/twentytwentyone-child/js/pages/crud/forms/widgets/bootstrap-datepicker.js"></script>
+  <script src="/wp-content/themes/twentytwentyone-child/js/pages/crud/forms/widgets/select2.js"></script>
+  <script src="/wp-content/themes/twentytwentyone-child/plugins/custom/uppy/uppy.bundle.js"></script>
+  <script src="/wp-content/themes/twentytwentyone-child/js/pages/crud/file-upload/uppy.js"></script>
+  <script src="/wp-content/themes/twentytwentyone-child/js/pages/crud/file-upload/dropzonejs.js"></script>
+  <script src="/wp-content/plugins/EGPL/cmtemplate/js/lib/bootstrap-sweetalert/sweetalert.min.js"></script>
+
+  
+  
+  
+  
+  
+		 <script>
     
-    <script>
     
-    jQuery(document).ready(function() {
-    jQuery('.egpl_single_select2').select2();
-    });
-    
-    
+      // Initialization
+      jQuery(document).ready(function() {
+			
+			
+				 // multi select
+        jQuery('.kt_select2_3').select2({
+         placeholder: "Select a Value",
+        });
+			
+		 jQuery('.kt_datepicker_1').datepicker({
+               
+              });
+              
+        jQuery('.btnclick').click(function(){
+            
+            
+            var buttonID = jQuery(this).attr('id');
+            console.log(buttonID);
+            var btn = KTUtil.getById(buttonID);
+            
+            KTUtil.btnWait(btn, "spinner spinner-right spinner-white pr-15", "Please wait");
+
+            setTimeout(function() {
+                KTUtil.btnRelease(btn);
+            }, 3000);
+            
+        });    
+        
+
+        
+			
+      });
+	
+	
+	
     </script>
-    <?php }else{
-        
-         $redirect = get_site_url();
+    
+     <?php }else{
+         
+           $redirect = get_site_url();
         wp_redirect($redirect);
         exit;
-        
-    }}else{
-        
-         $redirect = get_site_url();
+         
+         
+     }}else{
+    
+      $redirect = get_site_url();
         wp_redirect($redirect);
         exit;
-        
-        
-        
-    }?>
+    
+    
+    
+}?>

@@ -261,7 +261,9 @@ function getOrderProductsdetails($request){
            
            
             
-            $product_price =  wc_price($_product->regular_price);
+            
+            $product_price_ex = explode(".",wc_price($_product->regular_price));
+            $product_price = $product_price_ex[0];
             $image_ID = $_product->image_id;
             $image = "";
             $productQuntity = "";
@@ -284,16 +286,21 @@ function getOrderProductsdetails($request){
                 
             }else{
                 
-                $subtotalAmount =   wc_price($productname->Subtotal);
-                $OrderTotal = wc_price($order->total);
+                $subtotalAmount_ex =   explode(".",wc_price($productname->Subtotal));
+               
+                $subtotalAmount = $subtotalAmount_ex[0];
+                $orderpricetotal = explode(".",wc_price($order->total));
+                $OrderTotal = $orderpricetotal[0];
             }
             $product_title = str_replace("Payment #2 for","",$productname->order_item_name); 
             
             if($remaningAmount!=""){
               
+                $orderremaingpricetotal = explode(".",wc_price($remaningAmount));
+                
                 if(sizeof($products)== 1){
                     
-                    $tableHTML .= '<tr><td>'.$image.'</td><td>'.$prodcut_prfixname.$product_title.'</td><td>'.$product_price.'</td><td></td><td>'.wc_price($remaningAmount).'</td></tr>'; 
+                    $tableHTML .= '<tr><td>'.$image.'</td><td>'.$prodcut_prfixname.$product_title.'</td><td>'.$product_price.'</td><td></td><td>'.$orderremaingpricetotal[0].'</td></tr>'; 
            
                 }else{
                   
@@ -314,8 +321,11 @@ function getOrderProductsdetails($request){
     
     
         if($remaningAmount!="" ){
+            
+            $orderremaingpricetotal = explode(".",wc_price($remaningAmount));
+            
            
-            $tableHTML .= '<tr><td></td><td><strong style="font-style: italic;">Total</strong></td><td></td><td></td><td><strong style="font-style: italic;">'.wc_price($remaningAmount).'</strong</td></tr></tbody></table>'; 
+            $tableHTML .= '<tr><td></td><td><strong style="font-style: italic;">Total</strong></td><td></td><td></td><td><strong style="font-style: italic;">'.$orderremaingpricetotal[0].'</strong</td></tr></tbody></table>'; 
         
             
         }else{

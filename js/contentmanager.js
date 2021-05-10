@@ -15,7 +15,53 @@ jQuery(document).ready(function() {
             
         }, 6000);
     }); 
+    
+    jQuery("#headerlogo").change(function(e){
+        
+        var getfile = jQuery("#headerlogo")[0].files[0];
+        if(getfile !=''){
+            
+            jQuery("#headerlogoURL").val("");
+            
+        }
+        var file = jQuery("#headerlogo").get(0).files[0];
  
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                jQuery("#previewImgheader").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+        jQuery("#previewImgheader").show();
+        
+    });
+    jQuery("#sitefavicon").change(function(e){
+        
+        var getfile = jQuery("#sitefavicon")[0].files[0];
+        if(getfile !=''){
+            
+            jQuery("#sitefaviconURL").val("");
+            
+        }
+        var file = jQuery("#sitefavicon").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                jQuery("#previewImgsitefavicon").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+        jQuery("#previewImgsitefavicon").show();
+        
+        
+    });
+    
     jQuery( ".sf-sub-indicator" ).addClass( "icon-play" ); 
     
     
@@ -2121,3 +2167,70 @@ function getimportmapping_data(){
         });
     
 }
+
+function portalsettings_update(){
+    
+    
+    jQuery("body").css({'cursor':'wait'});
+   
+    var data = new FormData();
+    
+    
+    var getheaderimage = jQuery("#headerimage").val();
+    var getheaderlogo = jQuery("#headerimageLogo").val();
+    var getheaderfavicon = jQuery("#headerimageFavicon").val();
+    
+    
+    data.append('getheaderlogo', getheaderlogo);
+    data.append('getheaderfavicon', getheaderfavicon);
+     data.append('getheaderimage', getheaderimage);
+    
+    
+    jQuery('.portalsettings').each(function() {
+        
+       var value = jQuery(this).val();
+       var name = jQuery(this).attr('name');
+       data.append(name, value);
+        
+    });
+    
+    
+    var url = currentsiteurl+'/';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=portalsettingsupdate';
+    jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function (data) {
+              jQuery("body").css({'cursor':'default'});
+              
+                                    swal({
+					title: "Success",
+					text: 'Exhibitor portal settings have been updated successfully.',
+					type: "success",
+                                        html:true,
+					confirmButtonClass: "btn-success",
+					confirmButtonText: "Ok"
+                                    },function(){
+                        
+                                        location.reload();
+                        
+                                    });
+              
+            },error: function (xhr, ajaxOptions, thrownError) {
+                     swal({
+                        title: "Error",
+			text: "There was an error during the requested operation. Please try again.",
+			type: "error",
+			confirmButtonClass: "btn-danger",
+			confirmButtonText: "Ok"
+                     });
+            }
+        });
+    
+}
+
+

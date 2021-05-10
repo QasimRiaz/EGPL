@@ -17,9 +17,26 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
     $content = $page_data->post_content;
     $editor_id = 'mycustomeditor';
     
+    $args = array(
+        'post_type' => 'page',
+        'category_name'    => 'Content Manager Editor',
+        'posts_per_page'   => -1,
+        'order'            => 'ASC',
+        
+    );
+    $loop = new WP_Query( $args );
+    
+    
+   // echo '<pre>';
+   // print_r($loop);exit;
+    
     include 'cm_header.php';
     include 'cm_left_menu_bar.php';
-	query_posts('category_name=Content Manager Editor&showposts=-1&orderby=title&order=ASC'); //edit query_posts('category_name=Content Manager Editor&showposts=-1');
+    
+    
+    
+    
+   // query_posts('category_name=Content Manager Editor&showposts=-1&orderby=title&order=ASC'); //edit query_posts('category_name=Content Manager Editor&showposts=-1');
     
     ?>
 
@@ -56,7 +73,7 @@ if (current_user_can('administrator') || current_user_can('contentmanager')) {
                             
                               <option value=""> </option>
                            <?php
-                                  while (have_posts()) : the_post();
+                                   while ( $loop->have_posts() ) : $loop->the_post();
                                       // do whatever you want
                                       $postid = get_the_ID();
                                       if (isset($_POST['getallPages'])) {

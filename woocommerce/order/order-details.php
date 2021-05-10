@@ -11,19 +11,24 @@
  * the readme will list any important changes.
  *
  * @see     https://docs.woocommerce.com/document/template-structure/
- * @package WooCommerce/Templates
- * @version 3.7.0
+ * @package WooCommerce\Templates
+ * @version 4.6.0
  */
+
 defined( 'ABSPATH' ) || exit;
-$order = wc_get_order( $order_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited
+
+$order = wc_get_order( $order_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
 if ( ! $order ) {
 	return;
 }
+
 $order_items           = $order->get_items( apply_filters( 'woocommerce_purchase_order_item_types', 'line_item' ) );
 $show_purchase_note    = $order->has_status( apply_filters( 'woocommerce_purchase_note_order_statuses', array( 'completed', 'processing' ) ) );
 $show_customer_details = is_user_logged_in() && $order->get_user_id() === get_current_user_id();
 $downloads             = $order->get_downloadable_items();
 $show_downloads        = $order->has_downloadable_item() && $order->is_download_permitted();
+
 if ( $show_downloads ) {
 	wc_get_template(
 		'order/order-downloads.php',
@@ -37,13 +42,13 @@ if ( $show_downloads ) {
 <section class="woocommerce-order-details">
 	<?php do_action( 'woocommerce_order_details_before_order_table', $order ); ?>
 
-	<h2 class="woocommerce-order-details__title"><?php esc_html_e( 'Order details', 'woocommerce' ); ?></h2>
-
-	<table class="woocommerce-table woocommerce-table--order-details shop_table order_details">
+	<h2 style="text-align: center;" class="woocommerce-order-details__title"><?php esc_html_e( 'Order Details', 'woocommerce' ); ?></h2>
+        <br>
+	<table class="woocommerce-table woocommerce-table--order-details shop_table order_details shop_table order_details table table-bordered">
 
 		<thead>
 			<tr>
-				<th class="woocommerce-table__product-name product-name"><?php esc_html_e( 'Test', 'woocommerce' ); ?></th>
+				<th class="woocommerce-table__product-name product-name"><?php esc_html_e( 'Product', 'woocommerce' ); ?></th>
 				<th class="woocommerce-table__product-table product-total"><?php esc_html_e( 'Total', 'woocommerce' ); ?></th>
 			</tr>
 		</thead>
@@ -51,8 +56,10 @@ if ( $show_downloads ) {
 		<tbody>
 			<?php
 			do_action( 'woocommerce_order_details_before_order_table_items', $order );
+
 			foreach ( $order_items as $item_id => $item ) {
 				$product = $item->get_product();
+                               // echo $product;exit;
 				wc_get_template(
 					'order/order-details-item.php',
 					array(
@@ -65,6 +72,7 @@ if ( $show_downloads ) {
 					)
 				);
 			}
+
 			do_action( 'woocommerce_order_details_after_order_table_items', $order );
 			?>
 		</tbody>
@@ -93,7 +101,14 @@ if ( $show_downloads ) {
 </section>
 
 <?php
+/**
+ * Action hook fired after the order details.
+ *
+ * @since 4.4.0
+ * @param WC_Order $order Order data.
+ */
+do_action( 'woocommerce_after_order_details', $order );
+
 if ( $show_customer_details ) {
 	wc_get_template( 'order/order-details-customer.php', array( 'order' => $order ) );
 }
-

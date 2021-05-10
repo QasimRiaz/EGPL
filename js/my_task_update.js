@@ -181,6 +181,7 @@ function update_user_meta_custome(elem,typeoftask) {
     
     jQuery("body").css({'cursor':'wait'})
     var id = jQuery(elem).attr("id");
+    console.log(id)
     erroralert = "";
     var sponsorid=getUrlParameter('sponsorid');
     var url = currentsiteurl+'/';
@@ -200,7 +201,7 @@ function update_user_meta_custome(elem,typeoftask) {
         
         if(GetFieldurlValue == true){
              var metaupdate = jQuery('#' + value).val();
-             
+             console.log("TESTING");
              if(pattern.test(metaupdate)){
                  
                  
@@ -233,14 +234,15 @@ function update_user_meta_custome(elem,typeoftask) {
             success: function(output) {
 				//console.log("Hello world 1");
              //alert("Hello! I am an alert box!!");
-               filestatus=true;
+               //filestatus=true;
                jQuery("body").css({'cursor':'default'});
                if(metaupdate !=""){
                    
                    jQuery('#update_'+value+'_remove').removeClass('specialremoveicondisable');
                    jQuery("." + value+'_submissionstatus').css( "background-color", "#d5f1d5");
                    jQuery('#update_'+value+'_remove').addClass('specialremoveiconenable');
-                   jQuery('#'+id).children('.content').text('Submitted');
+                   jQuery('#'+id).text('Submitted');
+                   jQuery('#'+value+'_taskboday').css( "background-color", "#d5f1d5");
                    
                    
                }
@@ -272,7 +274,7 @@ function update_user_meta_custome(elem,typeoftask) {
                     }     
                 });
             }else{
-                
+                console.log("TESTING__Faild__2021");
                 filestatus=true;
                 erroralert = "faildvaildurl";
                 jQuery("body").css({'cursor':'default'});
@@ -330,7 +332,8 @@ function update_user_meta_custome(elem,typeoftask) {
             data: {action: value, updatevalue: metaupdate, status: statusvalue,sponsorid:sponsorid,usertimezone:usertimezone,typeoftask:typeoftask},
             type: 'post',
             success: function(output) {
-            
+                
+              
                filestatus=true;
                jQuery("body").css({'cursor':'default'});
                if(metaupdate !=""){
@@ -338,8 +341,9 @@ function update_user_meta_custome(elem,typeoftask) {
                    jQuery('#update_'+value+'_remove').removeClass('specialremoveicondisable');
                    jQuery("." + value+'_submissionstatus').css( "background-color", "#d5f1d5");
                    jQuery('#update_'+value+'_remove').addClass('specialremoveiconenable');
-                   jQuery('#'+id).children('.content').text('Submitted');
-                   
+                   jQuery('#'+id).text('Submitted');
+                   jQuery('#'+value+'_taskboday').css( "background-color", "#d5f1d5");
+                        
                    
                }
                if(sponsorid){
@@ -503,8 +507,10 @@ function update_user_meta_custome(elem,typeoftask) {
                         jQuery('#update_'+value+'_remove').removeClass('specialremoveicondisable');
                         jQuery("." + value+'_submissionstatus').css( "background-color", "#d5f1d5");
                         jQuery('#update_'+value+'_remove').addClass('specialremoveiconenable');
-                        jQuery('#'+id).children('.content').text('Submitted');
+                        jQuery('#'+id).text('Submitted');
+                        jQuery('#'+value+'_taskboday').css( "background-color", "#d5f1d5");
                         jQuery('#'+id).addClass('disableremovebutton');
+                        
                    
                     }
                     filestatus=true;
@@ -545,66 +551,50 @@ function update_user_meta_custome(elem,typeoftask) {
         //alert(metaupdate);
         //l.stop();
     }
-    
+    if (filestatus === true) {
+
+        if (erroralert == true) {
+            
+            erroralert = false;
+            swal({
+                title: "Error",
+                text: "There was an error during the requested operation. Please try again.",
+                type: "error",
+                confirmButtonClass: "btn btn-danger mr-2",
+                cancelButtonClass: "btn btn-secondary mr-2",
+                confirmButtonText: "Ok"
+            });
+
+        } else if (erroralert == "faildfileextenshion") {
+
+            swal({
+                title: "Error",
+                text: "This file type is not permitted for security reasons or the file extension is invalid.",
+                type: "error",
+                confirmButtonClass: "btn btn-danger mr-2",
+            cancelButtonClass: "btn btn-secondary mr-2",
+                confirmButtonText: "Ok"
+            });
+        } else if (erroralert == "faildvaildurl") {
+            
+            swal({
+                title: "Error",
+                text: "Url is not valid. Provide a valid url (e.g. https://www.domain.com).",
+                type: "error",
+                confirmButtonClass: "btn btn-danger mr-2",
+                cancelButtonClass: "btn btn-secondary mr-2",
+                confirmButtonText: "Ok"
+            });
+        } else {
+           
+        }
+        
+        filestatus = false;
+    } 
     
     
 }
-jQuery(document).ready(function() {
-    
-   [].slice.call( document.querySelectorAll( 'button.taskcustomesubmit' ) ).forEach( function( bttn ) {
-       
-                               
-				new ProgressButton( bttn, {
-					callback : function( instance ) {
-						var progress = 0,
-							interval = setInterval( function() {
-								progress = Math.min( progress + Math.random() * 0.5, 1 );
-								instance._setProgress( progress );
 
-								if( filestatus === true ) {
-                                                                    
-                                                                    if(erroralert == true){
-									instance._stop(-1);
-                                                                        erroralert=false;
-                                                                        swal({
-                                                                                title: "Error",
-                                                                                text: "There was an error during the requested operation. Please try again.",
-                                                                                type: "error",
-                                                                                confirmButtonClass: "btn-danger",
-                                                                                confirmButtonText: "Ok"
-                                                                        });
-                                                                        
-                                                                    }else if(erroralert == "faildfileextenshion"){
-                                                                        
-                                                                               swal({
-                                                                                           title: "Error",
-                                                                                           text: "This file type is not permitted for security reasons or the file extension is invalid.",
-                                                                                           type: "error",
-                                                                                           confirmButtonClass: "btn-danger",
-                                                                                           confirmButtonText: "Ok"
-                                                                                   });
-                                                                    }else if(erroralert == "faildvaildurl"){
-                                                                                instance._stop(1);
-                                                                               swal({
-                                                                                           title: "Error",
-                                                                                           text: "Url is not valid. Provide a valid url (e.g. https://www.domain.com).",
-                                                                                           type: "error",
-                                                                                           confirmButtonClass: "btn-danger",
-                                                                                           confirmButtonText: "Ok"
-                                                                                   });
-                                                                    }else{
-                                                                        instance._stop(1);
-                                                                    }
-									clearInterval( interval );
-                                                                        filestatus=false;
-								}
-							}, 200 );
-					}
-				} );
-                            
-                            
-			} );
-});
 
 
 function remove_task_value_readyfornew(e,typeoftask){
@@ -627,7 +617,8 @@ function remove_task_value_readyfornew(e,typeoftask){
             text: 'You want to remove your submission?',
             type: "warning",
             showCancelButton: true,
-            confirmButtonClass: "btn-danger",
+            confirmButtonClass: "btn btn-danger mr-2",
+            cancelButtonClass: "btn btn-secondary mr-2",
             confirmButtonText: "Yes, remove it!",
             cancelButtonText: "No, cancel please!",
             closeOnConfirm: false,
@@ -657,7 +648,9 @@ function remove_task_value_readyfornew(e,typeoftask){
                             jQuery("." + task_name_key+'_submissionstatus').removeAttr('style');
                             jQuery('#' + removebuttonid).removeClass('specialremoveiconenable');
                             jQuery('#' + removebuttonid).addClass('specialremoveicondisable');
-                            jQuery('#update_' + task_name_key + '_status').children('.content').text('Submit');
+                            console.log(task_name_key);
+                            jQuery('#update_' + task_name_key + '_status').text('Submit');
+                            jQuery('#'+task_name_key+'_taskboday').css( "background-color", "#fff");
                             jQuery('#update_' + task_name_key + '_status').removeClass('disableremovebutton');
                         
                         swal({
@@ -711,8 +704,11 @@ function remove_task_value_readyfornew(e,typeoftask){
                         jQuery("." + myString).show();
                         jQuery('#' + removebuttonid).removeClass('specialremoveiconenable');
                         jQuery('#' + removebuttonid).addClass('specialremoveicondisable');
-                        jQuery('#update_' + task_name_key + '_status').children('.content').text('Submit');
+                        jQuery('#update_' + task_name_key + '_status').text('Submit');
+                        jQuery('#'+task_name_key+'_taskboday').css( "background-color", "#fff");
                         jQuery('#update_' + task_name_key + '_status').removeClass('disableremovebutton');
+                        
+                        
                         swal({
                             title: "Removed!",
                             text: "Submission remove Successfully",
@@ -803,7 +799,7 @@ function addnewmultivalueinput(taskid,limit){
         
         var r = "'"+Math.random().toString(36).substring(7)+"'";
         var arrayvalue  = taskid+"[]";
-        var appendhtml = '<p id='+r+'><input style="width: 80% !important;margin-top: 1px;"  class="myclass specialcountclass_'+taskid+'  speicaltaskmulittask_'+taskid+'" type="text" name="' + arrayvalue+'" /> <button style="width: 17%;" class="speicaltaskmulittask_'+taskid+' btn btn-danger btn-small" onclick="removethisvaluetask('+r+')" title="Delete"><i class="fas fa-trash"></i></button></p>';
+        var appendhtml = '<p id='+r+' class="row"><input   class="form-control col-sm-10 myclass specialcountclass_'+taskid+'  speicaltaskmulittask_'+taskid+'" type="text" name="' + arrayvalue+'" /> <button  style="margin-left: 10px;margin-top: 6px;" class="speicaltaskmulittask_'+taskid+' btn btn-icon btn-danger btn-circle btn-lg mr-4" onclick="removethisvaluetask('+r+')" title="Delete"><i class="fas fa-trash"></i></button></p>';
         jQuery(".multivaluetask_"+taskid).append(appendhtml);
         console.log(countlimit);
         
@@ -816,7 +812,7 @@ function addnewmultivalueinput(taskid,limit){
         
         var r = "'"+Math.random().toString(36).substring(7)+"'";
         var arrayvalue  = taskid+"[]";
-        var appendhtml = '<p id='+r+'><input style="width: 80% !important;margin-top: 1px;"  class="myclass specialcountclass_'+taskid+' speicaltaskmulittask_'+taskid+'" type="text" name="' + arrayvalue+'" /> <button style="width: 17%;" class="speicaltaskmulittask_'+taskid+' btn btn-danger btn-small" onclick="removethisvaluetask('+r+')" title="Delete"><i class="fas fa-trash"></i></button></p>';
+        var appendhtml = '<p id='+r+' class="row"><input class="form-control col-sm-10 myclass specialcountclass_'+taskid+' speicaltaskmulittask_'+taskid+'" type="text" name="' + arrayvalue+'" /> <button style="margin-left: 10px;margin-top: 6px;" class="speicaltaskmulittask_'+taskid+' btn btn-icon btn-danger btn-circle btn-lg mr-4" onclick="removethisvaluetask('+r+')" title="Delete"><i class="fas fa-trash"></i></button></p>';
         jQuery(".multivaluetask_"+taskid).append(appendhtml);
     }}
     
