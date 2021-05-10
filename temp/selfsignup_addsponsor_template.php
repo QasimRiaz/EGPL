@@ -50,7 +50,7 @@
                      <span class="card-icon">
                          <i class="fab fa-wpforms text-primary fa-lg"></i>
                      </span>
-                     <h1>Registration </h1>
+                     <h4>Registration </h4>
                  </div>
              </div>
 
