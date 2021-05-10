@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           4.31
+ * Version:           4.32
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -7927,6 +7927,14 @@ add_action('rest_api_init', function() {
 		'callback' => 'createuser',
 	]);
         
+        
+        register_rest_route('w1/v1', 'getuserinfo', [
+		'methods' => 'POST',
+		'callback' => 'getuserinfo',
+	]);
+        
+        
+        
         register_rest_route('w1/v1', 'updateuser', [
 		'methods' => 'POST',
 		'callback' => 'updateuser',
@@ -7964,6 +7972,7 @@ function getuserfields(){
         require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/egpl-custome-functions.php';
         $GetAllcustomefields = new EGPLCustomeFunctions();
         $additional_fields = $GetAllcustomefields->getAllcustomefields();
+        $additional_tasks_list = $GetAllcustomefields->getAllcustometasks();
         usort($additional_fields, 'sortByOrder');
     
         $index_count=0;
@@ -7988,7 +7997,8 @@ function getuserfields(){
             
         }
      
-        
+     
+     
     
     
     
@@ -8015,6 +8025,7 @@ function getuserfieldsdata(){
         require_once plugin_dir_path( __DIR__ ) . 'EGPL/includes/egpl-custome-functions.php';
         $GetAllcustomefields = new EGPLCustomeFunctions();
         $additional_fields = $GetAllcustomefields->getAllcustomefields();
+        $additional_tasks_list = $GetAllcustomefields->getAllcustometasks();
         usort($additional_fields, 'sortByOrder');
     
         $index_count=0;
@@ -8043,11 +8054,31 @@ function getuserfieldsdata(){
             
         }
      
-        
+        foreach ($additional_tasks_list as $key_task=>$value_task){
+            
+           
+            
+                
+                
+                $requiredStatus = $value_task['required'];
+                if($requiredStatus == "checked"){
+                    
+                   $columns_list_attitional['users'][$index_count]['required']  = true; 
+                }else{
+                    
+                   $columns_list_attitional['users'][$index_count]['required']  = false;  
+                }
+                $columns_list_attitional['users'][$index_count]['name']  = $value_task['key'];
+                $columns_list_attitional['users'][$index_count]['type']= 'text';//$value_task['type'];
+                $columns_list_attitional['users'][$index_count]['label']= $value_task['label'];
+               
+                
+                $index_count++;
+            
+            
+        }   
     
     
-    
-     
      echo json_encode($columns_list_attitional);
      die();
     }catch (Exception $e) {
@@ -8499,6 +8530,105 @@ function createuser(){
 }
 
 
+
+
+function getuserinfo(){
+    
+    try {
+    
+      
+        
+    $newContactUserData =  json_decode(file_get_contents('php://input')) ;
+    $lastInsertId = contentmanagerlogging('Zapier Get User Information', "Admin Action", "", "", "", $newContactUserData);
+    
+    if(!empty($newContactUserData)){
+        
+        
+        $useroppnumber = $newContactUserData->useropp;
+        global $wpdb;
+         $site_prefix = $wpdb->get_blog_prefix();
+         
+        
+         
+        
+          
+        $args = array(
+	'order'          => 'ASC',
+	'orderby'        => 'display_name',
+	'meta_query'     => array(
+		'relation' => 'AND',
+		array(
+			'key'     => $site_prefix.'external_reference_id_zapier',
+			'value'   => $useroppnumber,
+			'compare' => '=',
+		),
+		
+	)
+        );
+
+
+        
+        $user_query = new WP_User_Query( $args );
+        $authors = $user_query->get_results();
+        if (is_multisite()) {
+                $blog_id = get_current_blog_id();
+                $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+            }else{
+                $get_all_roles_array = 'wp_user_roles';
+            }
+        $get_all_roles = get_option($get_all_roles_array);
+        
+        if(!empty($authors)){
+            
+            
+            
+            $user_id = $authors[0]->ID;
+            $user_data = get_userdata($user_id);
+            $all_meta_for_user = get_user_meta($user_id);
+                
+                
+            $resultRegistratedUser['email'] = $user_data->user_email;
+            $resultRegistratedUser['First Name'] = $all_meta_for_user[$site_prefix.'first_name'][0];;
+            $resultRegistratedUser['Last Name'] = $all_meta_for_user[$site_prefix.'last_name'][0];;
+            $resultRegistratedUser['Role'] = $get_all_roles[$user_data->roles[0]]['name'];
+            $resultRegistratedUser['message'] = "success";
+            
+            
+            //$resultRegistratedUser = json_encode($resultRegistratedUser);
+            
+        }else{
+            
+            
+            $resultRegistratedUser["message"] = "There is no user exist with this opp id.";
+            //$resultRegistratedUser = json_encode($resultRegistratedUser);
+            
+        }
+        
+        
+        
+        
+    }else{
+        
+        $resultRegistratedUser["message"] = "Something went going wrong. Please Connect with App administrative.";
+        $resultRegistratedUser = json_encode($resultRegistratedUser);
+    }
+    
+    return $resultRegistratedUser;
+    
+    }catch (Exception $e) {
+
+      
+
+        return $e;
+    }
+    
+    
+    
+    
+}
+
+
+
 function updateuser(){
     
     try {
@@ -8661,11 +8791,38 @@ function UpdateNewUser($updateContactUserData){
 function CreateNewUser($newContactUserData){
     
     try{
-        
+    
+     global $wpdb;
+     $site_prefix = $wpdb->get_blog_prefix();
+         
     $blogid = get_current_blog_id() ;
     $user_id = username_exists($newContactUserData->username);
     $role = $newContactUserData->Role;
     $email = $newContactUserData->username;
+    $external_reference_id_zapier = $newContactUserData->external_reference_id_zapier;
+          
+        $args = array(
+	'order'          => 'ASC',
+	'orderby'        => 'display_name',
+	'meta_query'     => array(
+		'relation' => 'AND',
+		array(
+			'key'     => $site_prefix.'external_reference_id_zapier',
+			'value'   => $external_reference_id_zapier,
+			'compare' => '=',
+		),
+		
+	)
+        );
+
+
+        
+     $user_query = new WP_User_Query( $args );
+     $authors = $user_query->get_results();
+    
+    
+    
+    
     $t=time();
     $roleKeyValue = "";
             if (is_multisite()) {
@@ -8690,7 +8847,7 @@ function CreateNewUser($newContactUserData){
         
     }else{
     
-    if (!$user_id and email_exists($newContactUserData->username) == false) {
+    if (!$user_id and email_exists($newContactUserData->username) == false && empty($authors)) {
         
        $random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
        $user_id = myregisterrequest_new_user($newContactUserData->username, $newContactUserData->Semail) ;//register_new_user( $username, $email );//wp_create_user($username, $random_password, $email);
@@ -8700,11 +8857,13 @@ function CreateNewUser($newContactUserData){
         $loggin_data['created_id']=$result;
 
         $useremail='';
-        // custome_email_send($user_id,$newContactUserData->Semail,"welcome_email_template");
-         
-        // update_user_option($user_id, 'profile_updated', $t*1000);
-         updateregistredUserMeta($user_id,$newContactUserData,$role);
-         if (add_user_to_blog($blogid, $user_id, $role)) {
+        
+        updateregistredUserMeta($user_id,$newContactUserData,$role);
+        
+        custome_email_send($user_id,$newContactUserData->Semail,"welcome_email_template");
+        //update_user_option($user_id, 'profile_updated', $t*1000);
+        
+        if (add_user_to_blog($blogid, $user_id, $role)) {
 
                  add_user_to_blog(1, $user_id, $role);
                  $message['user_id'] = $user_id;
@@ -8753,7 +8912,7 @@ function CreateNewUser($newContactUserData){
     if($user_status_for_this_site == 'alreadyexist'){
         
         $message['message'] =  'User already exists for this site.';
-        update_user_option($user_id, 'profile_updated', $t*1000);
+        //update_user_option($user_id, 'profile_updated', $t*1000);
     }else{    
         
         
@@ -8766,10 +8925,12 @@ function CreateNewUser($newContactUserData){
                 
                
                     $useremail='';
-                   // custome_email_send($user_id,$email,"welcome_email_template");
-                    //$t=time();
-                    //update_user_option($user_id, 'profile_updated', $t*1000);
+                    
                     updateregistredUserMeta($user_id,$newContactUserData,$role);
+                    custome_email_send($user_id,$email,"welcome_email_template");
+                    $t=time();
+                    //update_user_option($user_id, 'profile_updated', $t*1000);
+                    
                 
                 $message['message'] =  'User added to this blog.';
             
@@ -8803,7 +8964,21 @@ function updateregistredUserMeta($userID,$userMetaData,$role){
                 $valueDataIndex =  str_replace(".0","",$valueDataIndex);
                 
             }
-            update_user_option($userID, $keyIndex, $valueDataIndex);
+            
+            if (strpos($keyIndex, 'task') !== false) {
+                
+                $current_date_time = date('d-M-Y H:i:s');
+                update_user_meta($userID, $keyIndex.'_datetime', '');
+                update_user_meta($userID, $keyIndex.'_status', "Complete");
+                update_user_meta($userID, $keyIndex, $valueDataIndex);
+                
+            }else{
+                
+                update_user_option($userID, $keyIndex, $valueDataIndex); 
+                
+            }
+            
+            
             
             
         }
@@ -9413,7 +9588,6 @@ function gettasktype($taskkey){
     }
     return $getOrginalData;
 }
-
 
 ///-----------------Expogenie API Endpoints ---------------------///
 
