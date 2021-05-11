@@ -26,18 +26,18 @@ $base_url  = get_site_url();
     
     currentsiteurl = '<?php echo $base_url;?>';
 </script>  
-
-<link href="<?php echo $base_url;?>/wp-content/plugins/EGPL/cmtemplate/css/lib/bootstrap-sweetalert/sweetalert.css" rel="stylesheet">
-<link href="<?php echo $base_url;?>/wp-content/plugins/EGPL/cmtemplate/js/lib/bootstrap-sweetalert/sweetalert.js" rel="stylesheet">    
-
 <style>
     
-    .woocommerce-message:before{
-        
-        content:none !important;
-    }
     
-</style>
+    .customewidthsweet {
+    width: 60% !important;
+    left: 40% !important;
+}
+.accordion.accordion-toggle-plus .card .card-header .card-title.collapsed:after {
+    
+    content: "+";
+}
+</style>  
 <?php 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -72,28 +72,24 @@ $getcancelledOrdersList['order-actions'] = "Action";
 
 ?>
 
-   
+<div class="card card-custom gutter-b">
     
-<div class="accordion" id="accordionExample">
-    <div class="card header-wc-open" >
-    <div class="card-header" id="headingTwo">
-      <h2 class="mb-0 wc-open-bg">
-        <a class="collapsed" id="OpenOrderIcon" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-         Open Orders
-         <i class="fa fa-chevron-up customeicon" id="OpenOrderIconicon"></i>
-        </a>
-        
-      </h2>
-    </div>
-    <div id="collapseTwo" class="collapse in paddingclasswctable" aria-labelledby="headingTwo" data-parent="#accordionExample">
-      <div class="card-body">
-      <?php if ( $has_orders ) : 
+   
+        <div class="accordion accordion-solid accordion-toggle-plus" id="accordionExample6">
+            <div class="card">
+                <div class="card-header" id="headingOne6">
+                    <div class="card-title" data-toggle="collapse" data-target="#collapseOne6">
+                        <i class="fas fa-box-open"></i>Open Orders</div>
+                </div>
+                <div id="collapseOne6" class="collapse show" data-parent="#accordionExample6">
+                    <div class="card-body">
+                        <?php if ( $has_orders ) : ?>
         
 
 
 
-?>
-	<table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table">
+
+	<table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table table table-bordered">
 		<thead>
 			<tr>
                             <?php  foreach ($getpendingOrdersList as $column_id => $column_name ) : ?>
@@ -136,11 +132,15 @@ $getcancelledOrdersList['order-actions'] = "Action";
                                                                 if($item_count == 0){
                                                                     
                                                                     // printf( _n( '%1$s for %2$s item', '%1$s for %2$s items', $item_count, 'woocommerce' ), $order->get_formatted_order_total(), $item_count );
-                                                                    echo $order->get_formatted_order_total();
+                                                                   $totalamount =  $order->get_formatted_order_total();
+                                                                   $productprice = explode(".",$totalamount);
+                                                                   echo $productprice[0];
                                                                     
                                                                 }else{
                                                                     
-                                                                   echo $order->get_formatted_order_total();
+                                                                   $totalamount =  $order->get_formatted_order_total();
+                                                                   $productprice = explode(".",$totalamount);
+                                                                   echo $productprice[0];
                                                                 }
 								
                                                                 
@@ -149,7 +149,7 @@ $getcancelledOrdersList['order-actions'] = "Action";
 								
                                                                     
                                                            
-                                                                   <a style="cursor: pointer;" onclick="getOrderproductdetail(<?php echo $order->get_order_number(); ?>,<?php echo $order->total; ?> )">Product Details</a>
+                                                                   <a style="cursor: pointer;color:#2a6496;" onclick="getOrderproductdetail(<?php echo $order->get_order_number(); ?>,<?php echo $order->total; ?>)">Product Details</a>
 									
 								   
                                                                 
@@ -157,10 +157,10 @@ $getcancelledOrdersList['order-actions'] = "Action";
 							<?php elseif ( 'order-actions' === $column_id ) : ?>
 								<?php
 								$actions = wc_get_account_orders_actions( $order );
-
+                                                                $siteurl =  get_site_url().'/my-account/view-order/'.$order->get_order_number();
 								if ( ! empty( $actions ) ) {
 									foreach ( $actions as $key => $action ) {
-										echo '<a href="' . esc_url( $action['url'] ) . '" class="woocommerce-button button ' . sanitize_html_class( $key ) . '">' . esc_html( $action['name'] ) . '</a>';
+										echo '<a href="' . esc_url( $action['url'] ) . '" class="woocommerce-button button ' . sanitize_html_class( $key ) . '">' . esc_html( $action['name'] ) . '</a><br>';
 									}
 								}
 								?>
@@ -191,37 +191,31 @@ $getcancelledOrdersList['order-actions'] = "Action";
 <?php else : ?>
 	<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
 		<a class="woocommerce-Button button" href="<?php echo esc_url( apply_filters( 'woocommerce_return_to_shop_redirect', wc_get_page_permalink( 'shop' ) ) ); ?>">
-			<?php _e( 'Head to Shop', 'woocommerce' ); ?>
+			<?php _e( 'Go shop', 'woocommerce' ); ?>
 		</a>
-		<?php _e( 'No Open Order.', 'woocommerce' ); ?>
+		<?php _e( 'No order has been made yet.', 'woocommerce' ); ?>
 	</div>
 <?php endif; ?>
 
-<?php do_action( 'woocommerce_after_account_orders', $has_orders ); ?></div>
-    </div>
-  </div>
-    
-    <div class="card header-wc-completed" >
-    <div class="card-header" id="headingOne">
-      <h2 class="mb-0 wc-completed-bg">
-        <a class="completedOrdersstatus" id="completedOrderIcon"  type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          Completed Orders
-           <i class="fa fa-chevron-down customeicon" id="completedOrderIconicon" ></i>
-        </a>
-          
-      </h2>
-    </div>
-
-    <div id="collapseOne" class="collapse in paddingclasswctable" aria-labelledby="headingOne" data-parent="#accordionExample">
-      <div class="card-body">
-      <?php if ( $has_orders ) : 
+<?php do_action( 'woocommerce_after_account_orders', $has_orders ); ?>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingTwo6">
+                    <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseTwo6">
+                        <i class="fas fa-box"></i>Completed Orders</div>
+                </div>
+                <div id="collapseTwo6" class="collapse" data-parent="#accordionExample6">
+                    <div class="card-body">
+                        <?php if ( $has_orders ) : ?>
         
 
 
 
-?>
 
-	<table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table">
+
+	<table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table table table-bordered">
 		<thead>
 			<tr>
                                 
@@ -271,11 +265,15 @@ $getcancelledOrdersList['order-actions'] = "Action";
                                                                 if($item_count == 0){
                                                                     
                                                                     // printf( _n( '%1$s for %2$s item', '%1$s for %2$s items', $item_count, 'woocommerce' ), $order->get_formatted_order_total(), $item_count );
-                                                                    echo $order->get_formatted_order_total();
+                                                                   $totalamount =  $order->get_formatted_order_total();
+                                                                   $productprice = explode(".",$totalamount);
+                                                                   echo $productprice[0];
                                                                     
                                                                 }else{
                                                                     
-                                                                   echo $order->get_formatted_order_total();
+                                                                   $totalamount =  $order->get_formatted_order_total();
+                                                                   $productprice = explode(".",$totalamount);
+                                                                   echo $productprice[0];
 								 
                                                                 }
 								
@@ -292,17 +290,19 @@ $getcancelledOrdersList['order-actions'] = "Action";
 								
                                                                     
                                                            
-                                                                   <a style="cursor: pointer;" onclick="getOrderproductdetail(<?php echo $order->get_order_number(); ?>,'' )">
+                                                                   <a style="cursor: pointer;color:#2a6496;" onclick="getOrderproductdetail(<?php echo $order->get_order_number(); ?>,'' )">
 									Product Details
 								   </a>
                                                                 
 							<?php elseif ( 'order-actions' === $column_id ) : ?>
 								<?php
 								$actions = wc_get_account_orders_actions( $order );
-
+                                                                $siteurl =  get_site_url().'/my-account/view-order/'.$order->get_order_number();
+                                                             
+                                                                
 								if ( ! empty( $actions ) ) {
 									foreach ( $actions as $key => $action ) {
-										echo '<a href="' . esc_url( $action['url'] ) . '" class="woocommerce-button button ' . sanitize_html_class( $key ) . '">' . esc_html( $action['name'] ) . '</a>';
+										echo '<a href="' . esc_url($siteurl) . '" class="woocommerce-button button ' . sanitize_html_class( $key ) . '">' . esc_html( $action['name'] ) . '</a>';
 									}
 								}
 								?>
@@ -332,18 +332,20 @@ $getcancelledOrdersList['order-actions'] = "Action";
 <?php else : ?>
 	<div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
 		<a class="woocommerce-Button button" href="<?php echo esc_url( apply_filters( 'woocommerce_return_to_shop_redirect', wc_get_page_permalink( 'shop' ) ) ); ?>">
-			<?php _e( 'Head to Shop', 'woocommerce' ); ?>
+			<?php _e( 'Go shop', 'woocommerce' ); ?>
 		</a>
-		<?php _e( 'No Open Orders.', 'woocommerce' ); ?>
+		<?php _e( 'No order has been made yet.', 'woocommerce' ); ?>
 	</div>
 <?php endif; ?>
 
 <?php do_action( 'woocommerce_after_account_orders', $has_orders ); ?>
-</div>
-    </div>
-  </div>
-  
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+   
+</div>   
     
-
-</div>
 
