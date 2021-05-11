@@ -113,7 +113,7 @@
                             <div class="row">
                                 <div class="form-group col-sm-12">
                                     <label class="form-control-label" for="inputEventStart">Event Address</label>
-                                    <textarea  class="form-control portalsettings" name="eventaddress"  id="inputEventaddress" placeholder="Event Address" required="true"><?php echo $eventaddress;?></textarea>
+                                    <textarea  class="form-control portalsettings" name="eventaddress"  id="inputEventaddress" placeholder="Event Address" ><?php echo $eventaddress;?></textarea>
                                 </div>
                             </div>
                         <p><h6 class="card-title">Site Theme Colors</h6></p>
