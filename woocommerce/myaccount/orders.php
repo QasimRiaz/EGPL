@@ -347,5 +347,3 @@ $getcancelledOrdersList['order-actions'] = "Action";
         
    
 </div>   
-    
-

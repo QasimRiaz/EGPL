@@ -757,6 +757,7 @@ jQuery( document ).ready(function() {
   var $dataScaleY = jQuery('#dataScaleY');
   var options = {
     aspectRatio: 50 / 9,
+    zoomOnWheel: false,
     preview: '.img-preview',
     crop: function (e) {
       var data = e.detail;
@@ -1000,6 +1001,7 @@ jQuery(function () {
   var $dataScaleYLogo = jQuery('#dataScaleYLogo');
   var optionsLogo = {
     aspectRatio: 2 / 1,
+    zoomOnWheel: false,
     preview: '.img-previewLogo',
     crop: function (e) {
       var dataLogo = e.detail;
@@ -1248,6 +1250,7 @@ jQuery(function () {
   var $dataScaleYFavicon = jQuery('#dataScaleYFavicon');
   var optionsFavicon = {
     aspectRatio: 1 / 1,
+    zoomOnWheel: false,
     preview: '.img-previewFavicon',
     crop: function (e) {
       var dataFavicon = e.detail;
