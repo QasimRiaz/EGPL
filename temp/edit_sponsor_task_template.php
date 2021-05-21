@@ -41,7 +41,20 @@ get_header();
    
    
     
-   
+     $tasksortedArray = [];
+     foreach ($result as $taskIndex => $taskObject){
+         
+        $tasksortedArray[$taskIndex]['Id'] = $taskObject->ID;
+        $tasksortedArray[$taskIndex]['sortingOrder'] = strtotime(get_post_meta( $taskObject->ID, 'duedate', true)); 
+        
+        
+         
+     }
+    
+     
+     usort($tasksortedArray, function($a, $b) {
+    return $a['sortingOrder'] <=> $b['sortingOrder'];
+});
      
      $settitng_key = 'ContenteManager_Settings';
      $sponsor_info = get_option($settitng_key);
@@ -144,10 +157,10 @@ get_header();
 	 <?php
            
          
-           foreach ($result as $taskIndex => $taskObject){
+           foreach ($tasksortedArray as $taskIndex => $taskObject){
                     
                
-                                    $tasksID=$taskObject->ID;
+                                    $tasksID=$taskObject['Id'];
                                     $profile_field_settings = [];
                                     $value_value = get_post_meta( $tasksID, 'value' , false);
                                     $value_unique = get_post_meta( $tasksID, 'unique' , false);
@@ -484,7 +497,7 @@ get_header();
                                $action_col .='<div class="' . $profile_field_name . '" style="display:none;">';
                            }
 
-                           $action_col .= '	<div class="dropzone dropzone-multi"><input '.$file_fields_staus_type.'  ' . $profile_field_settings['taskattrs'] . ' type="file" class ="upload myfileuploader dropzone-select btn btn-light-primary font-weight-bold btn-sm dz-clickable" id="my' . $profile_field_name . '" name="my' . $profile_field_name . '"></a><span class="form-text text-muted">File size must be less than 50MB.</span></div>';
+                           $action_col .= '	<div class="dropzone dropzone-multi" style="background: none;"><input '.$file_fields_staus_type.'  ' . $profile_field_settings['taskattrs'] . ' type="file" class ="upload myfileuploader dropzone-select btn btn-light-primary font-weight-bold btn-sm dz-clickable" id="my' . $profile_field_name . '" name="my' . $profile_field_name . '"></a><span class="form-text text-muted">File size must be less than 50MB.</span></div>';
                            if (!empty($value)) {
                                $action_col .='</div>';
                            }
