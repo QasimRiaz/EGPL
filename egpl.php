@@ -7387,15 +7387,9 @@ function reviewboothproducts($order){
          }
         }
     }
-  
-   
-    
 }
-
 function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
-        
-      
-        if(is_array($order)){
+      if(is_array($order)){
             
             $order_ID = $order->id;
             
