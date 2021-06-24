@@ -5,6 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
+ * Version:           4.40
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
