@@ -5,7 +5,6 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           4.36
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -191,6 +190,70 @@ if($_GET['contentManagerRequest'] == "bulkimportmappingcreaterequest") {
             echo 'notconnected';
         }
       
+        
+    }catch (Exception $e) {
+       
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($e));
+   
+      return $e;
+    }
+ 
+ die();   
+    
+}else if ($_GET['contentManagerRequest'] == 'setlevelspriorities') {
+    
+    require_once('../../../wp-load.php');
+    
+    
+    try{
+        
+        $dataRequeste =  json_decode(stripslashes($_POST['leveleslist']), true);
+        $user_ID = get_current_user_id();
+        $user_info = get_userdata($user_ID);  
+        $lastInsertId = contentmanagerlogging('Update Levels Priorities',"Admin Action","",$user_ID,$user_info->user_email,$dataRequeste);
+        
+        
+      
+        
+        if (is_multisite()) {
+                $blog_id = get_current_blog_id();
+                $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+            }else{
+                $get_all_roles_array = 'wp_user_roles';
+            }
+        $get_all_roles = get_option($get_all_roles_array);
+        
+        foreach($dataRequeste as $index=>$levelkey){
+            
+           $rolekey     =  $levelkey['rolename'];
+           $ordernumber =  $levelkey['prioritnum'];
+           
+          
+           
+           foreach ($get_all_roles as $key => $name) {
+           
+               
+               if($key == $rolekey){
+                  
+                   $get_all_roles[$key]['priorityNum'] = $ordernumber;
+                   
+               }
+               
+               
+           }
+           
+            
+        }
+        
+       
+        
+        
+        
+        update_option($get_all_roles_array, $get_all_roles);
+        contentmanagerlogging_file_upload ($lastInsertId,serialize($get_all_roles));
+        echo "success";
+        die();
+        
         
     }catch (Exception $e) {
        
@@ -4099,7 +4162,7 @@ function getReportsdatanew($report_name,$usertimezone){
 
 add_action('wp_enqueue_scripts', 'add_contentmanager_js');
 function add_contentmanager_js(){
-      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'5.2.1', true);
+      wp_enqueue_script('safari4', plugins_url().'/EGPL/js/my_task_update.js', array('jquery'),'5.2.2', true);
     
      wp_enqueue_script( 'jquery.alerts', plugins_url() . '/EGPL/js/jquery.alerts.js', array(), '1.1.0', true );
      wp_enqueue_script( 'boot-date-picker', plugins_url() . '/EGPL/js/bootstrap-datepicker.js', array(), '1.2.0', true );
@@ -6850,7 +6913,7 @@ function changeuseremailaddress($request){
             }else{
                 
                 //$result_update = wp_update_user( array ( 'ID' => $userid, 'user_login' => $newemail,'user_email'=>$newemail) ) ;
-               global $wpdb;
+                global $wpdb;
                 $tablename = $wpdb->prefix . "users";
                 $sql = $wpdb->prepare( "UPDATE `wp_users` SET `display_name`='".$newemail."' , `user_login`='".$newemail."',`user_email`='".$newemail."' WHERE `ID`=".$userid."", $tablename );
                 $result_update = $wpdb->query($sql);
@@ -6975,8 +7038,18 @@ function exp_autocomplete_all_orders($order_id) {
         //ravenhub additional code -- 01-06-2020////
         
         global  $wpdb;
+        
         $site_prefix = $wpdb->get_blog_prefix();
 	$postid = get_current_user_id();
+        if(empty($postid)){
+            
+            
+            $postid = get_post_meta($order_id,'_customer_user',true);
+        }
+        
+        
+       
+        
 	$data = array();                                                                    
         $getsiteurl = get_site_url();
         $companyname = get_user_meta($postid, $site_prefix.'company_name',true);
@@ -6998,6 +7071,7 @@ function exp_autocomplete_all_orders($order_id) {
         
         
         //ravenhub additional code -- 01-06-2020////
+        $original_order_fields = wc_get_order( $order_id );
         
         
         
@@ -7051,12 +7125,6 @@ function exp_autocomplete_all_orders($order_id) {
 		) );
                 
                 
-                
-               
-                    
-                   
-             
-               
                 
 		if ( is_wp_error( $new_order ) ) {
                     
@@ -7189,9 +7257,15 @@ function exp_autocomplete_all_orders($order_id) {
             $emails = WC_Emails::instance();
             $emails->customer_invoice( wc_get_order( $new_order_ID ) );
             $orderstatus = "partial-payment";
-            
-            
-            
+            $mailer = WC()->mailer();
+            $mails = $mailer->get_emails();
+            if (!empty($mails)) {
+                foreach ($mails as $mail) {
+                    if ($mail->id == 'customer_completed_order') {
+                        $mail->trigger($order_id);
+                    }
+                }
+            }
         }
         
         if($payment_method == 'cheque'){
@@ -7207,6 +7281,7 @@ function exp_autocomplete_all_orders($order_id) {
            
             
             //exp_updateuser_role_onmpospurches($order,$porduct_ids_array);
+                 
             exp_updateuser_role_onmpospurches($order->id,$porduct_ids_array);
             
             
@@ -7245,7 +7320,7 @@ function exp_autocomplete_paid_orders($order_status, $order_id) {
                 }
             }
             
-             
+            
          
             exp_updateuser_role_onmpospurches($order->id,$porduct_ids_array);
         
@@ -7319,7 +7394,7 @@ function reviewboothproducts($order){
 function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
         
        
-           
+      
         if(is_array($order)){
             
             $order_ID = $order->id;
@@ -7329,7 +7404,14 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
             $order_ID = $order;
         }
  
-        $current_user = wp_get_current_user();
+        $current_user = get_current_user_id();
+       
+        if(empty($current_user)){
+            
+            
+            $current_user = get_post_meta($order_ID,'_customer_user',true);
+        }
+        
        // $lastInsertId = contentmanagerlogging('Purches MPOs',"User Action",serialize($order),''.$current_user->id,$current_user->user_email,"pre_action_data");
         require_once( 'temp/lib/woocommerce-api.php' );
         
@@ -7387,7 +7469,7 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
                       
                         update_post_meta( $id, 'porductID', $ids );
                         update_post_meta( $id, 'orderID', $order_ID );
-                        update_post_meta( $id, 'OrderUserID', $current_user->ID);
+                        update_post_meta( $id, 'OrderUserID', $current_user);
                        
                         
                         
@@ -7395,7 +7477,7 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
                             
                          
                           
-                           $OrderUserID = $current_user->ID;
+                           $OrderUserID = $current_user;
                            $foolrplanID = $woocommerce_rest_api_keys['ContentManager']['floorplanactiveid'];
                            $boothTypesLegend = json_decode(get_post_meta($foolrplanID, 'legendlabels', true )); 
                            
@@ -7532,12 +7614,12 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
                     
                     $get_productlevel = get_post_meta( $productID, 'productlevel', true );
                     
-                    
+                 
                     if(!empty($get_productlevel)){
                         
                          $seletedroleValue = $get_productlevel;
                          $assign_role[] = $seletedroleValue;
-                        
+                         
                     }
                     
                     $selectedTaskListData = get_post_meta( $ids);
@@ -7557,21 +7639,44 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
             }
             
             
-           
-            
-                $user_info = get_userdata($current_user->id);
-            
-                if($user_info->roles[0] !='administrator' && $user_info->roles[0] !='contentmanager'){
-                    foreach ($assign_role as $key=>$rolename){
-                       if(!empty($rolename)){
-                           
-                            $u = new WP_User($current_user->id);
-                            $u->set_role( $rolename );
-                           $responce['assignrole'] = $rolename;
-                       } 
+                         $user_info = get_userdata($current_user);
+                         
+                
+                         
+                        foreach($assign_role as $key=>$roleName){
+                            
+                            $productroleOrder = getroleorder($roleName);
                         
-                    }
-                }
+                            if ($user_info->roles[0] != 'administrator' && $user_info->roles[0] != 'contentmanager') {
+                            
+                                
+                            
+                                $u = new WP_User($current_user);
+
+                                $currentroleName = $u->get_role();
+                                $currentroleOrder = getroleorder($user_info->roles[0]);
+                                
+                                 //echo $roleName.'<br>';
+                                 //echo $user_info->roles[0].'<br>';
+                                 //echo $currentroleOrder.'<br>';
+                                 //echo $productroleOrder.'_________';exit;
+                                
+                                
+                                if ($productroleOrder < $currentroleOrder) {
+                                
+                                    $u->set_role($roleName);
+                                    $responce['assignrole'] = $roleName;
+                                
+                                } else {
+
+                                    $responce['assignrole'] = $currentroleName['name'];
+                                }
+                            }
+                        }
+            
+            
+            
+                
                   if(!empty($latestProductsValue['selectedtasks'])){  
                    foreach ($latestProductsValue['selectedtasks'] as $taskindex=>$taskKey){
                        
@@ -7583,12 +7688,12 @@ function exp_updateuser_role_onmpospurches($order,$porduct_ids_array){
                        
                        if(!empty($value_usersids[0])){
                            
-                           array_push($value_usersids[0], $current_user->id);
+                           array_push($value_usersids[0], $current_user);
                            update_post_meta( $taskKey, 'usersids' , $value_usersids[0]);
                            
                        }else{
                            
-                           $newindex[]=$current_user->id;
+                           $newindex[]=$current_user;
                             update_post_meta( $taskKey, 'usersids' , $newindex);
                            
                        }
@@ -7793,49 +7898,49 @@ function bs_event_table_content( $column_name, $post_id ) {
 }
 
 
-function myplugin_plugin_path() {
-
-  // gets the absolute path to this plugin directory
-
-  return untrailingslashit( plugin_dir_path( __FILE__ ) );
-}
-add_filter( 'woocommerce_locate_template', 'myplugin_woocommerce_locate_template', 10,10);
-
-
-
-function myplugin_woocommerce_locate_template( $template, $template_name, $template_path ) {
-    
-    
-  global $woocommerce;
-  $_template = $template;
-
-  if ( ! $template_path ) $template_path = $woocommerce->template_url;
-
-  $plugin_path  = myplugin_plugin_path() . '/woocommerce/';
-
-  // Look within passed path within the theme - this is priority
-  $template = locate_template(
-
-    array(
-      $template_path . $template_name,
-      $template_name
-    )
-  );
-
-  // Modification: Get the template from this plugin, if it exists
-  if ( ! $template && file_exists( $plugin_path . $template_name ) )
-    $template = $plugin_path . $template_name;
-
-  // Use default template
-  if ( ! $template )
-    $template = $_template;
-
-  // Return what we found
-  
-  //echo $template;
-  
-  return $template;
-}
+//function myplugin_plugin_path() {
+//
+//  // gets the absolute path to this plugin directory
+//
+//  return untrailingslashit( plugin_dir_path( __FILE__ ) );
+//}
+//add_filter( 'woocommerce_locate_template', 'myplugin_woocommerce_locate_template', 10,10);
+//
+//
+//
+//function myplugin_woocommerce_locate_template( $template, $template_name, $template_path ) {
+//    
+//    
+//  global $woocommerce;
+//  $_template = $template;
+//
+//  if ( ! $template_path ) $template_path = $woocommerce->template_url;
+//
+//  $plugin_path  = myplugin_plugin_path() . '/woocommerce/';
+//
+//  // Look within passed path within the theme - this is priority
+//  $template = locate_template(
+//
+//    array(
+//      $template_path . $template_name,
+//      $template_name
+//    )
+//  );
+//
+//  // Modification: Get the template from this plugin, if it exists
+//  if ( ! $template && file_exists( $plugin_path . $template_name ) )
+//    $template = $plugin_path . $template_name;
+//
+//  // Use default template
+//  if ( ! $template )
+//    $template = $_template;
+//
+//  // Return what we found
+//  
+//  //echo $template;
+//  
+//  return $template;
+//}
 
 
 add_filter('woocommerce_cart_item_permalink','__return_false');
@@ -10029,3 +10134,45 @@ function adding_customers_details_to_thankyou( $order_id ) {
 
     wc_get_template( 'order/order-details-customer.php', array('order' => $order ));
 }
+
+
+function getroleorder($rolename){
+    
+    //echo $rolename;
+    
+    if(!empty($rolename)){
+        
+        if (is_multisite()) {
+                $blog_id = get_current_blog_id();
+                $get_all_roles_array = 'wp_'.$blog_id.'_user_roles';
+            }else{
+                $get_all_roles_array = 'wp_user_roles';
+            }
+        $get_all_roles = get_option($get_all_roles_array);
+        
+        foreach ($get_all_roles as $key => $name) {
+            
+         
+            if ($rolename  == 'subscriber' || $rolename  == 'customer' ) {
+                
+                $orderNumber = 1000;
+                return $orderNumber;
+                
+            }else{
+               // echo $rolename .'=='. $key.'__________';
+               if($rolename == $key) {
+                   
+                   
+                   $orderNumber = (int)$name['priorityNum'];
+                   return $orderNumber;
+               }
+                
+                
+                
+            }
+            
+        }
+        
+    }
+}
+include 'woocommerce-registration-fields.php';

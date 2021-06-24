@@ -110,7 +110,7 @@ jQuery(window).load(function() {
         
         var col1 = '<div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"><i class="hi-icon fa fa-clone saveeverything" id="'+uniquecode+'" title="Create a clone" onclick="clonebulk_task(this)" style="color:#262626;cursor: pointer;" data-toggle="tooltip" aria-hidden="true"></i> <i data-toggle="tooltip" title="Advanced" name="'+uniquecode+'" onclick="bulktasksettings(this)" class="hi-icon fusion-li-icon fa fa-gears" ></i><i name="'+uniquecode+'" data-toggle="tooltip" style=" cursor: pointer;margin-left: 10px;" onclick="removebulk_task(this)" title="Remove this task" class="hi-icon fusion-li-icon fa fa-times-circle " style="color:#262626;"></i></div>';
         var col2 = '<input data-toggle="tooltip" placeholder="Title" title="Title" id="row-'+uniquecode+'-title" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control" name="tasklabel" >  <input type="hidden" id="row-'+uniquecode+'-key" value=""><input type="hidden" id="row-'+uniquecode+'-attribute"  value="" ><input type="hidden" id="row-'+uniquecode+'-emailnotification"  value="" ><input type="hidden" id="row-'+uniquecode+'-multiselectstatus"  value="" ><input type="hidden" id="row-'+uniquecode+'-emailnotificationaddress"  value="" ><input type="hidden" id="row-'+uniquecode+'-multivaluetasklimit"  value="" > <input type="hidden" id="row-'+uniquecode+'-taskMWC"  value="" ><input type="hidden" id="row-'+uniquecode+'-taskMWDDP"  value="" ><input type="hidden" id="row-'+uniquecode+'-taskCode"  value="" ><input type="hidden" id="row-'+uniquecode+'-SystemTask"  value="" > ';
-        var col3 = '<div class="topmarrginebulkedit"><select  data-toggle="tooltip" title="Select Type" class="select2 bulktasktypedrop" id="bulktasktype_'+uniquecode+'" data-placeholder="Select Type" data-allow-clear="true">'+tasktypedata+'</select></div><div class="bulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" ><input type="text"  class="form-control" name="linkurl" placeholder="Link URL" title="Link URL"id="row-'+uniquecode+'-linkurl" ><br><input type="text"  class="form-control" name="linkname" placeholder="Link Name" title="Link Name" id="row-'+uniquecode+'-linkname"></div><div class="dbulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" > <input type="text"  class="form-control" name="dropdownvalues" placeholder="Comma separated list of values" title="Comma separated list of values"  id="row-'+uniquecode+'-dropdownvlaues" ></div>';
+        var col3 = '<div class="topmarrginebulkedit"><select  data-toggle="tooltip" title="Select Type" class="form-control bulktasktypedrop" id="bulktasktype_'+uniquecode+'" data-placeholder="Select Type" data-allow-clear="true">'+tasktypedata+'</select></div><div class="bulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" ><input type="text"  class="form-control" name="linkurl" placeholder="Link URL" title="Link URL"id="row-'+uniquecode+'-linkurl" ><br><input type="text"  class="form-control" name="linkname" placeholder="Link Name" title="Link Name" id="row-'+uniquecode+'-linkname"></div><div class="dbulktasktype_'+uniquecode+'" style="display: none;margin-top:10px;margin-bottom: 10px;" > <input type="text"  class="form-control" name="dropdownvalues" placeholder="Comma separated list of values" title="Comma separated list of values"  id="row-'+uniquecode+'-dropdownvlaues" ></div>';
         var col4 = '<input  data-toggle="tooltip" title="Due Date" placeholder="Due Date" id="row-'+uniquecode+'-duedate" style="padding-left: 13px;margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control datepicker" name="datepicker" >';
         var col5 = '<div class="addscrol topmarrginebulkedit"><select data-toggle="tooltip" class="select2" id="row-'+uniquecode+'-levels" data-placeholder="Select Levels" title="Select Levels" data-allow-clear="true"  multiple="multiple">'+taskroledata+'</select><br><select data-placeholder="Select Users" title="Select Users" id="row-'+uniquecode+'-userid" data-allow-clear="true"  class="select2" multiple="multiple">'+taskuseriddata+'</select> <br></div>';
         var col6 = '<br><div class="addscrol"><div id="row-'+uniquecode+'-descrpition" name="taskdiscrpition_'+uniquecode+'" class="edittaskdiscrpition_'+uniquecode+'" oncontextmenu="return false;" onclick="bulktask_descripiton(this)"></div><p ><i class="font-icon fa fa-edit" name="taskdiscrpition_'+uniquecode+'" title="Edit your task specifications"style="cursor: pointer;color: #0082ff;"onclick="bulktask_descripiton(this)"></i><span id="desplaceholder-'+uniquecode+'"style="margin-left: 10px;color:gray;">Specifications</span></p></div></div>';
@@ -126,14 +126,14 @@ jQuery(window).load(function() {
         ]).draw().nodes().to$().addClass("bulkaddnewtask");
         
         //t.column(0).order('desc').draw();
-        jQuery('#bulktasktype_'+uniquecode).select2();
+       // jQuery('#bulktasktype_'+uniquecode).select2();
         jQuery('#row-'+uniquecode+'-levels').select2();
         jQuery('#row-'+uniquecode+'-userid').select2();
     
         var $eventSelect = jQuery(".bulktasktypedrop");
         //$eventSelect.on("select2:open", function (e) {  console.log('open'); });
         //$eventSelect.on("select2:close", function (e) { console.log('close'); });
-        $eventSelect.on("select2:select", function (e) {
+        $eventSelect.change(function (e) {
             console.log('1');
             var selectedtype = jQuery(this).val();
             var className = jQuery(this).attr('id');
@@ -171,7 +171,7 @@ jQuery(window).load(function() {
             '<div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a"><i class="hi-icon fa fa-clone" title="Create a clone" style="color:#262626;cursor: pointer;" aria-hidden="true"></i><i style=" cursor: pointer;margin-left: 10px;" onclick="removebulk_tasklistview(this)" title="Remove this task" class="hi-icon fusion-li-icon fa fa-times-circle " style="color:#262626;"></i></div>',
             '<input placeholder="Task Title" style="margin-top: 10px;margin-bottom: 10px;" type="text" class="form-control" name="tasklabel" id="tasklabel" > ',
             '<div class="topmarrginebulkedit">\n\
-            <select  class="select2 special'+newfieldtask+'" data-placeholder="Select Type" data-allow-clear="true">\n\
+            <select  class="form-control special'+newfieldtask+'" data-placeholder="Select Type" data-allow-clear="true">\n\
             <option>None</option>\n\
             <option>File Upload</option>\n\
             <option>Date</option><option>Email</option><option>Number</option></select></div>',
@@ -226,7 +226,7 @@ jQuery(window).load(function() {
 var $eventSelect = jQuery(".bulktasktypedrop");
 //$eventSelect.on("select2:open", function (e) {  console.log('open'); });
 //$eventSelect.on("select2:close", function (e) { console.log('close'); });
-$eventSelect.on("select2:select", function (e) {
+$eventSelect.change(function (e) {
     console.log('1');
      var selectedtype = jQuery(this).val();
      var className = jQuery(this).attr('id');
@@ -246,12 +246,7 @@ $eventSelect.on("select2:select", function (e) {
 
 });
 //$eventSelect.on("select2:unselect", function (e) { console.log('unselect');});
-jQuery('.bulktasktypedrop').on("select2:selecting", function(e) {
-    console.log(e.currentTarget['id']);
-   
-   
-    
-   
+jQuery('.bulktasktypedrop').change(function(e) {
     
     var oldselectingvalue ='';
     oldselectingvalue = jQuery('#'+e.currentTarget['id']).val();
@@ -446,7 +441,7 @@ function clonebulk_task(e){
         jQuery('#row-'+uniquecode+'-SystemTask').val('');
         
         jQuery('#row-'+uniquecode+'-key').val('');
-        jQuery('#bulktasktype_'+uniquecode).select2();
+        //jQuery('#bulktasktype_'+uniquecode).select2();
         jQuery('#row-'+uniquecode+'-levels').select2();
         jQuery('#row-'+uniquecode+'-userid').select2();
         
@@ -454,7 +449,7 @@ function clonebulk_task(e){
         var $eventSelect = jQuery(".bulktasktypedrop");
         //$eventSelect.on("select2:open", function (e) {  console.log('open'); });
         //$eventSelect.on("select2:close", function (e) { console.log('close'); });
-        $eventSelect.on("select2:select", function (e) {
+        $eventSelect.change(function (e) {
             console.log('1');
             var selectedtype = jQuery(this).val();
             var className = jQuery(this).attr('id');
@@ -605,11 +600,13 @@ function saveallbulktask(){
         
         
          var taskid = jQuery( this ).attr('id');
+         console.log(taskid);
          var taskLabelcheck = jQuery( '#row-'+taskid+'-title' ).val();
          var status = 'noduplicate';
-       jQuery( ".saveeverything" ).each(function( index2 ) {
+         jQuery( ".saveeverything" ).each(function( index2 ) {
             
             var taskid2 = jQuery( this ).attr('id');
+            console.log(taskid2);
             var taskLabelcompare = jQuery( '#row-'+taskid2+'-title' ).val();
              
             if(taskid != taskid2){
@@ -623,7 +620,7 @@ function saveallbulktask(){
                 }
             }
            
-       });
+        });
        if(status == 'duplicate'){
             console.log(status);
             console.log(taskid);
@@ -639,7 +636,7 @@ function saveallbulktask(){
       
      
         
-    var taskid = jQuery( this ).attr('id');
+    //var taskid = jQuery( this ).attr('id');
     
     
     var str = jQuery( '#row-'+taskid+'-title' ).val();
@@ -683,24 +680,28 @@ function saveallbulktask(){
         singletaskarray['allow_multi'] = 'no';
         singletaskarray['size'] = '';
         singletaskarray['label'] = jQuery( '#row-'+taskid+'-title' ).val();
-        singletaskarray['type'] = jQuery( '#bulktasktype_'+taskid ).val();
+        
         singletaskarray['lin_url'] = jQuery( '#row-'+taskid+'-linkurl' ).val();
         singletaskarray['linkname'] = jQuery( '#row-'+taskid+'-linkname' ).val();
         singletaskarray['attrs'] = jQuery( '#row-'+taskid+'-duedate' ).val();
         singletaskarray['taskattrs'] = jQuery( '#row-'+taskid+'-attribute' ).val();
         singletaskarray['taskMWC'] = jQuery( '#row-'+taskid+'-taskMWC' ).val();
         singletaskarray['taskMWDDP'] = jQuery( '#row-'+taskid+'-taskMWDDP' ).val();
-        singletaskarray['roles'] = jQuery( '#row-'+taskid+'-levels' ).val();
-        singletaskarray['usersids'] = jQuery( '#row-'+taskid+'-userid' ).val();
+        
+        
         singletaskarray['SystemTask'] = jQuery( '#row-'+taskid+'-SystemTask' ).val();
         singletaskarray['taskCode'] = jQuery( '#row-'+taskid+'-taskCode' ).val();
         singletaskarray['descrpition'] = jQuery( '#row-'+taskid+'-descrpition' ).html();
         singletaskarray['emailnotification'] = jQuery( '#row-'+taskid+'-emailnotification' ).val();
         singletaskarray['emailnotificationaddress'] = jQuery( '#row-'+taskid+'-emailnotificationaddress' ).val();
-        
-        
         singletaskarray['multivaluetasklimit'] = jQuery( '#row-'+taskid+'-multivaluetasklimit' ).val();
         singletaskarray['multiselectstatus'] = jQuery( '#row-'+taskid+'-multiselectstatus' ).val();
+        
+        singletaskarray['type'] = jQuery( '#bulktasktype_'+taskid ).val();
+        singletaskarray['roles'] = jQuery( '#row-'+taskid+'-levels' ).val();
+        singletaskarray['usersids'] = jQuery( '#row-'+taskid+'-userid' ).val();
+        
+        
         
         singletaskarray['key'] = uniqueKey;
       
@@ -942,11 +943,16 @@ function bulktasksettings(e){
   
   
   var content='';
- 
-            
-   content='<table><tr><h5 style="margin-top: 2px;">'+task_title+'</h5><hr/></tr></table><table><tr><td><strong>Lock task when submitted</strong><br>(User cannot remove their submission)</td><td><input '+task_additional_MWComplete+' type="checkbox" class="toggle-one" id="confrim_taskMWC" data-toggle="toggle"></td></tr><tr><td><strong>Submission Notification <i title="helpText" class="fa fa-question-circle" style="font-size: 15px;cursor: pointer;"></i></td><td><input '+task_emailnotification+' type="checkbox" class="toggle-one" id="setnotification_taskMWC" data-toggle="toggle"></td></tr><tr><td><strong>Notification Emails <i title="helpText" class="fa fa-question-circle" style="font-size: 15px;cursor: pointer;"></i><br><span>(Comma separated list of email addresses that should receive submission notifications)</span></td><td><textarea id="notificationemails_taskMWC" >'+task_notificationemailsaddress+'</textarea></td></tr><tr><td><strong>Lock task when due date is passed</strong><br>(User cannot submit after due date)</td><td><input '+task_additional_MWDueDatePass+' type="checkbox" class="toggle-one"  id="confrim_taskMWDDP" data-toggle="toggle"></td></tr><tr>'+trvalue+'</tr>'+htmlforsystemtask+htmlfortaskCode+'</table>';
-   
-    
+
+  //content='<h1>STOP</h1>';
+
+  
+  //content='<table><tr><h5 style="margin-top: 2px;">'+task_title+'</h5><hr/></tr></table><table><tr><td><strong>Lock task when submitted</strong><br>(User cannot remove their submission)</td><td><input '+task_additional_MWComplete+' type="checkbox" class="toggle-one" id="confrim_taskMWC" data-toggle="toggle"></td></tr><tr><td><strong>Submission Notification <i title="helpText" class="fa fa-question-circle" style="font-size: 15px;cursor: pointer;"></i></td><td><input '+task_emailnotification+' type="checkbox" class="toggle-one" id="setnotification_taskMWC" data-toggle="toggle"></td></tr><tr><td><strong>Notification Emails <i title="helpText" class="fa fa-question-circle" style="font-size: 15px;cursor: pointer;"></i><br><span>(Comma separated list of email addresses that should receive submission notifications)</span></td><td><textarea id="notificationemails_taskMWC" >'+task_notificationemailsaddress+'</textarea></td></tr><tr><td><strong>Lock task when due date is passed</strong><br>(User cannot submit after due date)</td><td><input '+task_additional_MWDueDatePass+' type="checkbox" class="toggle-one"  id="confrim_taskMWDDP" data-toggle="toggle"></td></tr><tr>'+trvalue+'</tr>'+htmlforsystemtask+htmlfortaskCode+'</table>';
+
+    content='<table><tr><h5 style="margin-top: 2px;">'+task_title+'</h5><hr/></tr></table><table><tr><td><strong>Submission Notification <i title="helpText" class="fa fa-question-circle" style="font-size: 15px;cursor: pointer;"></i></td><td><input '+task_emailnotification+' type="checkbox" class="toggle-one" id="setnotification_taskMWC" data-toggle="toggle"></td></tr><tr><td><strong>Notification Emails <i title="helpText" class="fa fa-question-circle" style="font-size: 15px;cursor: pointer;"></i><br><span>(Comma separated list of email addresses that should receive submission notifications)</span></td><td><textarea id="notificationemails_taskMWC" >'+task_notificationemailsaddress+'</textarea></td></tr><tr><tr><td><strong>Lock task when submitted</strong><br>(User cannot remove their submission)</td><td><input '+task_additional_MWComplete+' type="checkbox" class="toggle-one" id="confrim_taskMWC" data-toggle="toggle"></td></tr><tr><td><strong>Lock task when due date is passed</strong><br>(User cannot submit after due date)</td><td><input '+task_additional_MWDueDatePass+' type="checkbox" class="toggle-one"  id="confrim_taskMWDDP" data-toggle="toggle"></td></tr><tr>'+trvalue+'</tr>'+htmlforsystemtask+htmlfortaskCode+'</table>';
+
+
+
     
   jQuery.confirm({
             

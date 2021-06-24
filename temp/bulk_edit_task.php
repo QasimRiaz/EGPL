@@ -332,7 +332,7 @@ height: 50% !important;
                                         </td>
                                         <td>
                                            <div class="topmarrginebulkedit">
-                                               <select  <?php if($value['SystemTask'] == "checked") {echo 'disabled="true" title="This is a system task. Changing its type is not allowed"';}else{echo 'title="Task Type"';} ?>  style="width:100px !important;"class="select2 bulktasktypedrop tasktypesdata" id="bulktasktype_<?php echo $task_code; ?>" data-placeholder="Select Type" data-toggle="tooltip" data-allow-clear="true">
+                                               <select  <?php if($value['SystemTask'] == "checked") {echo 'disabled="true" title="This is a system task. Changing its type is not allowed"';}else{echo 'title="Task Type"';} ?>  style="width:100% !important;"class="form-control bulktasktypedrop tasktypesdata" id="bulktasktype_<?php echo $task_code; ?>" data-placeholder="Select Type" data-toggle="tooltip" data-allow-clear="true">
                                                     <?php foreach ($plug_in_settings['ContentManager']['taskmanager']['input_type'] as $val) { ?>
                                                         <?php if ($val['type'] == $value['type']) { ?>
                                                             <option value="<?php echo $val['type']; ?>" selected="selected"><?php echo $val['lable']; ?></option>
@@ -470,7 +470,7 @@ height: 50% !important;
         include 'cm_footer.php';
         ?>
             
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=3.50"></script>    
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=3.59"></script>    
             
         <?php
         

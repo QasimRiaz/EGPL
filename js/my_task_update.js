@@ -407,7 +407,7 @@ function update_user_meta_custome(elem,typeoftask) {
         }
         console.log(statusvalue);
        
-        if(convertintombs < 50){
+        if(convertintombs < 150){
         
         
         

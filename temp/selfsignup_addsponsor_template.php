@@ -409,8 +409,8 @@
                      </div>
                      <div class="card-footer">
                          <div class="row">
-                             <div class="col-6"></div>
-                             <div class="col-6">
+                             <!-- <div class="col-6"></div> -->
+                             <div class="col-12" style="text-align: center;">
                                  <button type="submit" id="selfisignup" name="selfisignup" class="btn btn-success mr-2 eg-buttons">Submit</button>
                                  <a href="<?php echo $base_url;?>" class="btn btn-secondary">Cancel</a>
                              </div>

@@ -74,7 +74,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
            $getvisiblelevelsnames = get_post_meta($product_id, "_alg_wc_pvbur_visible",true);
            
            $getvisiblelistofusers = get_post_meta($product_id, "_alg_wc_pvbur_uservisible",true);
-         
+           $get_depositenable_type = get_post_meta($product_id, "_wc_deposit_enabled",true);
          
            
            
@@ -190,7 +190,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                           <label class="col-sm-3 form-control-label">Price <strong>*</strong></label>
                           <div class="col-sm-9">
 
-                              <input type="number"  class="form-control" id="pprice" name="pprice" value="<?php echo $update_product->regular_price; ?>" placeholder="<?php echo $product_name_for_fields_lebal;?> Price" required>
+                              <input type="number" min="0" oninput="validity.valid||(value='');"  class="form-control" id="pprice" name="pprice" value="<?php echo $update_product->regular_price; ?>" placeholder="<?php echo $product_name_for_fields_lebal;?> Price" required>
 
 
                           </div>
@@ -227,7 +227,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                           <label class="col-sm-3 form-control-label">Stock Quantity<strong>*</strong></label>
                           <div class="col-sm-9">
 
-                              <input type="number"  class="form-control" id="pquanitity" value="<?php echo $update_product->stock_quantity; ?>" name="pquanitity" placeholder="Stock Quantity" >
+                              <input type="number" min="0" oninput="validity.valid||(value='');"  class="form-control" id="pquanitity" value="<?php echo $update_product->stock_quantity; ?>" name="pquanitity" placeholder="Stock Quantity" >
 
 
                           </div>
@@ -237,7 +237,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                           <label class="col-sm-3 form-control-label">Stock Quantity<strong>*</strong></label>
                           <div class="col-sm-9">
 
-                              <input type="number"  class="form-control" id="pquanitity" name="pquanitity" placeholder="Stock Quantity" >
+                              <input type="number" min="0" oninput="validity.valid||(value='');"  class="form-control" id="pquanitity" name="pquanitity" placeholder="Stock Quantity" >
 
 
                           </div></div>
@@ -568,17 +568,41 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                   <div class="form-group row">
                           
                           
-                          <label class="col-sm-3 form-control-label">Enable Deposits <i data-toggle="tooltip" title="Select if you want to enable split payments for this booth." class="fa fa-question-circle" aria-hidden="true"></i></label>
+                          <label class="col-sm-3 form-control-label">Enable Deposits <i data-toggle="tooltip" title="Select to give your users ability to pay a deposit payment for this item" class="fa fa-question-circle" aria-hidden="true"></i></label>
                           <div class="col-sm-9">
                               
-                             <?php if (isset($_GET['productid'])) { 
-                                   if(!empty($get_deposit_type)){?> 
-                              <input type="checkbox" id="depositsstatus" checked="true">
-                             <?php }else{?>
-                              <input type="checkbox" id="depositsstatus" >
-                             <?php }}else{?>
-                              <input type="checkbox" id="depositsstatus" >
-                             <?php } ?>
+                             
+                              <select class="form-control" id="depositsstatus">
+                                  
+                                <?php if (isset($_GET['productid'])) { 
+                                  if($get_depositenable_type == "optional"){  ?> 
+                                   <option value="optional" selected="true">Yes - deposits are optional</option>
+                                   <option value="forced">Yes - deposits are required</option>
+                                   <option value="no">No</option>
+                                <?php }else if($get_depositenable_type == "forced"){?>
+                                    
+                                    <option value="optional" >Yes - deposits are optional</option>
+                                    <option value="forced" selected="true">Yes - deposits are required</option>
+                                    <option value="no" >No</option>
+                                    
+                                <?php }else{ ?>
+                                  
+                                   <option value="optional" >Yes - deposits are optional</option>
+                                   <option value="forced">Yes - deposits are required</option>
+                                   <option value="no" selected="true">No</option>
+                                <?php }}else{?>
+                                   
+                                  <option value="optional" >Yes - deposits are optional</option>
+                                   <option value="forced">Yes - deposits are required</option>
+                                   <option value="no" selected="true">No</option>
+                                <?php } ?>
+                                  
+                              </select>
+                              
+                              
+                              
+                              
+                             
                           </div>
                    </div>
                    
@@ -639,7 +663,7 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
                           <label class="col-sm-3 form-control-label">Position <i data-toggle="tooltip" title="This determines the order in which this product shows up in the shop based on the numeric order. For example, if you create 3 products, and you select the position 1,2,3 for each of the products, the product with the position '1' will appear first. Leaving a position blank will default the product by creation date." class="fa fa-question-circle" aria-hidden="true"></i></label>
                           <div class="col-sm-9">
 
-                            <input  id="menu_order" class="form-control"  value="<?php echo $update_product->menu_order; ?>" type="number" >		
+                            <input  id="menu_order" class="form-control"  value="<?php echo $update_product->menu_order; ?>" type="number" min="0" oninput="validity.valid||(value='');" >		
 
                           </div>
                       </div>
@@ -706,9 +730,8 @@ if(!empty($wooconsumerkey) && !empty($wooseceretkey)){
     </div>
 
     <?php }include 'cm_footer.php'; ?>
-    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=2.58"></script>
+    <script type="text/javascript" src="/wp-content/plugins/EGPL/js/manage-products.js?v=3.4"></script>
    
-        
         
    <?php }else{
        $redirect = get_site_url();

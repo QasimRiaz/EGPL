@@ -23,7 +23,10 @@ $getsiteurl = get_site_url();
         
         $getcodeurl1 = str_replace("https://","",$getsiteurl);
         $getcodeurl2 = str_replace("/","-",$getcodeurl1);
+        include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+        $virtualpluginstatus = get_option('Activated_VirtualEGPL');
         
+      
 ?>
 
 <style>
@@ -100,12 +103,10 @@ $getsiteurl = get_site_url();
                                             <i class="font-icon fa fa-lock"></i>
                                             <span class="lbl">Change Password</span>
                                         </a>
-										
-										<a class="dropdown-item" target="_blank" href="https://expo-genie.com/release-notes/">
+                                        <a class="dropdown-item" target="_blank" href="https://expo-genie.com/release-notes/">
                                             <i class="font-icon fa fa-sticky-note-o"></i>
                                             <span class="lbl">Release Notes</span>
                                         </a>
-										
                                         <div class="dropdown-divider"></div>
                                         
                                         <a class="dropdown-item" href="<?php echo $site_url; ?>/logout/">
@@ -257,10 +258,8 @@ $getsiteurl = get_site_url();
 	                  <i class="font-icon fa fa-eye"></i>
 	                    <span class="lbl menumargine">Review Applicants</span>
 	                </a>
-	            </li> 
-                    
-                    
-                    
+
+                       
                     
 	            </ul>
 	        </li>
@@ -282,18 +281,19 @@ $getsiteurl = get_site_url();
 	                    <span class="lbl menumargine">Content Editor</span>
 	                </a>
 	            </li>
-				<li class="mythemestyle">
-	                <a href="<?php echo $site_url; ?>/admin-settings/">
-	                   <i class="font-icon fa fa-image"></i>
-	                    <span class="lbl menumargine">Header</span>
-	                </a>
-	            </li>
+	            </li> 
                     <li class="mythemestyle">
 	                <a href="<?php echo $site_url; ?>/user-fields/">
 	                  <i class="font-icon fa fa-wpforms"></i>
 	                    <span class="lbl menumargine">User Fields</span>
 	                </a>
 	            </li> 
+				<li class="mythemestyle">
+	                <a href="<?php echo $site_url; ?>/admin-settings/">
+	                   <i class="font-icon fa fa-image"></i>
+	                    <span class="lbl menumargine">Header</span>
+	                </a>
+	            </li>
 <!--                    <a href="<?php //echo $site_url; ?>/admin-settings/">
 	                  <i class="font-icon fa fa-gears"></i>
 	                    <span class="lbl menumargine">Header Image</span>
@@ -391,7 +391,16 @@ $getsiteurl = get_site_url();
                     </ul>
                 </li>
              <?php } ?>  
-               
+              <?php 
+              
+                if( $virtualpluginstatus == 'VirtualEGPL/virtualegpl.php' ) {?>
+                
+                       
+                      <?php include_once( WP_PLUGIN_DIR . '/VirtualEGPL/templates/cm_left_menu_bar_vu.php' ); ?>
+
+                     
+                  
+             <?php } ?>     
  </ul>
 
 </nav><!--.side-menu-->

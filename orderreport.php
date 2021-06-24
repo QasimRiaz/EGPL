@@ -1369,7 +1369,7 @@ function manageproducts() {
                $column_row['Icon'] = '<img width="40" height ="40" src="'.  $url .'" />'; 
             }else{
                 
-                $column_row['Icon'] ="";
+                $column_row['Icon'] ='<img width="40" height ="40" src="'.  get_site_url() .'/wp-content/themes/twentytwentyone-child/woocommerce/placeholder-image.png" />';
             }
             
 
@@ -1465,22 +1465,26 @@ function addnewproducts($addnewproduct_data) {
         $menu_order = $addnewproduct_data['menu_order'];
         $depositstype = $addnewproduct_data['depositstype'];
         $depositsamount = $addnewproduct_data['depositsamount'];
-        
+        $wc_deposit_enabled = $addnewproduct_data['_wc_deposit_enabled'];
+      
         $selectedtaskArray['visiblelevels'] = json_decode(stripslashes($_POST['visiblelevels']), true);
         $selectedtaskArray['invisiblelevels'] = json_decode(stripslashes($_POST['invisiblelevels']), true);
         $selectedtaskArray['listofuservisible'] = json_decode(stripslashes($_POST['listofuservisible']), true);
-       
+
+        $staticimage = 'https://metronictheme.wpengine.com/masterportal//wp-content/plugins/EGPL/images/placeholder-image.png';
         
         $url = get_site_url();
         
         
-        if(!empty($productimage)){
-            $productpicrul = product_file_upload($productimage);
+        if(empty($productimage)){
+            $productpicrul =product_file_upload($staticimage);
+           // $productpicrul = product_file_upload($productimage);
            
             
         }else{
-                
-                $productpicrul = 0;
+
+              $productpicrul = product_file_upload($productimage);  
+                // $productpicrul = 0;
                 
         }
         
@@ -1542,7 +1546,7 @@ function addnewproducts($addnewproduct_data) {
             
             $objProduct->update_meta_data('_wc_deposit_type', $depositstype);
             $objProduct->update_meta_data('_wc_deposit_amount', $depositsamount);
-            $objProduct->update_meta_data('_wc_deposit_enabled', 'forced');
+            $objProduct->update_meta_data('_wc_deposit_enabled', $wc_deposit_enabled);
             
         }
         
@@ -1640,7 +1644,7 @@ function updateproducts($updateproducts_data) {
         $menu_order = $updateproducts_data['menu_order'];
         $depositstype = $updateproducts_data['depositstype'];
         $depositsamount = $updateproducts_data['depositsamount'];
-        
+        $wc_deposit_enabled = $updateproducts_data['_wc_deposit_enabled'];
         
         
         $rootsite_url =  network_site_url();
@@ -1748,7 +1752,7 @@ function updateproducts($updateproducts_data) {
         if(!empty($depositstype) && !empty($depositsamount)){
             $objProduct->update_meta_data('_wc_deposit_type', $depositstype);
             $objProduct->update_meta_data('_wc_deposit_amount', $depositsamount);
-            $objProduct->update_meta_data('_wc_deposit_enabled', 'forced');
+            $objProduct->update_meta_data('_wc_deposit_enabled', $wc_deposit_enabled);
         }else{
             
             $objProduct->update_meta_data('_wc_deposit_type', "");

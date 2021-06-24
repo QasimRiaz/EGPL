@@ -33,7 +33,20 @@
     $result = get_posts( $args );
      $base_url  = get_site_url();
    
-   
+   $tasksortedArray = [];
+     foreach ($result as $taskIndex => $taskObject){
+         
+        $tasksortedArray[$taskIndex]['Id'] = $taskObject->ID;
+        $tasksortedArray[$taskIndex]['sortingOrder'] = strtotime(get_post_meta( $taskObject->ID, 'duedate', true)); 
+        
+        
+         
+     }
+    
+     
+     usort($tasksortedArray, function($a, $b) {
+    return $a['sortingOrder'] <=> $b['sortingOrder'];
+});
    
     
    
@@ -123,10 +136,10 @@
            <?php
            
          
-           foreach ($result as $taskIndex => $taskObject){
+           foreach ($tasksortedArray as $taskIndex => $taskObject){
                     
                
-                                    $tasksID=$taskObject->ID;
+                                    $tasksID=$taskObject['Id'];
                                     $profile_field_settings = [];
                                     $value_value = get_post_meta( $tasksID, 'value' , false);
                                     $value_unique = get_post_meta( $tasksID, 'unique' , false);

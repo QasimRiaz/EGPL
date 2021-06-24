@@ -514,7 +514,7 @@ get_header();
                            $action_col .= $form_tag . " />";
                            if (!empty($value)) {
                                $profile_field_name_new = "'".$profile_field_name."'";
-                               $action_col .= '<div style="text-align: center;margin-top: 14px;" class="remove_' . $profile_field_name . '"><a  class="btn btn-primary btn-shadow-hover font-weight-bold mr-2" onclick="downloadfontendfile('.$profile_field_name_new.','.$user_IDD.')" style="cursor: pointer;margin-right: 24px;">Download File</a></div>';
+                               $action_col .= '<div style="text-align: center;margin-top: 14px;" class="remove_' . $profile_field_name . '"><a  class="btn btn-primary btn-shadow-hover font-weight-bold mr-2" href="'.$value['url'].'" style="cursor: pointer;margin-right: 24px;" download>Download File</a></div>';
                                    
                               
                                
@@ -734,7 +734,7 @@ get_header();
 													<!--begin::User-->
 													<div class="mr-3">
 														<!--begin::Name-->
-														<p  class="d-flex align-items-center text-dark  font-size-h5 font-weight-bold mr-3">'.$profile_field_settings["label"].'
+														<p  class="d-flex align-items-center text-dark  font-size-h5 font-weight-bold mr-3"><b>'.$profile_field_settings["label"].'</b>
 														</p>
 														<!--end::Name-->
 														<!--begin::Contacts-->

@@ -9,9 +9,9 @@ jQuery(document).ready(function () {
     
     
     
-   jQuery("#depositsstatus").click(function(){
+   jQuery("#depositsstatus").change(function(){
         
-        if(jQuery("#depositsstatus").prop( "checked" )){
+        if(jQuery("#depositsstatus option:selected").val() !="no" ){
             
             
             jQuery(".depositsdetail").show();
@@ -206,11 +206,12 @@ function add_new_product(){
     var getcatname = jQuery('#getcatname').val();
     var depositstype = "";
     var depositsamount = "";
-    
-    if(jQuery("#depositsstatus").prop( "checked" )){
+    var wc_deposit_enabled = jQuery("#depositsstatus option:selected").val();
+    if(wc_deposit_enabled != "no"){
          
           depositstype = jQuery("#depositstype option:selected").val(); 
           depositsamount = jQuery('#depositamount').val();
+          
          
          
      }else{
@@ -274,6 +275,7 @@ function add_new_product(){
     
     data.append('depositstype', depositstype);
     data.append('depositsamount', depositsamount);
+    data.append('_wc_deposit_enabled', wc_deposit_enabled);
     
     data.append('pprice', pprice);
     data.append('pquanitity', pquanitity);
@@ -539,7 +541,7 @@ if(stockstatus == 'instock'){
     
     //jQuery('.stockstatusbox').show();
      jQuery('.quanititybox').empty("");
-     jQuery('.quanititybox').append('<div class="form-group row stockstatusbox"><label class="col-sm-2 form-control-label">Stock Quantity<strong>*</strong></label><div class="col-sm-10"> <input type="number"  class="form-control" id="pquanitity" name="pquanitity" placeholder="Stock Quantity" ></div></div>');
+     jQuery('.quanititybox').append('<div class="form-group row stockstatusbox"><label class="col-sm-3 form-control-label">Stock Quantity<strong>*</strong></label><div class="col-sm-9"> <input type="number" min="0"  class="form-control" id="pquanitity" name="pquanitity" placeholder="Stock Quantity" ></div></div>');
     
 }else{
     

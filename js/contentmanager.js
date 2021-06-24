@@ -1791,7 +1791,7 @@ function approvethisuser(elem){
     var idsponsor = jQuery(elem).attr("id");
     jQuery.confirm({
         title: '<p style="text-align:center;" >Are you sure?</p>',
-        content: '<p><h3 style="text-align:center;">Do you want to approve this user? This will send them a welcome email.</h3></p><p style="text-align:center;">Here you can assign a level to this user. IMPORTANT: If you leave as "Unassigned", this user will be prompted to purchase a package before gaining full access to ExpoGenie.</p><p style="text-align:center;"><strong>Assign Level :  </strong> <select id="selectassignlevel" style="width: 200px;border: 1px #0c0c0c solid;border-radius: 3px;height: 36px;">'+jQuery("#assignuserroles").html()+'</select></p>',
+        content: '<p><h3 style="text-align:center;">Do you want to approve this user? This will send them a welcome email.</h3></p><p style="text-align:center;">Here you can assign a level to this user. IMPORTANT: If you leave as "Unassigned", this user will be prompted to purchase a package before gaining full access to ExpoGenie.</p><p><strong>Assign Level :  </strong> <select id="selectassignlevel" style="width: 200px;border: 1px #0c0c0c solid;border-radius: 3px;height: 36px;">'+jQuery("#assignuserroles").html()+'</select></p><p style="margin: 5px 0px;"><input checked="" type="checkbox" value="checked" id="welcomememailstatus"> Send a welcome email.</p>',
         confirmButton: 'Yes, approve it!',
         cancelButton: 'No, cancel please!',
        
@@ -1803,8 +1803,15 @@ function approvethisuser(elem){
             jQuery("body").css("cursor", "wait");
             var userassignrole = jQuery('#selectassignlevel option:selected').val();
             jQuery(".fa-check-circle-o").css("cursor", "not-allowed");
-           
-            conform_approvethis_user(idsponsor,userassignrole);
+            var welcomememailstatus = "";
+            if (jQuery('#welcomememailstatus').is(':checked')) {
+                     
+                     
+                     welcomememailstatus = 'checked';
+                }else{
+                     welcomememailstatus = 'unchecked';
+                }
+            conform_approvethis_user(idsponsor,userassignrole,welcomememailstatus);
            
         },
         cancel: function () {
@@ -1841,7 +1848,7 @@ function approvethisuser(elem){
 //						});
     
 }
-function conform_approvethis_user(idsponsor,userassignrole){
+function conform_approvethis_user(idsponsor,userassignrole,welcomememailstatus){
     
     //  console.log(idsponsor);
      jQuery(".confirm").attr('disabled','disabled');
@@ -1853,6 +1860,7 @@ function conform_approvethis_user(idsponsor,userassignrole){
     
      
      data.append('id', idsponsor);
+     data.append('welcomememailstatus', welcomememailstatus);
      data.append('userassignrole', userassignrole);
      
      jQuery.ajax({
@@ -2233,4 +2241,67 @@ function portalsettings_update(){
     
 }
 
-
+function setlevelspriorities(){
+    
+    
+    jQuery("body").css({'cursor':'wait'});
+   
+    var data = new FormData();
+    
+    
+    var AllDataArray = [];
+    
+    jQuery("#example tbody").find("tr").each(function (index) {
+       
+       
+       var levelname = jQuery(this).attr("id");
+       var OrderNumber = jQuery(this).find("td").eq(0).html();
+       
+       var dataArray = {rolename:levelname,prioritnum:OrderNumber};
+       AllDataArray.push(dataArray);
+       
+       
+       
+    });
+    
+    
+    
+    data.append('leveleslist',   JSON.stringify(AllDataArray));
+    
+    var url = currentsiteurl+'/';
+    var urlnew = url + 'wp-content/plugins/EGPL/egpl.php?contentManagerRequest=setlevelspriorities';
+    jQuery.ajax({
+            url: urlnew,
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function (data) {
+              jQuery("body").css({'cursor':'default'});
+              
+                                    swal({
+					title: "Success",
+					text: 'Level Priorities saved successfully.',
+					type: "success",
+                                        html:true,
+					confirmButtonClass: "btn-success",
+					confirmButtonText: "Ok"
+                                    },function(){
+                        
+                                        location.reload();
+                        
+                                    });
+              
+            },error: function (xhr, ajaxOptions, thrownError) {
+                     swal({
+                        title: "Error",
+			text: "There was an error during the requested operation. Please try again.",
+			type: "error",
+			confirmButtonClass: "btn-danger",
+			confirmButtonText: "Ok"
+                     });
+            }
+        });
+    
+}

@@ -1,4 +1,4 @@
-    
+    <?php  $virtualpluginstatus = get_option('Activated_VirtualEGPL');?>
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <!--        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/highstock.js?v=2.95"></script>-->
      
@@ -33,7 +33,7 @@
         
         
 <!--        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/exporting.js?v=2.95"></script>-->
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/contentmanager.js?v=3.62"></script>
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/contentmanager.js?v=3.66"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.watable.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-datepicker.min.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bootstrap-multiselect.js?v=2.95"></script>
@@ -46,10 +46,13 @@
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/admin-modernizr.custom.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/welcomeemail-content.js?v=2.95"></script>
         <script type="text/javascript" src="/wp-content/plugins/EGPL/js/orderhistory.js?v=2.7"></script>
+        
+        
         <script src="https://code.highcharts.com/highcharts.js"></script>
         <script src="https://code.highcharts.com/highcharts-more.js"></script>
         <script src="https://code.highcharts.com/modules/exporting.js"></script>
         <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+        
       
         <script src='/wp-content/plugins/EGPL/js/randomColor.js?v=2.95'></script>
         <script src='/wp-content/plugins/EGPL/js/jquery.ajax-progress.js?v=2.95'></script>
@@ -76,6 +79,21 @@
   
            <script type="text/javascript" src="/wp-content/plugins/EGPL/js/jquery.alerts.js?v=2.95"></script>
 <script src="https://cdn.tiny.cloud/1/7sjeh9nrwq4lhsc48nnxfcx0ctkanr5e5ykokigve8ftjbcu/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+ <?php if( $virtualpluginstatus == 'VirtualEGPL/virtualegpl.php' ) {
+     
+     
+     include_once( WP_PLUGIN_DIR . '/VirtualEGPL/templates/cm_footer_vu.php' );
+     
+     
+ }
+ 
+ 
+ 
+?>
+
+
+
+
 <script>
 jQuery(document).ready(function() {
     
@@ -96,7 +114,7 @@ tinymce.init({
   height: 400,
   branding: false,
   plugins: [
-    'table code link hr paste'
+    'table code link hr paste lists'
   ],table_default_attributes: {
     
     
@@ -113,7 +131,7 @@ tinymce.init({
   height: 400,
   branding: false,
   plugins: [
-    'table code link hr paste'
+    'table code link hr paste lists'
   ],table_default_attributes: {
     
     
@@ -130,7 +148,7 @@ tinymce.init({
   height: 400,
   branding: false,
   plugins: [
-    'table code link hr paste'
+    'table code link hr paste lists'
   ],table_default_attributes: {
     
     
@@ -147,7 +165,7 @@ tinymce.init({
   height: 400,
   branding: false,
   plugins: [
-    'table code link hr paste'
+    'table code link hr paste lists'
   ],table_default_attributes: {
     
     
@@ -165,16 +183,18 @@ tinymce.init({
 	<script>
           
           console.log(window.location.protocol + "//" + window.location.host + this.location.pathname);
-          jQuery('a[href="' + window.location.protocol + "//" + window.location.host + this.location.pathname + '"]').parents('li').addClass('active');
-          jQuery('a[href="' + window.location.protocol + "//" + window.location.host + this.location.pathname + '"]').parents('li').parent('ul').parent('li').removeClass('active');
+          jQuery('a[href="' + window.location.protocol + "//" + window.location.host + this.location.pathname + '/"]').parents('li').addClass('active');
+          jQuery('a[href="' + window.location.protocol + "//" + window.location.host + this.location.pathname + '/"]').parents('li').parent('ul').parent('li').removeClass('active');
           if(this.location.pathname != '/dashboard/'){
+              
+              console.log(this.location.pathname);
           jQuery('.opened').removeClass('opened');
-          jQuery('a[href="' + window.location.protocol + "//" + window.location.host + this.location.pathname + '"]').parents('li').parent('ul').parent('li').addClass('opened');
+          jQuery('a[href="' + window.location.protocol + "//" + window.location.host + this.location.pathname + '/"]').parents('li').parent('ul').parent('li').addClass('opened');
           }
             jQuery(".mynav li a").on("click", function(){
                     jQuery('.opened').addClass('opened');
                     jQuery('.active').removeClass('active');
-                    jQuery('a[href="' + window.location.protocol + "//" + window.location.host + this.location.pathname + '"]').parent('li').addClass("active");
+                    jQuery('a[href="' + window.location.protocol + "//" + window.location.host + this.location.pathname + '/"]').parent('li').addClass("active");
             });
 jQuery('#daterange3').daterangepicker({
 				singleDatePicker: true,
@@ -198,7 +218,43 @@ jQuery('#daterange3').daterangepicker({
  var timezone = 'GMT' + getTimezoneName();
  jQuery("#timezonetext").append(timezone);
  jQuery("#picktime").val(time);
- jQuery('.mycustomedropdown').select2(); 
+ jQuery('.mycustomedropdown').select2();
+ 
+ jQuery(document).ready(function() {
+     
+     
+     if( jQuery(window).width() > 990 ){
+
+     jQuery(".hamburger").click(function(){
+         
+        
+        var classList = jQuery(this).attr("class");
+        
+        if(~classList.indexOf("is-active")>=0){
+            
+            
+            jQuery(".side-menu").hide();
+            jQuery(".page-content").css("padding-left",'0px');
+            
+            console.log('Qasimriaz');
+            setTimeout(function(){jQuery("html").css('overflow','auto');}, 1000);
+        }else{
+            
+           jQuery(".side-menu").show();
+           jQuery(".page-content").css("padding-left",'255px');
+        }
+        
+         
+     });
+ }
+     
+     
+     
+ });
+ 
+ 
+ 
+ 
 </script>
 
 
