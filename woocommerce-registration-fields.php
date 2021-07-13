@@ -25,7 +25,7 @@ function custom_override_checkout_fields( $fields ) {
 //            unset( $fields['billing']['_billing_email'] );
 //            unset( $fields['billing']['_billing_company'] );
 //            
-            unset( $fields['billing']['billing_email'] );
+           
             unset( $fields['billing']['billing_phone'] );
             unset( $fields['billing']['billing_address_2'] );
 //            unset( $fields['billing']['billing_first_name'] );
@@ -36,9 +36,13 @@ function custom_override_checkout_fields( $fields ) {
           //  unset( $fields['billing']['billing_postcode'] );
       
         $fields['billing']['billing_first_name']['label'] = "First Name";
+        $fields['billing']['billing_first_name']['priority'] = 1;
         $fields['billing']['billing_last_name']['label'] = "Last Name";
-        //$fields['billing']['billing_email']['label'] = "Email";
+        $fields['billing']['billing_last_name']['priority'] = 2;
+        $fields['billing']['billing_email']['label'] = "Email";
+        $fields['billing']['billing_email']['priority'] = 3;
         $fields['billing']['billing_company']['label'] = "Company Name";
+        $fields['billing']['billing_company']['priority'] = 4;
         $fields['billing']['billing_city']['label'] = "City";
         $fields['billing']['billing_address_1']['label'] = "Street Address";
         $fields['billing']['billing_company']['required'] = true;
@@ -51,7 +55,9 @@ function custom_override_checkout_fields( $fields ) {
         
         
         
-        if (!is_user_logged_in() ) {    
+        if (!is_user_logged_in() ) { 
+            
+            
         foreach ($additional_fields as $key=>$value){ 
             
             $requiredStatus = $additional_fields[$key]['fieldrequriedstatus'];
@@ -114,13 +120,14 @@ function custom_checkout_fields_update_order_meta( $order_id ) {
          $CreatedUserID = get_current_user_id();
     }else{
         
-        $CreatedUserID = $_REQUEST['created_userid']; 
+        $CreatedUserID = $_REQUEST['created_userid'];
+        //update_post_meta($order_id,'_billing_email',sanitize_text_field( $_POST['Semail'] ));
     }
     
     
     
     update_post_meta($order_id,'_customer_user',$CreatedUserID);
-    update_post_meta($order_id,'_billing_email',sanitize_text_field( $_POST['Semail'] ));
+    
 //    update_post_meta($order_id,'_billing_phone',sanitize_text_field( $_POST['user_phone_1'] ));
 //    update_post_meta($order_id,'_billing_state',sanitize_text_field( $_POST['userstate'] ));
 //    update_post_meta($order_id,'_billing_address_1',sanitize_text_field( $_POST['address_line_1'] ));

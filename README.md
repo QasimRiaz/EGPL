@@ -111,3 +111,27 @@ Fixed Admin Edit Task Page User Name
 
 Fixed bug task description issue copy with other task uniquer id
 Fixed tinmc editor issue
+
+-------------------07-13-2021--- New Release 4.40 --------------
+
+Main Release including following items
+
+
+1. Add-Ons Placeholder Image
+2. Bold Task Titles
+3. Booth Tag & Label Collapse Default
+4. Center text on login page & make image larger
+5. Email Notifications for Orders Discrepency
+6. Move "User Fields" to Content Menu
+7. Number Field Type Bug Fix
+8. Option for end-users to pay partial payments in full
+9. Product Level Assignment Priority
+10. Public Floor Plan Self-Booth Selection
+11. Reduce Margin Height on Tasks
+12. Remove "." from "Send Welcome Email"
+13. Remove "x" on this page
+14. Remove Level merge field on Home Page
+15. Reorder Task Advanced Section
+16. Revert Task Files Back to Desktop Download
+17. Update "Enable" Deposit Hint
+18. Update File Size Limit from 50MB to 150MB
