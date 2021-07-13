@@ -294,7 +294,7 @@
                 $create_pages_list[16]['title'] = 'Tasks';
                 $create_pages_list[16]['name']  = 'task-list';
                 $create_pages_list[16]['temp']  = 'metronictasks.php';
-                $create_pages_list[16]['catname']  = false;
+                $create_pages_list[16]['catname']  = true;
                 
                 $create_pages_list[17]['title'] = 'Bulk Import Users';
                 $create_pages_list[17]['name']  = 'bulk-import-user';
@@ -318,7 +318,7 @@
                 
                 $create_pages_list[21]['title'] = 'Order Reporting';
                 $create_pages_list[21]['name']  = 'order-reporting';
-                $create_pages_list[21]['temp']  = 'temp/product-order-reporting-template.php';
+                $create_pages_list[21]['temp']  = 'temp/product-order-reporting-table-template.php';
                 $create_pages_list[21]['catname']  = false;
                 
 
@@ -472,8 +472,8 @@
                 
                 $create_pages_list[47]['title'] = 'Task Page';
                 $create_pages_list[47]['name']  = 'task-page';
-                $create_pages_list[47]['temp']  =  'metronictasks.php';
-                $create_pages_list[47]['catname']  = true;
+                $create_pages_list[47]['temp']  =  'egpldefualttemplate.php';
+                $create_pages_list[47]['catname']  = false;
                 
                 
                 $create_pages_list[48]['title'] = 'TERMS AND CONDITIONS';
@@ -536,6 +536,13 @@
                 $create_pages_list[57]['name']  = 'floor-plan-viewer';
                 $create_pages_list[57]['temp']  = 'noheaderfooter.php';
                 $create_pages_list[57]['catname']  = false;
+                
+                
+                 $create_pages_list[58]['title'] = 'Exhibitor Entry';
+                $create_pages_list[58]['name']  = 'exhibitor-entry';
+                $create_pages_list[58]['temp']  = 'exhibitor-entry.php';
+                $create_pages_list[58]['catname']  = false;
+                
                 
                 
                 $all_pages_defult_content['create-user']='';
