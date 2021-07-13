@@ -5,7 +5,7 @@
  * Plugin Name:       EGPL
  * Plugin URI:        https://github.com/QasimRiaz/EGPL
  * Description:       EGPL
- * Version:           4.40
+ * Version:           4.41
  * Author:            EG
  * License:           GNU General Public License v2
  * Text Domain:       EGPL
@@ -4345,13 +4345,14 @@ function my_plugin_activate() {
 
                     $page_path = $create_pages_list[$key]['name'];
                     $page = get_page_by_path($page_path);
-                    if (!$page) {
-                        if($create_pages_list[$key]['catname'] == true){
+                    if($create_pages_list[$key]['catname'] == true){
                             $cat_name = array($cat_id_get);//'content-manager-editor';
                         }else{
                             
                              $cat_name = '' ; //'content-manager-editor';
                         }
+                    if (!$page) {
+                        
                         
                         $my_post = array(
                             'post_title' => wp_strip_all_tags($create_pages_list[$key]['title']),
@@ -4366,14 +4367,20 @@ function my_plugin_activate() {
 // Insert the post into the database
                         $returnpage_ID = wp_insert_post($my_post);
                         update_post_meta($returnpage_ID, '_wp_page_template', $create_pages_list[$key]['temp']);
+                        
                     }else{
                     
                   
                         
                         $pageID = $page->ID;
-                        
                         update_post_meta($pageID, '_wp_page_template', $create_pages_list[$key]['temp']);
-                        
+                        if($page_path == "task-page"){
+                            
+                            wp_set_post_categories( $pageID, array() );
+                        }else{
+                            
+                            wp_set_post_categories( $pageID, array( $cat_id_get ) );
+                        }
                    
                 }
                 }
