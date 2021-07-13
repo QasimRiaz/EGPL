@@ -179,7 +179,7 @@ class FloorPlanManager {
                         $newRequestBoothArray->depositstype=$boothObject->depositstype;
                         $newRequestBoothArray->depositsamount=$boothObject->depositsamount;
                         $newRequestBoothArray->depositestatus=$boothObject->depositestatus;
-                      
+                        $newRequestBoothArray->despositeenablestatus=$boothObject->despositeenablestatus;
                          
                          
                         
@@ -210,11 +210,14 @@ class FloorPlanManager {
                             $objProduct->set_reviews_allowed(TRUE); //Set if reviews is allowed.                        | bool
                             
                            
-                           if($boothObject->depositestatus != "unchecked"){
+                           if($boothObject->despositeenablestatus == "optional" || $boothObject->despositeenablestatus == "forced"){
+                                
+                               
+                               
                                
                                 $objProduct->update_meta_data('_wc_deposit_type', $boothObject->depositstype);
                                 $objProduct->update_meta_data('_wc_deposit_amount', $boothObject->depositsamount);
-                                $objProduct->update_meta_data('_wc_deposit_enabled', 'forced');
+                                $objProduct->update_meta_data('_wc_deposit_enabled', $boothObject->despositeenablestatus);
                                 
                             }else{
                                 
@@ -258,11 +261,11 @@ class FloorPlanManager {
                             $objProduct->set_tax_class($boothObject->boothlevel); 
                             $objProduct->set_image_id($productpicID); //Set main image ID.
                             
-                             if($boothObject->depositestatus != "unchecked"){
-                               
+                             if($boothObject->despositeenablestatus == "optional" || $boothObject->despositeenablestatus == "forced"){
+                              
                                 $objProduct->update_meta_data('_wc_deposit_type', $boothObject->depositstype);
                                 $objProduct->update_meta_data('_wc_deposit_amount', $boothObject->depositsamount);
-                                $objProduct->update_meta_data('_wc_deposit_enabled', 'forced');
+                                $objProduct->update_meta_data('_wc_deposit_enabled', $boothObject->despositeenablestatus);
                                 
                             }else{
                                 
@@ -311,11 +314,11 @@ class FloorPlanManager {
                             $objProduct->set_reviews_allowed(TRUE); //Set if reviews is allowed.                        | bool
                             
                            
-                           if($boothObject->depositestatus != "unchecked"){
-                               
+                           if($boothObject->despositeenablestatus == "optional" || $boothObject->despositeenablestatus == "forced"){
+                              
                                 $objProduct->update_meta_data('_wc_deposit_type', $boothObject->depositstype);
                                 $objProduct->update_meta_data('_wc_deposit_amount', $boothObject->depositsamount);
-                                $objProduct->update_meta_data('_wc_deposit_enabled', 'forced');
+                                $objProduct->update_meta_data('_wc_deposit_enabled', $boothObject->despositeenablestatus);
                                 
                             }else{
                                 

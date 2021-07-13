@@ -2192,7 +2192,11 @@ function portalsettings_update(){
     data.append('getheaderlogo', getheaderlogo);
     data.append('getheaderfavicon', getheaderfavicon);
      data.append('getheaderimage', getheaderimage);
-    
+    if(jQuery('#applicationmoderationstatus').is(':checked')){
+            data.append('applicationmoderationstatus', 'checked');
+     }else{
+            data.append('applicationmoderationstatus', '');
+        }
     
     jQuery('.portalsettings').each(function() {
         

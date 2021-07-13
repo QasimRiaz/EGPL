@@ -548,7 +548,7 @@
                         <div class="col-sm-2"></div>
                             <div class="col-sm-6">
                                 <div class="checkbox" id="checknewuserdiv">
-                                    <input  type="checkbox" id="checknewuser">Send welcome email<br/>
+                                    <input  type="checkbox" id="checknewuser">Send Welcome Email<br/>
                                     
                                    
                                 </div>

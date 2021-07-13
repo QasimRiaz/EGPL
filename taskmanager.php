@@ -258,7 +258,19 @@ function savebulktask_update($request){
         
         $listoftaks = json_decode(stripslashes($request['bulktaskdata']));
         $removetaskslist = json_decode(stripslashes($request['deletedtaskslist']));  
-       
+              $args = array(
+                'posts_per_page'   => -1,
+                'orderby'          => 'date',
+                'order'            => 'DESC',
+                'post_type'        => 'egpl_custome_tasks',
+                'post_status'      => 'draft',
+
+            );
+        $oldData = json_encode(get_posts( $args ));
+        
+        
+        contentmanagerlogging('Save Bulk Task-Before',"Admin Action",$oldData,$user_ID,$user_info->user_email,"pre_action_data");
+        
         
         $lastInsertId = contentmanagerlogging('Save Bulk Task',"Admin Action",$request,$user_ID,$user_info->user_email,"pre_action_data");
         if(!empty($removetaskslist)){
@@ -315,8 +327,11 @@ function savebulktask_update($request){
             update_post_meta( $tasksID, 'emailnotificationaddress', $taskObject->emailnotificationaddress );
             update_post_meta( $tasksID, 'multivaluetasklimit', $taskObject->multivaluetasklimit );
             update_post_meta( $tasksID, 'multiselectstatus', $taskObject->multiselectstatus );
-            
-            
+
+            //my code Shehroze
+
+            update_post_meta( $tasksID, 'TaskPosition', $taskObject->taskposition ); 
+           
             
             if(!empty($taskObject->options)){
                 

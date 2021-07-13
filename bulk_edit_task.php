@@ -252,8 +252,7 @@ height: 50% !important;
 
                                     //my code Shehroze
 
-                                   $value_position = get_post_meta($tasksID, 'TaskPosition', true);
-                                    $value['taskposition'] = (int)$value_position;
+                                    $value_position = get_post_meta($tasksID, 'TaskPosition', true);
                                    
 
 
@@ -292,7 +291,9 @@ height: 50% !important;
                                     $value['multiselectstatus'] =$value_multiselectstatus;
                                     
 
-                                  
+                                    //my code Shehroze
+                                    
+                                    $value['taskposition'] = (int)$value_position;
 
 
                                     
@@ -341,9 +342,10 @@ height: 50% !important;
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-multivaluetasklimit"  value="<?php if(isset($value['multivaluetasklimit'])){ echo $value['multivaluetasklimit'];} ?>" ></span>
                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-multiselectstatus"  value="<?php if(isset($value['multiselectstatus'])){ echo $value['multiselectstatus'];} ?>" ></span>
 
-                                            <!--  my code Shehroze start-->
-                                            <span><input type="hidden" id="row-<?php echo $task_code; ?>-taskposition"  value="<?php if(isset($value['taskposition'])){ echo $value['taskposition'];} ?>" ></span>
-                                            <!--  my code Shehroze end-->
+                                            <!-- my -->
+
+                                             <span><input type="hidden" id="row-<?php echo $task_code; ?>-taskposition"  value="<?php if(isset($value['taskposition'])){ echo $value['taskposition'];} ?>" ></span>
+                                            
                                             
                                             
                                         </td>
@@ -487,7 +489,7 @@ height: 50% !important;
         include 'cm_footer.php';
         ?>
             
-        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=3.69"></script>    
+        <script type="text/javascript" src="/wp-content/plugins/EGPL/js/bulk_edit_task.js?v=3.68"></script>    
             
         <?php
         

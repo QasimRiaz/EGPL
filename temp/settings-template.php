@@ -384,7 +384,7 @@
                     
                                 <div class="row">
                                 <div class="form-group col-sm-12">
-                                    <label class="form-control-label" >Header Image </label>
+                                    <label class="form-control-label" >Header Image (1800 x 230)</label>
                                     <input type="file" class="form-control" id="inputImage"  accept=".jpeg, .jpg, .jpe,.png">
                                     <input type="hidden"  id="headerimage" <?php if(!empty($mainheaderbackground)){ echo 'value="'.$mainheaderbackground.'"';}?>>
                                 </div>
@@ -674,7 +674,31 @@
                                 
                             </div>
                             </div>-->
+							
+							 <br>
+                  <br>
+                            <div class="card-header egmb-20">
+                                <h4 class="card-title">User Application Settings</h4>
+                            </div>
+							<div class="form-group row">
+                    <div class="col-sm-8"><label class=" form-control-label">Enable/Disable Application Moderation </label></div>
+                        <div class="col-sm-4">
                             
+                            <input type="checkbox" class="toggle-one" id="applicationmoderationstatus" data-toggle="toggle" <?php echo $applicationmoderationstatus;?>>
+                            
+                        </div>
+                    
+                </div> 
+                  <div class="from-group row">
+                      
+                      
+                      <div class="col-sm-12"><p style="font-size: 20px;margin-left: 12px;">Enable this setting if you want to moderate user applications before they gain access into this event portal. If this is disabled, when a user completes the form the system will immediately create an account for that user and send them the Welcome Email with login credentials.</p></div>
+                      
+                  </div>
+               
+                  <br>
+                  <br>
+							
                             <div class="card-header egmb-20">
                                 <h4 class="card-title">Notification Settings</h4>
                             </div>
