@@ -4374,13 +4374,26 @@ function my_plugin_activate() {
                         
                         $pageID = $page->ID;
                         update_post_meta($pageID, '_wp_page_template', $create_pages_list[$key]['temp']);
-                        if($page_path == "task-page"){
-                            
-                            wp_set_post_categories( $pageID, array() );
-                        }else{
+                        
+                        if($create_pages_list[$key]['catname'] == true){
                             
                             wp_set_post_categories( $pageID, array( $cat_id_get ) );
+                            
+                        }else{
+                            
+                            wp_set_post_categories( $pageID, array() );
+                            
                         }
+                        
+                        
+                        
+//                        if($page_path == "task-page"){
+//                            
+//                            
+//                        }else{
+//                            
+//                            
+//                        }
                    
                 }
                 }
